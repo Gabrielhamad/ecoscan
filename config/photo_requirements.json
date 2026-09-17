@@ -1,0 +1,318 @@
+{
+  "plastic": {
+    "title": "Plástico",
+    "minimum_images": 50,
+    "ideal_images": 100,
+    "examples": [
+      "garrafa PET inteira",
+      "garrafa PET amassada",
+      "sacola plástica",
+      "pote de alimento",
+      "tampas plásticas",
+      "embalagem limpa",
+      "embalagem com leve sujeira"
+    ],
+    "contexts": [
+      "mesa clara",
+      "mesa escura",
+      "chão",
+      "ambiente externo",
+      "fundo real de cozinha ou escola"
+    ],
+    "avoid": [
+      "objeto muito distante",
+      "várias classes misturadas sem destaque",
+      "rótulo ocupando toda a imagem",
+      "foto com pessoa ou documento visível"
+    ]
+  },
+  "paper_cardboard": {
+    "title": "Papel e papelão",
+    "minimum_images": 50,
+    "ideal_images": 100,
+    "examples": [
+      "folha sulfite",
+      "jornal",
+      "revista",
+      "caixa de papelão aberta",
+      "caixa dobrada",
+      "papel amassado",
+      "papel engordurado para exemplo difícil"
+    ],
+    "contexts": [
+      "fundo claro",
+      "fundo escuro",
+      "pilha de papéis",
+      "uma caixa isolada",
+      "ambiente de sala ou escritório"
+    ],
+    "avoid": [
+      "texto pessoal legível",
+      "documento com dados",
+      "papel cobrindo toda a foto sem bordas",
+      "papel molhado sem identificação no lote"
+    ]
+  },
+  "metal": {
+    "title": "Metal",
+    "minimum_images": 50,
+    "ideal_images": 100,
+    "examples": [
+      "lata de alumínio",
+      "lata amassada",
+      "lata de aço",
+      "tampa metálica",
+      "embalagem metálica limpa",
+      "papel alumínio",
+      "peça metálica pequena"
+    ],
+    "contexts": [
+      "mesa",
+      "piso",
+      "recipiente de coleta",
+      "luz natural",
+      "luz artificial"
+    ],
+    "avoid": [
+      "pilhas e baterias como metal comum",
+      "objeto refletindo luz demais",
+      "aerossol misturado com lata comum",
+      "material cortante sem proteção"
+    ]
+  },
+  "glass": {
+    "title": "Vidro",
+    "minimum_images": 50,
+    "ideal_images": 100,
+    "examples": [
+      "garrafa transparente",
+      "garrafa verde",
+      "pote de conserva",
+      "frasco pequeno",
+      "vidro quebrado protegido",
+      "garrafa com tampa",
+      "garrafa sem tampa"
+    ],
+    "contexts": [
+      "fundo contrastante",
+      "luz lateral",
+      "mesa clara",
+      "mesa escura",
+      "ponto de coleta"
+    ],
+    "avoid": [
+      "lâmpada tratada como vidro comum",
+      "espelho como vidro comum sem classe específica",
+      "cacos soltos sem segurança",
+      "reflexo que esconda o objeto"
+    ]
+  },
+  "organic": {
+    "title": "Orgânico",
+    "minimum_images": 50,
+    "ideal_images": 100,
+    "examples": [
+      "casca de banana",
+      "casca de laranja",
+      "restos de verdura",
+      "folhas secas",
+      "borra de café",
+      "resto de comida",
+      "alimento deteriorado"
+    ],
+    "contexts": [
+      "prato",
+      "pote",
+      "mesa",
+      "composteira",
+      "ambiente de cozinha"
+    ],
+    "avoid": [
+      "foto com embalagem junto ao alimento",
+      "resto muito misturado sem classe dominante",
+      "imagem com baixa higiene visual",
+      "objeto pequeno demais na cena"
+    ]
+  },
+  "battery": {
+    "title": "Pilhas e baterias",
+    "minimum_images": 50,
+    "ideal_images": 100,
+    "examples": [
+      "pilha AA",
+      "pilha AAA",
+      "bateria 9V",
+      "bateria de relógio",
+      "bateria recarregável",
+      "power bank",
+      "bateria de celular fotografada com segurança"
+    ],
+    "contexts": [
+      "uma pilha isolada",
+      "pequeno conjunto de pilhas",
+      "embalagem de pilha",
+      "ponto de coleta",
+      "fundo neutro"
+    ],
+    "avoid": [
+      "bateria vazando sem proteção",
+      "bateria estufada manuseada de perto",
+      "pilha misturada com metais comuns",
+      "foto com texto pessoal ou etiqueta sensível"
+    ]
+  },
+  "electronic": {
+    "title": "Eletroeletrônicos",
+    "minimum_images": 50,
+    "ideal_images": 100,
+    "examples": [
+      "celular antigo",
+      "carregador",
+      "cabo USB",
+      "mouse",
+      "teclado",
+      "placa eletrônica",
+      "controle remoto"
+    ],
+    "contexts": [
+      "objeto inteiro",
+      "acessório isolado",
+      "conjunto pequeno de eletrônicos",
+      "ponto de logística reversa",
+      "mesa com fundo simples"
+    ],
+    "avoid": [
+      "tela exibindo dados pessoais",
+      "número de série legível como foco",
+      "equipamento ligado na tomada",
+      "mistura com lixo comum"
+    ]
+  },
+  "lamp": {
+    "title": "Lâmpadas",
+    "minimum_images": 50,
+    "ideal_images": 100,
+    "examples": [
+      "lâmpada LED",
+      "lâmpada fluorescente compacta",
+      "lâmpada tubular",
+      "lâmpada incandescente",
+      "embalagem de lâmpada",
+      "lâmpada em ponto de coleta"
+    ],
+    "contexts": [
+      "inteira sobre fundo contrastante",
+      "na embalagem",
+      "em caixa de transporte",
+      "ponto de entrega",
+      "mesa clara"
+    ],
+    "avoid": [
+      "lâmpada quebrada sem proteção",
+      "confundir com vidro comum",
+      "foto com brilho excessivo",
+      "manuseio inseguro"
+    ]
+  },
+  "medicine": {
+    "title": "Medicamentos",
+    "minimum_images": 50,
+    "ideal_images": 100,
+    "examples": [
+      "blister vazio",
+      "blister com comprimidos vencidos",
+      "caixa de medicamento",
+      "frasco de xarope",
+      "pomada vencida",
+      "ponto de coleta em farmácia"
+    ],
+    "contexts": [
+      "embalagem sem dados pessoais",
+      "produto isolado",
+      "conjunto pequeno",
+      "balcão ou mesa",
+      "ponto de entrega"
+    ],
+    "avoid": [
+      "receita médica visível",
+      "nome de paciente",
+      "seringas e agulhas misturadas",
+      "medicamento aberto derramado"
+    ]
+  },
+  "cooking_oil": {
+    "title": "Óleo de cozinha usado",
+    "minimum_images": 50,
+    "ideal_images": 100,
+    "examples": [
+      "garrafa PET com óleo usado",
+      "funil transferindo óleo frio",
+      "recipiente fechado",
+      "ponto de coleta de óleo",
+      "óleo separado da pia"
+    ],
+    "contexts": [
+      "cozinha",
+      "mesa",
+      "ponto de coleta",
+      "garrafa transparente",
+      "fundo contrastante"
+    ],
+    "avoid": [
+      "óleo quente",
+      "óleo sendo despejado na pia",
+      "recipiente aberto derramando",
+      "foto sem indicar que é óleo usado"
+    ]
+  },
+  "aerosol": {
+    "title": "Aerossóis",
+    "minimum_images": 50,
+    "ideal_images": 100,
+    "examples": [
+      "desodorante aerossol",
+      "spray de limpeza",
+      "lata pressurizada vazia",
+      "aerossol com tampa",
+      "embalagem pressurizada isolada"
+    ],
+    "contexts": [
+      "mesa",
+      "fundo neutro",
+      "ponto de resíduo especial",
+      "produto em pé",
+      "produto deitado"
+    ],
+    "avoid": [
+      "perfurar embalagem",
+      "aquecer embalagem",
+      "confundir com lata metálica comum",
+      "produto vazando"
+    ]
+  },
+  "chemical_packaging": {
+    "title": "Embalagens químicas",
+    "minimum_images": 50,
+    "ideal_images": 100,
+    "examples": [
+      "embalagem de produto de limpeza",
+      "frasco de solvente doméstico",
+      "embalagem de tinta",
+      "galão pequeno identificado",
+      "embalagem fechada"
+    ],
+    "contexts": [
+      "fundo neutro",
+      "rótulo parcialmente visível",
+      "embalagem fechada",
+      "ponto de resíduo perigoso",
+      "ambiente seguro"
+    ],
+    "avoid": [
+      "produto aberto",
+      "vazamento químico",
+      "mistura de produtos",
+      "manuseio sem segurança"
+    ]
+  }
+}

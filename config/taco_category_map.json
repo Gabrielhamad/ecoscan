@@ -1,0 +1,75 @@
+{
+  "provider": "TACO",
+  "provider_url": "https://tacodataset.org/",
+  "repository_url": "https://github.com/pedropro/TACO",
+  "annotations_url": "https://raw.githubusercontent.com/pedropro/TACO/master/data/annotations.json",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "citation": "Proenca, Pedro F.; Simoes, Pedro. TACO: Trash Annotations in Context for Litter Detection. arXiv:2003.06975, 2020.",
+  "license_note": "TACO contains manually labeled waste images with COCO annotations. Keep attribution and citation with any academic use.",
+  "classes": {
+    "plastic": [
+      "Other plastic bottle",
+      "Clear plastic bottle",
+      "Plastic bottle cap",
+      "Other plastic",
+      "Plastic film",
+      "Other plastic wrapper",
+      "Single-use carrier bag",
+      "Polypropylene bag",
+      "Disposable plastic cup",
+      "Other plastic cup",
+      "Plastic lid",
+      "Spread tub",
+      "Tupperware",
+      "Disposable food container",
+      "Plastic utensils",
+      "Plastic straw",
+      "Six pack rings"
+    ],
+    "paper_cardboard": [
+      "Toilet tube",
+      "Other carton",
+      "Egg carton",
+      "Drink carton",
+      "Corrugated carton",
+      "Meal carton",
+      "Pizza box",
+      "Magazine paper",
+      "Tissues",
+      "Wrapping paper",
+      "Normal paper",
+      "Paper bag",
+      "Paper cup",
+      "Paper straw"
+    ],
+    "metal": [
+      "Food Can",
+      "Drink can",
+      "Metal bottle cap",
+      "Metal lid",
+      "Pop tab",
+      "Scrap metal",
+      "Aluminium foil"
+    ],
+    "glass": [
+      "Glass bottle",
+      "Broken glass",
+      "Glass cup",
+      "Glass jar"
+    ],
+    "organic": [
+      "Food waste"
+    ],
+    "battery": [
+      "Battery"
+    ],
+    "medicine": [
+      "Aluminium blister pack",
+      "Carded blister pack"
+    ],
+    "aerosol": [
+      "Aerosol"
+    ]
+  }
+}

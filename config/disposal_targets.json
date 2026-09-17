@@ -1,0 +1,170 @@
+{
+  "plastic": {
+    "destination_title": "Lixeira vermelha",
+    "destination_type": "Coleta seletiva de plástico",
+    "bin_color_name": "Vermelha",
+    "bin_color_hex": "#d9342b",
+    "asset_path": "assets/disposal_targets/plastic_red_bin.png",
+    "search_query": "ponto de coleta seletiva plástico reciclagem",
+    "preparation_steps": [
+      "Esvazie a embalagem.",
+      "Passe uma água se houver muito resíduo de alimento.",
+      "Amasse quando possível para reduzir volume."
+    ],
+    "attention_note": "Se estiver muito contaminado com gordura, produto químico ou restos orgânicos, confirme a regra municipal antes de encaminhar como reciclável."
+  },
+  "paper_cardboard": {
+    "destination_title": "Lixeira azul",
+    "destination_type": "Coleta seletiva de papel e papelão",
+    "bin_color_name": "Azul",
+    "bin_color_hex": "#2474c9",
+    "asset_path": "assets/disposal_targets/paper_blue_bin.png",
+    "search_query": "ponto de coleta seletiva papel papelão reciclagem",
+    "preparation_steps": [
+      "Mantenha o material seco.",
+      "Dobre caixas para ocupar menos espaço.",
+      "Separe papéis engordurados ou muito contaminados."
+    ],
+    "attention_note": "Papel molhado, engordurado ou com sujeira excessiva pode perder reciclabilidade."
+  },
+  "metal": {
+    "destination_title": "Lixeira amarela",
+    "destination_type": "Coleta seletiva de metais",
+    "bin_color_name": "Amarela",
+    "bin_color_hex": "#f2bc28",
+    "asset_path": "assets/disposal_targets/metal_yellow_bin.png",
+    "search_query": "ponto de coleta seletiva metal alumínio aço reciclagem",
+    "preparation_steps": [
+      "Retire restos de alimento.",
+      "Enxágue latas quando possível.",
+      "Amasse latas limpas para reduzir volume."
+    ],
+    "attention_note": "Pilhas, baterias, aerossóis e eletrônicos não devem ser misturados com metais recicláveis comuns."
+  },
+  "glass": {
+    "destination_title": "Lixeira verde",
+    "destination_type": "Coleta seletiva de vidro",
+    "bin_color_name": "Verde",
+    "bin_color_hex": "#1b8f5a",
+    "asset_path": "assets/disposal_targets/glass_green_bin.png",
+    "search_query": "ponto de coleta seletiva vidro reciclagem",
+    "preparation_steps": [
+      "Esvazie frascos e garrafas.",
+      "Separe tampas quando forem de outro material.",
+      "Embale vidro quebrado com segurança e identifique."
+    ],
+    "attention_note": "Espelhos, cerâmicas, porcelanas e lâmpadas podem exigir descarte diferente do vidro comum."
+  },
+  "organic": {
+    "destination_title": "Lixeira marrom",
+    "destination_type": "Orgânicos e compostagem",
+    "bin_color_name": "Marrom",
+    "bin_color_hex": "#8a5c35",
+    "asset_path": "assets/disposal_targets/organic_brown_bin.png",
+    "search_query": "compostagem comunitária coleta resíduos orgânicos",
+    "preparation_steps": [
+      "Separe restos de comida de embalagens.",
+      "Evite misturar com plástico, vidro, metal ou papel.",
+      "Quando houver serviço disponível, encaminhe para compostagem."
+    ],
+    "attention_note": "Carnes, ossos e alimentos muito gordurosos podem não ser aceitos em todas as composteiras."
+  },
+  "battery": {
+    "destination_title": "Ponto de coleta especial",
+    "destination_type": "Pilhas e baterias",
+    "bin_color_name": "Laranja",
+    "bin_color_hex": "#f07b24",
+    "asset_path": "assets/disposal_targets/battery_orange_dropoff.png",
+    "search_query": "ponto de coleta pilhas baterias descarte",
+    "preparation_steps": [
+      "Não descarte no lixo comum.",
+      "Mantenha pilhas e baterias intactas e secas.",
+      "Leve a ecoponto, loja participante ou campanha de recolhimento."
+    ],
+    "attention_note": "Baterias estufadas, vazando ou danificadas exigem cuidado extra; procure orientação do ponto de coleta antes de transportar."
+  },
+  "electronic": {
+    "destination_title": "Ponto de logística reversa",
+    "destination_type": "Eletroeletrônicos",
+    "bin_color_name": "Laranja",
+    "bin_color_hex": "#f07b24",
+    "asset_path": "assets/disposal_targets/electronic_orange_dropoff.png",
+    "search_query": "ponto de coleta lixo eletrônico eletroeletrônicos",
+    "preparation_steps": [
+      "Remova dados pessoais de celulares e computadores.",
+      "Separe cabos, carregadores e acessórios quando possível.",
+      "Leve a ponto de logística reversa, ecoponto ou loja participante."
+    ],
+    "attention_note": "Eletrônicos não devem ser misturados com recicláveis comuns por conterem componentes que precisam de tratamento específico."
+  },
+  "lamp": {
+    "destination_title": "Ponto de coleta especial",
+    "destination_type": "Lâmpadas",
+    "bin_color_name": "Laranja",
+    "bin_color_hex": "#f07b24",
+    "asset_path": "assets/disposal_targets/lamp_orange_dropoff.png",
+    "search_query": "ponto de coleta lâmpadas descarte",
+    "preparation_steps": [
+      "Mantenha a lâmpada inteira sempre que possível.",
+      "Proteja contra quebra durante o transporte.",
+      "Leve a comércio participante, ecoponto ou coleta específica."
+    ],
+    "attention_note": "Lâmpadas quebradas devem ser isoladas com cuidado e seguir orientação local."
+  },
+  "medicine": {
+    "destination_title": "Ponto de entrega em farmácia",
+    "destination_type": "Medicamentos vencidos ou em desuso",
+    "bin_color_name": "Branca",
+    "bin_color_hex": "#f4f6f5",
+    "asset_path": "assets/disposal_targets/medicine_white_dropoff.png",
+    "search_query": "descarte medicamentos farmácia ponto de coleta",
+    "preparation_steps": [
+      "Não descarte em pia, vaso sanitário ou lixo comum.",
+      "Mantenha na embalagem quando possível.",
+      "Leve a farmácia, unidade de saúde ou ponto de coleta participante."
+    ],
+    "attention_note": "Confira a regra local para seringas, agulhas e materiais perfurocortantes."
+  },
+  "cooking_oil": {
+    "destination_title": "Ponto de coleta de óleo",
+    "destination_type": "Óleo de cozinha usado",
+    "bin_color_name": "Âmbar",
+    "bin_color_hex": "#c98a1d",
+    "asset_path": "assets/disposal_targets/oil_amber_dropoff.png",
+    "search_query": "ponto de coleta óleo de cozinha usado reciclagem",
+    "preparation_steps": [
+      "Espere o óleo esfriar.",
+      "Armazene em garrafa PET limpa e bem fechada.",
+      "Leve a ponto de coleta de óleo usado."
+    ],
+    "attention_note": "Nunca despeje óleo na pia, no ralo ou no solo."
+  },
+  "aerosol": {
+    "destination_title": "Ponto de coleta especial",
+    "destination_type": "Embalagens pressurizadas",
+    "bin_color_name": "Laranja",
+    "bin_color_hex": "#f07b24",
+    "asset_path": "assets/disposal_targets/aerosol_orange_dropoff.png",
+    "search_query": "ecoponto aerossol embalagem pressurizada descarte",
+    "preparation_steps": [
+      "Não perfure nem queime a embalagem.",
+      "Verifique se há produto residual.",
+      "Procure ecoponto ou orientação municipal para resíduos especiais."
+    ],
+    "attention_note": "Aerossóis podem ter pressão residual e não devem ir automaticamente para metal comum."
+  },
+  "chemical_packaging": {
+    "destination_title": "Ponto de resíduo perigoso",
+    "destination_type": "Embalagens químicas",
+    "bin_color_name": "Laranja",
+    "bin_color_hex": "#f07b24",
+    "asset_path": "assets/disposal_targets/chemical_orange_dropoff.png",
+    "search_query": "ecoponto resíduos perigosos embalagem química descarte",
+    "preparation_steps": [
+      "Não misture com recicláveis comuns.",
+      "Mantenha a embalagem fechada e identificada.",
+      "Siga orientação do fabricante, comércio responsável ou serviço municipal."
+    ],
+    "attention_note": "Produtos químicos podem contaminar outros materiais e representar risco ambiental."
+  }
+}

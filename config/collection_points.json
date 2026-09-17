@@ -1,0 +1,613 @@
+{
+  "metadata": {
+    "city": "Ribeirão Preto e São Paulo",
+    "state": "SP",
+    "coverage": ["Ribeirão Preto - SP", "São Paulo - SP"],
+    "source_label": "Bases municipais oficiais de Ecopontos",
+    "source_url": "https://www.ribeiraopreto.sp.gov.br/recicla/ecopontos",
+    "source_urls": [
+      "https://www.ribeiraopreto.sp.gov.br/recicla/ecopontos",
+      "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    ],
+    "retrieved_at": "2026-09-13",
+    "notes": "Base inicial alimentada por endereços oficiais. Latitude e longitude podem ser adicionadas depois para ordenação interna por distância."
+  },
+  "points": [
+    {
+      "point_id": "rp-ecoponto-01",
+      "name": "Ecoponto 1 - Alexandre Balbo",
+      "city": "Ribeirão Preto",
+      "state": "SP",
+      "address": "Avenida Ettore e Aurora Corauci, 1375",
+      "neighborhood": "Alexandre Balbo",
+      "hours": "Todos os dias, das 7h às 19h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass",
+        "battery",
+        "electronic",
+        "lamp",
+        "cooking_oil",
+        "chemical_packaging"
+      ],
+      "accepted_materials": [
+        "recicláveis secos",
+        "eletrodomésticos",
+        "eletroeletrônicos",
+        "pilhas",
+        "baterias",
+        "lâmpadas de LED",
+        "óleo vegetal usado",
+        "latas de tinta"
+      ],
+      "limit_note": "Limites variam por tipo de resíduo; confirmar regra local antes de levar grandes volumes.",
+      "notes": "Ponto municipal de entrega voluntária."
+    },
+    {
+      "point_id": "rp-ecoponto-02",
+      "name": "Ecoponto 2 - Jardim Centenário",
+      "city": "Ribeirão Preto",
+      "state": "SP",
+      "address": "Rua Arthur Ramos, 1185",
+      "neighborhood": "Jardim Centenário",
+      "hours": "Todos os dias, das 7h às 19h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass",
+        "battery",
+        "electronic",
+        "lamp",
+        "cooking_oil",
+        "chemical_packaging"
+      ],
+      "accepted_materials": [
+        "recicláveis secos",
+        "eletrodomésticos",
+        "eletroeletrônicos",
+        "pilhas",
+        "baterias",
+        "lâmpadas de LED",
+        "óleo vegetal usado",
+        "latas de tinta"
+      ],
+      "limit_note": "Limites variam por tipo de resíduo; confirmar regra local antes de levar grandes volumes.",
+      "notes": "Ponto municipal de entrega voluntária."
+    },
+    {
+      "point_id": "rp-ecoponto-03",
+      "name": "Ecoponto 3 - Jardim Santos Dumont",
+      "city": "Ribeirão Preto",
+      "state": "SP",
+      "address": "Rua Guará, 2225",
+      "neighborhood": "Jardim Santos Dumont",
+      "hours": "Todos os dias, das 7h às 19h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass",
+        "battery",
+        "electronic",
+        "lamp",
+        "cooking_oil",
+        "chemical_packaging"
+      ],
+      "accepted_materials": [
+        "recicláveis secos",
+        "eletrodomésticos",
+        "eletroeletrônicos",
+        "pilhas",
+        "baterias",
+        "lâmpadas de LED",
+        "óleo vegetal usado",
+        "latas de tinta"
+      ],
+      "limit_note": "Limites variam por tipo de resíduo; confirmar regra local antes de levar grandes volumes.",
+      "notes": "Ponto municipal de entrega voluntária."
+    },
+    {
+      "point_id": "rp-ecoponto-04",
+      "name": "Ecoponto 4 - Jardim das Palmeiras II",
+      "city": "Ribeirão Preto",
+      "state": "SP",
+      "address": "Rua Poeta Fernando Pessoa, 15",
+      "neighborhood": "Jardim das Palmeiras II",
+      "hours": "Todos os dias, das 7h às 19h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass",
+        "battery",
+        "electronic",
+        "lamp",
+        "cooking_oil",
+        "chemical_packaging"
+      ],
+      "accepted_materials": [
+        "recicláveis secos",
+        "eletrodomésticos",
+        "eletroeletrônicos",
+        "pilhas",
+        "baterias",
+        "lâmpadas de LED",
+        "óleo vegetal usado",
+        "latas de tinta"
+      ],
+      "limit_note": "Limites variam por tipo de resíduo; confirmar regra local antes de levar grandes volumes.",
+      "notes": "Ponto municipal de entrega voluntária."
+    },
+    {
+      "point_id": "rp-ecoponto-05",
+      "name": "Ecoponto 5 - Jardim Paiva",
+      "city": "Ribeirão Preto",
+      "state": "SP",
+      "address": "Av. Sen. Teotônio Vilella, 1285",
+      "neighborhood": "Jardim Paiva",
+      "hours": "Todos os dias, das 7h às 19h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass",
+        "battery",
+        "electronic",
+        "lamp",
+        "cooking_oil",
+        "chemical_packaging"
+      ],
+      "accepted_materials": [
+        "recicláveis secos",
+        "eletrodomésticos",
+        "eletroeletrônicos",
+        "pilhas",
+        "baterias",
+        "lâmpadas de LED",
+        "óleo vegetal usado",
+        "latas de tinta"
+      ],
+      "limit_note": "Limites variam por tipo de resíduo; confirmar regra local antes de levar grandes volumes.",
+      "notes": "Ponto municipal de entrega voluntária."
+    },
+    {
+      "point_id": "rp-ecoponto-06",
+      "name": "Ecoponto 6 - Jardim São Fernando",
+      "city": "Ribeirão Preto",
+      "state": "SP",
+      "address": "Avenida Miguel Padulla, 400",
+      "neighborhood": "Jardim São Fernando",
+      "hours": "Todos os dias, das 7h às 19h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass",
+        "battery",
+        "electronic",
+        "lamp",
+        "cooking_oil",
+        "chemical_packaging"
+      ],
+      "accepted_materials": [
+        "recicláveis secos",
+        "eletrodomésticos",
+        "eletroeletrônicos",
+        "pilhas",
+        "baterias",
+        "lâmpadas de LED",
+        "óleo vegetal usado",
+        "latas de tinta"
+      ],
+      "limit_note": "Limites variam por tipo de resíduo; confirmar regra local antes de levar grandes volumes.",
+      "notes": "Ponto municipal de entrega voluntária."
+    },
+    {
+      "point_id": "rp-ecoponto-07",
+      "name": "Ecoponto 7 - Adelino Simioni",
+      "city": "Ribeirão Preto",
+      "state": "SP",
+      "address": "Av. Gal. Euclides Figueiredo, 120",
+      "neighborhood": "Adelino Simioni",
+      "hours": "Todos os dias, das 7h às 19h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass",
+        "battery",
+        "electronic",
+        "lamp",
+        "cooking_oil",
+        "chemical_packaging"
+      ],
+      "accepted_materials": [
+        "recicláveis secos",
+        "eletrodomésticos",
+        "eletroeletrônicos",
+        "pilhas",
+        "baterias",
+        "lâmpadas de LED",
+        "óleo vegetal usado",
+        "latas de tinta"
+      ],
+      "limit_note": "Limites variam por tipo de resíduo; confirmar regra local antes de levar grandes volumes.",
+      "notes": "Ponto municipal de entrega voluntária."
+    },
+    {
+      "point_id": "rp-ecoponto-08",
+      "name": "Ecoponto 8 - Jardim Diva Tarlá de Carvalho",
+      "city": "Ribeirão Preto",
+      "state": "SP",
+      "address": "Av. Dr. Fernando Mendes Garcia, 3480",
+      "neighborhood": "Jardim Diva Tarlá de Carvalho",
+      "hours": "Todos os dias, das 7h às 19h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass",
+        "battery",
+        "electronic",
+        "lamp",
+        "cooking_oil",
+        "chemical_packaging"
+      ],
+      "accepted_materials": [
+        "recicláveis secos",
+        "eletrodomésticos",
+        "eletroeletrônicos",
+        "pilhas",
+        "baterias",
+        "lâmpadas de LED",
+        "óleo vegetal usado",
+        "latas de tinta"
+      ],
+      "limit_note": "Limites variam por tipo de resíduo; confirmar regra local antes de levar grandes volumes.",
+      "notes": "Ponto municipal de entrega voluntária."
+    },
+    {
+      "point_id": "sp-ecoponto-se-liberdade",
+      "name": "Ecoponto Liberdade",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Jaceguai, 67",
+      "neighborhood": "Liberdade",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-se-glicerio",
+      "name": "Ecoponto Glicério",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Baixada Glicério, 49",
+      "neighborhood": "Glicério",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-se-armenia",
+      "name": "Ecoponto Armênia",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Eduardo Chaves, 103",
+      "neighborhood": "Armênia",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-butanta-agua-podre",
+      "name": "Ecoponto Água Podre",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua João Fratucci, 141",
+      "neighborhood": "Jardim Bonfiglioli",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-butanta-politecnica",
+      "name": "Ecoponto Politécnica",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Praça Engenheiro Hugo Brandi",
+      "neighborhood": "Jardim Rizzo",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-pinheiros-pinheiros",
+      "name": "Ecoponto Pinheiros",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Praça do Cancioneiro, 15",
+      "neighborhood": "Pinheiros",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-pinheiros-vila-madalena",
+      "name": "Ecoponto Vila Madalena",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Girassol, 15",
+      "neighborhood": "Vila Madalena",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-vila-mariana",
+      "name": "Ecoponto Vila Mariana",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Afonso Celso, 147",
+      "neighborhood": "Vila Mariana",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-mirandopolis",
+      "name": "Ecoponto Mirandópolis",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Av. Sen. Casemiro da Rocha, 1220",
+      "neighborhood": "Mirandópolis",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-santana-tucuruvi",
+      "name": "Ecoponto Tucuruvi",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Eduardo Vicente Nasser, 519",
+      "neighborhood": "Tucuruvi",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-santana-santa-teresinha",
+      "name": "Ecoponto Santa Teresinha",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Copacabana, 190",
+      "neighborhood": "Santa Teresinha",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-mooca",
+      "name": "Ecoponto Mooca",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Taquari, 549",
+      "neighborhood": "Mooca",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-vila-prudente",
+      "name": "Ecoponto Vila Prudente",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Américo Vespucci, 785",
+      "neighborhood": "Vila Prudente",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-ipiranga-tereza-cristina",
+      "name": "Ecoponto Tereza Cristina",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Tereza Cristina, 10",
+      "neighborhood": "Ipiranga",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-santo-amaro-vicente-rao",
+      "name": "Ecoponto Vicente Rao",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Avenida Professor Vicente Rao, 308",
+      "neighborhood": "Santo Amaro",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-lapa-vila-jaguara",
+      "name": "Ecoponto Vila Jaguara",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Agrestina, 189",
+      "neighborhood": "Vila Jaguara",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    },
+    {
+      "point_id": "sp-ecoponto-jabaquara",
+      "name": "Ecoponto Jabaquara",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua dos Jornalistas, 167",
+      "neighborhood": "Jabaquara",
+      "hours": "Segunda a sábado, das 6h às 22h; domingos e feriados, das 6h às 18h",
+      "accepted_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "accepted_materials": [
+        "resíduos recicláveis",
+        "pequenos volumes de entulho",
+        "móveis e objetos volumosos",
+        "poda de árvores"
+      ],
+      "limit_note": "Até 1 m³ por descarte; confirmar regras oficiais antes de levar volumes ou resíduos especiais.",
+      "notes": "Ecoponto municipal oficial de São Paulo. Para pilhas, remédios, lâmpadas e eletrônicos, confirmar logística reversa específica.",
+      "source_label": "Prefeitura de São Paulo - Ecopontos",
+      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse"
+    }
+  ]
+}

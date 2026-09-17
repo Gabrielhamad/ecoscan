@@ -1,0 +1,124 @@
+{
+  "project_name": "EcoScan",
+  "image_size": [224, 224],
+  "confidence_threshold": 0.65,
+  "random_seed": 42,
+  "allowed_extensions": [".jpg", ".jpeg", ".png"],
+  "min_image_size": [48, 48],
+  "min_images_per_class_warning": 20,
+  "imbalance_ratio_warning": 2.0,
+  "classes": [
+    "plastic",
+    "paper_cardboard",
+    "metal",
+    "glass",
+    "organic",
+    "battery",
+    "electronic",
+    "lamp",
+    "medicine",
+    "cooking_oil",
+    "aerosol",
+    "chemical_packaging"
+  ],
+  "directories": {
+    "raw_data": "data/raw",
+    "curated_data": "data/curated",
+    "processed_data": "data/processed",
+    "train_data": "data/train",
+    "validation_data": "data/validation",
+    "test_data": "data/test",
+    "models": "models",
+    "reports": "reports",
+    "logs": "logs"
+  },
+  "dataset_split": {
+    "train": 0.7,
+    "validation": 0.15,
+    "test": 0.15
+  },
+  "baseline": {
+    "algorithm": "knn",
+    "image_size": [96, 96],
+    "histogram_bins": 8,
+    "confidence_threshold": 0.15,
+    "softmax_temperature": 0.2,
+    "k_neighbors": 9
+  },
+  "model": {
+    "type": "transfer_learning",
+    "framework": "tensorflow",
+    "architecture": "MobileNetV2",
+    "weights": "imagenet",
+    "fine_tune": false,
+    "batch_size": 16,
+    "epochs": 12,
+    "fine_tune_epochs": 8,
+    "learning_rate": 0.0001,
+    "dropout": 0.2,
+    "early_stopping_patience": 4,
+    "output_path": "models/ecoscan_transfer.keras",
+    "class_names_path": "models/class_names.json"
+  },
+  "history": {
+    "enabled": true,
+    "path": "logs/history.jsonl",
+    "save_images": false
+  },
+  "filters": {
+    "default": "auto",
+    "auto": {
+      "candidate_sequences": [
+        ["none"],
+        ["gaussian"],
+        ["median"],
+        ["bilateral"],
+        ["clahe"],
+        ["clahe", "gaussian"],
+        ["clahe", "median"],
+        ["clahe", "bilateral"]
+      ],
+      "max_steps": 2
+    },
+    "gaussian": {
+      "kernel_size": 5,
+      "sigma": 1.0
+    },
+    "median": {
+      "kernel_size": 5
+    },
+    "bilateral": {
+      "diameter": 9,
+      "sigma_color": 75,
+      "sigma_space": 75
+    },
+    "clahe": {
+      "clip_limit": 2.0,
+      "tile_grid_size": [8, 8]
+    },
+    "canny": {
+      "threshold1": 80,
+      "threshold2": 160
+    }
+  },
+  "segmentation": {
+    "default": "auto",
+    "auto": {
+      "candidate_methods": ["otsu", "hsv_color", "grabcut"],
+      "min_foreground_ratio": 0.025,
+      "ideal_foreground_ratio": 0.38,
+      "max_foreground_ratio": 0.86
+    },
+    "threshold": {
+      "method": "otsu"
+    },
+    "hsv_color": {
+      "saturation_min": 45,
+      "value_min": 35
+    },
+    "grabcut": {
+      "iterations": 5,
+      "margin_percent": 0.08
+    }
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "title": "EcoScan Cidade Limpa",
+  "owner": "Secretaria do Meio Ambiente",
+  "public_message": "Campanha de educação ambiental para orientar descarte correto, logística reversa e redução de resíduos descartados de forma inadequada.",
+  "weekly_rotation_note": "As missões podem ser renovadas semanalmente pela gestão ambiental conforme o foco da campanha.",
+  "admin_responsibilities": [
+    "Definir tema da campanha e público-alvo.",
+    "Publicar missões educativas e de descarte responsável.",
+    "Acompanhar evidências recebidas e casos inconclusivos.",
+    "Organizar recompensas simbólicas ou benefícios municipais quando houver convênio.",
+    "Atualizar pontos de coleta oficiais e materiais aceitos."
+  ],
+  "strategic_goals": [
+    "Aumentar a taxa de descarte correto de recicláveis secos e resíduos de logística reversa.",
+    "Reduzir descarte irregular em vias públicas, escolas, comércios e áreas verdes.",
+    "Gerar dados de participação por bairro para orientar campanhas territoriais da secretaria.",
+    "Usar correções dos cidadãos para fortalecer o reconhecimento por imagem nas próximas versões."
+  ],
+  "operational_routines": [
+    "Publicar uma campanha principal por mês com missões semanais e material educativo.",
+    "Revisar diariamente denúncias e imagens inconclusivas enviadas pelos usuários.",
+    "Atualizar pontos de coleta oficiais quando houver mudança de endereço, horário ou material aceito.",
+    "Consolidar ranking, classes com mais erro e bairros com maior demanda para reunião da equipe.",
+    "Exportar evidências técnicas e relatórios antes de treinar novo lote de imagens."
+  ],
+  "audience_segments": [
+    "Cidadãos que querem saber onde descartar corretamente.",
+    "Escolas e universidades em ações educativas.",
+    "Comércios, condomínios e prédios públicos com geração recorrente de resíduos.",
+    "Equipe da secretaria responsável por campanha, fiscalização e educação ambiental."
+  ],
+  "missions": [
+    {
+      "id": "separar_reciclavel_seco",
+      "title": "Separar reciclável seco",
+      "description": "Fotografe plástico, papel, metal ou vidro limpo e separado para descarte correto.",
+      "points": 20,
+      "target_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "verification_action": "recognize_waste",
+      "proof_hint": "Mostre um material principal, limpo, centralizado e com fundo simples."
+    },
+    {
+      "id": "lata_metal_segura",
+      "title": "Identificar lata e metal",
+      "description": "Registre lata de alumínio ou embalagem metálica limpa para reforçar a coleta seletiva.",
+      "points": 25,
+      "target_classes": ["metal"],
+      "verification_action": "recognize_waste",
+      "proof_hint": "Fotografe a lata inteira, com topo e base visíveis, evitando reflexo forte."
+    },
+    {
+      "id": "plastico_garrafa_pet",
+      "title": "Garrafa PET no reciclável",
+      "description": "Mostre garrafa plástica limpa, amassada ou inteira, pronta para descarte correto.",
+      "points": 25,
+      "target_classes": ["plastic"],
+      "verification_action": "recognize_waste",
+      "proof_hint": "Use fundo simples e deixe gargalo, corpo e rótulo visíveis quando houver."
+    },
+    {
+      "id": "vidro_sem_risco",
+      "title": "Vidro separado com segurança",
+      "description": "Registre garrafa ou frasco de vidro separado de materiais orgânicos e cortantes.",
+      "points": 25,
+      "target_classes": ["glass"],
+      "verification_action": "recognize_waste",
+      "proof_hint": "Mostre o vidro inteiro e evite misturar com plástico transparente na mesma foto."
+    },
+    {
+      "id": "logistica_reversa_segura",
+      "title": "Levar resíduo especial ao ponto correto",
+      "description": "Registre pilha, eletrônico, lâmpada ou medicamento destinado a ponto de coleta especial.",
+      "points": 35,
+      "target_classes": ["battery", "electronic", "lamp", "medicine"],
+      "verification_action": "recognize_waste",
+      "proof_hint": "Evite foto de embalagem misturada; o item especial precisa estar visível."
+    },
+    {
+      "id": "oleo_sem_pia",
+      "title": "Óleo usado fora da pia",
+      "description": "Mostre óleo de cozinha armazenado em garrafa fechada para entrega em ponto de coleta.",
+      "points": 30,
+      "target_classes": ["cooking_oil"],
+      "verification_action": "recognize_waste",
+      "proof_hint": "A garrafa precisa aparecer inteira, bem iluminada e sem reflexo forte."
+    },
+    {
+      "id": "embalagem_perigosa",
+      "title": "Embalagem química com cuidado",
+      "description": "Registre embalagem de produto químico doméstico ou embalagem pressurizada para orientação segura.",
+      "points": 30,
+      "target_classes": ["aerosol", "chemical_packaging"],
+      "verification_action": "recognize_waste",
+      "proof_hint": "Mostre a embalagem inteira e evite imagens de rótulo isolado."
+    },
+    {
+      "id": "auditoria_do_reconhecimento",
+      "title": "Ajudar a calibrar o EcoScan",
+      "description": "Envie uma imagem clara de qualquer resíduo da campanha e corrija a classe caso o sistema erre.",
+      "points": 10,
+      "target_classes": ["plastic", "paper_cardboard", "metal", "glass", "organic", "battery", "electronic", "lamp", "medicine", "cooking_oil", "aerosol", "chemical_packaging"],
+      "verification_action": "recognize_waste",
+      "proof_hint": "Se o reconhecimento errar, use o formulário de correção para alimentar a próxima curadoria do dataset."
+    },
+    {
+      "id": "semana_sao_paulo_ecopontos",
+      "title": "Semana Ecoponto São Paulo",
+      "description": "Consulte o mapa, encontre um Ecoponto de São Paulo e registre um reciclável seco destinado corretamente.",
+      "points": 30,
+      "target_classes": ["plastic", "paper_cardboard", "metal", "glass"],
+      "verification_action": "recognize_waste",
+      "proof_hint": "Depois da análise, use a aba Mapa para confirmar o Ecoponto mais conveniente."
+    },
+    {
+      "id": "denunciar_mau_descarte",
+      "title": "Denunciar mau descarte",
+      "description": "Envie uma foto de descarte irregular para triagem técnica e orientação da campanha.",
+      "points": 15,
+      "target_classes": ["plastic", "paper_cardboard", "metal", "glass", "organic", "battery", "electronic", "lamp", "medicine", "cooking_oil", "aerosol", "chemical_packaging"],
+      "verification_action": "report_bad_disposal",
+      "proof_hint": "Inclua local, descrição breve e uma foto nítida da situação."
+    }
+  ],
+  "rewards": [
+    {
+      "id": "selo_participante",
+      "title": "Selo participante",
+      "points_required": 50,
+      "description": "Reconhecimento digital para usuários que completarem as primeiras missões."
+    },
+    {
+      "id": "campanha_municipal",
+      "title": "Benefício em campanha municipal",
+      "points_required": 150,
+      "description": "Pontuação suficiente para participação em campanhas futuras de incentivo, quando autorizadas pela gestão pública."
+    },
+    {
+      "id": "agente_ambiental",
+      "title": "Agente ambiental da comunidade",
+      "points_required": 300,
+      "description": "Perfil de usuário engajado para ações educativas, mutirões e desafios de coleta seletiva."
+    }
+  ]
+}

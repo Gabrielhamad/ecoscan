@@ -1,0 +1,18 @@
+{
+  "profiles": [
+    {
+      "id": "usuario_demo",
+      "display_name": "Cidadão",
+      "role": "user",
+      "organization": "Comunidade",
+      "notes": "Atendimento digital para orientação de descarte, coleta e educação ambiental."
+    },
+    {
+      "id": "admin_secretaria",
+      "display_name": "Gestão Ambiental",
+      "role": "admin",
+      "organization": "Secretaria do Meio Ambiente",
+      "notes": "Perfil administrativo para revisar campanhas, pontos e denúncias no protótipo local."
+    }
+  ]
+}

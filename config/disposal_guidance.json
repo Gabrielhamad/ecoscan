@@ -1,0 +1,98 @@
+{
+  "plastic": {
+    "display_name": "Plástico",
+    "environmental_category": "Reciclável",
+    "common_trash": false,
+    "guidance": "Quando limpo e seco, encaminhar para coleta seletiva ou cooperativa de reciclagem. Embalagens muito contaminadas podem exigir avaliação local.",
+    "educational_note": "Plásticos têm composições variadas; a limpeza melhora a chance de reciclagem.",
+    "academic_example": true
+  },
+  "paper_cardboard": {
+    "display_name": "Papel / papelão",
+    "environmental_category": "Reciclável",
+    "common_trash": false,
+    "guidance": "Manter seco e encaminhar para coleta seletiva. Papel engordurado ou muito contaminado pode não ser aceito como reciclável.",
+    "educational_note": "Umidade e gordura reduzem a qualidade do material reciclável.",
+    "academic_example": true
+  },
+  "metal": {
+    "display_name": "Metal",
+    "environmental_category": "Reciclável",
+    "common_trash": false,
+    "guidance": "Encaminhar para coleta seletiva, preferencialmente limpo e sem restos de alimento.",
+    "educational_note": "Metais costumam ter boa reciclabilidade quando separados corretamente.",
+    "academic_example": true
+  },
+  "glass": {
+    "display_name": "Vidro",
+    "environmental_category": "Reciclável com cuidado",
+    "common_trash": false,
+    "guidance": "Encaminhar para coleta seletiva. Se estiver quebrado, embalar com segurança e identificar para evitar acidentes.",
+    "educational_note": "Vidro quebrado exige cuidado no manuseio mesmo quando é reciclável.",
+    "academic_example": true
+  },
+  "organic": {
+    "display_name": "Orgânico",
+    "environmental_category": "Orgânico / compostável",
+    "common_trash": true,
+    "guidance": "Quando houver estrutura disponível, encaminhar para compostagem. Caso contrário, seguir a orientação municipal para resíduos orgânicos.",
+    "educational_note": "Resíduos orgânicos podem gerar adubo quando compostados em condições adequadas.",
+    "academic_example": true
+  },
+  "battery": {
+    "display_name": "Pilha / bateria",
+    "environmental_category": "Resíduo especial",
+    "common_trash": false,
+    "guidance": "Não descartar no lixo comum. Encaminhar para ponto de coleta específico, ecoponto, loja participante ou campanha de recolhimento.",
+    "educational_note": "Pilhas e baterias podem conter componentes que exigem descarte específico.",
+    "academic_example": true
+  },
+  "electronic": {
+    "display_name": "Eletrônico",
+    "environmental_category": "Resíduo eletroeletrônico",
+    "common_trash": false,
+    "guidance": "Encaminhar para logística reversa, ecoponto ou ponto de coleta de eletroeletrônicos. Não misturar com resíduos recicláveis comuns.",
+    "educational_note": "Equipamentos eletrônicos combinam materiais recicláveis e componentes que precisam de tratamento adequado.",
+    "academic_example": true
+  },
+  "lamp": {
+    "display_name": "Lâmpada",
+    "environmental_category": "Resíduo especial",
+    "common_trash": false,
+    "guidance": "Encaminhar para ponto de coleta específico, comércio participante ou ecoponto. Se estiver quebrada, isolar com cuidado e seguir a orientação local.",
+    "educational_note": "Alguns tipos de lâmpada exigem descarte controlado por risco químico e de corte.",
+    "academic_example": false
+  },
+  "medicine": {
+    "display_name": "Medicamento",
+    "environmental_category": "Resíduo especial",
+    "common_trash": false,
+    "guidance": "Não descartar em lixo comum, pia ou vaso sanitário. Levar a farmácias, unidades de saúde ou pontos de coleta participantes.",
+    "educational_note": "Medicamentos descartados de forma incorreta podem contaminar água e solo.",
+    "academic_example": false
+  },
+  "cooking_oil": {
+    "display_name": "Óleo de cozinha",
+    "environmental_category": "Resíduo especial / reciclável",
+    "common_trash": false,
+    "guidance": "Armazenar em garrafa fechada e levar a ponto de coleta de óleo usado. Não despejar na pia.",
+    "educational_note": "Óleo descartado na rede de esgoto causa obstruções e aumenta a poluição hídrica.",
+    "academic_example": false
+  },
+  "aerosol": {
+    "display_name": "Aerossol",
+    "environmental_category": "Resíduo especial",
+    "common_trash": false,
+    "guidance": "Verificar orientação local e encaminhar para coleta adequada quando houver risco químico ou pressão residual.",
+    "educational_note": "Embalagens pressurizadas podem exigir tratamento diferente de metais recicláveis comuns.",
+    "academic_example": false
+  },
+  "chemical_packaging": {
+    "display_name": "Embalagem química",
+    "environmental_category": "Resíduo perigoso",
+    "common_trash": false,
+    "guidance": "Não misturar com recicláveis comuns. Encaminhar conforme orientação do fabricante, comércio responsável ou serviço municipal especializado.",
+    "educational_note": "Resíduos de produtos químicos podem contaminar materiais recicláveis e representar risco ambiental.",
+    "academic_example": false
+  }
+}

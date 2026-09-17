@@ -1,0 +1,158 @@
+{
+  "plastic": {
+    "impact_title": "Impacto do descarte incorreto de plástico",
+    "risk_level": "moderado",
+    "risk_label": "Poluição persistente",
+    "bad_disposal_risks": [
+      "Pode permanecer por longo período no ambiente quando vai para ruas, solo, rios ou áreas verdes.",
+      "Quando descartado sujo, pode contaminar outros recicláveis e reduzir a eficiência da coleta seletiva.",
+      "Fragmentos plásticos podem prejudicar drenagem urbana, fauna e qualidade visual dos espaços públicos."
+    ],
+    "positive_action": "Separar o plástico limpo e seco aumenta a chance de reciclagem e reduz rejeitos enviados a aterros.",
+    "source_label": "CONAMA 275/2001 - padrão de cores da coleta seletiva",
+    "source_url": "https://conama.mma.gov.br/index.php?id=1356&option=com_sisconama&view=processo"
+  },
+  "paper_cardboard": {
+    "impact_title": "Impacto do descarte incorreto de papel e papelão",
+    "risk_level": "baixo",
+    "risk_label": "Perda de reciclabilidade",
+    "bad_disposal_risks": [
+      "Papel molhado, engordurado ou contaminado costuma perder valor de reciclagem.",
+      "Mistura com orgânicos aumenta rejeitos e dificulta o trabalho de triagem.",
+      "Caixas sem dobra ocupam mais volume no transporte e nos pontos de armazenamento."
+    ],
+    "positive_action": "Manter seco, dobrar e separar por tipo melhora a triagem e aproveita melhor o material reciclável.",
+    "source_label": "CONAMA 275/2001 - padrão de cores da coleta seletiva",
+    "source_url": "https://conama.mma.gov.br/index.php?id=1356&option=com_sisconama&view=processo"
+  },
+  "metal": {
+    "impact_title": "Impacto do descarte incorreto de metal",
+    "risk_level": "baixo",
+    "risk_label": "Desperdício de material reciclável",
+    "bad_disposal_risks": [
+      "Metais enviados ao lixo comum deixam de retornar à cadeia produtiva.",
+      "Latas e peças sujas podem contaminar outros materiais durante a triagem.",
+      "Objetos cortantes ou amassados de forma irregular podem causar acidente no manuseio."
+    ],
+    "positive_action": "Latas limpas e separadas favorecem reciclagem, economia de recursos e melhor segurança na coleta.",
+    "source_label": "CONAMA 275/2001 - padrão de cores da coleta seletiva",
+    "source_url": "https://conama.mma.gov.br/index.php?id=1356&option=com_sisconama&view=processo"
+  },
+  "glass": {
+    "impact_title": "Impacto do descarte incorreto de vidro",
+    "risk_level": "moderado",
+    "risk_label": "Risco de corte e rejeito persistente",
+    "bad_disposal_risks": [
+      "Vidro quebrado pode ferir moradores, coletores e trabalhadores de triagem.",
+      "Misturado ao lixo comum, pode rasgar sacos e espalhar rejeitos.",
+      "Alguns itens parecidos, como lâmpadas, espelhos e cerâmicas, exigem destino diferente do vidro comum."
+    ],
+    "positive_action": "Separar vidro comum e embalar fragmentos com identificação reduz acidentes e melhora o aproveitamento.",
+    "source_label": "CONAMA 275/2001 - padrão de cores da coleta seletiva",
+    "source_url": "https://conama.mma.gov.br/index.php?id=1356&option=com_sisconama&view=processo"
+  },
+  "organic": {
+    "impact_title": "Impacto do descarte incorreto de resíduo orgânico",
+    "risk_level": "moderado",
+    "risk_label": "Chorume, odor e emissão de gases",
+    "bad_disposal_risks": [
+      "Orgânicos misturados a recicláveis sujam materiais que poderiam ser reaproveitados.",
+      "Quando manejados de forma inadequada, podem gerar odores, chorume e atrair vetores.",
+      "O envio desnecessário a aterros aumenta volume de rejeitos e perde potencial de compostagem."
+    ],
+    "positive_action": "Separar para compostagem, quando disponível, transforma resíduo em adubo e reduz rejeito.",
+    "source_label": "PNRS/SINIR - gestão integrada de resíduos sólidos",
+    "source_url": "https://sinir.gov.br/"
+  },
+  "battery": {
+    "impact_title": "Impacto do descarte incorreto de pilhas e baterias",
+    "risk_level": "alto",
+    "risk_label": "Resíduo especial",
+    "bad_disposal_risks": [
+      "Pode haver vazamento de substâncias que contaminam solo e água.",
+      "Baterias danificadas podem representar risco químico ou térmico durante transporte e armazenamento.",
+      "Misturar com recicláveis comuns coloca trabalhadores de triagem em situação de risco."
+    ],
+    "positive_action": "Levar a ponto de coleta especial ou logística reversa mantém o resíduo fora do lixo comum.",
+    "source_label": "SINIR - logística reversa",
+    "source_url": "https://sinir.gov.br/perfis/logistica-reversa/"
+  },
+  "electronic": {
+    "impact_title": "Impacto do descarte incorreto de eletroeletrônicos",
+    "risk_level": "alto",
+    "risk_label": "Logística reversa",
+    "bad_disposal_risks": [
+      "Equipamentos combinam plástico, metais, placas e componentes que precisam de desmontagem adequada.",
+      "Misturar eletrônicos com lixo comum pode desperdiçar materiais valiosos e gerar contaminação.",
+      "Celulares e computadores descartados sem preparo também podem expor dados pessoais."
+    ],
+    "positive_action": "Encaminhar para logística reversa permite triagem técnica, recuperação de materiais e descarte seguro.",
+    "source_label": "SINIR - logística reversa",
+    "source_url": "https://sinir.gov.br/perfis/logistica-reversa/"
+  },
+  "lamp": {
+    "impact_title": "Impacto do descarte incorreto de lâmpadas",
+    "risk_level": "alto",
+    "risk_label": "Coleta especial",
+    "bad_disposal_risks": [
+      "Lâmpadas quebradas podem causar cortes e liberar resíduos que exigem cuidado.",
+      "Alguns tipos, como fluorescentes, precisam de sistema próprio de recolhimento.",
+      "Misturar com vidro comum pode contaminar a coleta seletiva e aumentar risco na triagem."
+    ],
+    "positive_action": "Transportar inteira e levar a ponto de coleta especial evita quebra e tratamento inadequado.",
+    "source_label": "SINIR - logística reversa",
+    "source_url": "https://sinir.gov.br/perfis/logistica-reversa/"
+  },
+  "medicine": {
+    "impact_title": "Impacto do descarte incorreto de medicamentos",
+    "risk_level": "alto",
+    "risk_label": "Risco à água e à saúde",
+    "bad_disposal_risks": [
+      "Medicamentos jogados em pia ou vaso podem seguir para a rede de esgoto.",
+      "Descarte no lixo comum aumenta risco de uso acidental ou manipulação indevida.",
+      "Embalagens e sobras precisam de fluxo de recolhimento apropriado."
+    ],
+    "positive_action": "Levar medicamentos vencidos ou em desuso a farmácias ou pontos participantes reduz risco sanitário e ambiental.",
+    "source_label": "SINIR - logística reversa",
+    "source_url": "https://sinir.gov.br/perfis/logistica-reversa/"
+  },
+  "cooking_oil": {
+    "impact_title": "Impacto do descarte incorreto de óleo de cozinha",
+    "risk_level": "alto",
+    "risk_label": "Poluição hídrica e entupimento",
+    "bad_disposal_risks": [
+      "Óleo despejado na pia pode obstruir tubulações e redes de esgoto.",
+      "No solo ou na água, forma película que prejudica o ambiente e dificulta tratamento.",
+      "Misturado ao lixo, pode vazar e contaminar outros resíduos."
+    ],
+    "positive_action": "Guardar em garrafa bem fechada e levar a ponto de coleta permite reciclagem e evita poluição.",
+    "source_label": "PNRS/SINIR - gestão integrada de resíduos sólidos",
+    "source_url": "https://sinir.gov.br/"
+  },
+  "aerosol": {
+    "impact_title": "Impacto do descarte incorreto de aerossóis",
+    "risk_level": "alto",
+    "risk_label": "Pressão residual e resíduo químico",
+    "bad_disposal_risks": [
+      "Embalagens pressurizadas podem causar acidente se forem perfuradas, aquecidas ou compactadas.",
+      "Produto residual pode contaminar outros materiais recicláveis.",
+      "Nem todo aerossol deve seguir diretamente para a lixeira de metais comuns."
+    ],
+    "positive_action": "Conferir orientação municipal e levar a ecoponto quando houver risco químico ou pressão residual.",
+    "source_label": "PNRS/SINIR - gestão integrada de resíduos sólidos",
+    "source_url": "https://sinir.gov.br/"
+  },
+  "chemical_packaging": {
+    "impact_title": "Impacto do descarte incorreto de embalagens químicas",
+    "risk_level": "alto",
+    "risk_label": "Resíduo perigoso",
+    "bad_disposal_risks": [
+      "Resíduos químicos podem contaminar solo, água e outros materiais recicláveis.",
+      "Misturar produtos diferentes pode gerar reação ou risco no manuseio.",
+      "A embalagem vazia ainda pode exigir orientação do fabricante, comércio ou serviço municipal."
+    ],
+    "positive_action": "Manter fechada, identificada e encaminhar para fluxo específico reduz risco ambiental e ocupacional.",
+    "source_label": "PNRS/SINIR - gestão integrada de resíduos sólidos",
+    "source_url": "https://sinir.gov.br/"
+  }
+}

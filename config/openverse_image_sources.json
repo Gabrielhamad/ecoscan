@@ -1,0 +1,145 @@
+{
+  "provider": "Openverse",
+  "provider_url": "https://openverse.org/",
+  "api_url": "https://api.openverse.org/v1/images/",
+  "license_type": "commercial,modification",
+  "license_note": "Openverse aggregates openly licensed media metadata from third-party sources. Keep the attribution manifest and verify per-file license before publishing, redistributing, or training a final model.",
+  "title_reject_any": {
+    "_all": ["clip art", "clipart", "sticker", "transparent", "free vector", "vector download", "illustration", "icon", "logo", "mockup", "render"],
+    "cooking_oil": ["png sticker", "clip-art", "coca-cola", "coca cola", "cola", "soda", "soft drink", "soft drinks", "world's fair", "world-s-fair", "palace of agriculture"],
+    "lamp": ["preview of"],
+    "medicine": ["parts tray", "kontaktlinsen", "contact lens", "medicine cabinet"],
+    "chemical_packaging": ["sun-bleached", "sand bottle", "drinking water", "mario", "instructions", "handwashing station", "soda bottle", "gatorade"]
+  },
+  "title_include_any": {
+    "plastic": ["plastic", "pet", "bottle", "bag", "packaging"],
+    "paper_cardboard": ["paper", "cardboard", "carton", "newspaper", "recycling"],
+    "metal": ["metal", "aluminium", "aluminum", "can", "tin"],
+    "glass": ["glass", "bottle", "jar"],
+    "organic": ["food waste", "banana", "peel", "compost", "vegetable", "leftover"],
+    "battery": ["battery", "batteries", "aa", "aaa", "lithium", "cell"],
+    "electronic": ["electronic", "computer", "circuit", "monitor", "phone", "e-waste", "ewaste"],
+    "lamp": ["lamp", "bulb", "fluorescent", "led", "light", "cfl"],
+    "medicine": ["medicine", "medication", "pill", "tablet", "blister", "pharmaceutical", "drug", "prescription"],
+    "cooking_oil": ["cooking oil", "used oil", "frying oil", "vegetable oil", "oil bottle", "oil recycling"],
+    "aerosol": ["aerosol", "spray can", "spray paint", "deodorant", "hairspray", "insecticide"],
+    "chemical_packaging": ["detergent", "cleaning product", "pesticide", "paint can", "paint bucket", "solvent", "bleach", "bleach bottle", "disinfectant", "hazardous waste", "chemical container", "chemical bottle"]
+  },
+  "classes": {
+    "plastic": [
+      "plastic bottle waste",
+      "PET bottle recycling",
+      "discarded plastic packaging",
+      "plastic bag waste"
+    ],
+    "paper_cardboard": [
+      "cardboard recycling box",
+      "discarded cardboard",
+      "waste paper recycling",
+      "newspaper recycling"
+    ],
+    "metal": [
+      "aluminium can recycling",
+      "discarded metal can",
+      "food can waste",
+      "beverage can recycling"
+    ],
+    "glass": [
+      "glass bottle recycling",
+      "discarded glass bottle",
+      "green glass bottle waste",
+      "brown glass bottle recycling"
+    ],
+    "organic": [
+      "food waste composting",
+      "vegetable peel waste",
+      "banana peel waste",
+      "organic waste compost"
+    ],
+    "battery": [
+      "used batteries recycling",
+      "discarded AA batteries",
+      "button cell battery waste",
+      "lithium ion battery recycling"
+    ],
+    "electronic": [
+      "electronic waste recycling",
+      "discarded computer hardware",
+      "printed circuit board waste",
+      "mobile phone e waste"
+    ],
+    "lamp": [
+      "fluorescent lamp recycling",
+      "discarded light bulb",
+      "compact fluorescent lamp waste",
+      "LED lamp waste",
+      "used light bulb",
+      "CFL bulb recycling",
+      "fluorescent tube recycling"
+    ],
+    "medicine": [
+      "expired medicine packaging",
+      "medicine blister pack",
+      "pill bottle waste",
+      "pharmaceutical waste packaging",
+      "empty pill bottle",
+      "medicine packaging blister",
+      "prescription bottle waste"
+    ],
+    "cooking_oil": [
+      "used cooking oil bottle",
+      "cooking oil recycling",
+      "vegetable oil bottle waste",
+      "used frying oil collection",
+      "used cooking oil container",
+      "cooking oil bottle",
+      "oil recycling container",
+      "vegetable oil bottle",
+      "olive oil bottle",
+      "sunflower oil bottle",
+      "canola oil bottle",
+      "frying oil bottle",
+      "cooking oil container",
+      "used vegetable oil container",
+      "oil bottle kitchen",
+      "bottle of cooking oil"
+    ],
+    "aerosol": [
+      "discarded aerosol can",
+      "spray can waste",
+      "aerosol can recycling",
+      "spray paint can waste",
+      "empty spray can",
+      "empty aerosol can",
+      "spray paint can",
+      "deodorant aerosol can",
+      "deodorant spray can",
+      "hairspray aerosol can",
+      "insecticide spray can",
+      "air freshener aerosol",
+      "empty spray paint can",
+      "household aerosol can"
+    ],
+    "chemical_packaging": [
+      "detergent bottle waste",
+      "bleach bottle recycling",
+      "pesticide container waste",
+      "paint can waste",
+      "household hazardous waste container",
+      "cleaning product bottle recycling",
+      "pesticide container disposal",
+      "solvent bottle disposal",
+      "empty bleach bottle",
+      "household chemical container",
+      "disinfectant bottle waste",
+      "paint bucket waste",
+      "bleach bottle",
+      "bleach bottles",
+      "detergent bottle",
+      "pesticide bottle",
+      "chemical bottle",
+      "cleaning product bottle",
+      "empty paint can"
+    ]
+  }
+}
