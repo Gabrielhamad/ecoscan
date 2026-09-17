@@ -48,7 +48,7 @@ def append_recognition_feedback(
     source_kind: str,
     note: str = "",
 ) -> RecognitionFeedback:
-    if expected_class not in config.classes:
+    if expected_class not in (*config.classes, "out_of_scope", "unknown"):
         allowed = ", ".join(config.classes)
         raise ValueError(f"Classe esperada inválida: {expected_class}. Classes: {allowed}")
 

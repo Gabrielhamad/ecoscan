@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 import logging
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from ecoscan.app.pipeline import ProcessingPipelineOptions, ProcessingPipelineResult, run_processing_pipeline
@@ -25,6 +26,7 @@ from ecoscan.classification.material_rules import MaterialRuleDecision, apply_ma
 from ecoscan.config import AppConfig
 from ecoscan.disposal.guidance import DisposalGuidance, get_guidance, load_guidance
 from ecoscan.services.dataset_reliability import ClassReliability, assess_class_reliability
+from ecoscan.services.recognition_scope import restrict_prediction
 
 
 LOGGER = logging.getLogger(__name__)
@@ -43,6 +45,8 @@ class WasteAnalysisResult:
     model_type: str
     reliability: ClassReliability | None = None
     material_rule: MaterialRuleDecision | None = None
+    outside_scope: bool = False
+    model_sha256: str = ""
 
 
 def _load_guidance_for_config(config: AppConfig) -> dict[str, DisposalGuidance]:
@@ -127,15 +131,23 @@ def analyze_waste_image(
         selected_model_path = _model_path(config, model_path)
         bundle = model_bundle or _load_bundle_for_path(config, selected_model_path)
         prediction = _predict(config, pipeline.segmentation_result.image, bundle)
+        outside_scope = prediction.top_class_id not in config.classes
         prediction, material_rule = apply_material_rules(
             prediction,
             image=pipeline.preprocessing.resized,
             mask=pipeline.segmentation_result.mask,
             element_analysis=pipeline.element_analysis,
         )
+        if outside_scope:
+            prediction = replace(prediction, class_id=None, top_class_id="", accepted=False)
+            material_rule = None
+        prediction = restrict_prediction(prediction, config.classes)
+        outside_scope = outside_scope or not prediction.top_class_id
 
         guidance = None
         message = "Não foi possível identificar o resíduo com segurança."
+        if outside_scope:
+            message = "A análise não corresponde às categorias deste piloto. Alimentos e orgânicos estão fora do escopo; não há destino confirmado."
         reliability = assess_class_reliability(config, prediction.class_id or prediction.top_class_id)
         if prediction.accepted and prediction.class_id is not None:
             guidance_by_class = _load_guidance_for_config(config)
@@ -158,6 +170,8 @@ def analyze_waste_image(
             model_type=f"{bundle.model_type}+material_rules" if material_rule else bundle.model_type,
             reliability=reliability,
             material_rule=material_rule,
+            outside_scope=outside_scope,
+            model_sha256=hashlib.sha256(selected_model_path.read_bytes()).hexdigest() if selected_model_path.is_file() else "unavailable",
         )
     except Exception:
         LOGGER.exception("analysis_failed image=%s", image_path)

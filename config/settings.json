@@ -12,14 +12,8 @@
     "paper_cardboard",
     "metal",
     "glass",
-    "organic",
     "battery",
-    "electronic",
-    "lamp",
-    "medicine",
-    "cooking_oil",
-    "aerosol",
-    "chemical_packaging"
+    "electronic"
   ],
   "directories": {
     "raw_data": "data/raw",

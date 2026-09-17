@@ -69,36 +69,18 @@
     {
       "id": "logistica_reversa_segura",
       "title": "Levar resíduo especial ao ponto correto",
-      "description": "Registre pilha, eletrônico, lâmpada ou medicamento destinado a ponto de coleta especial.",
+      "description": "Registre pilha, bateria ou pequeno eletrônico destinado a ponto de coleta especial.",
       "points": 35,
-      "target_classes": ["battery", "electronic", "lamp", "medicine"],
+      "target_classes": ["battery", "electronic"],
       "verification_action": "recognize_waste",
       "proof_hint": "Evite foto de embalagem misturada; o item especial precisa estar visível."
-    },
-    {
-      "id": "oleo_sem_pia",
-      "title": "Óleo usado fora da pia",
-      "description": "Mostre óleo de cozinha armazenado em garrafa fechada para entrega em ponto de coleta.",
-      "points": 30,
-      "target_classes": ["cooking_oil"],
-      "verification_action": "recognize_waste",
-      "proof_hint": "A garrafa precisa aparecer inteira, bem iluminada e sem reflexo forte."
-    },
-    {
-      "id": "embalagem_perigosa",
-      "title": "Embalagem química com cuidado",
-      "description": "Registre embalagem de produto químico doméstico ou embalagem pressurizada para orientação segura.",
-      "points": 30,
-      "target_classes": ["aerosol", "chemical_packaging"],
-      "verification_action": "recognize_waste",
-      "proof_hint": "Mostre a embalagem inteira e evite imagens de rótulo isolado."
     },
     {
       "id": "auditoria_do_reconhecimento",
       "title": "Ajudar a calibrar o EcoScan",
       "description": "Envie uma imagem clara de qualquer resíduo da campanha e corrija a classe caso o sistema erre.",
       "points": 10,
-      "target_classes": ["plastic", "paper_cardboard", "metal", "glass", "organic", "battery", "electronic", "lamp", "medicine", "cooking_oil", "aerosol", "chemical_packaging"],
+      "target_classes": ["plastic", "paper_cardboard", "metal", "glass", "battery", "electronic"],
       "verification_action": "recognize_waste",
       "proof_hint": "Se o reconhecimento errar, use o formulário de correção para alimentar a próxima curadoria do dataset."
     },
@@ -116,7 +98,7 @@
       "title": "Denunciar mau descarte",
       "description": "Envie uma foto de descarte irregular para triagem técnica e orientação da campanha.",
       "points": 15,
-      "target_classes": ["plastic", "paper_cardboard", "metal", "glass", "organic", "battery", "electronic", "lamp", "medicine", "cooking_oil", "aerosol", "chemical_packaging"],
+      "target_classes": ["plastic", "paper_cardboard", "metal", "glass", "battery", "electronic"],
       "verification_action": "report_bad_disposal",
       "proof_hint": "Inclua local, descrição breve e uma foto nítida da situação."
     }

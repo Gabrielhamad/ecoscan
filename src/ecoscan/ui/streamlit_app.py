@@ -14,6 +14,7 @@ from typing import Any
 from ecoscan.app.pipeline import ProcessingPipelineOptions
 from ecoscan.config import load_config
 from ecoscan.ui.identity import render_identity
+from ecoscan.ui.learning import render_contribution, render_review, render_scope
 from ecoscan.disposal.collection_points import (
     CollectionPoint,
     build_collection_point_directions_url,
@@ -2098,7 +2099,7 @@ def _render_institutional_hero(
             "e qual ponto de coleta procurar."
         )
         panel_rows = [
-            ("Câmera", "traseira ao vivo"),
+            ("Foto", "do resíduo"),
             ("Resposta", "destino correto"),
             ("Coleta", "pontos próximos"),
             ("Impacto", "educação ambiental"),
@@ -2168,7 +2169,7 @@ def _render_user_flow_strip(st: Any) -> None:
 def _render_public_overview_strip(st: Any) -> None:
     strip = "".join(
         [
-            _status_item("Câmera", "traseira ao vivo", "ação principal no celular", "ok"),
+            _status_item("Foto", "do resíduo", "captura ou galeria", "ok"),
             _status_item("Resposta", "descarte certo", "lixeira, preparo e impacto", "ok"),
             _status_item("Mapa", "coleta próxima", "busca rápida por material", "ok"),
             _status_item("Participação", "missões e pontos", "campanha ambiental ativa", "ok"),
@@ -2927,56 +2928,7 @@ def _render_recognition_feedback_form(
     active_profile: UserProfile,
     guidance_by_class: dict[str, DisposalGuidance],
 ) -> None:
-    signature_seed = (
-        str(result.pipeline.metadata.get("image_path", "analysis"))
-        + "|"
-        + str(result.predicted_class)
-        + "|"
-        + str(result.probability)
-    )
-    key_suffix = hashlib.sha256(signature_seed.encode("utf-8")).hexdigest()[:12]
-    predicted = result.predicted_class or result.top_class
-    default_index = list(config.classes).index(predicted) if predicted in config.classes else 0
-
-    with st.expander("O reconhecimento errou? Enviar correção para melhorar o modelo"):
-        st.caption(
-            "Use quando o app classificar errado. A imagem e a classe correta ficam salvas para curadoria do dataset."
-        )
-        with st.form(f"recognition_feedback_{key_suffix}"):
-            reporter_name = st.text_input(
-                "Nome de quem testou",
-                value=active_profile.display_name,
-                key=f"feedback_reporter_{key_suffix}",
-            )
-            expected_class = st.selectbox(
-                "Classe correta",
-                config.classes,
-                index=default_index,
-                format_func=lambda class_id: _class_label(class_id, guidance_by_class),
-                key=f"feedback_expected_{key_suffix}",
-            )
-            note = st.text_area(
-                "Observação",
-                placeholder="Ex.: lata de refrigerante na mesa, luz baixa, app indicou vidro.",
-                key=f"feedback_note_{key_suffix}",
-            )
-            submitted = st.form_submit_button("Salvar correção")
-
-        if submitted:
-            try:
-                feedback = append_recognition_feedback(
-                    config,
-                    result,
-                    expected_class=expected_class,
-                    reporter_id=active_profile.id,
-                    reporter_name=reporter_name or active_profile.display_name,
-                    source_kind=str(st.session_state.get("last_analysis_source", "upload")),
-                    note=note,
-                )
-                st.success(f"Correção salva para curadoria: {feedback.id}")
-                st.caption(f"Manifesto: {feedback_manifest_path_from_config(config)}")
-            except Exception as exc:
-                _render_user_error(st, exc, context="recognition_feedback")
+    render_contribution(st, config, result, active_profile)
 
 
 def _select_filter_parameters(st: Any, filter_name: str) -> dict[str, Any]:
@@ -4099,7 +4051,10 @@ def _render_civic_reports_tab(
     if report_result is not None:
         _render_photo_processing_summary(st, report_result.pipeline)
 
-    recent = read_civic_reports(civic_reports_path_from_config(config), limit=8)
+    recent = read_civic_reports(civic_reports_path_from_config(config))
+    if not active_profile.is_admin:
+        recent = [item for item in recent if item.submitted_by == active_profile.id]
+    recent = recent[-8:]
     if recent:
         st.markdown('<div class="ecoscan-section-title">Últimas denúncias registradas</div>', unsafe_allow_html=True)
         rows = [
@@ -4481,6 +4436,8 @@ def _render_admin_tab(
         st.warning("Este painel é restrito ao perfil administrativo.")
         return
 
+    render_review(st, config, active_profile)
+
     ledger_path = points_ledger_path_from_config(config)
     reports_path = civic_reports_path_from_config(config)
     reviews_path = civic_report_reviews_path_from_config(config)
@@ -4674,6 +4631,8 @@ def main() -> None:
         _render_public_app_chrome(st)
 
     _render_institutional_hero(st, config, active_profile, campaign)
+    st.caption("EcoScan · piloto independente de educação ambiental. Não é um canal oficial de atendimento municipal.")
+    render_scope(st)
     if active_profile.is_admin:
         _render_overview_strip(st, config)
     else:
@@ -4740,7 +4699,7 @@ def main() -> None:
             st.markdown(
                 '<div class="ecoscan-camera-panel">'
                 "<strong>Captura inteligente</strong><br>"
-                '<span class="ecoscan-muted">No celular, use a câmera traseira ao vivo para apontar para o resíduo e ver a orientação de descarte.</span>'
+                '<span class="ecoscan-muted">Fotografe um item da lista ou envie uma imagem da galeria para consultar uma sugestão de descarte.</span>'
                 "</div>",
                 unsafe_allow_html=True,
             )

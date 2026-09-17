@@ -27,6 +27,14 @@ def build_recognition_safety_decision(
     reliability = getattr(result, "reliability", None)
     material_rule = getattr(result, "material_rule", None)
 
+    if getattr(result, "outside_scope", False):
+        return RecognitionSafetyDecision(
+            status="outside_scope", tone="warn", title="Item fora do escopo ou não confirmado",
+            message="Este piloto não identifica alimentos ou resíduos orgânicos.",
+            primary_action="Confira os itens aceitos e reporte o resultado para revisão.",
+            allow_disposal_guidance=False, encourage_feedback=True,
+        )
+
     if capture_status == "retake":
         return RecognitionSafetyDecision(
             status="retake",

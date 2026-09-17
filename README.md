@@ -6,6 +6,14 @@ O sistema recebe a imagem de um resíduo, aplica um pipeline reproduzível de pr
 
 ## Estado atual
 
+Piloto público: https://ecoscan-gabrielhamad.streamlit.app/
+
+O escopo atual tem seis categorias: metal, plástico, papel/papelão, vidro,
+pilhas/baterias e pequenos eletrônicos. Alimentos e orgânicos estão excluídos.
+Consulte `docs/piloto_publico_e_aprendizado.md` para itens-alvo e revisão das
+contribuições. Correções não treinam o modelo automaticamente. A fila na
+hospedagem ainda é temporária; baixe e preserve os pacotes da rodada de testes.
+
 Estrutura principal implementada:
 
 - estrutura do projeto;
@@ -16,7 +24,7 @@ Estrutura principal implementada:
 - destinos visuais de descarte por classe;
 - impactos ambientais do mau descarte;
 - experiência visual institucional da Secretaria do Meio Ambiente, com linguagem de portal municipal sem copiar marca oficial;
-- perfis locais de usuário e admin para demonstração;
+- visitantes por sessão e login OIDC administrativo (requer credenciais);
 - campanha ambiental com missões, pontos persistentes e recompensas configuráveis;
 - denúncia de mau descarte com triagem por imagem e revisão administrativa;
 - base local de pontos de coleta filtrável por material;

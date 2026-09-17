@@ -65,7 +65,7 @@ class CampaignTests(unittest.TestCase):
         mission = next(
             mission
             for mission in load_campaign(config.project_root / "config" / "campaigns.json").missions
-            if mission.id == "oleo_sem_pia"
+            if mission.id == "logistica_reversa_segura"
         )
         result = SimpleNamespace(
             accepted=True,

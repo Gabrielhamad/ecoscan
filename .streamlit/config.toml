@@ -1,5 +1,6 @@
 [server]
 headless = true
+maxUploadSize = 15
 address = "0.0.0.0"
 enableCORS = true
 enableXsrfProtection = true
