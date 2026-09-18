@@ -13,6 +13,7 @@ Prioridade de engenharia, nao ranking estatistico de dano ambiental:
 | Pilhas | Pilhas domesticas AA/AAA; bateria portatil como caso sujeito a revisao | Diferentes marcas, tamanhos, unidades e grupos |
 | Eletronicos | Celular, mouse, carregador de celular | Frente, verso, lateral, com/sem cabo, diferentes modelos |
 | Orientacao assistida | Oleo de cozinha usado | Conteudo confirmado pelo usuario, nunca inferido da cor do liquido |
+| Orientacao assistida | Medicamentos domiciliares de uso humano vencidos ou sem uso | Confirmacao do usuario; nao identificar comprimidos, conteudo ou validade pela foto |
 
 Nao ampliar o treino para todos os aparelhos ou todos os plasticos. O identificador
 legado small_electronic permanece para compatibilidade de protocolos; novos relatos
@@ -34,6 +35,7 @@ material, nao certifica subtipo ou composicao. Novos nomes nao aumentam a precis
   Nao criar missao que confirme entrega, volume ou identidade do liquido pela foto.
 
 Fontes oficiais:
+- https://sinir.gov.br/perfis/logistica-reversa/logistica-reversa/medicamentos-seus-residuos-e-embalagens/
 - https://sinir.gov.br/perfis/logistica-reversa/logistica-reversa/embalagens-em-geral/
 - https://sinir.gov.br/perfis/logistica-reversa/logistica-reversa/eletroeletronicos/
 - https://prefeitura.sp.gov.br/web/sesana/w/doe-seu-oleo-usado
@@ -70,6 +72,8 @@ remove essas categorias do artefato treinado nem melhora sua qualidade.
 - Estado estruturado no protocolo, visivel ao analista.
 - Tres escolhas especificas de eletronicos, mantendo protocolos antigos.
 - Consulta de descarte de oleo separada da identificacao automatica.
+- Consulta de medicamentos com acesso ao localizador LogMed e fonte SINIR;
+  perfurocortantes requerem orientacao especifica. Nao coletar dados de saude.
 - Auditoria de espaco sem exclusao destrutiva.
 
 Pendente: curadoria visual, cobertura por estado, banco duravel e novo candidato
