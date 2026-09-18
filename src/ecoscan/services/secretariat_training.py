@@ -12,6 +12,7 @@ import numpy as np
 from ecoscan.app.pipeline import ProcessingPipelineOptions, run_processing_pipeline
 from ecoscan.classification.visual_features import extract_visual_features
 from ecoscan.classification.visual_knn import VisualKnnClassifier
+from ecoscan.services.contribution_store import persistent_enabled
 from ecoscan.services.learning_contributions import (
     _LOCK, _write, contribution_dir, contribution_image, list_contributions,
 )
@@ -43,6 +44,8 @@ def candidate_runs(config):
 def train_candidate(config, *, reviewer) -> dict:
     if not reviewer.is_admin:
         raise PermissionError("Somente a secretaria pode iniciar um treino.")
+    if persistent_enabled():
+        raise ValueError("Nesta etapa do banco, exporte as aprovadas para treino local. A persistência de candidatos ainda não foi ativada.")
     if not _TRAINING_LOCK.acquire(blocking=False):
         raise ValueError("Já existe um treino em execução nesta instância.")
     try:

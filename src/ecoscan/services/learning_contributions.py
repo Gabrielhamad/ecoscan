@@ -16,6 +16,7 @@ from PIL import Image
 
 from ecoscan.services.recognition_feedback import append_recognition_feedback, feedback_dir_from_config
 from ecoscan.services.recognition_scope import ITEMS, ITEM_CONDITIONS
+from ecoscan.services.contribution_store import remote_store
 
 
 _LOCK = threading.RLock()
@@ -34,6 +35,9 @@ def _write(path: Path, record: dict) -> None:
 
 
 def list_contributions(config) -> list[dict]:
+    store = remote_store()
+    if store is not None:
+        return store.list()
     records = []
     with _LOCK:
         for path in sorted(contribution_dir(config).glob("*.json")):
@@ -85,6 +89,11 @@ def submit_contribution(config, result, *, item_id: str, reporter_id: str,
             "model_sha256": getattr(result, "model_sha256", "unavailable"),
             "feedback": asdict(feedback),
         }
+        store = remote_store()
+        if store is not None:
+            buffer = io.BytesIO()
+            image.convert("RGB").save(buffer, format="JPEG", quality=85)
+            return store.save(record, image=buffer.getvalue())
         _write(contribution_dir(config) / f"{feedback.id}.json", record)
         return record
 
@@ -101,7 +110,14 @@ def review_contribution(config, contribution_id: str, *, decision: str, reviewer
         raise ValueError("Use até 600 caracteres na resposta.")
     with _LOCK:
         path = contribution_dir(config) / f"{identifier}.json"
-        record = json.loads(path.read_text(encoding="utf-8"))
+        store = remote_store()
+        if store is not None:
+            record = next((row for row in store.list() if row["id"] == identifier), None)
+            if record is None:
+                raise ValueError("Protocolo não encontrado.")
+        else:
+            record = json.loads(path.read_text(encoding="utf-8"))
+        previous_revision = record.get("revision", 0)
         previous_candidate = record.get("candidate_id")
         if expected_revision is not None and record.get("revision", 0) != expected_revision:
             raise ValueError("Outro analista atualizou este protocolo. Atualize a fila antes de decidir.")
@@ -122,6 +138,8 @@ def review_contribution(config, contribution_id: str, *, decision: str, reviewer
             "decision": decision, "reviewer": reviewer.id, "at": record["reviewed_at"],
             "item_id": record["item_id"], "response": record["response"],
         })
+        if store is not None:
+            return store.save(record, previous_revision=previous_revision)
         _write(path, record)
         if previous_candidate:
             for related in list_contributions(config):
@@ -134,6 +152,16 @@ def review_contribution(config, contribution_id: str, *, decision: str, reviewer
 
 def contribution_image(config, record: dict) -> Path:
     root = (feedback_dir_from_config(config) / "images").resolve()
+    if record.get("storage_key"):
+        store = remote_store()
+        if store is None:
+            raise ValueError("Configure o banco para acessar esta foto.")
+        root.mkdir(parents=True, exist_ok=True)
+        path = root / f"{UUID(record['id'])}.jpg"
+        if not path.exists():
+            with _LOCK:
+                path.write_bytes(store.image(record))
+        return path
     path = Path(record["feedback"]["image_path"]).resolve()
     if not path.is_relative_to(root) or not path.is_file():
         raise ValueError("Foto da contribuição indisponível.")

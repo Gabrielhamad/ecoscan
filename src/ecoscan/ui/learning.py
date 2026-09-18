@@ -7,6 +7,7 @@ from ecoscan.services.learning_contributions import (
     review_contribution, submit_contribution, citizen_contributions,
 )
 from ecoscan.services.recognition_scope import ITEMS, ITEM_CONDITIONS
+from ecoscan.services.contribution_store import persistent_enabled
 from ecoscan.services.secretariat_training import candidate_runs, train_candidate, training_dir
 
 
@@ -18,7 +19,11 @@ STATUS_LABELS = {"pending": "Recebido pela secretaria", "approved": "Aprovado pe
 def render_citizen_protocols(st, config, profile):
     st.subheader("Minhas contribuições à secretaria")
     st.button("Atualizar protocolos", key="refresh_contributions")
-    records = citizen_contributions(config, profile.id)
+    try:
+        records = citizen_contributions(config, profile.id)
+    except (OSError, ValueError) as exc:
+        st.error(str(exc))
+        return
     if not records:
         st.caption("Quando você reportar uma análise, o protocolo e a resposta da equipe aparecerão aqui.")
         return
@@ -78,7 +83,10 @@ def render_contribution(st, config, result, profile):
         receipt = st.session_state.get(receipt_key)
         if receipt:
             st.success(f"Contribuição recebida para revisão. Protocolo: {receipt[0][:8]}")
-            st.warning("A hospedagem atual usa armazenamento temporário. Baixe sua contribuição e envie ao responsável do grupo para preservá-la.")
+            if persistent_enabled():
+                st.caption("Protocolo salvo no banco e foto em armazenamento privado. O pacote abaixo é uma cópia para você.")
+            else:
+                st.warning("Banco ainda não ativado. Baixe sua contribuição e envie ao responsável do grupo para preservá-la.")
             st.download_button("Baixar minha contribuição", receipt[1],
                                file_name=f"ecoscan-contribuicao-{receipt[0]}.zip", mime="application/zip",
                                key=f"download_{signature}")
@@ -88,7 +96,11 @@ def render_review(st, config, profile):
     if not profile.is_admin:
         return
     st.subheader("Central de análise da secretaria")
-    records = list_contributions(config)
+    try:
+        records = list_contributions(config)
+    except (OSError, ValueError) as exc:
+        st.error(str(exc))
+        return
     columns = st.columns(3)
     columns[0].metric("Aguardando análise", sum(row["status"] == "pending" for row in records))
     columns[1].metric("Aprovadas", sum(row["status"] == "approved" for row in records))
@@ -114,7 +126,7 @@ def render_review(st, config, profile):
             response = st.text_area("Resposta ao cidadão", max_chars=600,
                                     value=selected.get("response", ""),
                                     placeholder="Ex.: Confirmamos uma lata metálica. Obrigado pela contribuição.")
-            train_now = st.checkbox("Gerar candidato após aprovar", value=True)
+            train_now = st.checkbox("Gerar candidato após aprovar", value=not persistent_enabled(), disabled=persistent_enabled())
             if st.form_submit_button("Salvar revisão"):
                 review_contribution(config, selected["id"], decision=decision, reviewer=profile,
                                     item_id=item_id, response=response,
@@ -136,13 +148,16 @@ def render_review(st, config, profile):
         if packages:
             st.download_button("Baixar fila para revisão offline", packages[0], "ecoscan-fila.zip", "application/zip")
             st.download_button("Baixar somente aprovadas", packages[1], "ecoscan-aprovadas.zip", "application/zip")
-        st.caption("Exporte antes de reiniciar a hospedagem. Fotos aprovadas ainda precisam de divisão entre treino, validação e teste.")
+        st.caption("Fotos aprovadas ainda precisam de divisão entre treino, validação e teste. Mantenha cópias de segurança dos pacotes.")
     except (ValueError, OSError) as exc:
         st.error(str(exc))
 
 
 def render_training(st, config, profile):
     if not profile.is_admin:
+        return
+    if persistent_enabled():
+        st.info("Banco de contribuições ativo. Exporte as aprovadas para treino local; candidatos e publicação de modelos ainda não estão integrados ao banco.")
         return
     if st.session_state.get("training_notice"):
         st.warning(st.session_state.pop("training_notice"))
