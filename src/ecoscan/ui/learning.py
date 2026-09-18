@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import hashlib
+import json
+from datetime import datetime, timezone
 
 from ecoscan.services.learning_contributions import (
     contribution_image, contribution_package, list_contributions,
@@ -24,16 +26,29 @@ def render_citizen_protocols(st, config, profile):
     except (OSError, ValueError) as exc:
         st.error(str(exc))
         return
+    if persistent_enabled():
+        st.caption("Consulta ao banco concluída. As contribuições enviadas ficam disponíveis para revisão da secretaria.")
+    else:
+        st.warning("Armazenamento temporário: baixe seus comprovantes e pacotes.")
+    if profile.id.startswith("visitor_"):
+        st.info("Você está como visitante. Os envios podem ficar no banco, mas o acesso a eles depende desta sessão. Guarde o protocolo.")
+    else:
+        st.caption("Protocolos vinculados à sua conta. Use a mesma conta em outro dispositivo para acompanhá-los.")
     if not records:
         st.caption("Quando você reportar uma análise, o protocolo e a resposta da equipe aparecerão aqui.")
         return
-    st.dataframe([{
-        "Protocolo": row["id"][:8], "Item": ITEMS.get(row["item_id"], (row["item_id"],))[0],
-        "Análise": STATUS_LABELS.get(row["status"], row["status"]),
-        "Aprendizado": STATUS_LABELS.get(row["training_status"], "Aguardando revisão"),
-        "Resposta da equipe": row["response"] or "Ainda sem resposta",
-    } for row in records], hide_index=True, width="stretch")
-    st.caption("Sem login, estes protocolos ficam vinculados à sua sessão. Preserve o pacote baixado.")
+    pending = sum(row["status"] == "pending" for row in records)
+    st.caption(f"{len(records)} contribuição(ões) · {pending} aguardando revisão")
+    for row in records:
+        item = ITEMS.get(row["item_id"], (row["item_id"],))[0]
+        status = STATUS_LABELS.get(row["status"], row["status"])
+        with st.expander(f"{item} · {status}"):
+            st.code(row["id"], language=None)
+            st.write("**Resposta da secretaria:** " + (row["response"] or "Aguardando análise da equipe."))
+            st.caption(STATUS_LABELS.get(row["training_status"], "Ainda não utilizado no treinamento"))
+            st.download_button("Baixar protocolo", json.dumps(row, ensure_ascii=False, indent=2),
+                               file_name=f"ecoscan-protocolo-{row['id']}.json", mime="application/json",
+                               key=f"protocol_download_{row['id']}")
 
 
 def render_scope(st):
@@ -77,19 +92,40 @@ def render_contribution(st, config, result, profile):
             try:
                 record = submit_contribution(config, result, item_id=item, reporter_id=profile.id,
                                              consent=consent, note=note, condition=condition)
-                st.session_state[receipt_key] = (record["id"], contribution_package(config, [record]))
+                st.session_state[receipt_key] = {
+                    "record": record, "persistent": bool(record.get("storage_key")),
+                    "received_at": datetime.now(timezone.utc).isoformat(), "package": None,
+                }
             except (ValueError, OSError) as exc:
-                st.error(str(exc) if isinstance(exc, ValueError) else "Não foi possível guardar a contribuição. Tente novamente.")
+                st.error(str(exc) if isinstance(exc, ValueError) else
+                         "Não foi possível confirmar o envio. Consulte Perfil → Atualizar protocolos antes de reenviar.")
         receipt = st.session_state.get(receipt_key)
+        # Sessions opened before this release may still contain the old tuple.
+        if receipt and not isinstance(receipt, dict):
+            st.session_state.pop(receipt_key, None)
+            receipt = None
         if receipt:
-            st.success(f"Contribuição recebida para revisão. Protocolo: {receipt[0][:8]}")
-            if persistent_enabled():
+            identifier = receipt["record"]["id"]
+            st.success(f"Contribuição recebida para revisão. Protocolo: {identifier[:8]}")
+            if receipt["persistent"]:
                 st.caption("Protocolo salvo no banco e foto em armazenamento privado. O pacote abaixo é uma cópia para você.")
             else:
                 st.warning("Banco ainda não ativado. Baixe sua contribuição e envie ao responsável do grupo para preservá-la.")
-            st.download_button("Baixar minha contribuição", receipt[1],
-                               file_name=f"ecoscan-contribuicao-{receipt[0]}.zip", mime="application/zip",
-                               key=f"download_{signature}")
+            st.download_button("Baixar comprovante do envio", json.dumps({
+                "protocol": identifier, "received_at": receipt["received_at"],
+                "persistent": receipt["persistent"], "item_id": receipt["record"].get("item_id"),
+                "status_at_submission": receipt["record"]["status"],
+            }, ensure_ascii=False, indent=2), file_name=f"ecoscan-protocolo-{identifier}.json",
+                mime="application/json", key=f"receipt_download_{signature}")
+            if st.button("Preparar cópia com foto", key=f"prepare_receipt_{signature}"):
+                try:
+                    receipt["package"] = contribution_package(config, [receipt["record"]])
+                except (ValueError, OSError):
+                    st.warning("Seu envio já foi confirmado. Não foi possível preparar a cópia agora; tente novamente sem reenviar a contribuição.")
+            if receipt["package"] is not None:
+                st.download_button("Baixar minha contribuição", receipt["package"],
+                                   file_name=f"ecoscan-contribuicao-{identifier}.zip", mime="application/zip",
+                                   key=f"download_{signature}")
 
 
 def render_review(st, config, profile):

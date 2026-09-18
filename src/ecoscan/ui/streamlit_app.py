@@ -4745,18 +4745,25 @@ def main() -> None:
                     _render_user_error(st, exc, context="image_analysis")
                 finally:
                     if temp_path is not None:
-                        temp_path.unlink(missing_ok=True)
+                        try:
+                            temp_path.unlink(missing_ok=True)
+                        except OSError:
+                            LOGGER.warning("temporary_upload_cleanup_failed")
             else:
                 result = st.session_state.get("last_analysis_result")
 
             if result is not None:
                 should_save_history = bool(config.history.get("enabled", True)) or save_history
                 if should_save_history and st.session_state.get("last_history_saved_signature") != signature:
-                    append_history_entry(
-                        history_path_from_config(config),
-                        build_history_entry(result, source_path=st.session_state.get("last_analysis_source")),
-                    )
-                    st.session_state["last_history_saved_signature"] = signature
+                    try:
+                        append_history_entry(
+                            history_path_from_config(config),
+                            build_history_entry(result, source_path=st.session_state.get("last_analysis_source")),
+                        )
+                        st.session_state["last_history_saved_signature"] = signature
+                    except OSError:
+                        LOGGER.warning("local_history_write_failed")
+                        st.warning("A análise foi concluída, mas o histórico local não pôde ser gravado. O envio de uma contribuição é independente.")
 
                 safety_decision = build_recognition_safety_decision(
                     result,
