@@ -4584,9 +4584,9 @@ def main() -> None:
     segmentation_parameters: dict[str, Any] = {}
     save_history = False
 
+    active_profile = render_identity(st)
     with st.sidebar:
         st.header("Identificação")
-        active_profile = render_identity(st)
         _render_active_profile_card(st, active_profile)
 
         if active_profile.is_admin:
