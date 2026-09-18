@@ -82,9 +82,9 @@ def build_recognition_safety_decision(
     return RecognitionSafetyDecision(
         status="identified",
         tone="ok",
-        title="Identificado com segurança operacional",
-        message="A imagem tem qualidade suficiente para orientar o descarte deste resíduo.",
-        primary_action="Siga o preparo e procure o ponto de descarte indicado.",
+        title="Material sugerido pela análise",
+        message="A análise passou pelos critérios do piloto, mas não confirma composição, conteúdo ou contaminação.",
+        primary_action="Confirme o material antes de seguir o preparo e consultar a coleta.",
         allow_disposal_guidance=True,
         encourage_feedback=False,
     )

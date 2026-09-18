@@ -2840,9 +2840,9 @@ def _render_processing_evidence(
     segmentation_name = pipeline.segmentation_result.name
     element_count = pipeline.element_analysis.significant_count
     model_name = result.model_type
-    accepted_label = "reconhecimento confirmado" if result.accepted else "reconhecimento incerto"
+    accepted_label = "classificação sugerida" if result.accepted else "reconhecimento incerto"
     if result.material_rule is not None:
-        accepted_label = "modelo + validação visual"
+        accepted_label = "modelo + regra visual"
 
     method_chips = "".join(
         [
@@ -2872,7 +2872,7 @@ def _render_processing_evidence(
     primary_cols[0].image(pipeline.loaded.array, caption="Antes: imagem original enviada", width="stretch")
     primary_cols[1].image(
         pipeline.detection_heatmap,
-        caption="Mapa de detecção: regiões quentes indicam o resíduo isolado",
+        caption="Máscara em cores: região selecionada pela segmentação, não confiança do modelo",
         width="stretch",
     )
 
@@ -2889,7 +2889,7 @@ def _render_processing_evidence(
     )
     detail_cols[2].image(
         pipeline.element_overlay,
-        caption="Contorno e componentes detectados",
+        caption="Componentes da máscara; não equivalem a objetos reconhecidos",
         width="stretch",
     )
 
@@ -4631,14 +4631,15 @@ def main() -> None:
     if not active_profile.is_admin:
         _render_public_app_chrome(st)
 
-    _render_institutional_hero(st, config, active_profile, campaign)
-    st.caption("EcoScan · piloto independente de educação ambiental. Não é um canal oficial de atendimento municipal.")
-    render_scope(st)
     if active_profile.is_admin:
-        _render_overview_strip(st, config)
+        _render_institutional_hero(st, config, active_profile, campaign)
     else:
-        _render_public_overview_strip(st)
-        _render_user_flow_strip(st)
+        from ecoscan.ui.citizen_design import render_citizen_design
+        render_citizen_design(st, _asset_data_uri(config.project_root, "assets/disposal_targets/plastic_red_bin.png"))
+    st.caption("EcoScan · piloto independente de educação ambiental. Não é um canal oficial de atendimento municipal.")
+    if active_profile.is_admin:
+        render_scope(st)
+        _render_overview_strip(st, config)
 
     class_chips = "".join(_class_chip(class_id, guidance_by_class) for class_id in config.classes)
 
@@ -4677,6 +4678,7 @@ def main() -> None:
         tab_names = [
             analysis_tab,
             collection_tab,
+            "Descarte",
             campaign_tab,
             report_tab,
             account_tab,
@@ -4684,11 +4686,17 @@ def main() -> None:
     tabs = dict(zip(tab_names, st.tabs(tab_names)))
     result = st.session_state.get("last_analysis_result")
 
+    if "Descarte" in tabs:
+        with tabs["Descarte"]:
+            st.subheader("Descarte responsável")
+            render_scope(st)
+
     with tabs[analysis_tab]:
         section_title = "Escanear resíduo" if not active_profile.is_admin else "Analisar resíduo"
         st.markdown(f'<div class="ecoscan-section-title">{section_title}</div>', unsafe_allow_html=True)
         if not active_profile.is_admin:
-            _render_capture_tips(st)
+            with st.expander("Preparar uma boa foto"):
+                _render_capture_tips(st)
         source_options = ["Câmera", "Imagem"] if active_profile.is_admin else ["Tirar foto", "Enviar foto"]
         source = st.radio("Entrada", source_options, horizontal=True)
         source_kind = "camera" if source in {"Câmera", "Tirar foto"} else "upload"
@@ -4697,21 +4705,14 @@ def main() -> None:
             uploaded_file = st.file_uploader(upload_label, type=["jpg", "jpeg", "png"])
             waiting_message = "Aguardando imagem."
         else:
-            st.markdown(
-                '<div class="ecoscan-camera-panel">'
-                "<strong>Captura inteligente</strong><br>"
-                '<span class="ecoscan-muted">Fotografe um item da lista ou envie uma imagem da galeria para consultar uma sugestão de descarte.</span>'
-                "</div>",
-                unsafe_allow_html=True,
-            )
-            _render_live_camera_link(st)
             if active_profile.is_admin:
+                _render_live_camera_link(st)
                 uploaded_file = st.camera_input("Ligar câmera e capturar resíduo", key="camera_capture")
                 waiting_message = "Aguardando captura da câmera."
             else:
                 st.caption(
-                    "Se o navegador pedir HTTPS para câmera ao vivo, use a foto rápida abaixo. "
-                    "No celular, o seletor permite tirar foto pela câmera traseira ou escolher da galeria."
+                    "No celular, escolha Câmera ou Galeria no seletor do aparelho. "
+                    "A disponibilidade da câmera depende do navegador."
                 )
                 uploaded_file = st.file_uploader(
                     "Tirar ou enviar foto do resíduo",
@@ -4725,8 +4726,11 @@ def main() -> None:
         else:
             signature = _input_signature(uploaded_file, source_kind, pipeline_options)
             if st.session_state.get("last_analysis_signature") != signature:
-                temp_path = _temporary_upload(uploaded_file, prefix=source_kind)
+                for stale_key in ("last_analysis_result", "last_analysis_signature", "last_analysis_source"):
+                    st.session_state.pop(stale_key, None)
+                temp_path = None
                 try:
+                    temp_path = _temporary_upload(uploaded_file, prefix=source_kind)
                     with st.spinner("Detectando resíduo na captura..." if source_kind == "camera" else "Detectando resíduo na imagem..."):
                         result = analyze_waste_image(
                             temp_path,
@@ -4739,6 +4743,9 @@ def main() -> None:
                 except Exception as exc:
                     result = None
                     _render_user_error(st, exc, context="image_analysis")
+                finally:
+                    if temp_path is not None:
+                        temp_path.unlink(missing_ok=True)
             else:
                 result = st.session_state.get("last_analysis_result")
 
@@ -4767,9 +4774,10 @@ def main() -> None:
                 with right:
                     st.markdown('<div class="ecoscan-result">', unsafe_allow_html=True)
                     _render_recognition_decision(st, safety_decision)
-                    if result.accepted and result.guidance:
-                        st.subheader(result.guidance.display_name)
-                        st.metric("Confiança da análise", _format_percent(result.probability))
+                    if result.accepted and result.guidance and safety_decision.allow_disposal_guidance:
+                        st.subheader("Sugestão: " + result.guidance.display_name)
+                        st.metric("Pontuação do modelo", _format_percent(result.probability))
+                        st.caption("A pontuação não é uma garantia de acerto. Confirme o material e o conteúdo antes de descartar.")
                         st.write(f"**Categoria ambiental:** {result.guidance.environmental_category}")
                         st.write(result.guidance.guidance)
                         if getattr(result, "reliability", None) and not result.reliability.is_sufficient:
@@ -4777,7 +4785,7 @@ def main() -> None:
                         st.caption(result.guidance.educational_note)
                     else:
                         st.subheader("Não identificado com segurança")
-                        st.metric("Maior confiança", _format_percent(result.probability))
+                        st.metric("Maior pontuação", _format_percent(result.probability))
                         st.write("Tente outra foto com melhor iluminação, fundo simples e objeto centralizado.")
                         st.caption(f"Classe mais próxima: {result.top_class}")
                     st.markdown('<div class="ecoscan-soft-divider"></div>', unsafe_allow_html=True)
