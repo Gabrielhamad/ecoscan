@@ -15,8 +15,21 @@ ITEMS = {
     "glass_jar": ("Pote de vidro", "glass"),
     "battery": ("Pilha ou bateria portátil", "battery"),
     "small_electronic": ("Celular, mouse, carregador ou pequeno eletrônico", "electronic"),
+    "mobile_phone": ("Celular", "electronic"),
+    "computer_mouse": ("Mouse de computador", "electronic"),
+    "charger": ("Carregador de celular", "electronic"),
     "out_of_scope": ("Alimento, orgânico ou outro item fora da lista", "out_of_scope"),
     "unknown": ("Não sei identificar o material", "unknown"),
+}
+
+ITEM_CONDITIONS = {
+    "unspecified": "Não informado",
+    "intact": "Inteiro / sem deformação",
+    "crushed": "Amassado / achatado",
+    "folded": "Dobrado / desmontado",
+    "torn": "Rasgado / em pedaços",
+    "broken": "Quebrado / cacos",
+    "dirty": "Com resíduos / sujo",
 }
 
 

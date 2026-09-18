@@ -15,7 +15,7 @@ import numpy as np
 from PIL import Image
 
 from ecoscan.services.recognition_feedback import append_recognition_feedback, feedback_dir_from_config
-from ecoscan.services.recognition_scope import ITEMS
+from ecoscan.services.recognition_scope import ITEMS, ITEM_CONDITIONS
 
 
 _LOCK = threading.RLock()
@@ -42,11 +42,13 @@ def list_contributions(config) -> list[dict]:
 
 
 def submit_contribution(config, result, *, item_id: str, reporter_id: str,
-                        consent: bool, note: str = "") -> dict:
+                        consent: bool, note: str = "", condition: str = "unspecified") -> dict:
     if not consent:
         raise ValueError("Autorize o uso da foto para enviar a contribuição.")
     if item_id not in ITEMS:
         raise ValueError("Escolha um item da lista.")
+    if condition not in ITEM_CONDITIONS:
+        raise ValueError("Estado do objeto inválido.")
     expected = ITEMS[item_id][1]
     if expected not in (*config.classes, "unknown", "out_of_scope"):
         raise ValueError("Categoria indisponível nesta versão.")
@@ -78,6 +80,7 @@ def submit_contribution(config, result, *, item_id: str, reporter_id: str,
         record = {
             "id": feedback.id, "created_at": time.time(), "reporter_id": reporter_id,
             "item_id": item_id, "expected_class": expected, "status": "pending",
+            "condition": condition,
             "consent": True, "consent_version": "1", "image_sha256": digest,
             "model_sha256": getattr(result, "model_sha256", "unavailable"),
             "feedback": asdict(feedback),

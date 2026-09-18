@@ -6,7 +6,7 @@ from ecoscan.services.learning_contributions import (
     contribution_image, contribution_package, list_contributions,
     review_contribution, submit_contribution, citizen_contributions,
 )
-from ecoscan.services.recognition_scope import ITEMS
+from ecoscan.services.recognition_scope import ITEMS, ITEM_CONDITIONS
 from ecoscan.services.secretariat_training import candidate_runs, train_candidate, training_dir
 
 
@@ -36,6 +36,13 @@ def render_scope(st):
         st.write("Piloto com seis categorias. As respostas são sugestões e precisam de confirmação.")
         st.write("Latas de bebida/conserva; garrafas PET e potes plásticos; caixas e folhas de papel; garrafas e potes de vidro; pilhas/baterias; pequenos eletrônicos.")
         st.caption("Alimentos e resíduos orgânicos não são reconhecidos. Lâmpadas, remédios, óleo, aerossóis e embalagens químicas ficam fora da identificação automática desta etapa. Uma foto não confirma o conteúdo de uma embalagem.")
+        st.write("Eletrônicos prioritários: celular, mouse e carregador de celular. Outros aparelhos precisam de orientação específica e não têm reconhecimento validado neste piloto.")
+        st.caption("Amassados, papelão dobrado e cacos são casos de avaliação, não capacidades já comprovadas. Informe o estado ao reportar uma foto. Cacos não permitem confirmar pela aparência que se trata de vidro de embalagem, e não cerâmica ou outro material.")
+    with st.expander("Óleo de cozinha usado: consultar descarte"):
+        st.write("Esta orientação é para óleo de cozinha que você já identificou; o sistema não confirma líquidos pela foto.")
+        st.write("Deixe esfriar, armazene em garrafa PET bem fechada e entregue em um ponto que aceite óleo de cozinha. Não despeje na pia, no vaso sanitário ou no solo. Não misture com óleo de motor ou outros produtos.")
+        st.link_button("Consultar campanha e pontos em São Paulo", "https://prefeitura.sp.gov.br/web/sesana/w/doe-seu-oleo-usado")
+        st.caption("Confirme endereço, horário e condições de recebimento com o ponto antes de sair. A garrafa com óleo não deve receber a orientação de uma embalagem plástica vazia.")
 
 
 def render_contribution(st, config, result, profile):
@@ -47,6 +54,8 @@ def render_contribution(st, config, result, profile):
         with st.form(f"contribution_form_{signature}"):
             item = st.selectbox("O que aparece na foto?", list(ITEMS), index=None,
                                 placeholder="Escolha o item real", format_func=lambda key: ITEMS[key][0])
+            condition = st.selectbox("Estado do objeto", list(ITEM_CONDITIONS),
+                                     format_func=lambda key: ITEM_CONDITIONS[key])
             note = st.text_area("Observação opcional", max_chars=600,
                                 placeholder="Ex.: lata amassada, foto com reflexo. Não informe dados pessoais.")
             consent = st.checkbox("Autorizo o grupo EcoScan a guardar esta foto e usá-la na revisão e no treinamento. A foto é minha e não contém pessoas ou dados pessoais.")
@@ -54,7 +63,7 @@ def render_contribution(st, config, result, profile):
         if sent:
             try:
                 record = submit_contribution(config, result, item_id=item, reporter_id=profile.id,
-                                             consent=consent, note=note)
+                                             consent=consent, note=note, condition=condition)
                 st.session_state[receipt_key] = (record["id"], contribution_package(config, [record]))
             except (ValueError, OSError) as exc:
                 st.error(str(exc) if isinstance(exc, ValueError) else "Não foi possível guardar a contribuição. Tente novamente.")
@@ -87,6 +96,7 @@ def render_review(st, config, profile):
         st.image(str(contribution_image(config, selected)), width=300)
         st.write(f"Modelo sugeriu: {selected['feedback']['predicted_class'] or selected['feedback']['top_class'] or 'inconclusivo'}")
         st.write(selected["feedback"]["note"])
+        st.write("Estado informado: " + ITEM_CONDITIONS.get(selected.get("condition", "unspecified"), "Não informado"))
         with st.form(f"review_contribution_{selected['id']}_{selected.get('revision', 0)}"):
             item_id = st.selectbox("Item confirmado pelo analista", list(ITEMS),
                                    index=list(ITEMS).index(selected["item_id"]),
