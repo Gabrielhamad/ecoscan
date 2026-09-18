@@ -41,7 +41,7 @@ def render_citizen_design(st, image_uri):
       [data-testid="stButton"] button {min-height:44px;}
     }
     </style>''', unsafe_allow_html=True)
-    st.markdown(f'''<header class="eco-citizen-header">
+    st.markdown(f'''<section class="eco-citizen-header">
       <img src="{image_uri}" alt="Coleta de materiais recicláveis">
       <div><h1>EcoScan</h1><p>Seu próximo descarte começa aqui.</p></div>
-    </header>''', unsafe_allow_html=True)
+    </section>''', unsafe_allow_html=True)
