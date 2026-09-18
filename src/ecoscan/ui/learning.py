@@ -4,9 +4,31 @@ import hashlib
 
 from ecoscan.services.learning_contributions import (
     contribution_image, contribution_package, list_contributions,
-    review_contribution, submit_contribution,
+    review_contribution, submit_contribution, citizen_contributions,
 )
 from ecoscan.services.recognition_scope import ITEMS
+from ecoscan.services.secretariat_training import candidate_runs, train_candidate, training_dir
+
+
+STATUS_LABELS = {"pending": "Recebido pela secretaria", "approved": "Aprovado pelo analista",
+                 "rejected": "Não aproveitado", "queued": "Na fila de treino",
+                 "awaiting_validation": "Candidato treinado; aguardando validação", "excluded": "Fora do treino"}
+
+
+def render_citizen_protocols(st, config, profile):
+    st.subheader("Minhas contribuições à secretaria")
+    st.button("Atualizar protocolos", key="refresh_contributions")
+    records = citizen_contributions(config, profile.id)
+    if not records:
+        st.caption("Quando você reportar uma análise, o protocolo e a resposta da equipe aparecerão aqui.")
+        return
+    st.dataframe([{
+        "Protocolo": row["id"][:8], "Item": ITEMS.get(row["item_id"], (row["item_id"],))[0],
+        "Análise": STATUS_LABELS.get(row["status"], row["status"]),
+        "Aprendizado": STATUS_LABELS.get(row["training_status"], "Aguardando revisão"),
+        "Resposta da equipe": row["response"] or "Ainda sem resposta",
+    } for row in records], hide_index=True, width="stretch")
+    st.caption("Sem login, estes protocolos ficam vinculados à sua sessão. Preserve o pacote baixado.")
 
 
 def render_scope(st):
@@ -21,7 +43,7 @@ def render_contribution(st, config, result, profile):
     signature = hashlib.sha256(str(pixels.shape).encode() + pixels.tobytes()).hexdigest()[:16]
     receipt_key = f"contribution_receipt_{signature}"
     with st.expander("O resultado está errado? Contribuir com uma correção", expanded=not result.accepted):
-        st.caption("Sua foto pode ajudar o grupo a corrigir erros como confundir lata com vidro. Cada envio passa por revisão; o modelo não aprende imediatamente.")
+        st.caption("Sua correção entra na fila dos analistas da secretaria. Acompanhe a resposta em Perfil. Fotos aprovadas podem alimentar um modelo candidato, validado antes da publicação.")
         with st.form(f"contribution_form_{signature}"):
             item = st.selectbox("O que aparece na foto?", list(ITEMS), index=None,
                                 placeholder="Escolha o item real", format_func=lambda key: ITEMS[key][0])
@@ -48,8 +70,13 @@ def render_contribution(st, config, result, profile):
 def render_review(st, config, profile):
     if not profile.is_admin:
         return
-    st.subheader("Revisão das contribuições")
+    st.subheader("Central de análise da secretaria")
     records = list_contributions(config)
+    columns = st.columns(3)
+    columns[0].metric("Aguardando análise", sum(row["status"] == "pending" for row in records))
+    columns[1].metric("Aprovadas", sum(row["status"] == "approved" for row in records))
+    columns[2].metric("Na fila de treino", sum(row.get("training_status") == "queued" for row in records))
+    render_training(st, config, profile)
     st.caption("Confira foto e rótulo. A aprovação prepara o próximo treino; não altera o modelo em uso.")
     if not records:
         st.info("Nenhuma contribuição recebida nesta instância.")
@@ -60,12 +87,27 @@ def render_review(st, config, profile):
         st.image(str(contribution_image(config, selected)), width=300)
         st.write(f"Modelo sugeriu: {selected['feedback']['predicted_class'] or selected['feedback']['top_class'] or 'inconclusivo'}")
         st.write(selected["feedback"]["note"])
-        with st.form("review_contribution"):
+        with st.form(f"review_contribution_{selected['id']}_{selected.get('revision', 0)}"):
+            item_id = st.selectbox("Item confirmado pelo analista", list(ITEMS),
+                                   index=list(ITEMS).index(selected["item_id"]),
+                                   format_func=lambda key: ITEMS[key][0])
             decision = st.selectbox("Decisão", ["approved", "rejected"], index=None,
                                     format_func=lambda value: "Aprovar rótulo e foto" if value == "approved" else "Rejeitar")
+            response = st.text_area("Resposta ao cidadão", max_chars=600,
+                                    value=selected.get("response", ""),
+                                    placeholder="Ex.: Confirmamos uma lata metálica. Obrigado pela contribuição.")
+            train_now = st.checkbox("Gerar candidato após aprovar", value=True)
             if st.form_submit_button("Salvar revisão"):
-                review_contribution(config, selected["id"], decision=decision, reviewer=profile)
+                review_contribution(config, selected["id"], decision=decision, reviewer=profile,
+                                    item_id=item_id, response=response,
+                                    expected_revision=selected.get("revision", 0))
                 st.session_state.pop("review_packages", None)
+                if decision == "approved" and train_now:
+                    try:
+                        with st.spinner("Treinando candidato com fotos aprovadas..."):
+                            train_candidate(config, reviewer=profile)
+                    except (ValueError, OSError) as exc:
+                        st.session_state["training_notice"] = "Revisão salva; treino pendente. " + str(exc)
                 st.rerun()
         if st.button("Preparar pacotes de contribuições"):
             st.session_state["review_packages"] = (
@@ -79,3 +121,29 @@ def render_review(st, config, profile):
         st.caption("Exporte antes de reiniciar a hospedagem. Fotos aprovadas ainda precisam de divisão entre treino, validação e teste.")
     except (ValueError, OSError) as exc:
         st.error(str(exc))
+
+
+def render_training(st, config, profile):
+    if not profile.is_admin:
+        return
+    if st.session_state.get("training_notice"):
+        st.warning(st.session_state.pop("training_notice"))
+    with st.expander("Treinos supervisionados"):
+        st.caption("Cada candidato reúne a base publicada e as fotos aprovadas. O modelo público só deve mudar após avaliação independente.")
+        if st.button("Treinar candidato com aprovadas"):
+            try:
+                with st.spinner("Processando fotos e treinando candidato..."):
+                    train_candidate(config, reviewer=profile)
+            except (ValueError, OSError) as exc:
+                st.error(str(exc))
+        runs = candidate_runs(config)
+        if runs:
+            st.dataframe([{"Lote": run["id"][:8], "Estado": run["status"],
+                           "Fotos novas": run["new_examples"]} for run in runs], hide_index=True)
+            latest = next((run for run in runs if run["status"] == "awaiting_validation"), None)
+            if latest:
+                from uuid import UUID
+                model = training_dir(config) / str(UUID(latest["id"])) / "candidate.npz"
+                st.download_button("Baixar candidato para avaliação", model.read_bytes(),
+                                   "ecoscan-candidate.npz", "application/octet-stream")
+                st.caption(latest["validation"])

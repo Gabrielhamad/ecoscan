@@ -131,7 +131,7 @@ def evaluate_mission_submission(mission: Mission, result: Any) -> MissionEvaluat
         points_awarded=max(0, int(mission.points)),
         detected_class=detected_class,
         probability=probability,
-        reason="Missão validada por tratamento de imagem, segmentação e reconhecimento.",
+        reason="Participação educativa registrada por análise da imagem. A foto não comprova entrega nem quantidade reciclada.",
     )
 
 

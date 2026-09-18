@@ -86,19 +86,46 @@ def submit_contribution(config, result, *, item_id: str, reporter_id: str,
         return record
 
 
-def review_contribution(config, contribution_id: str, *, decision: str, reviewer) -> dict:
+def review_contribution(config, contribution_id: str, *, decision: str, reviewer,
+                        item_id: str | None = None, response: str = "",
+                        expected_revision: int | None = None) -> dict:
     if not reviewer.is_admin:
         raise PermissionError("A revisão exige uma conta administrativa.")
     if decision not in ("approved", "rejected"):
         raise ValueError("Decisão inválida.")
     identifier = str(UUID(contribution_id))
+    if len(response) > 600:
+        raise ValueError("Use até 600 caracteres na resposta.")
     with _LOCK:
         path = contribution_dir(config) / f"{identifier}.json"
         record = json.loads(path.read_text(encoding="utf-8"))
+        previous_candidate = record.get("candidate_id")
+        if expected_revision is not None and record.get("revision", 0) != expected_revision:
+            raise ValueError("Outro analista atualizou este protocolo. Atualize a fila antes de decidir.")
+        if item_id is not None:
+            if item_id not in ITEMS:
+                raise ValueError("Item revisado inválido.")
+            record.setdefault("original_item_id", record["item_id"])
+            record["item_id"] = item_id
+            record["expected_class"] = ITEMS[item_id][1]
+            record["feedback"]["expected_class"] = record["expected_class"]
         if decision == "approved" and record["expected_class"] not in config.classes:
             raise ValueError("Itens fora do escopo ou desconhecidos não entram no treino de categorias.")
-        record.update(status=decision, reviewed_by=reviewer.id, reviewed_at=time.time())
+        record.update(status=decision, reviewed_by=reviewer.id, reviewed_at=time.time(),
+                      response=response.strip(), revision=record.get("revision", 0) + 1,
+                      training_status="queued" if decision == "approved" else "excluded")
+        record.pop("candidate_id", None)
+        record.setdefault("review_history", []).append({
+            "decision": decision, "reviewer": reviewer.id, "at": record["reviewed_at"],
+            "item_id": record["item_id"], "response": record["response"],
+        })
         _write(path, record)
+        if previous_candidate:
+            for related in list_contributions(config):
+                if related["id"] != identifier and related.get("candidate_id") == previous_candidate:
+                    related.pop("candidate_id", None)
+                    related["training_status"] = "queued" if related["status"] == "approved" else "excluded"
+                    _write(contribution_dir(config) / f"{related['id']}.json", related)
         return record
 
 
@@ -108,6 +135,13 @@ def contribution_image(config, record: dict) -> Path:
     if not path.is_relative_to(root) or not path.is_file():
         raise ValueError("Foto da contribuição indisponível.")
     return path
+
+
+def citizen_contributions(config, reporter_id: str) -> list[dict]:
+    """Only expose the caller's protocols, without internal paths or analyst IDs."""
+    return [{key: row.get(key) for key in (
+        "id", "created_at", "status", "item_id", "response", "training_status", "candidate_id")}
+        for row in list_contributions(config) if row["reporter_id"] == reporter_id]
 
 
 def contribution_package(config, records: list[dict], *, approved_only: bool = False) -> bytes:
@@ -127,7 +161,7 @@ def contribution_package(config, records: list[dict], *, approved_only: bool = F
                 continue
             filename = f"images/{category}/{identifier}.jpg"
             archive.write(contribution_image(config, record), filename)
-            metadata = {key: value for key, value in record.items() if key not in ("reporter_id", "reviewed_by", "feedback")}
+            metadata = {key: value for key, value in record.items() if key not in ("reporter_id", "reviewed_by", "review_history", "feedback")}
             metadata["feedback"] = {key: value for key, value in record["feedback"].items()
                                     if key not in ("image_path", "reporter_id", "reporter_name")}
             metadata["image"] = filename

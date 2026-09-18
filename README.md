@@ -14,6 +14,10 @@ Consulte `docs/piloto_publico_e_aprendizado.md` para itens-alvo e revisão das
 contribuições. Correções não treinam o modelo automaticamente. A fila na
 hospedagem ainda é temporária; baixe e preserve os pacotes da rodada de testes.
 
+A central da secretaria permite responder protocolos, corrigir rótulos e gerar
+candidatos após aprovação. O cidadão acompanha em Perfil. O modelo publicado
+não muda sem avaliação independente. Veja `docs/operacao_secretaria.md`.
+
 Estrutura principal implementada:
 
 - estrutura do projeto;

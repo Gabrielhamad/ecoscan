@@ -68,12 +68,30 @@
     },
     {
       "id": "logistica_reversa_segura",
-      "title": "Levar resíduo especial ao ponto correto",
-      "description": "Registre pilha, bateria ou pequeno eletrônico destinado a ponto de coleta especial.",
+      "title": "Pilha não vai no lixo comum",
+      "description": "Identifique uma pilha ou bateria portátil e consulte um ponto que aceite esse material. Não abra nem desmonte baterias.",
       "points": 35,
-      "target_classes": ["battery", "electronic"],
+      "target_classes": ["battery"],
       "verification_action": "recognize_waste",
-      "proof_hint": "Evite foto de embalagem misturada; o item especial precisa estar visível."
+      "proof_hint": "A foto registra identificação, não comprova entrega. Confira a aceitação no ponto antes de sair."
+    },
+    {
+      "id": "eletronico_sem_lixo_comum",
+      "title": "Pequeno eletrônico, destino especial",
+      "description": "Identifique celular, mouse ou carregador sem uso e consulte um ponto de logística reversa. Avalie reutilização antes do descarte.",
+      "points": 35,
+      "target_classes": ["electronic"],
+      "verification_action": "recognize_waste",
+      "proof_hint": "Fotografe o aparelho inteiro, sem dados pessoais na tela. A imagem não comprova entrega ao ponto."
+    },
+    {
+      "id": "papelao_seco",
+      "title": "Papelão separado, material aproveitado",
+      "description": "Separe uma caixa de papelão ou folhas secas para a coleta seletiva. Evite misturar com restos de comida.",
+      "points": 20,
+      "target_classes": ["paper_cardboard"],
+      "verification_action": "recognize_waste",
+      "proof_hint": "Mostre o material inteiro. Consulte o serviço local para confirmar as condições de aceitação."
     },
     {
       "id": "auditoria_do_reconhecimento",

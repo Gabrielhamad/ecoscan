@@ -14,7 +14,7 @@ from typing import Any
 from ecoscan.app.pipeline import ProcessingPipelineOptions
 from ecoscan.config import load_config
 from ecoscan.ui.identity import render_identity
-from ecoscan.ui.learning import render_contribution, render_review, render_scope
+from ecoscan.ui.learning import render_contribution, render_review, render_scope, render_citizen_protocols
 from ecoscan.disposal.collection_points import (
     CollectionPoint,
     build_collection_point_directions_url,
@@ -4158,6 +4158,7 @@ def _render_account_tab(
 ) -> None:
     st.markdown('<div class="ecoscan-section-title">Minha participação</div>', unsafe_allow_html=True)
     _render_active_profile_card(st, active_profile)
+    render_citizen_protocols(st, config, active_profile)
     ledger_path = points_ledger_path_from_config(config)
     points = total_points_for_user(ledger_path, active_profile.id)
     transactions = read_point_transactions(ledger_path, user_id=active_profile.id, limit=20)
