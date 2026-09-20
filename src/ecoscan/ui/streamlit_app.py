@@ -14,6 +14,7 @@ from typing import Any
 from ecoscan.app.pipeline import ProcessingPipelineOptions
 from ecoscan.config import load_config
 from ecoscan.ui.identity import render_identity
+from ecoscan.ui.education import render_education
 from ecoscan.ui.learning import render_contribution, render_review, render_scope, render_citizen_protocols
 from ecoscan.disposal.collection_points import (
     CollectionPoint,
@@ -1917,7 +1918,8 @@ def _load_photo_requirement_map(config: Any) -> dict[str, PhotoRequirement]:
 
 def _load_collection_point_list(config: Any) -> list[CollectionPoint]:
     try:
-        return load_collection_points(config.project_root / "config" / "collection_points.json")
+        return [point for point in load_collection_points(config.project_root / "config" / "collection_points.json")
+                if point.city == "São Paulo" and point.state == "SP"]
     except Exception as exc:
         LOGGER.warning("collection_points_load_failed detail=%s", exc)
         return []
@@ -3618,8 +3620,8 @@ def _render_collection_points_tab(
     st.markdown('<div class="ecoscan-section-title">Encontrar ponto de coleta</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="ecoscan-note">Use a base cadastrada para consultar pontos compatíveis por material. '
-        'A base inclui Ecopontos cadastrados para Ribeirão Preto e São Paulo; quando não houver ponto para a classe, '
-        'a busca externa no mapa continua disponível.</div>',
+        'Cobertura: município de São Paulo. Lista local parcial, conferida em 20/09/2026. '
+        'Consulte a rede completa no mapa oficial da Prefeitura e confirme a aceitação antes de sair.</div>',
         unsafe_allow_html=True,
     )
     control_col, source_col = st.columns([1.05, 0.95])
@@ -3630,20 +3632,14 @@ def _render_collection_points_tab(
             format_func=lambda class_id: _class_label(class_id, guidance_by_class),
             key="collection_point_class",
         )
-        city_options = ["São Paulo", "Ribeirão Preto", "Todas"]
-        city_scope = st.selectbox(
-            "Cidade",
-            city_options,
-            key="collection_point_city_scope",
-        )
         origin = st.text_input(
             "Local de origem para rota",
-            placeholder="ex.: Centro, São Paulo, Ribeirão Preto ou seu CEP",
+            placeholder="Bairro ou CEP de São Paulo",
             key="collection_point_origin",
         )
         city_query = st.text_input(
-            "Filtrar por bairro, rua ou cidade",
-            placeholder="ex.: São Paulo, Pinheiros, Sé, Jardim ou Ribeirão Preto",
+            "Filtrar por bairro ou rua",
+            placeholder="ex.: Liberdade, Jaceguai ou Cambuci",
             key="collection_point_city_query",
         )
     with source_col:
@@ -3665,17 +3661,14 @@ def _render_collection_points_tab(
         st.link_button(
             "Buscar no mapa",
             build_map_search_url(
-                "ecoponto coleta seletiva logística reversa resíduos São Paulo Ribeirão Preto",
-                origin if origin else "perto de mim",
+                "ecoponto coleta seletiva São Paulo SP",
+                (origin + ", São Paulo SP") if origin else "São Paulo SP",
             ),
             width="stretch",
         )
 
-    scoped_points = (
-        collection_points
-        if city_scope == "Todas"
-        else [point for point in collection_points if point.city == city_scope]
-    )
+    st.link_button("Mapa oficial: todos os ecopontos de São Paulo", "https://coleta.prefeitura.sp.gov.br/", width="stretch")
+    scoped_points = [point for point in collection_points if point.city == "São Paulo" and point.state == "SP"]
     filtered_points = filter_collection_points(
         scoped_points,
         class_id=selected_class,
@@ -3686,11 +3679,11 @@ def _render_collection_points_tab(
         label = guidance.display_name if guidance else selected_class
         st.info(
             f"A base local ainda não tem ponto cadastrado para {label}. "
-            "Use a busca no mapa ou cadastre pontos oficiais em config/collection_points.json."
+            "Consulte uma rede especializada e confirme o recebimento. Não leve pilhas ou eletrônicos a um ecoponto sem confirmação."
         )
         fallback = build_map_search_url(
-            f"ponto de coleta {label} descarte reciclagem",
-            origin if origin else "perto de mim",
+            f"ponto de coleta {label} descarte reciclagem São Paulo SP",
+            (origin + ", São Paulo SP") if origin else "São Paulo SP",
         )
         st.link_button("Procurar ponto externo", fallback, width="stretch")
         return
@@ -4479,10 +4472,21 @@ def _render_admin_tab(
     point_transactions = read_point_transactions(ledger_path, limit=500)
 
     cols = st.columns(4)
-    cols[0].metric("Perfis ativos", len(profiles))
+    cols[0].metric("Perfis locais de demonstração", len(profiles))
     cols[1].metric("Missões", len(campaign.missions) if campaign else 0)
     cols[2].metric("Denúncias", len(reports))
     cols[3].metric("Pontos de coleta", len(collection_points))
+
+    with st.expander("Cadastros reais e confirmação de e-mail"):
+        st.button("Atualizar cadastros", key="refresh_real_users")
+        try:
+            from ecoscan.services.participant_directory import registered_users
+            real_users = registered_users(st.session_state.get("auth_access_token"),
+                                          dict(st.secrets.get("access", {})))
+            st.caption(f"{len(real_users)} conta(s) consultada(s), limite de 1.000. Cadastro não significa contribuição enviada.")
+            st.dataframe(real_users, hide_index=True, width="stretch")
+        except (ValueError, PermissionError, OSError) as exc:
+            st.warning(str(exc))
 
     _render_admin_campaign_operations(
         st,
@@ -4700,6 +4704,7 @@ def main() -> None:
             "Base de imagens",
             "Histórico",
             "Sistema",
+            "Aprender",
         ]
     else:
         analysis_tab = "Escanear"
@@ -4711,12 +4716,16 @@ def main() -> None:
             analysis_tab,
             collection_tab,
             "Descarte",
+            "Aprender",
             campaign_tab,
             report_tab,
             account_tab,
         ]
     tabs = dict(zip(tab_names, st.tabs(tab_names)))
     result = st.session_state.get("last_analysis_result")
+
+    with tabs["Aprender"]:
+        render_education(st, config.project_root)
 
     if "Descarte" in tabs:
         with tabs["Descarte"]:

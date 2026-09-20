@@ -48,8 +48,8 @@ class OperationsTests(unittest.TestCase):
         metal_row = next(row for row in activity_rows if row["missão"] == metal_mission.title)
 
         self.assertEqual(len(campaign.missions), summary.mission_count)
-        self.assertGreaterEqual(summary.recyclable_point_count, 20)
-        self.assertIn(("São Paulo", 17), summary.city_counts)
+        self.assertEqual(summary.recyclable_point_count, 6)
+        self.assertIn(("São Paulo", 6), summary.city_counts)
         self.assertEqual(1, summary.participant_count)
         self.assertEqual(1, metal_row["validações"])
         self.assertEqual(metal_mission.points, metal_row["pontos_distribuídos"])
