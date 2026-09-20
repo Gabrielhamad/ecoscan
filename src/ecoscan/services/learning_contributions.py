@@ -47,6 +47,8 @@ def list_contributions(config) -> list[dict]:
 
 def submit_contribution(config, result, *, item_id: str, reporter_id: str,
                         consent: bool, note: str = "", condition: str = "unspecified") -> dict:
+    if not reporter_id or reporter_id.startswith("visitor_"):
+        raise ValueError("Entre em uma conta verificada para enviar contribuições.")
     if not consent:
         raise ValueError("Autorize o uso da foto para enviar a contribuição.")
     if item_id not in ITEMS:

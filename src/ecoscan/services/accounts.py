@@ -118,6 +118,8 @@ def build_point_transaction(
 
 
 def append_point_transaction(path: str | Path, transaction: PointTransaction) -> Path:
+    if not transaction.user_id or transaction.user_id.startswith("visitor_"):
+        raise ValueError("Entre em uma conta para registrar pontos.")
     store = operational_store()
     if store is not None:
         store.append("points", asdict(transaction))

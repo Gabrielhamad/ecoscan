@@ -148,6 +148,8 @@ def classify_report_verification(result: Any) -> tuple[str, str]:
 
 
 def append_civic_report(path: str | Path, record: CivicReportRecord) -> Path:
+    if record.submitted_by.startswith("visitor_"):
+        raise ValueError("Entre em uma conta para enviar relatos.")
     report_path = Path(path)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     exists = report_path.exists()

@@ -81,6 +81,8 @@ def build_field_test_record(
 
 
 def append_field_test_record(path: str | Path, record: FieldTestRecord) -> Path:
+    if not record.tester_id or record.tester_id.startswith("visitor_"):
+        raise ValueError("Entre em uma conta para registrar testes.")
     store = operational_store()
     if store is not None:
         store.append("field_tests", asdict(record))

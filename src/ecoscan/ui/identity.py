@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 from uuid import uuid4
+import time
 
 from ecoscan.services.accounts import UserProfile
 from ecoscan.services.identity import resolve_identity
@@ -73,20 +74,59 @@ def _render_password_identity(st, access):
             st.session_state.clear()
             st.rerun()
     else:
-        with st.expander("Entrar na conta"):
-            st.caption("Use a conta disponibilizada pelo responsável do grupo. Sem conta, você pode continuar como visitante.")
-            with st.form("password_login", clear_on_submit=True):
-                email = st.text_input("E-mail", max_chars=254)
-                password = st.text_input("Senha", type="password", max_chars=256)
-                submit = st.form_submit_button("Entrar")
-            if submit:
-                try:
-                    st.session_state["auth_access_token"] = sign_in(email, password)
-                except ValueError as exc:
-                    st.error(str(exc))
-                else:
-                    st.rerun()
-            st.caption("Esqueceu a senha? Solicite recuperação ao responsável do grupo. Nunca envie sua senha por mensagem.")
+        with st.expander("Entrar ou criar conta"):
+            st.caption("Visitante: análise temporária, mapa e orientações. Conta verificada: contribuições e participação vinculadas ao seu perfil.")
+            login_tab, signup_tab = st.tabs(["Entrar", "Criar conta"])
+            with signup_tab:
+                _render_registration(st, access)
+            with login_tab:
+                _render_login_form(st)
     if st.query_params.get("profile") == "admin_secretaria" and not profile.is_admin:
         st.info("A gestão requer uma conta autorizada pela secretaria.")
     return profile
+
+
+def _render_registration(st, access):
+    from ecoscan.services.password_identity import register
+    enabled = access.get("public_signup_enabled") is True
+    if not enabled:
+        st.info("Cadastro em preparação. O modo visitante continua disponível, sem salvar fotos, relatos ou pontos no perfil.")
+        return
+    with st.form("account_registration", clear_on_submit=True):
+        email = st.text_input("E-mail", max_chars=254, key="signup_email")
+        password = st.text_input("Senha (mínimo 12 caracteres)", type="password", max_chars=128)
+        confirmation = st.text_input("Confirmar senha", type="password", max_chars=128)
+        st.caption("E-mail e credenciais são tratados pelo Supabase Auth para acesso à conta. Fotos só são guardadas quando você autoriza uma contribuição.")
+        consent = st.checkbox("Concordo com o uso do meu e-mail para criar e verificar minha conta.")
+        submit = st.form_submit_button("Solicitar cadastro")
+    if submit:
+        if not consent:
+            st.error("Confirme o uso do e-mail antes de continuar.")
+            return
+        now = time.monotonic()
+        if now - st.session_state.get("signup_last_attempt", -60) < 60:
+            st.warning("Aguarde um minuto antes de tentar novamente.")
+            return
+        st.session_state["signup_last_attempt"] = now
+        try:
+            register(email, password, confirmation, enabled=enabled)
+        except ValueError as exc:
+            st.error(str(exc))
+        else:
+            st.success("Solicitação recebida. Se o cadastro puder prosseguir, você receberá um e-mail de confirmação. Verifique também o spam. Depois de confirmar, volte para Entrar.")
+
+
+def _render_login_form(st):
+    from ecoscan.services.password_identity import sign_in
+    with st.form("password_login", clear_on_submit=True):
+        email = st.text_input("E-mail", max_chars=254)
+        password = st.text_input("Senha", type="password", max_chars=256)
+        submit = st.form_submit_button("Entrar")
+    if submit:
+        try:
+            st.session_state["auth_access_token"] = sign_in(email, password)
+        except ValueError as exc:
+            st.error(str(exc))
+        else:
+            st.rerun()
+    st.caption("Esqueceu a senha? Solicite recuperação ao responsável do grupo. Nunca envie sua senha por mensagem.")

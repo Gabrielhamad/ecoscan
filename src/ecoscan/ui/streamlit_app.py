@@ -3989,6 +3989,9 @@ def _render_civic_reports_tab(
     pipeline_options: ProcessingPipelineOptions,
 ) -> None:
     st.markdown('<div class="ecoscan-section-title">Denunciar mau descarte</div>', unsafe_allow_html=True)
+    if active_profile.id.startswith("visitor_"):
+        st.info("Entre em uma conta verificada para enviar um relato à secretaria. Visitantes podem consultar o mapa e as orientações de descarte.")
+        return
     st.markdown(
         '<div class="ecoscan-note">A denúncia usa o mesmo tratamento de imagem, segmentação e reconhecimento '
         "para fazer triagem técnica da evidência. O resultado indica consistência visual, não substitui vistoria oficial.</div>",
@@ -4094,6 +4097,9 @@ def _render_field_test_form(
     guidance_by_class: dict[str, DisposalGuidance],
 ) -> None:
     st.markdown('<div class="ecoscan-section-title">Registrar teste da rodada</div>', unsafe_allow_html=True)
+    if active_profile.id.startswith("visitor_"):
+        st.info("Entre em uma conta verificada para registrar testes. O reconhecimento continua disponível sem cadastro.")
+        return
     st.markdown(
         '<div class="ecoscan-note">Use esta área quando estiver testando com o grupo. '
         "Ela registra se o reconhecimento acertou, errou ou ficou inconclusivo, sem depender de print ou anotação solta.</div>",
@@ -4178,6 +4184,8 @@ def _render_account_tab(
     st.markdown('<div class="ecoscan-section-title">Minha participação</div>', unsafe_allow_html=True)
     _render_active_profile_card(st, active_profile)
     render_citizen_protocols(st, config, active_profile)
+    if active_profile.id.startswith("visitor_"):
+        return
     ledger_path = points_ledger_path_from_config(config)
     try:
         points = total_points_for_user(ledger_path, active_profile.id)
@@ -4649,7 +4657,8 @@ def main() -> None:
                     key="public_segmentation",
                 )
                 segmentation_parameters = _select_segmentation_parameters(st, segmentation_name)
-                save_history = st.checkbox("Salvar no histórico local", value=False, key="public_history")
+                if not active_profile.id.startswith("visitor_"):
+                    save_history = st.checkbox("Salvar no histórico local", value=False, key="public_history")
 
     if not active_profile.is_admin:
         _render_public_app_chrome(st)
@@ -4776,7 +4785,8 @@ def main() -> None:
                 result = st.session_state.get("last_analysis_result")
 
             if result is not None:
-                should_save_history = bool(config.history.get("enabled", True)) or save_history
+                should_save_history = not active_profile.id.startswith("visitor_") and (
+                    bool(config.history.get("enabled", True)) or save_history)
                 if should_save_history and st.session_state.get("last_history_saved_signature") != signature:
                     try:
                         append_history_entry(

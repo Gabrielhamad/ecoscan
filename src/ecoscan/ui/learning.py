@@ -20,6 +20,9 @@ STATUS_LABELS = {"pending": "Recebido pela secretaria", "approved": "Aprovado pe
 
 def render_citizen_protocols(st, config, profile):
     st.subheader("Minhas contribuições à secretaria")
+    if profile.id.startswith("visitor_"):
+        st.info("Entre em uma conta verificada para enviar e acompanhar contribuições. No modo visitante, nada é salvo no perfil.")
+        return
     st.button("Atualizar protocolos", key="refresh_contributions")
     try:
         records = citizen_contributions(config, profile.id)
@@ -30,10 +33,7 @@ def render_citizen_protocols(st, config, profile):
         st.caption("Consulta ao banco concluída. As contribuições enviadas ficam disponíveis para revisão da secretaria.")
     else:
         st.warning("Armazenamento temporário: baixe seus comprovantes e pacotes.")
-    if profile.id.startswith("visitor_"):
-        st.info("Você está como visitante. Os envios podem ficar no banco, mas o acesso a eles depende desta sessão. Guarde o protocolo.")
-    else:
-        st.caption("Protocolos vinculados à sua conta. Use a mesma conta em outro dispositivo para acompanhá-los.")
+    st.caption("Protocolos vinculados à sua conta. Use a mesma conta em outro dispositivo para acompanhá-los.")
     if not records:
         st.caption("Quando você reportar uma análise, o protocolo e a resposta da equipe aparecerão aqui.")
         return
@@ -74,6 +74,9 @@ def render_scope(st):
 
 
 def render_contribution(st, config, result, profile):
+    if profile.id.startswith("visitor_"):
+        st.info("Para reportar esta análise à secretaria, entre em uma conta verificada. A foto do visitante não será guardada como contribuição.")
+        return
     pixels = result.pipeline.loaded.array
     signature = hashlib.sha256(str(pixels.shape).encode() + pixels.tobytes()).hexdigest()[:16]
     receipt_key = f"contribution_receipt_{signature}"

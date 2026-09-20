@@ -13,7 +13,7 @@ from types import SimpleNamespace
 from ecoscan.ui.learning import render_contribution
 result = SimpleNamespace(accepted=True, pipeline=SimpleNamespace(
     loaded=SimpleNamespace(array=np.zeros((8,8,3), dtype=np.uint8))))
-render_contribution(st, None, result, SimpleNamespace(id="visitor_test"))
+render_contribution(st, None, result, SimpleNamespace(id="supabase_test"))
 ''', default_timeout=20)
 
     def test_saved_receipt_survives_failed_photo_export(self):
@@ -53,12 +53,12 @@ render_contribution(st, None, result, SimpleNamespace(id="visitor_test"))
 import streamlit as st
 from types import SimpleNamespace
 from ecoscan.ui.learning import render_citizen_protocols
-render_citizen_protocols(st, None, SimpleNamespace(id="visitor_test"))
+render_citizen_protocols(st, None, SimpleNamespace(id="supabase_test"))
 ''').run()
             self.assertFalse(app.exception)
             self.assertEqual(len(app.dataframe), 0)
             self.assertTrue(any("Confirmamos uma lata" in m.value for m in app.markdown))
-            self.assertTrue(any("visitante" in m.value for m in app.info))
+            self.assertTrue(any("vinculados" in m.value for m in app.caption))
 
 
 if __name__ == "__main__":

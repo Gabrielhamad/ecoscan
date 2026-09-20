@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from uuid import UUID
+import re
 
 from ecoscan.services.accounts import UserProfile
 from ecoscan.services.contribution_store import settings
@@ -25,6 +26,23 @@ def sign_in(email: str, password: str) -> str:
         return result.session.access_token
     except Exception:
         raise ValueError("Não foi possível entrar. Confira seus dados e a confirmação da conta, ou tente novamente mais tarde.") from None
+
+
+def register(email: str, password: str, confirmation: str, *, enabled: bool = False) -> None:
+    if enabled is not True:
+        raise ValueError("Cadastro ainda em preparação. Você pode continuar como visitante.")
+    email = email.strip()
+    if len(email) > 254 or not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email):
+        raise ValueError("Informe um e-mail válido.")
+    if not 12 <= len(password) <= 128:
+        raise ValueError("Use uma senha com 12 a 128 caracteres.")
+    if password != confirmation:
+        raise ValueError("As senhas não coincidem.")
+    try:
+        # Standard signup, never admin.create_user or an email-confirmation bypass.
+        _client().auth.sign_up({"email": email, "password": password})
+    except Exception:
+        raise ValueError("Não foi possível solicitar o cadastro. Aguarde e tente novamente. Se persistir, avise o responsável pelo EcoScan.") from None
 
 
 def verified_profile(token: str, access: dict) -> UserProfile:
