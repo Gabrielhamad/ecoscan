@@ -45,6 +45,18 @@ def register(email: str, password: str, confirmation: str, *, enabled: bool = Fa
         raise ValueError("Não foi possível solicitar o cadastro. Aguarde e tente novamente. Se persistir, avise o responsável pelo EcoScan.") from None
 
 
+def resend_confirmation(email: str, *, enabled: bool = False) -> None:
+    if enabled is not True:
+        raise ValueError("Confirmação por e-mail ainda em preparação.")
+    email = email.strip()
+    if len(email) > 254 or not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email):
+        raise ValueError("Informe um e-mail válido.")
+    try:
+        _client().auth.resend({"type": "signup", "email": email})
+    except Exception:
+        raise ValueError("Não foi possível solicitar o reenvio. Aguarde e tente novamente; se persistir, avise o responsável pelo EcoScan.") from None
+
+
 def verified_profile(token: str, access: dict) -> UserProfile:
     try:
         # Always verify with Auth, not untrusted JWT decoding or user metadata.

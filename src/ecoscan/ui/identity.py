@@ -79,6 +79,8 @@ def _render_password_identity(st, access):
             login_tab, signup_tab = st.tabs(["Entrar", "Criar conta"])
             with signup_tab:
                 _render_registration(st, access)
+                if access.get("public_signup_enabled") is True:
+                    _render_resend_confirmation(st)
             with login_tab:
                 _render_login_form(st)
     if st.query_params.get("profile") == "admin_secretaria" and not profile.is_admin:
@@ -130,3 +132,23 @@ def _render_login_form(st):
         else:
             st.rerun()
     st.caption("Esqueceu a senha? Solicite recuperação ao responsável do grupo. Nunca envie sua senha por mensagem.")
+
+
+def _render_resend_confirmation(st):
+    from ecoscan.services.password_identity import resend_confirmation
+    with st.expander("Não recebi a confirmação"):
+        with st.form("resend_confirmation", clear_on_submit=True):
+            email = st.text_input("E-mail do cadastro", max_chars=254)
+            sent = st.form_submit_button("Reenviar confirmação")
+        if sent:
+            now = time.monotonic()
+            if now - st.session_state.get("signup_last_attempt", -60) < 60:
+                st.warning("Aguarde um minuto antes de solicitar outro e-mail.")
+                return
+            st.session_state["signup_last_attempt"] = now
+            try:
+                resend_confirmation(email, enabled=True)
+            except ValueError as exc:
+                st.error(str(exc))
+            else:
+                st.success("Se houver um cadastro pendente para esse e-mail, a confirmação será reenviada. Confira também o spam.")
