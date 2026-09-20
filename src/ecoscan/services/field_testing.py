@@ -9,6 +9,7 @@ from typing import Any, Iterable
 from uuid import uuid4
 
 from ecoscan.config import AppConfig
+from ecoscan.services.operational_store import operational_store
 
 
 VALID_RESULT_STATUSES = frozenset({"acertou", "errou", "inconclusivo"})
@@ -61,6 +62,8 @@ def build_field_test_record(
     clean_status = result_status.strip().lower()
     if clean_status not in VALID_RESULT_STATUSES:
         raise ValueError("Status de teste inválido: " + result_status)
+    if len(note) > 600:
+        raise ValueError("Use até 600 caracteres na observação do teste.")
     clean_confidence = None if confidence is None else max(0.0, min(1.0, float(confidence)))
     return FieldTestRecord(
         id=str(uuid4()),
@@ -78,6 +81,10 @@ def build_field_test_record(
 
 
 def append_field_test_record(path: str | Path, record: FieldTestRecord) -> Path:
+    store = operational_store()
+    if store is not None:
+        store.append("field_tests", asdict(record))
+        return Path(path)
     manifest_path = Path(path)
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     exists = manifest_path.exists()
@@ -95,6 +102,9 @@ def read_field_test_records(
     tester_id: str | None = None,
     limit: int | None = None,
 ) -> list[FieldTestRecord]:
+    store = operational_store()
+    if store is not None:
+        return [FieldTestRecord(**row) for row in store.read("field_tests", owner=tester_id, limit=limit)]
     manifest_path = Path(path)
     if not manifest_path.exists():
         return []

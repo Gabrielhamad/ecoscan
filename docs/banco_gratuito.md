@@ -7,9 +7,11 @@ rotulo/estado informado, consentimento, revisao/resposta e fotos privadas.
 Sem credenciais, permanece o modo local temporario. Se configurado e indisponivel,
 o sistema falha explicitamente: nao troca silenciosamente para arquivos locais.
 
-Nao migrados: campanhas, pontos de missao, denuncias, historico de testes legado,
-artefatos de modelos e cadastro/login. OIDC existente precisa de configuracao
-independente para identificar o mesmo usuario em diferentes dispositivos.
+Pontos de missao e registros de testes possuem adaptador remoto com ativacao
+separada, apos a migration 002. Arquivos CSV antigos nao sao importados automaticamente.
+Nao migrados: campanhas, denuncias e artefatos de modelos. Login Supabase foi
+implementado, mas provisionamento das contas e autorizacao de analistas exigem
+configuracao e aceite (ver login_piloto.md).
 Treino na hospedagem fica desativado quando o banco esta ativo: exportar aprovadas
 e treinar localmente ate implementar persistencia dos candidatos.
 
@@ -29,8 +31,8 @@ service_key = "CHAVE_SERVICE_ROLE_DO_SERVIDOR"
 ```
 
 Nao enviar a chave no chat, no GitHub, em screenshots ou no navegador do cidadao.
-O backend usa chave privilegiada; a autorizacao de analistas continua no OIDC
-existente. Nunca tornar admin um visitante por parametro da URL.
+O backend usa chave privilegiada; analistas precisam de identidade verificada
+e email explicitamente autorizado. Nunca tornar admin um visitante por parametro da URL.
 
 5. Reiniciar app e enviar foto de teste sem pessoas ou dados pessoais.
 6. Conferir registro na tabela e foto no bucket. Reiniciar novamente e conferir
@@ -40,6 +42,27 @@ existente. Nunca tornar admin um visitante por parametro da URL.
 
 Os passos de SQL e acesso real ainda exigem validacao no projeto provisionado.
 Testes locais com doubles verificam a integracao, nao substituem esse aceite.
+
+## Pontos e testes: implantacao em duas fases
+
+1. Publicar o codigo com `operations_enabled` ausente ou `false`.
+2. Executar `migrations/002_operational_records.sql` no SQL Editor.
+3. Verificar RLS nas duas tabelas, ausencia de leitura para anon/authenticated
+   e permissoes select/insert somente para service_role.
+4. Adicionar `operations_enabled = true` dentro de `[persistence]` nos Secrets
+   do Streamlit, preservando URL e chave existentes. Reiniciar o app.
+5. Com contas de teste diferentes, registrar teste e pontuacao, reiniciar e
+   conferir persistencia e isolamento. Reenvio da mesma evidencia/mesma missao
+   nao pode duplicar pontos. Visitantes nao acumulam pontos permanentes.
+
+Quando ativado, uma falha do banco interrompe a operacao com mensagem visivel;
+nao ha gravacao silenciosa em CSV. Sem ativacao, os arquivos continuam temporarios.
+Nao desativar o banco durante uma falha para simular recuperacao: isso cria
+historicos divergentes. Corrigir conexao/schema e repetir o aceite.
+
+O banco limita testes a 10.000 registros e um envio por identidade a cada dez
+segundos. Isso protege o piloto, mas nao substitui protecao contra abuso publico.
+Pontuacao e educativa, nao comprova entrega fisica de residuos.
 
 ## Limites e backups
 

@@ -3815,7 +3815,14 @@ def _render_campaign_tab(
         return
 
     ledger_path = points_ledger_path_from_config(config)
-    points = total_points_for_user(ledger_path, active_profile.id)
+    from ecoscan.services.operational_store import operations_enabled
+    if not operations_enabled():
+        st.caption("Piloto: a pontuação ainda usa armazenamento local temporário.")
+    try:
+        points = total_points_for_user(ledger_path, active_profile.id)
+    except OSError as exc:
+        st.error(str(exc))
+        return
     info_cols = st.columns([1.2, 0.8])
     with info_cols[0]:
         st.markdown(
@@ -3869,7 +3876,10 @@ def _render_campaign_tab(
 
         if proof_file is None:
             st.caption("Fotografe ou envie uma evidência da missão para liberar a validação.")
-        if st.button("Validar missão", disabled=proof_file is None):
+        is_visitor = active_profile.id.startswith("visitor_")
+        if is_visitor:
+            st.info("Entre em uma conta para registrar a participação e acumular pontos. Você pode consultar as missões sem login.")
+        if st.button("Validar missão", disabled=proof_file is None or is_visitor):
             temp_path = _temporary_upload(proof_file, prefix="mission")
             evidence_sha256 = hashlib.sha256(proof_file.getvalue()).hexdigest()
             try:
@@ -3899,10 +3909,14 @@ def _render_campaign_tab(
                                 note=evaluation.reason,
                             ),
                         )
-                        append_history_entry(
-                            history_path_from_config(config),
-                            build_history_entry(mission_result, source_path=source_kind),
-                        )
+                        st.success(f"Participação registrada: +{evaluation.points_awarded} pontos.")
+                        try:
+                            append_history_entry(
+                                history_path_from_config(config),
+                                build_history_entry(mission_result, source_path=source_kind),
+                            )
+                        except OSError:
+                            st.warning("Os pontos foram registrados, mas a cópia local da análise não pôde ser salva.")
                         updated_points = total_points_for_user(ledger_path, active_profile.id)
                         st.success(
                             f"Missão validada. +{evaluation.points_awarded} pontos. Total: {updated_points}."
@@ -4114,6 +4128,7 @@ def _render_field_test_form(
             confidence_percent = st.slider("Confiança (%)", 0, 100, 0, disabled=not has_confidence)
         note = st.text_area(
             "Observação do teste",
+            max_chars=600,
             placeholder="ex.: lata Monster virou vidro; garrafa PET com fundo branco acertou",
         )
         submitted = st.form_submit_button("Salvar teste da rodada")
@@ -4136,11 +4151,15 @@ def _render_field_test_form(
         except Exception as exc:
             _render_user_error(st, exc, context="field_test")
 
-    recent_tests = read_field_test_records(
-        field_test_manifest_path_from_config(config),
-        tester_id=active_profile.id,
-        limit=8,
-    )
+    try:
+        recent_tests = read_field_test_records(
+            field_test_manifest_path_from_config(config),
+            tester_id=active_profile.id,
+            limit=8,
+        )
+    except OSError as exc:
+        st.error(str(exc))
+        return
     if recent_tests:
         st.dataframe(
             field_test_rows(recent_tests, _guidance_class_labels(guidance_by_class), limit=8),
@@ -4160,8 +4179,12 @@ def _render_account_tab(
     _render_active_profile_card(st, active_profile)
     render_citizen_protocols(st, config, active_profile)
     ledger_path = points_ledger_path_from_config(config)
-    points = total_points_for_user(ledger_path, active_profile.id)
-    transactions = read_point_transactions(ledger_path, user_id=active_profile.id, limit=20)
+    try:
+        points = total_points_for_user(ledger_path, active_profile.id)
+        transactions = read_point_transactions(ledger_path, user_id=active_profile.id, limit=20)
+    except OSError as exc:
+        st.error(str(exc))
+        return
 
     cols = st.columns(3)
     cols[0].metric("Pontos acumulados", points)

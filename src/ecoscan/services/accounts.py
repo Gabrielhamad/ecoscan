@@ -9,6 +9,7 @@ from typing import Any
 from uuid import uuid4
 
 from ecoscan.config import AppConfig
+from ecoscan.services.operational_store import operational_store
 
 
 VALID_ROLES = frozenset({"user", "admin"})
@@ -117,6 +118,10 @@ def build_point_transaction(
 
 
 def append_point_transaction(path: str | Path, transaction: PointTransaction) -> Path:
+    store = operational_store()
+    if store is not None:
+        store.append("points", asdict(transaction))
+        return Path(path)
     ledger_path = Path(path)
     ledger_path.parent.mkdir(parents=True, exist_ok=True)
     exists = ledger_path.exists()
@@ -134,6 +139,9 @@ def read_point_transactions(
     user_id: str | None = None,
     limit: int | None = None,
 ) -> list[PointTransaction]:
+    store = operational_store()
+    if store is not None:
+        return [PointTransaction(**row) for row in store.read("points", owner=user_id, limit=limit)]
     ledger_path = Path(path)
     if not ledger_path.exists():
         return []
