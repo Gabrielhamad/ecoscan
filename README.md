@@ -1,376 +1,231 @@
 # EcoScan
 
-EcoScan é um guia inteligente de descarte responsável de resíduos, com foco em uso real por celular ou PC.
+**Da imagem à orientação de descarte, com educação ambiental e revisão humana.**
 
-O sistema recebe a imagem de um resíduo, aplica um pipeline reproduzível de processamento digital de imagens, classifica a categoria visual e retorna orientação de descarte, preparo do material, impacto ambiental e busca de ponto próximo. A documentação técnica mantém a rastreabilidade necessária para a APS de Processamento de Imagens e Visão Computacional.
+Aplicação web para celular e computador que combina processamento digital de imagens, classificação de resíduos e orientações de descarte. O piloto conecta participantes a uma área de gestão que simula o trabalho de uma secretaria ambiental.
 
-## Estado atual
+[Acessar o piloto](https://ecoscan-gabrielhamad.streamlit.app/) · [Guia do grupo](docs/guia_do_grupo.md) · [Arquitetura](docs/arquitetura_atual.md) · [Como contribuir](CONTRIBUTING.md)
 
-Piloto público: https://ecoscan-gabrielhamad.streamlit.app/
+> **Status: piloto acadêmico em validação.** Não é um serviço oficial da Prefeitura e não substitui a orientação do operador de coleta. O reconhecimento pode errar, inclusive em objetos comuns. Não há garantia de identificar todo resíduo.
 
-O escopo atual tem seis categorias: metal, plástico, papel/papelão, vidro,
-pilhas/baterias e pequenos eletrônicos. Alimentos e orgânicos estão excluídos.
-Consulte `docs/piloto_publico_e_aprendizado.md` para itens-alvo e revisão das
-contribuições. Correções não treinam o modelo automaticamente. A fila na
-hospedagem ainda é temporária; baixe e preserve os pacotes da rodada de testes.
+## Sumário
 
-A central da secretaria permite responder protocolos, corrigir rótulos e gerar
-candidatos após aprovação. O cidadão acompanha em Perfil. O modelo publicado
-não muda sem avaliação independente. Veja `docs/operacao_secretaria.md`.
+- [Proposta](#proposta)
+- [Recursos e perfis](#recursos-e-perfis)
+- [Escopo](#escopo)
+- [Pipeline de análise](#pipeline-de-análise)
+- [Execução local](#execução-local)
+- [Banco e autenticação](#banco-e-autenticação)
+- [Testes e publicação](#testes-e-publicação)
+- [Aprendizado supervisionado](#aprendizado-supervisionado)
+- [Estrutura](#estrutura)
+- [Próximas entregas](#próximas-entregas)
+- [Documentação e direitos de uso](#documentação-e-direitos-de-uso)
 
-Estrutura principal implementada:
+## Proposta
 
-- estrutura do projeto;
-- configuração centralizada;
-- classes iniciais configuráveis;
-- captura web rastreável por Wikimedia Commons, Openverse e TACO;
-- base de orientações separada do modelo;
-- destinos visuais de descarte por classe;
-- impactos ambientais do mau descarte;
-- experiência visual institucional da Secretaria do Meio Ambiente, com linguagem de portal municipal sem copiar marca oficial;
-- visitantes por sessão e login OIDC administrativo (requer credenciais);
-- campanha ambiental com missões, pontos persistentes e recompensas configuráveis;
-- denúncia de mau descarte com triagem por imagem e revisão administrativa;
-- base local de pontos de coleta filtrável por material;
-- plano de fotos por classe para fortalecer o dataset;
-- validação básica de imagens;
-- filtragem e segmentação adaptativas;
-- reconhecimento por baseline com rejeição por baixa confiança;
-- câmera via navegador e modo EcoScan Live;
-- análise exploratória de dataset;
-- ingestão de imagens do grupo para `data/raw`;
-- manifesto de uploads e bloqueio de duplicatas exatas;
-- preparação automática das imagens para reconhecimento;
-- geração de relatórios em `reports/dataset_analysis`;
-- testes automatizados com `unittest`;
-- documentação acadêmica inicial.
+O EcoScan procura reduzir dúvidas sobre separação e destinação de resíduos do dia a dia. A experiência começa pela foto, apresenta uma hipótese de categoria e orienta o descarte; o participante pode reportar um erro para revisão da equipe. Missões e conteúdo educativo complementam o fluxo.
 
-O reconhecimento atual usa uma baseline. O modelo final por transfer learning depende das fotos reais do grupo, curadoria, split e avaliação comparativa.
+O projeto torna observáveis as etapas de processamento de imagem do trabalho acadêmico: métodos utilizados, comparação antes/depois, máscara e regiões encontradas. Os requisitos acadêmicos estão no [checklist da APS](docs/checklist_aps.md); a interface pública usa linguagem de produto.
 
-## Classes configuradas
+## Recursos e perfis
 
-As classes configuradas em `config/settings.json` são:
+| Perfil | Recursos | Condições |
+| --- | --- | --- |
+| Visitante | Analisar foto, consultar descarte, coleta e conteúdo educativo | Análise temporária; não acumula participação persistente |
+| Participante | Recursos públicos, correções consentidas, protocolos e participação | Cadastro, confirmação do e-mail e login |
+| Analista | Revisar correções, responder protocolos, consultar cadastros e operar ferramentas de gestão | Identidade verificada e autorização explícita |
 
-- `plastic`
-- `paper_cardboard`
-- `metal`
-- `glass`
-- `organic`
-- `battery`
-- `electronic`
-- `lamp`
-- `medicine`
-- `cooking_oil`
-- `aerosol`
-- `chemical_packaging`
+O parâmetro de perfil na URL **não concede acesso administrativo**. O mesmo link público atende participantes e analistas; os recursos dependem da autenticação.
 
-Oito classes já atingiram o volume bruto mínimo de 50 imagens. `medicine`, `cooking_oil`, `aerosol` e `chemical_packaging` estão estruturadas e possuem base semente, mas ainda precisam de mais captura e curadoria antes de serem tratadas como reconhecimento confiável.
+| Área do participante | Finalidade |
+| --- | --- |
+| Escanear | Tirar/enviar foto e consultar resultado com orientação |
+| Mapa | Consultar coleta em São Paulo e abrir rotas externas |
+| Descarte | Orientação por material, incluindo casos de confirmação manual |
+| Aprender | Por que reciclar, possíveis novos produtos e fontes consultadas |
+| Missões | Atividades educativas e participação vinculada ao perfil |
+| Denunciar | Relatos de descarte inadequado; fluxo distinto da correção de reconhecimento |
+| Perfil | Participação e protocolos vinculados à conta |
+
+**Coleta:** a base auditada em 20/09/2026 contém seis ecopontos, não todos os pontos de São Paulo. Há acesso ao mapa municipal completo. A base não possui coordenadas verificadas para ordenar por proximidade, nem aceitação presumida de pilhas e eletrônicos. Veja a [auditoria](docs/education_and_collection_audit.md).
+
+## Escopo
+
+As seis categorias ativas estão em [config/settings.json](config/settings.json). Os objetos abaixo são alvos de coleta e avaliação, não uma certificação de desempenho.
+
+| Categoria | Objetos prioritários | Variações importantes |
+| --- | --- | --- |
+| `plastic` | Garrafa PET, pote e frasco rígido vazio | Transparência, cor, rótulo e deformação |
+| `metal` | Lata de bebida ou conserva vazia | Inteira, amassada, achatada, com/sem rótulo |
+| `paper_cardboard` | Caixa, folha e jornal | Montado, dobrado, rasgado e impresso |
+| `glass` | Garrafa e pote de embalagem | Cores e transparência; cacos são casos difíceis |
+| `battery` | Pilhas domésticas AA/AAA | Marca, tamanho e agrupamento; outras baterias exigem revisão |
+| `electronic` | Celular, mouse e carregador de celular | Frente, verso, lateral e cabos |
+
+Óleo de cozinha e medicamentos têm **orientação assistida**, não reconhecimento automático do conteúdo. Orgânicos e alimentos estão fora do escopo. Não manipule resíduos perigosos para melhorar um teste. Veja [escopo e variações](docs/escopo_e_variacoes.md).
+
+## Pipeline de análise
+
+```mermaid
+flowchart LR
+    A[Foto] --> B[Validação e preparação]
+    B --> C[Filtragem adaptativa]
+    C --> D[Segmentação e regiões]
+    D --> E[Classificação e verificações]
+    E --> F[Resultado ou incerteza]
+    F --> G[Orientação de descarte]
+    F --> H[Correção consentida]
+    H --> I[Revisão humana]
+```
+
+1. **Entrada:** validação do arquivo, leitura RGB, redimensionamento e diagnóstico de qualidade.
+2. **Filtragem:** comparação heurística de sequências com Gaussiano, mediana, bilateral e CLAHE, incluindo a opção de não filtrar.
+3. **Segmentação:** seleção entre Otsu, limiares em HSV e GrabCut; geração de máscara e análise de regiões.
+4. **Reconhecimento:** classificação, verificações de material e restrição às categorias do piloto.
+5. **Apresentação:** original/processamento, método escolhido, regiões e orientação quando houver resultado aceito.
+
+O modo adaptativo usa métricas e regras: não prova que escolheu o melhor método para toda imagem. O mapa visual de regiões **não é imagem térmica nem explicação Grad-CAM**. Regiões segmentadas não equivalem a objetos semanticamente identificados.
+
+O serviço suporta baseline, KNN visual, SVM e Keras. Sem um modelo final `.keras`, o artefato `models/vision_classifier.npz` tem prioridade quando disponível. Configurar MobileNetV2 não significa que ela já esteja treinada ou publicada. Veja o [pipeline](src/ecoscan/app/pipeline.py) e o [serviço de análise](src/ecoscan/services/analysis_service.py).
+
+## Execução local
+
+Pré-requisitos: Git e Python **3.11 ou superior**; **3.12** é recomendado para compatibilidade com treinamento opcional. O clone exige permissão caso o repositório esteja privado. O dataset completo não acompanha o Git.
+
+```bash
+git clone https://github.com/Gabrielhamad/ecoscan.git
+cd ecoscan
+python -m venv .venv
+```
+
+Ative o ambiente conforme o sistema:
+
+```powershell
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+```
+
+```bash
+# Linux/macOS
+source .venv/bin/activate
+```
+
+Instale e execute a partir da raiz do repositório:
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pip install --no-deps -e .
+python -m streamlit run streamlit_app.py
+```
+
+Abra `http://localhost:8501`. Se a porta estiver ocupada, use `python -m streamlit run streamlit_app.py --server.port 8502`. Sem credenciais de nuvem, é possível experimentar como visitante; cadastro e persistência compartilhada exigem configuração.
+
+**Celular:** o `localhost` do aparelho não é o computador. Para testes remotos, use a URL pública HTTPS. O seletor de câmera/galeria depende do navegador. O **EcoScan Live** é um servidor separado e não é publicado automaticamente com o Streamlit. Veja [acesso multidispositivo](docs/acesso_multidispositivo.md) e [câmera ao vivo](docs/live_camera_mobile.md).
+
+## Banco e autenticação
+
+O backend integra Supabase Auth, PostgreSQL e Storage privado. Preparar um ambiente novo é responsabilidade do mantenedor, não de cada colega que vai testar.
+
+1. Aplicar, na ordem, [migration 001](migrations/001_contributions.sql) e [migration 002](migrations/002_operational_records.sql).
+2. Conferir RLS e bucket privado, sem liberar acesso direto público às tabelas.
+3. Configurar credenciais somente em `.streamlit/secrets.toml` local ou nos Secrets da hospedagem.
+4. Configurar SMTP, URL de retorno e confirmação de e-mail; testar entrega antes de liberar cadastro.
+5. Autorizar analistas explicitamente e testar isolamento entre contas.
+
+Exemplo mínimo para **Supabase Auth**, com valores fictícios:
+
+```toml
+[persistence]
+url = "https://SEU_PROJETO.supabase.co"
+service_key = "CHAVE_PRIVADA_SOMENTE_NO_SERVIDOR"
+operations_enabled = true
+
+[access]
+public_signup_enabled = false
+supabase_admin_emails = []
+```
+
+Ative `public_signup_enabled` somente após validar SMTP e confirmação. Autorize apenas e-mails verificados. Não copie o bloco OIDC do [exemplo completo](.streamlit/secrets.example.toml) sem configurar esse provedor: OIDC é uma alternativa, não requisito do login Supabase.
+
+| Informação | Persistência implementada |
+| --- | --- |
+| Identidade e confirmação de e-mail | Supabase Auth |
+| Correções de reconhecimento, revisão e resposta | PostgreSQL e foto no Storage privado, quando configurados |
+| Pontos e registros de testes | PostgreSQL com `operations_enabled = true` e migration 002 |
+| Campanhas, denúncias cívicas e artefatos de treino | Arquivos locais; ainda não totalmente migrados |
+| Histórico técnico local | Não deve ser tratado como histórico durável compartilhado |
+
+Falha do banco configurado não deve virar gravação local silenciosa. Arquivos locais da hospedagem não garantem durabilidade. A chave privilegiada é exclusiva do servidor; a aplicação também valida identidade e acesso. Veja [banco](docs/banco_gratuito.md), [login](docs/login_piloto.md) e [aceite](docs/aceite_banco_piloto.md).
+
+## Testes e publicação
+
+Com o pacote instalado em modo editável:
+
+```bash
+python -m unittest discover -s tests
+```
+
+A suíte cobre processamento, serviços, autorização, persistência com simulações e partes da interface. Não comprova acurácia, entrega de e-mail, integração real da nuvem ou funcionamento em todos os celulares. O [guia do grupo](docs/guia_do_grupo.md) complementa a suíte com testes manuais.
+
+Para publicar, envie alterações revisadas ao repositório ligado ao Streamlit e confira a implantação e os logs. Um `git push` bem-sucedido não comprova que a nova versão já está disponível. Veja [hospedagem](docs/hospedagem_gratuita.md).
+
+## Aprendizado supervisionado
+
+```text
+Foto com erro + consentimento + categoria sugerida
+    -> protocolo -> revisão do analista -> aprovação ou rejeição
+    -> exportação das aprovadas -> curadoria e treino local
+    -> avaliação independente -> decisão de publicação
+```
+
+**Reportar ou aprovar uma imagem não altera automaticamente o modelo ativo.** Com persistência remota, o treino de candidatos na hospedagem está bloqueado; o fluxo previsto é exportar e treinar localmente. Separe dados por objeto/cena antes de gerar variações para evitar vazamento entre treino e teste.
+
+Avalie precisão, recall, F1, matriz de confusão, rejeição de desconhecidos e fotos reais. Para vídeo, avalie também latência e estabilidade. Não substitua o modelo com base somente no acerto das imagens usadas no treino. Veja [operação da secretaria](docs/operacao_secretaria.md) e [gestão do dataset](docs/gestao_dataset_e_classes.md).
 
 ## Estrutura
 
 ```text
-ecoscan/
-  config/
-    collection_points.json
-  data/
-  raw/
-    aerosol/
-    battery/
-    chemical_packaging/
-    cooking_oil/
-    electronic/
-    glass/
-    lamp/
-    medicine/
-    metal/
-    organic/
-    paper_cardboard/
-    plastic/
-    processed/
-    train/
-    validation/
-    test/
-  docs/
-  logs/
-  models/
-  notebooks/
-  reports/
-  scripts/
-  src/ecoscan/
-    app/
-    classification/
-    disposal/
-    image_processing/
-    metrics/
-    segmentation/
-    services/
-    ui/
-    utils/
-  tests/
+streamlit_app.py          Entrada da aplicação hospedada
+src/ecoscan/
+  app/                   Pipeline de processamento
+  image_processing/      Validação, qualidade e filtros
+  segmentation/          Máscaras, seleção adaptativa e regiões
+  classification/        Atributos e classificadores
+  training/              Treinamento opcional por transferência
+  services/              Casos de uso, identidade e persistência
+  disposal/              Orientações e pontos de coleta
+  live_camera/           Servidor e rastreamento experimental
+  ui/                    Interface Streamlit
+config/                  Classes, parâmetros, campanhas e orientações
+migrations/              Esquema e proteções do banco
+templates/               Modelo de e-mail de confirmação
+assets/                  Recursos visuais
+models/                  Artefatos de inferência selecionados
+data/                    Dados locais; originais e splits fora do Git
+scripts/                 Ferramentas de análise, treino e operação
+tests/                   Testes automatizados
+docs/                    Documentação técnica e acadêmica
+reports/ e logs/          Saídas locais, em geral fora do Git
 ```
 
-## Instalação
+## Próximas entregas
 
-Recomendado para a APS: Python 3.12.
+- Validar ponta a ponta: cadastro, confirmação, analista, reporte e resposta entre contas reais.
+- Melhorar reconhecimento com curadoria e avaliação independente por classe e estado.
+- Migrar campanhas e denúncias para armazenamento compartilhado durável.
+- Completar recuperação de senha e gestão de sessões; fortalecer proteção contra abuso.
+- Definir retenção, exclusão, backups e procedimento de incidentes antes do uso amplo.
+- Ampliar coleta com fontes auditáveis e coordenadas verificadas.
+- Validar acessibilidade e dispositivos reais; medir a câmera separadamente.
 
-```powershell
-cd ecoscan
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-```
+Não há resultado medido de massa reciclada, emissões evitadas ou renda gerada pelo EcoScan. Fotos, pontos e missões não comprovam entrega física.
 
-Se o alias `python` do Windows Store interferir, use o caminho do Python instalado na máquina ou ajuste o PATH.
+## Documentação e direitos de uso
 
-## Rodar para PC e celular
+Comece pelo [índice de documentação](docs/README.md). Documentos de fases anteriores podem conter escopos históricos; código/configuração e guias atuais orientam a operação. README revisado em **23/09/2026**, sem substituir uma verificação do serviço hospedado.
 
-Modo recomendado para teste local, celular na mesma rede e apresentacao:
+Não publique senhas, chaves, exportações de usuários ou fotos pessoais em issues e commits. Dados de treinamento exigem consentimento ou licença compatível e rastreabilidade. Remover metadados não remove pessoas ou documentos visíveis.
 
-```powershell
-cd ecoscan
-python scripts\ecoscan_access.py --restart
-```
-
-Ou execute o launcher:
-
-```powershell
-.\run_ecoscan_rede.ps1
-```
-
-O script inicia o app principal e o EcoScan Live, valida as portas e imprime os links corretos para:
-
-- usuario no PC;
-- admin no PC;
-- usuario no celular ou outro PC da mesma rede;
-- camera ao vivo.
-
-Para apenas conferir os links atuais:
-
-```powershell
-python scripts\ecoscan_access.py --check-only
-```
-
-Importante: o IP da rede pode mudar. Nao use link antigo sem rodar a checagem. A camera ao vivo no celular pode exigir HTTPS por regra do navegador; o upload de imagem funciona em HTTP local. Para uso por qualquer pessoa fora da rede, publique o app em HTTPS. Veja `docs/acesso_multidispositivo.md`.
-
-Para organizar teste remoto com colegas em outros lugares, use `docs/teste_remoto_grupo.md`. Quando o app errar, o formulario "O reconhecimento errou?" salva a imagem e a classe correta em `reports/recognition_feedback`.
-
-## Hospedar gratuito para o grupo
-
-Para uso por colegas em lugares diferentes, o caminho recomendado é publicar o app principal no Streamlit Community Cloud.
-
-Arquivos já preparados:
-
-- `streamlit_app.py`
-- `requirements.txt`
-- `runtime.txt`
-- `.streamlit/config.toml`
-- modelos leves liberados em `.gitignore`
-
-Passo curto:
-
-```text
-1. Suba o projeto para um repositório GitHub.
-2. Entre em https://share.streamlit.io.
-3. Crie um app apontando para streamlit_app.py.
-4. Compartilhe a URL https://NOME-DO-APP.streamlit.app com o grupo.
-```
-
-No gratuito, use upload/câmera do app principal. O EcoScan Live na porta `8765` continua como recurso local ou para uma hospedagem HTTPS dedicada. Veja `docs/hospedagem_gratuita.md`.
-
-Para gerar o checklist:
-
-```powershell
-python scripts\check_deployment_ready.py
-```
-
-## Preparar dataset
-
-Coloque as imagens em pastas por classe dentro de `data/raw`:
-
-```text
-data/raw/
-  aerosol/
-  plastic/
-  paper_cardboard/
-  metal/
-  glass/
-  organic/
-  battery/
-  electronic/
-  lamp/
-  medicine/
-  cooking_oil/
-  chemical_packaging/
-```
-
-Formatos aceitos inicialmente: JPG, JPEG e PNG.
-
-## Analisar dataset
-
-```powershell
-cd ecoscan
-python scripts\analyze_dataset.py --dataset data\raw --output reports\dataset_analysis
-python scripts\prepare_dataset_images.py --source data\raw --output data\processed --overwrite
-```
-
-O script gera:
-
-- `dataset_analysis.json`
-- `class_distribution.csv`
-- `resolution_distribution.csv`
-- `invalid_images.csv`
-- `potential_issues.txt`
-- `random_examples.jpg`
-- `class_distribution.png`
-- `resolution_distribution.png`
-
-## Capturar imagens abertas da web
-
-Para criar ou ampliar uma base semente a partir de imagens abertas com manifesto de licença:
-
-```powershell
-cd ecoscan
-python scripts\capture_wikimedia_dataset.py --images-per-class 50
-python scripts\capture_openverse_dataset.py --images-per-class 50 --classes lamp,medicine,cooking_oil,aerosol,chemical_packaging
-python scripts\capture_taco_dataset.py --images-per-class 50 --classes medicine,aerosol
-python scripts\analyze_dataset.py --dataset data\raw --output reports\dataset_analysis
-```
-
-As capturas geram imagens em `data/raw/<classe>` e manifestos de atribuição em `reports/web_capture`, `reports/openverse_capture` e `reports/taco_capture`.
-
-Essa base serve para desenvolver e demonstrar o pipeline. Para treinamento final, revise visualmente as imagens, remova exemplos fora da classe e considere complementar com datasets maiores documentados em `docs/dataset_web_research.md`.
-
-Depois de capturar imagens, consulte também `docs/dataset_capture_results.md` e as grades `reports/dataset_analysis/class_examples_<classe>.jpg`.
-
-## Testes
-
-Sem instalar `pytest`, os testes podem ser executados com:
-
-```powershell
-cd ecoscan
-$env:PYTHONPATH="src"
-python -m unittest discover -s tests
-```
-
-## Próximas fases
-
-Fases 2 e 3 implementadas:
-
-- carregamento de imagem para uso do usuário;
-- redimensionamento e normalização;
-- filtragem adaptativa com diagnóstico de qualidade e comparação de sequências;
-- experimentos com filtros;
-- comparação visual lado a lado.
-- segmentação modular e adaptativa;
-- análise de elementos visuais segmentados;
-- experimentos com threshold, HSV, contornos e GrabCut;
-- documentação dos efeitos observados.
-
-Scripts úteis:
-
-```powershell
-python scripts\run_processing_demo.py --image data\raw\metal\metal_0001_12-ounce-aluminum-soda-can-32167233397.jpg --filter auto --segmentation auto
-python scripts\compare_filters.py --image data\raw\metal\metal_0001_12-ounce-aluminum-soda-can-32167233397.jpg
-python scripts\compare_segmentation.py --image data\raw\metal\metal_0001_12-ounce-aluminum-soda-can-32167233397.jpg
-```
-
-Detalhes técnicos estão em `docs/fase_2_3_processamento.md`.
-
-Fases 4 e 5:
-
-- preparar dataset final;
-- criar baseline simples;
-- baseline;
-- transfer learning;
-- treinamento;
-- avaliação com accuracy, precision, recall, F1-score e matriz de confusão.
-
-Fase 4 inicial:
-
-```powershell
-python scripts\prepare_dataset_images.py --source data\raw --output data\processed --overwrite
-python scripts\split_dataset.py --source data\processed --overwrite
-python scripts\train_baseline.py
-```
-
-Detalhes em `docs/fase_4_baseline.md`.
-
-MVP inicial com baseline:
-
-```powershell
-python scripts\run_inference.py --image data\raw\metal\metal_0001_12-ounce-aluminum-soda-can-32167233397.jpg
-python scripts\run_streamlit_app.py
-```
-
-A interface Streamlit está em `src/ecoscan/ui/streamlit_app.py`. Detalhes em `docs/fase_6_7_mvp_inicial.md`.
-
-Detecção por câmera:
-
-```powershell
-python scripts\run_streamlit_app.py
-```
-
-Na aba `Análise`, selecione `Câmera`, capture uma foto e o sistema executa filtro, segmentação, análise de elementos e reconhecimento.
-
-Reconhecimento ao vivo com câmera traseira do celular:
-
-```powershell
-python scripts\ecoscan_access.py --restart
-```
-
-Abra a URL exibida pelo terminal no celular. A página `EcoScan Live` prioriza a câmera traseira (`facingMode: environment`), envia frames ao backend local e desenha caixas com IDs estáveis sobre os elementos segmentados. Em celular, o navegador pode exigir HTTPS para liberar câmera fora de `localhost`; nesse caso, use um túnel seguro, publique em HTTPS ou informe `--cert-file` e `--key-file` ao servidor live.
-
-Com OpenCV instalado, também existe captura direta por script:
-
-```powershell
-python scripts\capture_webcam.py --camera-index 0
-```
-
-## Adicionar fotos do grupo
-
-Pelo app, use a aba `Dataset` para enviar várias imagens a uma classe ativa. Os arquivos ficam em `data/raw/<classe>` e o manifesto fica em `reports/dataset_uploads/upload_manifest.csv`.
-
-Por script:
-
-```powershell
-python scripts\ingest_dataset_folder.py --source-folder C:\caminho\para\fotos --class-id battery
-```
-
-O fluxo completo para expandir classes e treinar novamente está em `docs/gestao_dataset_e_classes.md`.
-
-## Fluxo final do projeto
-
-Quando você adicionar mais fotos:
-
-```powershell
-python scripts\analyze_dataset.py --dataset data\raw --output reports\dataset_analysis
-python scripts\dataset_readiness.py
-python scripts\create_review_sheet.py
-python scripts\apply_review_sheet.py --overwrite
-python scripts\prepare_dataset_images.py --source data\curated --output data\processed --overwrite
-python scripts\split_dataset.py --source data\processed --overwrite
-python scripts\train_baseline.py
-python scripts\evaluate_model.py --model models\baseline_classifier.json --split test --output reports\evaluation\baseline_test
-python scripts\train_transfer.py
-python scripts\train_transfer.py --run
-python scripts\evaluate_model.py --model models\ecoscan_transfer.keras --split test --output reports\evaluation\transfer_test
-python scripts\run_acceptance_checks.py
-python scripts\project_status.py
-python scripts\project_audit.py
-python scripts\generate_academic_report.py
-python scripts\prepare_delivery_pack.py
-python scripts\run_streamlit_app.py
-```
-
-Documentos de referência:
-
-- `docs/fluxo_final_quando_adicionar_fotos.md`
-- `docs/gestao_dataset_e_classes.md`
-- `docs/pipeline_profissional_filtragem_reconhecimento.md`
-- `docs/arquitetura_final.md`
-- `docs/checklist_aps.md`
-- `docs/roadmap_profissional.md`
-- `docs/plano_execucao_em_grande_escala.md`
-- `docs/live_camera_mobile.md`
-- `reports/delivery_pack/indice_entrega.md`
+Não há licença de software declarada neste repositório. Não presuma autorização de redistribuição; o grupo deve definir uma licença e conferir separadamente os direitos dos datasets e recursos visuais. Para alterações, siga [CONTRIBUTING.md](CONTRIBUTING.md).
