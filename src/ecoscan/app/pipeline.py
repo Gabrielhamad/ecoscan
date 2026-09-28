@@ -33,9 +33,9 @@ from ecoscan.segmentation.morphology import MorphologyResult, apply_morphology
 
 @dataclass(frozen=True)
 class ProcessingPipelineOptions:
-    filter_name: str = "median"
+    filter_name: str = "auto"
     filter_parameters: dict[str, Any] | None = None
-    segmentation_name: str = "otsu"
+    segmentation_name: str = "auto"
     segmentation_parameters: dict[str, Any] | None = None
     morphology_name: str = "open_close"
     morphology_parameters: dict[str, Any] | None = None
@@ -91,8 +91,8 @@ def default_processing_options(config: AppConfig) -> ProcessingPipelineOptions:
     morphology = dict(config.segmentation.get("morphology", {}))
     operation = str(morphology.pop("default", "open_close"))
     return ProcessingPipelineOptions(
-        filter_name=str(config.filters.get("default", "median")),
-        segmentation_name=str(config.segmentation.get("default", "otsu")),
+        filter_name=str(config.filters.get("default", "auto")),
+        segmentation_name=str(config.segmentation.get("default", "auto")),
         morphology_name=operation,
         morphology_parameters=morphology,
     )

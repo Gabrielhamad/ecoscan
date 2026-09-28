@@ -73,7 +73,7 @@
     "save_images": false
   },
   "filters": {
-    "default": "median",
+    "default": "auto",
     "auto": {
       "candidate_sequences": [
         [
@@ -131,7 +131,7 @@
     }
   },
   "segmentation": {
-    "default": "otsu",
+    "default": "auto",
     "auto": {
       "candidate_methods": [
         "otsu",

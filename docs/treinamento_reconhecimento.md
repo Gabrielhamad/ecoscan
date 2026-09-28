@@ -54,13 +54,14 @@ O comando:
 - prepara cada foto com o pipeline adaptativo;
 - rejeita imagens com qualidade ou segmentação insuficiente;
 - gera novamente treino, validação e teste;
-- treina um candidato KNN visual;
+- compara classificadores visuais supervisionados e seleciona pelo macro-F1 de validação;
 - grava o manifesto e as métricas em
   `reports/recognition_training_candidate`;
-- salva o modelo em `models/vision_classifier_candidate.npz`;
+- salva o modelo em `models/vision_svm_classifier_candidate.joblib` (nome legado;
+  o algoritmo selecionado é registrado no relatório);
 - **não substitui o modelo ativo**.
 
-Para comparar um modelo visual supervisionado adicional:
+Para comparar outra configuração do classificador sem refazer a preparação:
 
 ```powershell
 python scripts\train_visual_svm.py `
@@ -72,6 +73,10 @@ python scripts\train_visual_svm.py `
 O limiar maior aumenta a abstenção: em dúvida, o app pede uma nova foto em vez
 de entregar uma orientação potencialmente errada. O número de imagens aceitas
 deve ser lido junto com precisão, recall, macro-F1 e matriz de confusão.
+O ciclo padrão usa limiar `0.25`, igual ao modelo do piloto. A preparação
+salva a imagem segmentada em PNG sem perdas; o classificador extrai dela os
+mesmos atributos usados na inferência. A configuração do pipeline e o hash
+do candidato são registrados em `training_run.json`.
 
 ## Critério de aprovação
 

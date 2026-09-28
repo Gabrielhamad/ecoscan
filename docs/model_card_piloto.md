@@ -8,7 +8,8 @@ não um modelo final de produção.
 
 - Classes: `plastic`, `paper_cardboard`, `metal`, `glass`, `battery`, `electronic`.
 - Descritores: RGB/HSV, HOG e LBP sobre a imagem preparada pelo pipeline.
-- Classificador: ensemble visual supervisionado selecionado pelo script SVM.
+- Classificador selecionado: Random Forest visual supervisionado. O nome do
+  arquivo contém `svm` por compatibilidade histórica; não descreve o algoritmo.
 - Limiar de aceitação do artefato: `0.25`; a decisão pública ainda passa por
   verificação de segurança e pode pedir confirmação.
 - Regras visuais adicionais: validações conservadoras para garrafas plásticas
@@ -16,14 +17,25 @@ não um modelo final de produção.
 
 ## Resultado da rodada disponível
 
-Na rodada local de 27/09/2026, com 723 imagens curadas, 672 passaram pela
-preparação automática e foram divididas em treino, validação e teste. O
-candidato selecionado apresentou:
+Na rodada local de 28/09/2026, com 723 imagens curadas, 672 passaram pela
+preparação automática e foram divididas por arquivo em treino, validação e
+teste. O candidato selecionado apresentou:
 
 | Conjunto | Acurácia top-1 | Macro-F1 | Observação |
 | --- | ---: | ---: | --- |
 | Validação | 40,0% | 39,1% | usado para selecionar o candidato |
-| Teste independente da rodada | 27,5% | 28,7% | ainda insuficiente para chamar de modelo final |
+| Teste separado da rodada | 27,5% | 28,7% | ainda insuficiente para chamar de modelo final |
+
+O split mantém duplicatas exatas juntas, mas **não isola necessariamente o mesmo
+objeto, cena ou sessão de captura**. Portanto, esta não é uma estimativa
+independente de desempenho em campo. No teste, 68 de 102 imagens ficaram sem
+rótulo aceito com limiar de 0,25. Precisão entre respostas aceitas e cobertura
+devem ser avaliadas separadamente.
+
+O processamento padrão da aplicação e do preparo do dataset foi alinhado para
+filtragem/segmentação adaptativas e morfologia. Uma nova rodada reproduziu o
+mesmo hash SHA-256 do modelo ativo (`7ff8f83c00a7fbae729bcadd9cbffcd827c08356a60b5d9f0df898d26e6bc500`)
+e as mesmas métricas; não houve ganho de reconhecimento nem troca de artefato.
 
 O limiar de 0,25 aumenta a rejeição de casos ambíguos, mas não corrige uma base
 com confusão entre classes. A taxa de abstenção precisa ser lida junto com a

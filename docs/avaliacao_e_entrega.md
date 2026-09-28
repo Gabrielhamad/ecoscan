@@ -176,6 +176,11 @@ oficial continuam necessários para declarar a entrega final aprovada.
 
 ## Adendo: práticas de processamento
 
+**Estado em 28/09/2026:** o perfil padrão do aplicativo passou a ser adaptativo
+para coincidir com a preparação usada no treino SVM. Os números abaixo são
+históricos e se referem ao perfil didático mediana/Otsu da rodada anterior;
+não representam o desempenho do perfil adaptativo atual.
+
 Após esta avaliação, foram integrados controles de morfologia binária, máscaras
 antes/depois, histogramas e experimento sintético. Consulte o
 [roteiro prático](pratica_processamento_imagens.md). Os números de reconhecimento

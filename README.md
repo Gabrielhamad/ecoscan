@@ -13,7 +13,9 @@ Aplicação web para celular e computador que combina processamento digital de i
 - [Proposta](#proposta)
 - [Recursos e perfis](#recursos-e-perfis)
 - [Escopo](#escopo)
+- [Tecnologias e arquitetura](#tecnologias-e-arquitetura)
 - [Pipeline de análise](#pipeline-de-análise)
+- [Sincronização do modelo](#sincronização-do-modelo)
 - [Execução local](#execução-local)
 - [Banco e autenticação](#banco-e-autenticação)
 - [Testes e publicação](#testes-e-publicação)
@@ -65,13 +67,30 @@ As seis categorias ativas estão em [config/settings.json](config/settings.json)
 
 Óleo de cozinha e medicamentos têm **orientação assistida**, não reconhecimento automático do conteúdo. Orgânicos e alimentos estão fora do escopo. Não manipule resíduos perigosos para melhorar um teste. Veja [escopo e variações](docs/escopo_e_variacoes.md).
 
+## Tecnologias e arquitetura
+
+| Camada | Tecnologia | Uso no projeto |
+| --- | --- | --- |
+| Aplicação | Python 3.11+ e Streamlit | Interface para celular e computador, sessão e painéis |
+| Imagens | Pillow, NumPy e OpenCV | Leitura com orientação EXIF, filtros, segmentação e morfologia |
+| Visão computacional | scikit-image e scikit-learn | Descritores HOG/LBP, histogramas e seleção de classificador visual supervisionado |
+| Persistência | Supabase Auth, PostgreSQL e Storage privado | Contas confirmadas, protocolos e fotos consentidas |
+| Publicação | GitHub e Streamlit Community Cloud | Código versionado e implantação da aplicação pública |
+
+O fluxo principal é `streamlit_app.py` → `ui/streamlit_app.py` →
+`services/analysis_service.py` → `app/pipeline.py` → `classification/` →
+`disposal/`. O módulo `services/` também contém autenticação, revisão e
+persistência. A [arquitetura atual](docs/arquitetura_atual.md) descreve as
+fronteiras e o que ainda depende de arquivos locais. TensorFlow/MobileNetV2
+está configurado para um experimento futuro, mas não é o modelo publicado.
+
 ## Pipeline de análise
 
 ```mermaid
 flowchart LR
     A[Foto] --> B[Validação e preparação]
-    B --> C[Filtro mediana]
-    C --> D[Segmentação Otsu]
+    B --> C[Filtragem adaptativa]
+    C --> D[Segmentação adaptativa]
     D --> M[Abertura e fechamento da máscara]
     M --> E[Classificação e verificações]
     E --> F[Resultado ou incerteza]
@@ -81,8 +100,8 @@ flowchart LR
 ```
 
 1. **Entrada:** validação do arquivo, leitura RGB, redimensionamento e diagnóstico de qualidade.
-2. **Filtragem:** mediana 3×3 por padrão; modo adaptativo, Gaussiano, bilateral, CLAHE e controle sem filtro disponíveis.
-3. **Segmentação:** Otsu por padrão; HSV, GrabCut e seleção adaptativa disponíveis.
+2. **Filtragem:** seleção adaptativa entre controle sem filtro, Gaussiano, mediana, bilateral, CLAHE e combinações limitadas. Cada escolha e seus parâmetros são registrados.
+3. **Segmentação:** seleção adaptativa entre Otsu, HSV e GrabCut. O laboratório permite escolher manualmente um método para comparar resultados.
 4. **Morfologia aplicada:** abertura seguida de fechamento, com erosão/dilatação e elemento quadrado 3×3 por padrão; parâmetros e controle sem operação disponíveis.
 5. **Reconhecimento:** classificação, verificações de material e restrição às categorias do piloto.
 6. **Apresentação:** original/final e antes/depois de cada operação, diferenças, parâmetros, download das evidências em PNG/ZIP e orientação quando houver resultado aceito.
@@ -91,7 +110,24 @@ O [roteiro prático de processamento](docs/pratica_processamento_imagens.md) ori
 
 O modo adaptativo usa métricas e regras: não prova que escolheu o melhor método para toda imagem. O mapa visual de regiões **não é imagem térmica nem explicação Grad-CAM**. Regiões segmentadas não equivalem a objetos semanticamente identificados.
 
-O serviço suporta baseline, KNN visual, SVM e Keras. Sem um modelo final `.keras`, o SVM visual supervisionado tem prioridade quando disponível; o KNN visual é a alternativa leve. O artefato publicado do piloto possui cartão de modelo e métricas em [model_card_piloto.md](docs/model_card_piloto.md); ele ainda não deve ser descrito como reconhecimento final. Configurar MobileNetV2 não significa que ela já esteja treinada ou publicada. Veja o [pipeline](src/ecoscan/app/pipeline.py) e o [serviço de análise](src/ecoscan/services/analysis_service.py).
+O serviço suporta baseline, KNN visual, artefato visual supervisionado e Keras. Sem um modelo final `.keras`, o artefato `vision_svm_classifier.joblib` tem prioridade quando disponível; o KNN visual é a alternativa leve. Apesar do nome histórico do arquivo, a seleção atual escolheu **Random Forest** entre SVM, regressão logística e ensembles. O artefato publicado do piloto possui cartão de modelo e métricas em [model_card_piloto.md](docs/model_card_piloto.md); ele ainda não deve ser descrito como reconhecimento final. Configurar MobileNetV2 não significa que ela já esteja treinada ou publicada. Veja o [pipeline](src/ecoscan/app/pipeline.py) e o [serviço de análise](src/ecoscan/services/analysis_service.py).
+
+## Sincronização do modelo
+
+O app usa automaticamente as técnicas de imagem configuradas em
+`config/settings.json` antes de chamar o modelo ativo. Treino local e inferência
+agora leem o mesmo perfil padrão: filtragem adaptativa, segmentação adaptativa e
+abertura/fechamento da máscara. A base processada salva em PNG sem perdas a
+matriz RGB entregue ao classificador. O resultado mostra as operações efetivamente
+executadas naquela foto. Ajustes manuais no laboratório reprocessam somente a
+análise atual e podem produzir entradas diferentes das usadas no treino.
+
+**Alterar um filtro no código ou aprovar um reporte não modifica os parâmetros do
+classificador.** O ciclo `scripts/train_recognition_cycle.py` prepara as fotos curadas,
+cria treino/validação/teste e gera um candidato visual separado. O analista avalia
+as métricas e os erros reais antes de substituir o artefato ativo. O GitHub
+recebe a versão aprovada; o Streamlit atualiza a aplicação após a implantação.
+Consulte o [procedimento de treinamento](docs/treinamento_reconhecimento.md).
 
 ## Execução local
 
@@ -186,6 +222,15 @@ Foto com erro + consentimento + categoria sugerida
 
 **Reportar ou aprovar uma imagem não altera automaticamente o modelo ativo.** Com persistência remota, o treino de candidatos na hospedagem está bloqueado; o fluxo previsto é exportar e treinar localmente. Separe dados por objeto/cena antes de gerar variações para evitar vazamento entre treino e teste.
 
+```powershell
+python scripts\train_recognition_cycle.py --overwrite --min-quality-score 55 --min-per-class 20
+```
+
+O candidato padrão é `models/vision_svm_classifier_candidate.joblib` (nome legado,
+não garantia de algoritmo SVM) e o relatório fica em
+`reports/recognition_training_candidate/`. O script bloqueia
+o caminho do modelo ativo. O dataset de treino não é enviado ao repositório.
+
 Avalie precisão, recall, F1, matriz de confusão, rejeição de desconhecidos e fotos reais. Para vídeo, avalie também latência e estabilidade. Não substitua o modelo com base somente no acerto das imagens usadas no treino. O ciclo reproduzível está em [treinamento e preparação do reconhecimento](docs/treinamento_reconhecimento.md). Veja também [operação da secretaria](docs/operacao_secretaria.md) e [gestão do dataset](docs/gestao_dataset_e_classes.md).
 
 ## Estrutura
@@ -231,7 +276,7 @@ Não há resultado medido de massa reciclada, emissões evitadas ou renda gerada
 
 ## Documentação e direitos de uso
 
-Comece pelo [índice de documentação](docs/README.md). Documentos de fases anteriores podem conter escopos históricos; código/configuração e guias atuais orientam a operação. README revisado em **23/09/2026**, sem substituir uma verificação do serviço hospedado.
+Comece pelo [índice de documentação](docs/README.md). Documentos de fases anteriores podem conter escopos históricos; código/configuração e guias atuais orientam a operação. README revisado em **28/09/2026**.
 
 Não publique senhas, chaves, exportações de usuários ou fotos pessoais em issues e commits. Dados de treinamento exigem consentimento ou licença compatível e rastreabilidade. Remover metadados não remove pessoas ou documentos visíveis.
 

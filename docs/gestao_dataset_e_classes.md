@@ -74,7 +74,7 @@ Fontes automatizadas disponíveis:
 
 ```powershell
 python scripts\capture_wikimedia_dataset.py --images-per-class 50
-python scripts\capture_openverse_dataset.py --images-per-class 50 --classes lamp,medicine,cooking_oil,aerosol,chemical_packaging
+python scripts\capture_openverse_dataset.py --images-per-class 50 --classes plastic,paper_cardboard,metal,glass,battery,electronic
 ```
 
 Esses scripts salvam manifestos em:
@@ -104,7 +104,7 @@ Depois da importação:
 python scripts\analyze_dataset.py --dataset data\raw --output reports\dataset_analysis
 python scripts\create_review_sheet.py
 python scripts\apply_review_sheet.py --overwrite
-python scripts\split_dataset.py --source data\curated --overwrite
+python scripts\train_recognition_cycle.py --overwrite --min-quality-score 55 --min-per-class 20
 python scripts\run_acceptance_checks.py
 ```
 

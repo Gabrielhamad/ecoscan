@@ -32,11 +32,13 @@ a ementa oficial não foi fornecida.
       → reconhecimento e orientação
 
 A imagem original é preservada em memória. A máscara bruta e a máscara tratada
-são mantidas separadamente. O padrão executa **mediana 3×3 → Otsu → abertura +
-fechamento**, com elemento quadrado 3×3, uma iteração por primitiva e borda zero.
+são mantidas separadamente. O padrão seleciona **filtragem e segmentação
+adaptativas → abertura + fechamento**, com elemento quadrado 3×3, uma iteração
+por primitiva e borda zero. Para demonstrar especificamente mediana 3×3 e Otsu,
+selecione esses métodos no laboratório.
 A máscara tratada é aplicada ao RGB filtrado antes da classificação.
 Os parâmetros são configurados em config/settings.json; o avaliador também lê esses padrões.
-O modo adaptativo e os controles sem operação continuam disponíveis no laboratório.
+Os controles sem operação e os métodos manuais continuam disponíveis no laboratório.
 
 ## Conteúdo da disciplina e onde demonstrar
 

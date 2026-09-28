@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from collections import Counter
+from dataclasses import asdict
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -15,9 +17,10 @@ if str(PROJECT_ROOT / "scripts") not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
 from ecoscan.config import load_config
+from ecoscan.app.pipeline import default_processing_options
 from ecoscan.services.dataset_preparation import prepare_dataset_images
 from ecoscan.services.dataset_split import split_dataset
-from train_visual_knn import _iter_split_images, main as train_visual_knn
+from train_visual_svm import main as train_visual_svm
 
 
 def _image_count(path: Path, classes: tuple[str, ...], extensions: frozenset[str]) -> dict[str, int]:
@@ -52,9 +55,20 @@ def _guard_rebuild(config, overwrite: bool) -> None:
         )
 
 
+def _guard_candidate_output(config, output_model: Path) -> None:
+    active_paths = {
+        config.directories["models"] / "vision_svm_classifier.joblib",
+        config.directories["models"] / "vision_classifier.npz",
+        config.directories["models"] / "baseline_classifier.json",
+        config.project_root / str(config.model.get("output_path", "models/ecoscan_transfer.keras")),
+    }
+    if output_model.resolve() in {path.resolve() for path in active_paths}:
+        raise ValueError("O ciclo só pode salvar um candidato; o caminho do modelo ativo é protegido.")
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Prepare, split, tune and train a safe EcoScan recognition candidate."
+        description="Prepare, split and select a supervised visual model candidate for EcoScan."
     )
     parser.add_argument(
         "--source",
@@ -65,7 +79,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--output-model",
         type=Path,
-        default=PROJECT_ROOT / "models" / "vision_classifier_candidate.npz",
+        default=PROJECT_ROOT / "models" / "vision_svm_classifier_candidate.joblib",
         help="Candidate artifact. It never becomes active automatically.",
     )
     parser.add_argument(
@@ -75,6 +89,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--min-quality-score", type=int, default=55)
     parser.add_argument("--min-per-class", type=int, default=20)
+    parser.add_argument("--threshold", type=float, default=0.25)
     parser.add_argument(
         "--overwrite",
         action="store_true",
@@ -86,6 +101,14 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     config = load_config()
+    try:
+        _guard_candidate_output(config, args.output_model)
+    except ValueError as exc:
+        print(f"Treino interrompido: {exc}")
+        return 2
+    if not 0.0 < args.threshold <= 1.0:
+        print("Treino interrompido: --threshold deve estar entre 0 e 1.")
+        return 2
     source = (args.source or config.directories["curated_data"]).resolve()
     if not source.exists():
         print(f"Fonte não encontrada: {source}")
@@ -130,16 +153,22 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     args.report_dir.mkdir(parents=True, exist_ok=True)
-    train_exit = train_visual_knn([
+    train_exit = train_visual_svm([
         "--output-model", str(args.output_model),
         "--report-dir", str(args.report_dir),
+        "--threshold", str(args.threshold),
     ])
     if train_exit != 0:
         return int(train_exit)
+    selection = json.loads((args.report_dir / "visual_svm_summary.json").read_text(encoding="utf-8"))
 
     run = {
         "source": str(source),
         "classes": list(config.classes),
+        "model_family": "visual_supervised",
+        "selected_algorithm": selection["selected_candidate"],
+        "processing_options": asdict(default_processing_options(config)),
+        "config_sha256": hashlib.sha256(config.config_path.read_bytes()).hexdigest(),
         "source_counts": source_counts,
         "preparation": {
             "prepared": summary.prepared,
@@ -153,6 +182,7 @@ def main(argv: list[str] | None = None) -> int:
             "test": dict(Counter(record.class_id for record in split_records if record.split == "test")),
         },
         "candidate_model": str(args.output_model),
+        "candidate_sha256": hashlib.sha256(args.output_model.read_bytes()).hexdigest(),
         "active_model_changed": False,
         "next_step": "Revisar métricas e casos de confusão; promover somente após aceite independente.",
     }

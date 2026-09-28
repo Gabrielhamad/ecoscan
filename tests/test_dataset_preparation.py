@@ -4,8 +4,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import numpy as np
 from PIL import Image, ImageDraw
 
+from ecoscan.app.pipeline import default_processing_options, run_processing_pipeline
 from ecoscan.config import load_config
 from ecoscan.services.dataset_preparation import prepare_dataset_images
 
@@ -40,6 +42,9 @@ class DatasetPreparationTests(unittest.TestCase):
             self.assertTrue((output_dir / "plastic" / "sample_processed.png").exists())
             self.assertTrue((report_dir / "preparation_manifest.csv").exists())
             self.assertTrue((report_dir / "preparation_summary.md").exists())
+            pipeline = run_processing_pipeline(image_path, load_config(), default_processing_options(load_config()))
+            with Image.open(output_dir / "plastic" / "sample_processed.png") as saved:
+                np.testing.assert_array_equal(np.asarray(saved), pipeline.segmentation_result.image)
 
 
 if __name__ == "__main__":

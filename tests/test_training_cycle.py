@@ -3,14 +3,22 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.train_recognition_cycle import _guard_rebuild, _image_count, build_parser
+from scripts.train_recognition_cycle import _guard_candidate_output, _guard_rebuild, _image_count, build_parser
+from ecoscan.config import load_config
 
 
 class TrainingCycleTests(unittest.TestCase):
     def test_candidate_is_the_safe_default(self):
         args = build_parser().parse_args([])
-        self.assertTrue(str(args.output_model).endswith("vision_classifier_candidate.npz"))
+        self.assertTrue(str(args.output_model).endswith("vision_svm_classifier_candidate.joblib"))
+        self.assertEqual(args.threshold, 0.25)
         self.assertFalse(args.overwrite)
+
+    def test_active_model_paths_are_protected(self):
+        config = load_config()
+        with self.assertRaises(ValueError):
+            _guard_candidate_output(config, config.directories["models"] / "vision_svm_classifier.joblib")
+        _guard_candidate_output(config, config.directories["models"] / "vision_svm_classifier_candidate.joblib")
 
     def test_counts_only_configured_extensions_and_classes(self):
         with tempfile.TemporaryDirectory() as tmp:

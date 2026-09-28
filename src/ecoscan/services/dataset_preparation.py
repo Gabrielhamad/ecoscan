@@ -7,7 +7,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
-from ecoscan.app.pipeline import ProcessingPipelineOptions, run_processing_pipeline
+from ecoscan.app.pipeline import default_processing_options, run_processing_pipeline
 from ecoscan.config import AppConfig
 from ecoscan.image_processing.image_io import save_image
 
@@ -200,14 +200,14 @@ def prepare_dataset_images(
     counts_by_class = {class_id: 0 for class_id in config.classes}
     rejected_by_class = {class_id: 0 for class_id in config.classes}
 
-    options = ProcessingPipelineOptions(filter_name="auto", segmentation_name="auto")
+    options = default_processing_options(config)
     for class_id, source in _iter_raw_images(source_root, config.classes, config.allowed_extensions):
         try:
             result = run_processing_pipeline(source, config, options)
             target = output_root / class_id / f"{source.stem}_processed.png"
             status, reason = _acceptance_reason(result.metadata, min_quality_score)
             if status == "prepared":
-                save_image(result.model_input_preview, target)
+                save_image(result.segmentation_result.image, target)
                 counts_by_class[class_id] += 1
             else:
                 rejected_by_class[class_id] += 1
@@ -304,7 +304,7 @@ def _write_reports(
             "",
             "## Critério técnico",
             "",
-            "Cada imagem aceita passou pelo pipeline de redimensionamento, filtragem adaptativa, segmentação adaptativa, análise de elementos e avaliação de qualidade de captura. A imagem salva em `data/processed` é a versão 224x224 já preparada para extração de características.",
+            "Cada imagem aceita passou pelo pipeline configurado de redimensionamento, filtragem, segmentação, morfologia, análise de elementos e avaliação de qualidade de captura. A imagem salva em `data/processed` é exatamente a matriz RGB entregue ao classificador, em PNG sem perdas.",
             "",
             "Essa etapa não substitui curadoria humana; ela remove casos tecnicamente fracos e registra filtro/segmentação usados para auditoria.",
             "",

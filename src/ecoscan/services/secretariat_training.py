@@ -9,7 +9,7 @@ from uuid import uuid4
 
 import numpy as np
 
-from ecoscan.app.pipeline import ProcessingPipelineOptions, run_processing_pipeline
+from ecoscan.app.pipeline import default_processing_options, run_processing_pipeline
 from ecoscan.classification.visual_features import extract_visual_features
 from ecoscan.classification.visual_knn import VisualKnnClassifier
 from ecoscan.services.contribution_store import persistent_enabled
@@ -93,8 +93,9 @@ def _train(config, reviewer):
         raw_base = baseline.features * baseline.feature_std + baseline.feature_mean
         features, labels = [], []
         for row in unique.values():
-            result = run_processing_pipeline(contribution_image(config, row), config,
-                                             ProcessingPipelineOptions(filter_name="auto", segmentation_name="auto"))
+            result = run_processing_pipeline(
+                contribution_image(config, row), config, default_processing_options(config)
+            )
             features.append(extract_visual_features(result.segmentation_result.image, baseline.metadata.feature_config))
             labels.append(row["expected_class"])
         # Refit normalization over old + reviewed examples, retaining legacy rejection classes.
