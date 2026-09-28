@@ -169,8 +169,17 @@ def _build_candidates() -> list[VisualCandidate]:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Train the EcoScan visual KNN classifier.")
-    parser.add_argument("--output-model", type=Path, default=PROJECT_ROOT / "models" / "vision_classifier.npz")
-    parser.add_argument("--report-dir", type=Path, default=PROJECT_ROOT / "reports" / "visual_training")
+    parser.add_argument(
+        "--output-model",
+        type=Path,
+        default=PROJECT_ROOT / "models" / "vision_classifier_candidate.npz",
+        help="Caminho do candidato; o modelo ativo só deve ser substituído após aceite.",
+    )
+    parser.add_argument(
+        "--report-dir",
+        type=Path,
+        default=PROJECT_ROOT / "reports" / "visual_training_candidate",
+    )
     parser.add_argument("--source", type=Path, default=None, help="Optional split root. Defaults to configured train/validation/test.")
     return parser
 

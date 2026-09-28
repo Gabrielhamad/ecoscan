@@ -14,6 +14,7 @@ from typing import Any
 from ecoscan.app.pipeline import ProcessingPipelineOptions
 from ecoscan.config import load_config
 from ecoscan.ui.identity import render_identity
+from ecoscan.ui.processing_lab import select_morphology_parameters, render_processing_lab
 from ecoscan.ui.education import render_education
 from ecoscan.ui.learning import render_contribution, render_review, render_scope, render_citizen_protocols
 from ecoscan.disposal.collection_points import (
@@ -2906,9 +2907,10 @@ def _render_processing_evidence(
         )
         stage_cols = st.columns(3)
         stage_cols[0].image(pipeline.segmentation_result.image, caption="4. Imagem segmentada", width="stretch")
-        stage_cols[1].image(pipeline.model_input_preview, caption="5. Entrada enviada ao modelo", width="stretch")
+        stage_cols[1].image(pipeline.model_input_preview, caption="5. Prévia normalizada; a preparação final depende do classificador", width="stretch")
         stage_cols[2].image(pipeline.element_overlay, caption="6. Componentes visuais", width="stretch")
 
+        render_processing_lab(st, pipeline)
         _render_photo_processing_summary(st, pipeline)
         _render_filter_decision(st, pipeline)
         _render_segmentation_decision(st, pipeline)
@@ -2933,7 +2935,7 @@ def _render_recognition_feedback_form(
     render_contribution(st, config, result, active_profile)
 
 
-def _select_filter_parameters(st: Any, filter_name: str) -> dict[str, Any]:
+def _select_filter_parameters(st: Any, filter_name: str, config=None) -> dict[str, Any]:
     if filter_name == "auto":
         st.caption("Pipeline adaptativo por brilho, contraste, nitidez, densidade de bordas e preservação de cor.")
         return {}
@@ -2943,7 +2945,8 @@ def _select_filter_parameters(st: Any, filter_name: str) -> dict[str, Any]:
             "sigma": st.slider("Sigma", 0.1, 5.0, 1.0, 0.1),
         }
     if filter_name == "median":
-        return {"kernel_size": st.select_slider("Kernel mediana", options=[3, 5, 7, 9], value=5)}
+        return {"kernel_size": st.select_slider("Kernel mediana", options=[3, 5, 7, 9],
+                                                value=config.filters.get("median", {}).get("kernel_size", 3) if config else 3)}
     if filter_name == "bilateral":
         return {
             "diameter": st.select_slider("Diâmetro bilateral", options=[5, 7, 9, 11], value=9),
@@ -4575,6 +4578,7 @@ def _render_admin_tab(
 def _input_signature(uploaded_file: Any, source_kind: str, options: ProcessingPipelineOptions) -> str:
     data = uploaded_file.getvalue()
     payload = {
+        "processing_version": "applied-evidence-v1",
         "source_kind": source_kind,
         "name": uploaded_file.name,
         "size": len(data),
@@ -4584,6 +4588,8 @@ def _input_signature(uploaded_file: Any, source_kind: str, options: ProcessingPi
             "filter_parameters": options.filter_parameters or {},
             "segmentation_name": options.segmentation_name,
             "segmentation_parameters": options.segmentation_parameters or {},
+            "morphology_name": options.morphology_name,
+            "morphology_parameters": options.morphology_parameters or {},
         },
     }
     return hashlib.sha256(
@@ -4613,10 +4619,14 @@ def main() -> None:
     st.set_page_config(page_title="EcoScan", layout="wide", initial_sidebar_state="collapsed")
     _render_theme(st)
 
-    filter_name = "auto"
+    from ecoscan.app.pipeline import default_processing_options
+    defaults = default_processing_options(config)
+    filter_name = defaults.filter_name
     filter_parameters: dict[str, Any] = {}
-    segmentation_name = "auto"
+    segmentation_name = defaults.segmentation_name
     segmentation_parameters: dict[str, Any] = {}
+    morphology_name = defaults.morphology_name
+    morphology_parameters: dict[str, Any] = {}
     save_history = False
 
     active_profile = render_identity(st)
@@ -4632,37 +4642,21 @@ def main() -> None:
             filter_name = st.selectbox(
                 "Filtro",
                 ["auto", "none", "gaussian", "median", "clahe", "sobel", "canny", "bilateral"],
-                index=0,
+                index=["auto", "none", "gaussian", "median", "clahe", "sobel", "canny", "bilateral"].index(defaults.filter_name),
             )
-            filter_parameters = _select_filter_parameters(st, filter_name)
+            filter_parameters = _select_filter_parameters(st, filter_name, config)
 
             segmentation_name = st.selectbox(
                 "Segmentação",
                 ["auto", "none", "otsu", "hsv_color", "grabcut"],
-                index=0,
+                index=["auto", "none", "otsu", "hsv_color", "grabcut"].index(defaults.segmentation_name),
             )
             segmentation_parameters = _select_segmentation_parameters(st, segmentation_name)
+            morphology_name, morphology_parameters = select_morphology_parameters(st, config.segmentation.get("morphology"))
             save_history = st.checkbox("Salvar no histórico local", value=False)
         else:
             st.header("Atendimento")
-            st.caption("O modo público usa processamento automático para manter a experiência simples.")
-            with st.expander("Opções avançadas"):
-                filter_name = st.selectbox(
-                    "Filtro",
-                    ["auto", "none", "gaussian", "median", "clahe", "sobel", "canny", "bilateral"],
-                    index=0,
-                    key="public_filter",
-                )
-                filter_parameters = _select_filter_parameters(st, filter_name)
-                segmentation_name = st.selectbox(
-                    "Segmentação",
-                    ["auto", "none", "otsu", "hsv_color", "grabcut"],
-                    index=0,
-                    key="public_segmentation",
-                )
-                segmentation_parameters = _select_segmentation_parameters(st, segmentation_name)
-                if not active_profile.id.startswith("visitor_"):
-                    save_history = st.checkbox("Salvar no histórico local", value=False, key="public_history")
+            st.caption("Use o laboratório na página para comparar técnicas de processamento.")
 
     if not active_profile.is_admin:
         _render_public_app_chrome(st)
@@ -4676,6 +4670,27 @@ def main() -> None:
     if active_profile.is_admin:
         render_scope(st)
         _render_overview_strip(st, config)
+    else:
+        with st.expander("Laboratório de processamento de imagens"):
+            st.caption("Compare técnicas da disciplina. Alterar parâmetros reprocessa a foto carregada.")
+            filter_name = st.selectbox(
+                "Filtro",
+                ["auto", "none", "gaussian", "median", "clahe", "sobel", "canny", "bilateral"],
+                index=["auto", "none", "gaussian", "median", "clahe", "sobel", "canny", "bilateral"].index(defaults.filter_name),
+                key="public_filter",
+            )
+            filter_parameters = _select_filter_parameters(st, filter_name, config)
+            segmentation_name = st.selectbox(
+                "Segmentação",
+                ["auto", "none", "otsu", "hsv_color", "grabcut"],
+                index=["auto", "none", "otsu", "hsv_color", "grabcut"].index(defaults.segmentation_name),
+                key="public_segmentation",
+            )
+            segmentation_parameters = _select_segmentation_parameters(st, segmentation_name)
+            morphology_name, morphology_parameters = select_morphology_parameters(st, config.segmentation.get("morphology"))
+            if not active_profile.id.startswith("visitor_"):
+                save_history = st.checkbox("Salvar no histórico local", value=False, key="public_history")
+
 
     class_chips = "".join(_class_chip(class_id, guidance_by_class) for class_id in config.classes)
 
@@ -4684,6 +4699,8 @@ def main() -> None:
         filter_parameters=filter_parameters,
         segmentation_name=segmentation_name,
         segmentation_parameters=segmentation_parameters,
+        morphology_name=morphology_name,
+        morphology_parameters=morphology_parameters,
     )
 
     if active_profile.is_admin:
@@ -4817,6 +4834,11 @@ def main() -> None:
                     public_action = build_public_next_action(result, target, safety_decision)
                     _render_public_next_action(st, public_action)
 
+                # Keep the executed preprocessing before the recognition card so the
+                # user can see exactly what image is handed to the classifier.
+                from ecoscan.ui.processing_lab import render_applied_processing
+                render_applied_processing(st, result.pipeline)
+
                 left, right = st.columns([1.05, 1])
                 with left:
                     st.image(result.pipeline.loaded.array, caption="Imagem analisada", width="stretch")
@@ -4867,13 +4889,12 @@ def main() -> None:
                 if active_profile.is_admin:
                     _render_processing_evidence(st, result, active_profile)
                 else:
-                    with st.expander("Ver evidência técnica da imagem"):
-                        _render_processing_evidence(
-                            st,
-                            result,
-                            active_profile,
-                            render_details_expander=False,
-                        )
+                    _render_processing_evidence(
+                        st,
+                        result,
+                        active_profile,
+                        render_details_expander=True,
+                    )
                 _render_recognition_feedback_form(st, config, result, active_profile, guidance_by_class)
 
                 if safety_decision.allow_disposal_guidance and result.guidance:
@@ -4928,6 +4949,7 @@ def main() -> None:
                 cols[0].image(result.pipeline.segmentation_result.image, caption="Segmentada", width="stretch")
                 cols[1].image(result.pipeline.detection_heatmap, caption="Mapa de detecção", width="stretch")
                 cols[2].image(result.pipeline.model_input_preview, caption="Entrada do modelo", width="stretch")
+                render_processing_lab(st, result.pipeline)
                 st.markdown('<div class="ecoscan-section-title">Qualidade da captura</div>', unsafe_allow_html=True)
                 _render_capture_quality_advice(st, result.pipeline)
                 st.markdown('<div class="ecoscan-section-title">Decisão de filtragem</div>', unsafe_allow_html=True)

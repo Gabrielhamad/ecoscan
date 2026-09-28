@@ -1,5 +1,9 @@
 # Checklist APS
 
+A presença de uma funcionalidade abaixo não equivale a aceite real nem a qualidade
+de reconhecimento comprovada. Consulte a [avaliação atual](avaliacao_e_entrega.md)
+e confronte esta lista com o enunciado oficial da instituição.
+
 ## Implementado
 
 - aquisição por upload;
@@ -15,6 +19,10 @@
 - normalização;
 - filtros;
 - segmentação;
+- morfologia binária: erosão, dilatação, abertura, fechamento e abertura seguida de fechamento;
+- elemento estruturante configurável, estágios intermediários e gradiente morfológico para inspeção;
+- laboratório com tons de cinza, histogramas, normalização e comparação de máscaras;
+- experimento sintético com referência conhecida e IoU, sem confundir com acurácia de reconhecimento;
 - análise de qualidade antes/depois do filtro;
 - análise de componentes/elementos visuais segmentados;
 - visualização do pipeline;
@@ -68,5 +76,7 @@
 
 - detecção treinada de múltiplas classes por objeto na mesma imagem;
 - YOLO/detecção supervisionada por caixas;
-- localização de pontos de coleta;
-- versão mobile.
+- localização automática por proximidade com coordenadas verificadas (há consulta a uma base limitada e links de mapas);
+- aplicativo mobile nativo (a interface web possui uso em celular, sujeito a aceite nos dispositivos).
+
+Roteiro de demonstração e critérios experimentais: [prática de processamento](pratica_processamento_imagens.md).

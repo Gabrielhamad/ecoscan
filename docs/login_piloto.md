@@ -20,7 +20,7 @@ Antes de ativar `public_signup_enabled = true` em `[access]`:
 1. Configurar SMTP proprio no Supabase. O SMTP padrao so envia para emails da
    equipe do projeto e nao atende um cadastro publico dos colegas.
 2. Manter Confirm email ativado; configurar Site URL para
-   `https://ecoscan-gabrielhamad.streamlit.app/` e conferir template de confirmacao.
+   `https://ecoscan-gabrielhamad.streamlit.app` e conferir template de confirmacao.
 3. Testar recebimento e confirmacao com um endereco externo autorizado pelo dono.
    O link confirma o email; o usuario volta ao app e entra com email/senha.
 4. Verificar bloqueio de email nao confirmado, limites e erros; planejar CAPTCHA
@@ -37,8 +37,9 @@ nao sao apagados nem vinculados automaticamente a novas contas.
 1. Criar/convidar cada participante em Supabase Authentication > Users.
    Manter confirmacao de email; nao declarar emails confirmados sem verificar.
 2. Configurar SITE_URL e redirecionamentos no Supabase antes de enviar convites.
-   O fluxo de convite/definicao de senha deve ser validado antes de convidar o grupo;
-   esta versao do app ainda nao implementa callback de definicao/recuperacao de senha.
+   Para o piloto, preferir cadastro com confirmacao e entrada por senha. O callback
+   implementado abaixo aceita apenas recuperacao; links de convite nao sao tratados
+   como links de recuperacao.
 3. No Streamlit Secrets, preservar [persistence] e adicionar:
 
 ```toml
@@ -61,5 +62,55 @@ Nao usar a senha do banco como senha do usuario. Nunca versionar credenciais.
 - Login identifica protocolos e pontos entre dispositivos quando a persistencia
   operacional esta ativa; nao migra registros locais antigos.
 - Relatos de visitante nao sao apropriados automaticamente por quem entrar depois.
-- Necessario validar com contas reais, regras de email/SMTP do plano gratuito e
-  fluxo de recuperacao antes de liberar cadastro geral. Nao enviar convites em massa.
+- O fluxo de recuperacao esta implementado; entrega de email e aceite com contas
+  reais dependem da configuracao abaixo. Nao enviar convites em massa.
+
+## Conta de analista para o piloto 02
+
+1. O responsavel cria sua propria conta pelo cadastro normal e confirma o email.
+   Se o cadastro publico estiver desativado, concluir a preparacao de SMTP antes
+   de habilita-lo. Nao criar conta compartilhada nem senha fixa no codigo.
+2. Adicionar somente esse email confirmado a [access].supabase_admin_emails
+   nos Secrets do servidor. O email e comparado sem diferenciar maiusculas.
+3. Entrar com essa conta pela mesma aba Entrar. A interface identifica o analista
+   e libera a Central de analise da secretaria. Selecionar um protocolo, conferir
+   foto e rotulo, escrever a resposta e salvar a revisao.
+4. O autor entra com a conta usada no envio e escolhe Perfil → Atualizar protocolos.
+   O numero original e preservado. Outra conta nao recebe esse protocolo.
+5. Para retirar acesso, remover o email da lista. Na proxima execucao a permissao
+   e reavaliada e os dados privados da sessao anterior sao limpos.
+
+Nao ha promocao pelo cadastro, parametros de URL ou metadados editaveis pelo
+usuario. A verificacao usa get_user(token) a cada execucao. O cliente Auth e
+separado do cliente de persistencia que usa a chave privada do servidor.
+
+## Recuperacao de senha
+
+No Supabase Authentication, configurar SMTP, Site URL para a URL HTTPS do app e
+prazo de validade/limites de envio. Em Email Templates → Reset Password, usar:
+
+    <a href="{{ .SiteURL }}/?token_hash={{ .TokenHash }}&amp;type=recovery">Definir nova senha no EcoScan</a>
+
+Configurar Site URL sem barra final para esse template. O link deve apontar direto
+para o app. Nao usar o template padrao com fragmento #access_token: o servidor
+Streamlit nao recebe fragmentos do navegador. Nao usar esse template para convite
+ou confirmacao de cadastro. Desativar rastreamento de links do provedor SMTP.
+
+O usuario abre Entrar → Esqueci minha senha e solicita o email. A resposta nao
+informa se a conta existe; ha intervalo de 60 segundos por sessao, complementado
+pelos limites do Supabase. Ao abrir o link, o app remove os parametros da URL,
+limpa qualquer conta anterior e mostra apenas o formulario de nova senha.
+A validacao de uso unico (verify_otp, tipo recovery) ocorre somente ao salvar,
+para nao consumir o link em uma previsualizacao automatica. Senha deve ter 12 a
+128 caracteres e coincidir com a confirmacao. Links invalidos, expirados ou usados
+nao alteram senha. Falhas apos consumir o link podem exigir uma nova solicitacao.
+
+A troca usa update_user na sessao de recuperacao isolada, nunca a API administrativa
+nem a sessao de outra conta. Ao concluir, exige novo login. Nao altera UUID da conta,
+propriedade de protocolos ou permissoes de analista. Sessoes de recuperacao nao
+sao promovidas a login do app. Tokens JWT ja emitidos em outros dispositivos
+continuam sujeitos ao prazo de validade do provedor.
+
+Referencias do contrato usado: [recuperacao](https://supabase.com/docs/reference/python/auth-resetpasswordforemail),
+[validacao OTP](https://supabase.com/docs/reference/python/auth-verifyotp) e
+[atualizacao do usuario](https://supabase.com/docs/reference/python/auth-updateuser).

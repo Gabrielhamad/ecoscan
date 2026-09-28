@@ -4,6 +4,7 @@ import argparse
 import csv
 import json
 import sys
+from dataclasses import asdict
 from pathlib import Path
 
 
@@ -14,7 +15,7 @@ if str(SRC_DIR) not in sys.path:
 if str(PROJECT_ROOT / "scripts") not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
-from ecoscan.app.pipeline import ProcessingPipelineOptions
+from ecoscan.app.pipeline import default_processing_options
 from ecoscan.config import load_config
 from ecoscan.metrics.classification_metrics import (
     classification_report,
@@ -44,6 +45,7 @@ def _write_predictions(path: Path, rows: list[dict[str, str]]) -> None:
         "model_type",
         "filter",
         "segmentation",
+        "morphology",
         "elements",
         "material_rule",
         "message",
@@ -67,7 +69,7 @@ def main(argv: list[str] | None = None) -> int:
     output_dir = args.output
     output_dir.mkdir(parents=True, exist_ok=True)
     bundle = load_model_bundle_for_analysis(config)
-    options = ProcessingPipelineOptions(filter_name="auto", segmentation_name="auto")
+    options = default_processing_options(config)
 
     labels: list[str] = []
     predictions: list[str | None] = []
@@ -92,6 +94,7 @@ def main(argv: list[str] | None = None) -> int:
                 "model_type": result.model_type,
                 "filter": result.pipeline.filter_result.name,
                 "segmentation": result.pipeline.segmentation_result.name,
+                "morphology": result.pipeline.morphology_result.metadata["operation"],
                 "elements": str(result.pipeline.element_analysis.significant_count),
                 "material_rule": rule_id,
                 "message": result.message,
@@ -99,6 +102,10 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     report = classification_report(labels, predictions, classes)
+    report["processing_options"] = asdict(options)
+    report["filter_configuration"] = config.filters
+    report["segmentation_configuration"] = config.segmentation
+    report["model_sha256"] = result.model_sha256
     report["split"] = args.split
     report["model_kind"] = "full_app_analysis"
     report["material_rule_counts"] = material_rule_counts

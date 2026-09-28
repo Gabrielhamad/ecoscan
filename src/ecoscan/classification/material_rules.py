@@ -10,6 +10,7 @@ from ecoscan.segmentation.elements import ElementAnalysis
 
 
 COMMON_RECYCLABLES = {"plastic", "paper_cardboard", "metal", "glass"}
+ACTIVE_RECYCLABLE_CLASSES = COMMON_RECYCLABLES | {"battery", "electronic"}
 
 
 @dataclass(frozen=True)
@@ -161,7 +162,10 @@ def _looks_like_beverage_can(metrics: MaterialCueMetrics, prediction: BaselinePr
         return False
     strong_colored_cylinder = metrics.red_ratio >= 0.35 or metrics.colored_ratio >= 0.62
     isolated_product_photo = metrics.background_white_ratio >= 0.45
-    weak_or_confused_model = prediction.top_class_id in {"glass", "metal"} and prediction.probability <= 0.42
+    weak_or_confused_model = (
+        prediction.top_class_id in ACTIVE_RECYCLABLE_CLASSES
+        and prediction.probability <= 0.42
+    )
     metallic_or_cylindrical = metrics.gray_metal_ratio >= 0.025 or metrics.vertical_edge_ratio >= 0.95
     return strong_colored_cylinder and isolated_product_photo and weak_or_confused_model and metallic_or_cylindrical
 
@@ -183,13 +187,27 @@ def _looks_like_dark_beverage_can(metrics: MaterialCueMetrics, prediction: Basel
         return False
     if metrics.cyan_green_blue_ratio < 0.045 and metrics.colored_ratio < 0.08:
         return False
-    weak_or_confused_model = prediction.top_class_id in {
-        "glass",
-        "paper_cardboard",
-        "plastic",
-        "metal",
-    }
+    weak_or_confused_model = prediction.top_class_id in ACTIVE_RECYCLABLE_CLASSES
     return weak_or_confused_model and prediction.probability <= 0.42
+
+
+def _looks_like_fragmented_dark_can(metrics: MaterialCueMetrics, prediction: BaselinePrediction) -> bool:
+    """Recover a can when branding and reflections fragment its segmentation mask."""
+    if metrics.significant_count < 3:
+        return False
+    if not 0.14 <= metrics.foreground_ratio <= 0.48:
+        return False
+    if not 0.58 <= metrics.bbox_aspect <= 1.16:
+        return False
+    if metrics.gray_metal_ratio < 0.60:
+        return False
+    if metrics.top_metal_ratio < 0.70 or metrics.bottom_metal_ratio < 0.70:
+        return False
+    if metrics.dark_ratio < 0.12 or metrics.vertical_edge_ratio < 1.0:
+        return False
+    if metrics.brightness_std < 45:
+        return False
+    return prediction.top_class_id in ACTIVE_RECYCLABLE_CLASSES and prediction.probability <= 0.40
 
 
 def _looks_like_structural_can(metrics: MaterialCueMetrics, prediction: BaselinePrediction) -> bool:
@@ -225,11 +243,7 @@ def _looks_like_structural_can(metrics: MaterialCueMetrics, prediction: Baseline
     if not product_surface_evidence and not texture_evidence:
         return False
 
-    weak_or_confused_model = prediction.top_class_id in {
-        "glass",
-        "paper_cardboard",
-        "plastic",
-    }
+    weak_or_confused_model = prediction.top_class_id in ACTIVE_RECYCLABLE_CLASSES
     return weak_or_confused_model and prediction.probability <= 0.58
 
 
@@ -242,7 +256,7 @@ def _looks_like_plastic_bottle_group(metrics: MaterialCueMetrics, prediction: Ba
         return False
     if metrics.brightness_mean < 125:
         return False
-    if prediction.top_class_id not in {"paper_cardboard", "glass", "plastic"}:
+    if prediction.top_class_id not in ACTIVE_RECYCLABLE_CLASSES:
         return False
     return prediction.probability <= 0.45
 
@@ -292,6 +306,19 @@ def apply_material_rules(
             confidence=0.80,
             rule_id="metal_dark_can_cylinder",
             reason="objeto único e cilíndrico, com bordas verticais, áreas escuras/metálicas e detalhe colorido típico de lata",
+            metrics=metrics,
+        )
+        return _override_prediction(prediction, decision), decision
+
+    if _looks_like_fragmented_dark_can(metrics, prediction):
+        decision = MaterialRuleDecision(
+            class_id="metal",
+            confidence=0.77,
+            rule_id="metal_fragmented_dark_can_geometry",
+            reason=(
+                "máscara fragmentada por rótulo e reflexos, mas com bordas superior e inferior metálicas, "
+                "eixo vertical e geometria compatíveis com lata"
+            ),
             metrics=metrics,
         )
         return _override_prediction(prediction, decision), decision

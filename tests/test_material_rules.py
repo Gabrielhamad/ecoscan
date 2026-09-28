@@ -47,6 +47,24 @@ class MaterialRulesTests(unittest.TestCase):
         self.assertEqual(prediction.top_class_id, "metal")
         self.assertEqual(prediction.class_id, "metal")
 
+    def test_red_can_overrides_weak_battery_prediction(self) -> None:
+        image = np.full((224, 224, 3), 255, dtype=np.uint8)
+        cv2.rectangle(image, (72, 48), (152, 184), (210, 26, 26), -1)
+        cv2.ellipse(image, (112, 48), (40, 12), 0, 0, 360, (185, 185, 185), -1)
+        cv2.ellipse(image, (112, 184), (40, 10), 0, 0, 360, (210, 210, 210), -1)
+        mask = np.any(image < 245, axis=2).astype(np.uint8) * 255
+
+        prediction, decision = apply_material_rules(
+            _prediction("battery", 0.20),
+            image=image,
+            mask=mask,
+            element_analysis=analyze_visual_elements(mask),
+        )
+
+        self.assertIsNotNone(decision)
+        self.assertEqual(decision.rule_id, "metal_can_shape_color")
+        self.assertEqual(prediction.class_id, "metal")
+
     def test_translucent_bottle_group_overrides_weak_paper_prediction(self) -> None:
         image = np.full((224, 224, 3), 255, dtype=np.uint8)
         for index, x in enumerate([25, 65, 105, 145, 180]):
@@ -65,6 +83,26 @@ class MaterialRulesTests(unittest.TestCase):
 
         self.assertIsNotNone(decision)
         self.assertEqual(prediction.top_class_id, "plastic")
+        self.assertEqual(prediction.class_id, "plastic")
+
+    def test_translucent_bottle_group_overrides_weak_electronic_prediction(self) -> None:
+        image = np.full((224, 224, 3), 255, dtype=np.uint8)
+        for index, x in enumerate([25, 65, 105, 145, 180]):
+            color = (45, 205 - index * 12, 185 + index * 7)
+            cv2.rectangle(image, (x, 62), (x + 24, 196), color, -1)
+            cv2.rectangle(image, (x + 7, 28), (x + 17, 68), color, -1)
+            cv2.line(image, (x + 3, 90), (x + 22, 84), (245, 255, 255), 3)
+        mask = np.any(image < 245, axis=2).astype(np.uint8) * 255
+
+        prediction, decision = apply_material_rules(
+            _prediction("electronic", 0.22),
+            image=image,
+            mask=mask,
+            element_analysis=analyze_visual_elements(mask),
+        )
+
+        self.assertIsNotNone(decision)
+        self.assertEqual(decision.rule_id, "plastic_bottle_group_translucent")
         self.assertEqual(prediction.class_id, "plastic")
 
     def test_dark_energy_drink_can_overrides_weak_glass_prediction(self) -> None:
@@ -90,6 +128,30 @@ class MaterialRulesTests(unittest.TestCase):
 
         self.assertIsNotNone(decision)
         self.assertEqual(prediction.top_class_id, "metal")
+        self.assertEqual(prediction.class_id, "metal")
+
+    def test_fragmented_dark_can_overrides_weak_electronic_prediction(self) -> None:
+        image = np.full((224, 224, 3), 214, dtype=np.uint8)
+        cv2.rectangle(image, (66, 44), (158, 186), (18, 18, 17), -1)
+        cv2.ellipse(image, (112, 44), (46, 10), 0, 0, 360, (190, 190, 186), -1)
+        cv2.ellipse(image, (112, 186), (45, 9), 0, 0, 360, (198, 198, 194), -1)
+        cv2.line(image, (76, 58), (76, 174), (118, 118, 114), 3)
+        cv2.line(image, (149, 58), (149, 174), (105, 105, 101), 3)
+        cv2.line(image, (96, 76), (95, 146), (80, 220, 35), 8)
+        cv2.line(image, (115, 72), (113, 158), (80, 220, 35), 8)
+        cv2.line(image, (133, 78), (130, 145), (80, 220, 35), 8)
+        cv2.line(image, (86, 58), (144, 58), (245, 245, 245), 2)
+        cv2.line(image, (88, 178), (140, 178), (245, 245, 245), 2)
+        mask = np.any(image < 205, axis=2).astype(np.uint8) * 255
+
+        prediction, decision = apply_material_rules(
+            _prediction("electronic", 0.23),
+            image=image,
+            mask=mask,
+            element_analysis=analyze_visual_elements(mask),
+        )
+
+        self.assertIsNotNone(decision)
         self.assertEqual(prediction.class_id, "metal")
 
     def test_structural_can_geometry_overrides_weak_glass_prediction(self) -> None:

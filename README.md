@@ -70,9 +70,10 @@ As seis categorias ativas estão em [config/settings.json](config/settings.json)
 ```mermaid
 flowchart LR
     A[Foto] --> B[Validação e preparação]
-    B --> C[Filtragem adaptativa]
-    C --> D[Segmentação e regiões]
-    D --> E[Classificação e verificações]
+    B --> C[Filtro mediana]
+    C --> D[Segmentação Otsu]
+    D --> M[Abertura e fechamento da máscara]
+    M --> E[Classificação e verificações]
     E --> F[Resultado ou incerteza]
     F --> G[Orientação de descarte]
     F --> H[Correção consentida]
@@ -80,14 +81,17 @@ flowchart LR
 ```
 
 1. **Entrada:** validação do arquivo, leitura RGB, redimensionamento e diagnóstico de qualidade.
-2. **Filtragem:** comparação heurística de sequências com Gaussiano, mediana, bilateral e CLAHE, incluindo a opção de não filtrar.
-3. **Segmentação:** seleção entre Otsu, limiares em HSV e GrabCut; geração de máscara e análise de regiões.
-4. **Reconhecimento:** classificação, verificações de material e restrição às categorias do piloto.
-5. **Apresentação:** original/processamento, método escolhido, regiões e orientação quando houver resultado aceito.
+2. **Filtragem:** mediana 3×3 por padrão; modo adaptativo, Gaussiano, bilateral, CLAHE e controle sem filtro disponíveis.
+3. **Segmentação:** Otsu por padrão; HSV, GrabCut e seleção adaptativa disponíveis.
+4. **Morfologia aplicada:** abertura seguida de fechamento, com erosão/dilatação e elemento quadrado 3×3 por padrão; parâmetros e controle sem operação disponíveis.
+5. **Reconhecimento:** classificação, verificações de material e restrição às categorias do piloto.
+6. **Apresentação:** original/final e antes/depois de cada operação, diferenças, parâmetros, download das evidências em PNG/ZIP e orientação quando houver resultado aceito.
+
+O [roteiro prático de processamento](docs/pratica_processamento_imagens.md) orienta a demonstração acadêmica. O laboratório fica disponível na página pública e na área técnica, com exportação de máscaras sem perdas e um experimento sintético reproduzível. A página pública exibe o processamento aplicado antes do cartão de reconhecimento, com comparação antes/depois específica da foto. O controle sem operação é explícito; aplicar morfologia não comprova aumento de acurácia.
 
 O modo adaptativo usa métricas e regras: não prova que escolheu o melhor método para toda imagem. O mapa visual de regiões **não é imagem térmica nem explicação Grad-CAM**. Regiões segmentadas não equivalem a objetos semanticamente identificados.
 
-O serviço suporta baseline, KNN visual, SVM e Keras. Sem um modelo final `.keras`, o artefato `models/vision_classifier.npz` tem prioridade quando disponível. Configurar MobileNetV2 não significa que ela já esteja treinada ou publicada. Veja o [pipeline](src/ecoscan/app/pipeline.py) e o [serviço de análise](src/ecoscan/services/analysis_service.py).
+O serviço suporta baseline, KNN visual, SVM e Keras. Sem um modelo final `.keras`, o SVM visual supervisionado tem prioridade quando disponível; o KNN visual é a alternativa leve. O artefato publicado do piloto possui cartão de modelo e métricas em [model_card_piloto.md](docs/model_card_piloto.md); ele ainda não deve ser descrito como reconhecimento final. Configurar MobileNetV2 não significa que ela já esteja treinada ou publicada. Veja o [pipeline](src/ecoscan/app/pipeline.py) e o [serviço de análise](src/ecoscan/services/analysis_service.py).
 
 ## Execução local
 
@@ -182,7 +186,7 @@ Foto com erro + consentimento + categoria sugerida
 
 **Reportar ou aprovar uma imagem não altera automaticamente o modelo ativo.** Com persistência remota, o treino de candidatos na hospedagem está bloqueado; o fluxo previsto é exportar e treinar localmente. Separe dados por objeto/cena antes de gerar variações para evitar vazamento entre treino e teste.
 
-Avalie precisão, recall, F1, matriz de confusão, rejeição de desconhecidos e fotos reais. Para vídeo, avalie também latência e estabilidade. Não substitua o modelo com base somente no acerto das imagens usadas no treino. Veja [operação da secretaria](docs/operacao_secretaria.md) e [gestão do dataset](docs/gestao_dataset_e_classes.md).
+Avalie precisão, recall, F1, matriz de confusão, rejeição de desconhecidos e fotos reais. Para vídeo, avalie também latência e estabilidade. Não substitua o modelo com base somente no acerto das imagens usadas no treino. O ciclo reproduzível está em [treinamento e preparação do reconhecimento](docs/treinamento_reconhecimento.md). Veja também [operação da secretaria](docs/operacao_secretaria.md) e [gestão do dataset](docs/gestao_dataset_e_classes.md).
 
 ## Estrutura
 
@@ -212,10 +216,13 @@ reports/ e logs/          Saídas locais, em geral fora do Git
 
 ## Próximas entregas
 
+Consulte a [avaliação de conformidade e resultados](docs/avaliacao_e_entrega.md) e o
+[plano de entrega por etapas](docs/plano_entrega.md), preparados em 27/09/2026.
+
 - Validar ponta a ponta: cadastro, confirmação, analista, reporte e resposta entre contas reais.
 - Melhorar reconhecimento com curadoria e avaliação independente por classe e estado.
 - Migrar campanhas e denúncias para armazenamento compartilhado durável.
-- Completar recuperação de senha e gestão de sessões; fortalecer proteção contra abuso.
+- Validar recuperação de senha na nuvem (fluxo implementado); evoluir gestão de sessões e proteção contra abuso.
 - Definir retenção, exclusão, backups e procedimento de incidentes antes do uso amplo.
 - Ampliar coleta com fontes auditáveis e coordenadas verificadas.
 - Validar acessibilidade e dispositivos reais; medir a câmera separadamente.

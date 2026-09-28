@@ -77,3 +77,52 @@ def verified_profile(token: str, access: dict) -> UserProfile:
         )
     except Exception:
         raise ValueError("Sua sessão não pôde ser validada. Entre novamente.") from None
+
+
+def request_password_reset(email: str) -> None:
+    """Send the provider's recovery email without disclosing account existence."""
+    email = email.strip()
+    if len(email) > 254 or not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email):
+        raise ValueError("Informe um e-mail válido.")
+    try:
+        # The recovery template uses SiteURL and TokenHash; no caller-controlled redirect.
+        _client().auth.reset_password_for_email(email)
+    except Exception:
+        raise ValueError("Não foi possível solicitar a recuperação. Aguarde e tente novamente.") from None
+
+
+def reset_password(token_hash: str, password: str, confirmation: str) -> None:
+    """Consume a recovery link only on explicit submission, using an isolated client.
+
+    Never use the current login, a supplied user ID, or the admin password API.
+    The recovery session stays in this call and is not promoted to an app login.
+    """
+    if not 12 <= len(password) <= 128:
+        raise ValueError("Use uma senha com 12 a 128 caracteres.")
+    if password != confirmation:
+        raise ValueError("As senhas não coincidem.")
+    if not isinstance(token_hash, str) or not re.fullmatch(r"[a-fA-F0-9]{32,128}", token_hash):
+        raise ValueError("Link inválido. Solicite uma nova recuperação.")
+    client = None
+    authenticated = False
+    try:
+        client = _client()
+        result = client.auth.verify_otp({"token_hash": token_hash, "type": "recovery"})
+        if not result.session or not result.session.access_token:
+            raise ValueError()
+        authenticated = True
+        if not result.user or not result.user.email_confirmed_at:
+            raise ValueError()
+        # verify_otp installs this recovery session on this fresh Auth client.
+        updated = client.auth.update_user({"password": password})
+        if not updated.user or updated.user.id != result.user.id:
+            raise ValueError()
+    except Exception:
+        raise ValueError("Não foi possível redefinir a senha. O link pode ter expirado ou já ter sido usado. Solicite uma nova recuperação e tente novamente.") from None
+    finally:
+        if authenticated:
+            try:
+                client.auth.sign_out({"scope": "local"})
+            except Exception:
+                # A logout outage must not turn a confirmed password update into failure.
+                pass

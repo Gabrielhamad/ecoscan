@@ -4,22 +4,19 @@ Este documento define como o grupo deve alimentar o EcoScan sem comprometer as m
 
 ## Objetivo
 
-O EcoScan deve evoluir de um classificador acadêmico de resíduos para um detector de descarte responsável. O escopo ativo inclui recicláveis comuns, orgânicos e resíduos especiais de maior risco ambiental:
+O EcoScan deve evoluir de um classificador acadêmico de resíduos para um detector de descarte responsável. O escopo ativo do reconhecimento foi reduzido para seis classes úteis e treináveis:
 
 - `plastic`;
 - `paper_cardboard`;
 - `metal`;
 - `glass`;
-- `organic`;
 - `battery`;
 - `electronic`;
-- `lamp`;
-- `medicine`;
-- `cooking_oil`;
-- `aerosol`;
-- `chemical_packaging`.
 
-As sete primeiras classes já atingiram o volume bruto mínimo de 50 imagens na captura web inicial. As classes especiais novas foram ativadas estruturalmente para upload, orientação ambiental e coleta de dados, mas ainda não devem ser tratadas como reconhecimento confiável até completarem volume, curadoria e avaliação.
+Óleo de cozinha e medicamentos continuam disponíveis como orientação assistida,
+sem reconhecimento automático. Orgânicos, alimentos, lâmpadas, aerossóis e
+embalagens químicas ficam fora do treinamento atual por exigirem escopo,
+segurança e dados específicos.
 
 ## Fluxo profissional
 

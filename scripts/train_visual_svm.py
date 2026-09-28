@@ -236,8 +236,17 @@ def _wrap_model(
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Train the EcoScan visual SVM classifier.")
-    parser.add_argument("--output-model", type=Path, default=PROJECT_ROOT / "models" / "vision_svm_classifier.joblib")
-    parser.add_argument("--report-dir", type=Path, default=PROJECT_ROOT / "reports" / "visual_svm_training")
+    parser.add_argument(
+        "--output-model",
+        type=Path,
+        default=PROJECT_ROOT / "models" / "vision_svm_classifier_candidate.joblib",
+        help="Caminho do candidato; o modelo ativo só deve ser substituído após aceite.",
+    )
+    parser.add_argument(
+        "--report-dir",
+        type=Path,
+        default=PROJECT_ROOT / "reports" / "visual_svm_training_candidate",
+    )
     parser.add_argument("--threshold", type=float, default=0.10)
     return parser
 

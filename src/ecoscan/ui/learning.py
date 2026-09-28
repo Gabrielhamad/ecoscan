@@ -79,10 +79,10 @@ def render_contribution(st, config, result, profile):
         return
     pixels = result.pipeline.loaded.array
     signature = hashlib.sha256(str(pixels.shape).encode() + pixels.tobytes()).hexdigest()[:16]
-    receipt_key = f"contribution_receipt_{signature}"
+    receipt_key = f"contribution_receipt_{profile.id}_{signature}"
     with st.expander("O resultado está errado? Contribuir com uma correção", expanded=not result.accepted):
         st.caption("Sua correção entra na fila dos analistas da secretaria. Acompanhe a resposta em Perfil. Fotos aprovadas podem alimentar um modelo candidato, validado antes da publicação.")
-        with st.form(f"contribution_form_{signature}"):
+        with st.form(f"contribution_form_{profile.id}_{signature}"):
             item = st.selectbox("O que aparece na foto?", list(ITEMS), index=None,
                                 placeholder="Escolha o item real", format_func=lambda key: ITEMS[key][0])
             condition = st.selectbox("Estado do objeto", list(ITEM_CONDITIONS),

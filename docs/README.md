@@ -13,11 +13,20 @@
 | Responsável pelo reconhecimento | [Escopo](escopo_e_variacoes.md) e [gestão do dataset](gestao_dataset_e_classes.md) |
 | Documentação acadêmica | [Checklist APS](checklist_aps.md) e [estrutura do PDF](estrutura_pdf_aps.md) |
 
+## Entrega e avaliação
+
+- [Avaliação de conformidade e evidências — 27/09/2026](avaliacao_e_entrega.md)
+- [Plano de entrega, responsáveis e critérios de aceite](plano_entrega.md)
+
 ## Referências técnicas
+
+- [Prática acadêmica: preparação, segmentação e morfologia](pratica_processamento_imagens.md)
 
 - [Filtragem adaptativa](filtragem_adaptativa.md)
 - [Segmentação adaptativa](segmentacao_adaptativa.md)
 - [Pipeline de processamento e reconhecimento](pipeline_profissional_filtragem_reconhecimento.md)
+- [Treinamento e preparação do reconhecimento](treinamento_reconhecimento.md)
+- [Cartão do modelo do piloto](model_card_piloto.md)
 - [Câmera ao vivo](live_camera_mobile.md)
 - [Tratamento de erros](tratamento_erros.md)
 - [Hospedagem](hospedagem_gratuita.md)

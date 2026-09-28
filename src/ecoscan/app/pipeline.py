@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
@@ -27,15 +27,18 @@ from ecoscan.segmentation.elements import (
     draw_element_overlay,
 )
 from ecoscan.segmentation.adaptive import segment_image_adaptive
-from ecoscan.segmentation.methods import SegmentationResult, segment_image
+from ecoscan.segmentation.methods import SegmentationResult, segment_image, apply_mask
+from ecoscan.segmentation.morphology import MorphologyResult, apply_morphology
 
 
 @dataclass(frozen=True)
 class ProcessingPipelineOptions:
-    filter_name: str = "auto"
+    filter_name: str = "median"
     filter_parameters: dict[str, Any] | None = None
-    segmentation_name: str = "auto"
+    segmentation_name: str = "otsu"
     segmentation_parameters: dict[str, Any] | None = None
+    morphology_name: str = "open_close"
+    morphology_parameters: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -52,6 +55,8 @@ class ProcessingPipelineResult:
     capture_quality: CaptureQualityAssessment
     model_input_preview: np.ndarray
     metadata: dict[str, Any]
+    raw_segmentation_result: SegmentationResult | None = None
+    morphology_result: MorphologyResult | None = None
 
 
 def _configured_filter_parameters(config: AppConfig, name: str) -> dict[str, Any]:
@@ -82,15 +87,23 @@ def _adaptive_segmentation_parameters(config: AppConfig) -> dict[str, Any]:
     return parameters
 
 
+def default_processing_options(config: AppConfig) -> ProcessingPipelineOptions:
+    morphology = dict(config.segmentation.get("morphology", {}))
+    operation = str(morphology.pop("default", "open_close"))
+    return ProcessingPipelineOptions(
+        filter_name=str(config.filters.get("default", "median")),
+        segmentation_name=str(config.segmentation.get("default", "otsu")),
+        morphology_name=operation,
+        morphology_parameters=morphology,
+    )
+
+
 def run_processing_pipeline(
     image_path: str | Path,
     config: AppConfig,
     options: ProcessingPipelineOptions | None = None,
 ) -> ProcessingPipelineResult:
-    selected_options = options or ProcessingPipelineOptions(
-        filter_name=str(config.filters.get("default", "auto")),
-        segmentation_name=str(config.segmentation.get("default", "auto")),
-    )
+    selected_options = options or default_processing_options(config)
     loaded = load_rgb_image(
         image_path,
         allowed_extensions=config.allowed_extensions,
@@ -155,6 +168,18 @@ def run_processing_pipeline(
             requested_segmentation,
             segmentation_parameters,
         )
+    raw_segmentation_result = segmentation_result
+    morphology_result = apply_morphology(
+        raw_segmentation_result.mask, selected_options.morphology_name,
+        **(selected_options.morphology_parameters or {}),
+    )
+    if morphology_result.metadata["operation"] != "none":
+        segmentation_result = replace(
+            raw_segmentation_result,
+            mask=morphology_result.mask,
+            image=apply_mask(filter_result.image, morphology_result.mask),
+            foreground_ratio=float(np.mean(morphology_result.mask > 0)),
+        )
     element_analysis = analyze_visual_elements(segmentation_result.mask)
     element_overlay = draw_element_overlay(filter_result.image, element_analysis)
     detection_heatmap = draw_detection_heatmap(preprocessing.resized, segmentation_result.mask, element_analysis)
@@ -165,6 +190,8 @@ def run_processing_pipeline(
 
     return ProcessingPipelineResult(
         loaded=loaded,
+        raw_segmentation_result=raw_segmentation_result,
+        morphology_result=morphology_result,
         preprocessing=preprocessing,
         quality_original=quality_original,
         filter_result=filter_result,
@@ -178,7 +205,10 @@ def run_processing_pipeline(
         metadata={
             "image_path": str(Path(image_path)),
             "original_size": [loaded.info.width, loaded.info.height],
+            "oriented_size": [loaded.array.shape[1], loaded.array.shape[0]],
             "target_size": list(config.image_size),
+            "preprocessing": preprocessing.metadata,
+            "morphology": morphology_result.metadata,
             "quality": {
                 "before_filter": quality_original.to_dict(),
                 "after_filter": quality_filtered.to_dict(),

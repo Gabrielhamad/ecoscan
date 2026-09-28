@@ -67,12 +67,12 @@ def _model_path(config: AppConfig, model_path: str | Path | None) -> Path:
     final_model_path = config.project_root / str(config.model.get("output_path", "models/ecoscan_transfer.keras"))
     if final_model_path.exists():
         return final_model_path
-    visual_model_path = _visual_model_path(config)
-    if visual_model_path.exists():
-        return visual_model_path
     visual_svm_model_path = _visual_svm_model_path(config)
     if visual_svm_model_path.exists():
         return visual_svm_model_path
+    visual_model_path = _visual_model_path(config)
+    if visual_model_path.exists():
+        return visual_model_path
     return config.directories["models"] / "baseline_classifier.json"
 
 
@@ -82,16 +82,40 @@ def _load_bundle_for_path(
 ) -> BaselineModelBundle | KerasModelBundle | VisualKnnModelBundle | VisualSvmModelBundle:
     if model_path.suffix.lower() == ".keras":
         class_names_path = config.project_root / str(config.model.get("class_names_path", "models/class_names.json"))
-        return load_keras_model(
+        bundle = load_keras_model(
             model_path,
             class_names_path=class_names_path,
             threshold=config.confidence_threshold,
         )
-    if model_path.suffix.lower() == ".npz":
-        return load_visual_knn_model(model_path)
-    if model_path.suffix.lower() in {".joblib", ".pkl"}:
-        return load_visual_svm_model(model_path)
-    return load_baseline_model(model_path)
+    elif model_path.suffix.lower() == ".npz":
+        bundle = load_visual_knn_model(model_path)
+    elif model_path.suffix.lower() in {".joblib", ".pkl"}:
+        bundle = load_visual_svm_model(model_path)
+    else:
+        bundle = load_baseline_model(model_path)
+
+    model_classes = _model_classes(bundle)
+    expected_classes = set(config.classes)
+    if model_classes != expected_classes:
+        missing = sorted(expected_classes - model_classes)
+        obsolete = sorted(model_classes - expected_classes)
+        raise ModelLoadError(
+            "Modelo incompatível com o escopo atual. "
+            f"Faltam: {missing or 'nenhuma'}; classes antigas: {obsolete or 'nenhuma'}. "
+            "Treine e valide um candidato com as classes configuradas antes de publicar."
+        )
+    return bundle
+
+
+def _model_classes(bundle: object) -> set[str]:
+    class_names = getattr(bundle, "class_names", None)
+    if isinstance(bundle, KerasModelBundle) or class_names is not None:
+        return {str(item) for item in class_names or []}
+    classifier = getattr(bundle, "classifier", None)
+    classes = getattr(classifier, "classes", None)
+    if classes is None:
+        raise ModelLoadError("Modelo sem metadados de classes; não pode ser validado para publicação.")
+    return {str(item) for item in classes}
 
 
 def load_model_bundle_for_analysis(

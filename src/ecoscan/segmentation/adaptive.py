@@ -167,9 +167,29 @@ def _border_ratio(mask: np.ndarray) -> float:
 def _component_stats(mask: np.ndarray) -> dict[str, float | int]:
     binary = mask > 0
     height, width = binary.shape
-    visited = np.zeros_like(binary, dtype=bool)
     total_pixels = max(1, height * width)
     min_area = max(12, int(total_pixels * 0.004))
+
+    # Connected-components is equivalent to the fallback flood fill but avoids
+    # walking every pixel in Python for each adaptive segmentation candidate.
+    try:
+        import cv2
+
+        count, _, stats, _ = cv2.connectedComponentsWithStats(
+            binary.astype(np.uint8), connectivity=8
+        )
+        areas = stats[1:, cv2.CC_STAT_AREA]
+        significant = int(np.count_nonzero(areas >= min_area))
+        largest_area = int(areas.max()) if len(areas) else 0
+        return {
+            "component_count": max(0, int(count) - 1),
+            "significant_components": significant,
+            "largest_component_ratio": largest_area / total_pixels,
+        }
+    except (ImportError, AttributeError):
+        pass
+
+    visited = np.zeros_like(binary, dtype=bool)
     component_count = 0
     significant_components = 0
     largest_area = 0

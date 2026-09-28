@@ -10,6 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 
 from ecoscan.app.pipeline import ProcessingPipelineResult
 from ecoscan.image_processing.filters import FilterResult
+from ecoscan.image_processing.preprocessing import to_grayscale
 from ecoscan.image_processing.image_io import array_to_pil, ensure_uint8, save_image
 from ecoscan.segmentation.methods import SegmentationResult
 
@@ -85,6 +86,26 @@ def save_pipeline_artifacts(result: ProcessingPipelineResult, output_dir: str | 
         save_image(result.element_overlay, report_dir / "07_elements_overlay.jpg"),
         save_image(result.detection_heatmap, report_dir / "08_detection_heatmap.jpg"),
     ]
+    # Preserve legacy artifact names; add lossless binary evidence separately.
+    morphology = getattr(result, "morphology_result", None)
+    raw = getattr(result, "raw_segmentation_result", None)
+    extra_grid = []
+    artifacts.append(save_image(to_grayscale(result.preprocessing.resized), report_dir / "09_grayscale.png"))
+    if morphology is not None and raw is not None:
+        for filename, mask in (
+            ("10_mask_before_morphology.png", raw.mask),
+            ("11_mask_after_morphology.png", morphology.mask),
+            ("12_morphological_gradient.png", morphology.gradient),
+            ("13_structuring_element.png", morphology.kernel * 255),
+        ):
+            artifacts.append(save_image(mask, report_dir / filename))
+        for index, (name, mask) in enumerate(morphology.stages, start=1):
+            artifacts.append(save_image(mask, report_dir / f"morphology_{index:02d}_{name}.png"))
+        extra_grid = [
+            ("Mascara antes da morfologia", _mask_to_rgb(raw.mask)),
+            ("Mascara final: " + morphology.metadata["operation"], _mask_to_rgb(morphology.mask)),
+            ("Gradiente (somente inspecao)", _mask_to_rgb(morphology.gradient)),
+        ]
     overview = _grid(
         [
             ("1 original", result.loaded.array),
@@ -95,10 +116,20 @@ def save_pipeline_artifacts(result: ProcessingPipelineResult, output_dir: str | 
             ("6 entrada do modelo", result.model_input_preview),
             ("7 elementos visuais", result.element_overlay),
             ("8 mapa de deteccao", result.detection_heatmap),
-        ],
+        ] + extra_grid,
         report_dir / "pipeline_overview.jpg",
     )
     artifacts.append(overview)
+
+    from ecoscan.services.processing_evidence import evidence_manifest, evidence_overview, processing_evidence_zip
+    for filename, data in (
+        ("antes_depois.png", evidence_overview(result)),
+        ("processing_evidence.zip", processing_evidence_zip(result)),
+        ("processing_evidence.json", json.dumps(evidence_manifest(result), ensure_ascii=False, indent=2).encode("utf-8")),
+    ):
+        path = report_dir / filename
+        path.write_bytes(data)
+        artifacts.append(path)
 
     metadata_path = report_dir / "pipeline_report.json"
     metadata_path.write_text(json.dumps(result.metadata, indent=2, ensure_ascii=False, default=_json_default), encoding="utf-8")

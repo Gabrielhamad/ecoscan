@@ -6,6 +6,7 @@ from typing import Any
 import numpy as np
 
 from ecoscan.image_processing.image_io import ensure_uint8
+from ecoscan.image_processing.preprocessing import to_grayscale
 
 
 try:
@@ -30,8 +31,7 @@ class SegmentationResult:
 
 
 def _rgb_to_gray(image: np.ndarray) -> np.ndarray:
-    rgb = ensure_uint8(image).astype(np.float32)
-    return (0.299 * rgb[..., 0] + 0.587 * rgb[..., 1] + 0.114 * rgb[..., 2]).astype(np.uint8)
+    return to_grayscale(image)
 
 
 def _saturation_and_value(image: np.ndarray) -> tuple[np.ndarray, np.ndarray]:

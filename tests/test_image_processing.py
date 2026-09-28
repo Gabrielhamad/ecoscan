@@ -56,6 +56,28 @@ class ImageProcessingTests(unittest.TestCase):
             self.assertEqual(result.image.shape, image.shape, filter_name)
             self.assertEqual(result.image.dtype, np.uint8, filter_name)
 
+    def test_exif_orientation_is_corrected_before_resize(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "camera.jpg"
+            image = Image.new("RGB", (80, 64), (20, 40, 60))
+            exif = image.getexif()
+            exif[274] = 6  # Camera rotated 90 degrees clockwise.
+            image.save(path, exif=exif)
+            loaded = load_rgb_image(path, allowed_extensions=frozenset({".jpg"}), min_size=(48,48))
+            self.assertEqual(loaded.array.shape, (80, 64, 3))
+            prepared = prepare_model_input(loaded.array, (32, 40))
+            self.assertEqual(prepared.resized.shape, (40, 32, 3))
+            self.assertEqual(prepared.normalized.dtype, np.float32)
+
+    def test_grayscale_luminance_and_legacy_resize_contract(self):
+        from ecoscan.image_processing.preprocessing import to_grayscale
+        pixels = np.array([[[255, 0, 0], [0, 255, 0], [0, 0, 255]]], dtype=np.uint8)
+        np.testing.assert_array_equal(to_grayscale(pixels), [[76, 149, 29]])
+        rgb = np.random.default_rng(42).integers(0, 256, (20, 30, 3), dtype=np.uint8)
+        # Pillow's previous RGB default was BICUBIC; do not silently change model inputs.
+        expected = np.asarray(Image.fromarray(rgb).resize((16, 16)))
+        np.testing.assert_array_equal(resize_image(rgb, (16, 16)), expected)
+
 
 if __name__ == "__main__":
     unittest.main()

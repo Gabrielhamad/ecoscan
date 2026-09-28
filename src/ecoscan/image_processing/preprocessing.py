@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
+from PIL import Image
 
 from ecoscan.image_processing.image_io import array_to_pil, ensure_uint8
 
@@ -18,8 +19,14 @@ class PreprocessResult:
 def resize_image(image: np.ndarray, size: tuple[int, int]) -> np.ndarray:
     width, height = size
     pil_image = array_to_pil(ensure_uint8(image))
-    resized = pil_image.resize((width, height))
+    resized = pil_image.resize((width, height), resample=Image.Resampling.BICUBIC)
     return np.asarray(resized, dtype=np.uint8)
+
+
+def to_grayscale(image: np.ndarray) -> np.ndarray:
+    """RGB luminance approximation; keep RGB separately for color recognition."""
+    rgb = ensure_uint8(image).astype(np.float32)
+    return (0.299 * rgb[..., 0] + 0.587 * rgb[..., 1] + 0.114 * rgb[..., 2]).astype(np.uint8)
 
 
 def normalize_image(image: np.ndarray) -> np.ndarray:
@@ -36,6 +43,11 @@ def prepare_model_input(image: np.ndarray, image_size: tuple[int, int]) -> Prepr
         model_input=model_input,
         metadata={
             "target_size": list(image_size),
+            "resize": "bicubic; stretch to target size (legacy model contract)",
+            "source_shape": list(image.shape),
+            "color_space": "RGB after EXIF orientation correction on load",
+            "normalized_dtype": str(normalized.dtype),
+            "normalized_range": [float(normalized.min()), float(normalized.max())],
             "normalization": "uint8 RGB scaled to [0, 1]",
             "model_input_shape": list(model_input.shape),
         },

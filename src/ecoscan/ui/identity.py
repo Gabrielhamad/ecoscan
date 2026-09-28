@@ -52,6 +52,8 @@ def render_identity(st: Any) -> UserProfile:
 def _render_password_identity(st, access):
     from ecoscan.services.password_identity import sign_in, verified_profile
 
+    if _render_password_recovery(st):
+        st.stop()
     st.session_state.setdefault("visitor_identity", uuid4().hex)
     profile = resolve_identity({}, {}, st.session_state["visitor_identity"])
     token = st.session_state.get("auth_access_token")
@@ -131,7 +133,7 @@ def _render_login_form(st):
             st.error(str(exc))
         else:
             st.rerun()
-    st.caption("Esqueceu a senha? Solicite recuperação ao responsável do grupo. Nunca envie sua senha por mensagem.")
+    _render_reset_request(st)
 
 
 def _render_resend_confirmation(st):
@@ -152,3 +154,60 @@ def _render_resend_confirmation(st):
                 st.error(str(exc))
             else:
                 st.success("Se houver um cadastro pendente para esse e-mail, a confirmação será reenviada. Confira também o spam.")
+
+
+def _render_reset_request(st):
+    from ecoscan.services.password_identity import request_password_reset
+    with st.expander("Esqueci minha senha"):
+        with st.form("password_reset_request", clear_on_submit=True):
+            email = st.text_input("E-mail da conta", max_chars=254)
+            sent = st.form_submit_button("Enviar link de recuperação")
+        if sent:
+            now = time.monotonic()
+            if now - st.session_state.get("reset_last_attempt", -60) < 60:
+                st.warning("Aguarde um minuto antes de solicitar outro e-mail.")
+                return
+            st.session_state["reset_last_attempt"] = now
+            try:
+                request_password_reset(email)
+            except ValueError as exc:
+                st.error(str(exc))
+            else:
+                st.success("Se houver uma conta para esse e-mail, você receberá um link de recuperação. Confira também o spam.")
+
+
+def _render_password_recovery(st):
+    from ecoscan.services.password_identity import reset_password
+    # Read only our callback fields. Clear credentials from the URL immediately;
+    # verify only on form submission so email preview scanners cannot consume it.
+    if "token_hash" in st.query_params or st.query_params.get("type") == "recovery":
+        hashes = st.query_params.get_all("token_hash")
+        types = st.query_params.get_all("type")
+        token_hash = hashes[0] if len(hashes) == 1 and types == ["recovery"] else ""
+        st.query_params.clear()
+        # A recovery link may belong to a different account than the current login.
+        st.session_state.clear()
+        st.session_state["password_recovery_hash"] = token_hash
+    if "password_recovery_hash" not in st.session_state:
+        if st.session_state.pop("password_reset_done", False):
+            st.success("Senha atualizada. Entre novamente com sua nova senha.")
+        return False
+    st.subheader("Definir nova senha")
+    st.caption("Use o link recebido por e-mail. Após salvar, entre novamente na conta.")
+    with st.form("password_recovery", clear_on_submit=True):
+        password = st.text_input("Nova senha (mínimo 12 caracteres)", type="password", max_chars=128)
+        confirmation = st.text_input("Confirmar nova senha", type="password", max_chars=128)
+        submitted = st.form_submit_button("Salvar nova senha")
+    if submitted:
+        try:
+            reset_password(st.session_state["password_recovery_hash"], password, confirmation)
+        except ValueError as exc:
+            st.error(str(exc))
+        else:
+            st.session_state.clear()
+            st.session_state["password_reset_done"] = True
+            st.rerun()
+    if st.button("Voltar para entrar ou solicitar outro link", key="cancel_password_recovery"):
+        st.session_state.clear()
+        st.rerun()
+    return True

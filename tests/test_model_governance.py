@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import json
+import tempfile
 import unittest
+from dataclasses import replace
+from pathlib import Path
 
 from ecoscan.config import load_config
 from ecoscan.services.diagnostics import model_status
@@ -18,7 +22,11 @@ from ecoscan.services.recognition_feedback import RecognitionFeedback
 
 class ModelGovernanceTests(unittest.TestCase):
     def test_builds_governance_plan_from_metrics_and_real_errors(self) -> None:
-        config = load_config()
+        with tempfile.TemporaryDirectory() as tmp:
+            config = _config_with_reference_snapshot(Path(tmp))
+            self._assert_governance_plan(config)
+
+    def _assert_governance_plan(self, config) -> None:
         feedback = [
             _feedback(expected="metal", predicted="glass", probability=0.58),
         ]
@@ -58,13 +66,15 @@ class ModelGovernanceTests(unittest.TestCase):
             self.assertEqual("prepared", plan.promotion_status)
 
     def test_reads_metric_snapshots_and_exposes_reference_row(self) -> None:
-        plan = build_model_governance_plan(load_config())
-        snapshots = read_evaluation_snapshots(load_config())
-        rows = metric_snapshot_rows(plan)
+        with tempfile.TemporaryDirectory() as tmp:
+            config = _config_with_reference_snapshot(Path(tmp))
+            plan = build_model_governance_plan(config)
+            snapshots = read_evaluation_snapshots(config)
+            rows = metric_snapshot_rows(plan)
 
-        self.assertGreaterEqual(len(snapshots), 1)
-        self.assertTrue(rows)
-        self.assertIn("macro_f1", rows[0])
+            self.assertGreaterEqual(len(snapshots), 1)
+            self.assertTrue(rows)
+            self.assertIn("macro_f1", rows[0])
 
     def test_hard_cases_ignore_correct_predictions(self) -> None:
         records = [
@@ -100,6 +110,28 @@ def _feedback(expected: str, predicted: str, probability: float) -> RecognitionF
         note="classe corrigida durante o teste",
         image_path="reports/recognition_feedback/images/item.jpg",
     )
+
+
+def _config_with_reference_snapshot(root: Path):
+    evaluation_dir = root / "evaluation" / "reference"
+    evaluation_dir.mkdir(parents=True)
+    (evaluation_dir / "metrics.json").write_text(
+        json.dumps(
+            {
+                "model_kind": "visual_knn",
+                "split": "test",
+                "accuracy": 0.32,
+                "macro_precision": 0.30,
+                "macro_recall": 0.31,
+                "macro_f1": 0.30,
+                "total": 12,
+                "uncertain_count": 2,
+            }
+        ),
+        encoding="utf-8",
+    )
+    config = load_config()
+    return replace(config, directories={**config.directories, "reports": root})
 
 
 if __name__ == "__main__":

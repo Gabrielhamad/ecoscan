@@ -1,12 +1,22 @@
 {
   "project_name": "EcoScan",
-  "image_size": [224, 224],
+  "image_size": [
+    224,
+    224
+  ],
   "confidence_threshold": 0.65,
   "random_seed": 42,
-  "allowed_extensions": [".jpg", ".jpeg", ".png"],
-  "min_image_size": [48, 48],
+  "allowed_extensions": [
+    ".jpg",
+    ".jpeg",
+    ".png"
+  ],
+  "min_image_size": [
+    48,
+    48
+  ],
   "min_images_per_class_warning": 20,
-  "imbalance_ratio_warning": 2.0,
+  "imbalance_ratio_warning": 2,
   "classes": [
     "plastic",
     "paper_cardboard",
@@ -33,7 +43,10 @@
   },
   "baseline": {
     "algorithm": "knn",
-    "image_size": [96, 96],
+    "image_size": [
+      96,
+      96
+    ],
     "histogram_bins": 8,
     "confidence_threshold": 0.15,
     "softmax_temperature": 0.2,
@@ -60,26 +73,45 @@
     "save_images": false
   },
   "filters": {
-    "default": "auto",
+    "default": "median",
     "auto": {
       "candidate_sequences": [
-        ["none"],
-        ["gaussian"],
-        ["median"],
-        ["bilateral"],
-        ["clahe"],
-        ["clahe", "gaussian"],
-        ["clahe", "median"],
-        ["clahe", "bilateral"]
+        [
+          "none"
+        ],
+        [
+          "gaussian"
+        ],
+        [
+          "median"
+        ],
+        [
+          "bilateral"
+        ],
+        [
+          "clahe"
+        ],
+        [
+          "clahe",
+          "gaussian"
+        ],
+        [
+          "clahe",
+          "median"
+        ],
+        [
+          "clahe",
+          "bilateral"
+        ]
       ],
       "max_steps": 2
     },
     "gaussian": {
       "kernel_size": 5,
-      "sigma": 1.0
+      "sigma": 1
     },
     "median": {
-      "kernel_size": 5
+      "kernel_size": 3
     },
     "bilateral": {
       "diameter": 9,
@@ -87,8 +119,11 @@
       "sigma_space": 75
     },
     "clahe": {
-      "clip_limit": 2.0,
-      "tile_grid_size": [8, 8]
+      "clip_limit": 2,
+      "tile_grid_size": [
+        8,
+        8
+      ]
     },
     "canny": {
       "threshold1": 80,
@@ -96,9 +131,13 @@
     }
   },
   "segmentation": {
-    "default": "auto",
+    "default": "otsu",
     "auto": {
-      "candidate_methods": ["otsu", "hsv_color", "grabcut"],
+      "candidate_methods": [
+        "otsu",
+        "hsv_color",
+        "grabcut"
+      ],
       "min_foreground_ratio": 0.025,
       "ideal_foreground_ratio": 0.38,
       "max_foreground_ratio": 0.86
@@ -113,6 +152,12 @@
     "grabcut": {
       "iterations": 5,
       "margin_percent": 0.08
+    },
+    "morphology": {
+      "default": "open_close",
+      "kernel_size": 3,
+      "kernel_shape": "square",
+      "iterations": 1
     }
   }
 }

@@ -46,8 +46,9 @@ backend que usa a chave privilegiada.
 No login Supabase, o token é validado no provedor e o e-mail precisa estar
 confirmado. O papel administrativo vem de uma lista explícita, nunca da URL ou
 de metadados editáveis pelo usuário. A lista de cadastros reais revalida o papel
-e apresenta e-mails mascarados. Tokens ficam na sessão; refresh e recuperação
-completa de senha permanecem pendentes.
+e apresenta e-mails mascarados. Tokens ficam na sessão. A recuperação por link de uso único está implementada;
+SMTP, template e aceite real precisam ser validados. Refresh de sessão permanece
+pendente. Veja [login](login_piloto.md) e [avaliação](avaliacao_e_entrega.md).
 
 ## Dados e falhas
 

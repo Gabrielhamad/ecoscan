@@ -60,6 +60,32 @@ render_citizen_protocols(st, None, SimpleNamespace(id="supabase_test"))
             self.assertTrue(any("Confirmamos uma lata" in m.value for m in app.markdown))
             self.assertTrue(any("vinculados" in m.value for m in app.caption))
 
+    def test_receipt_from_same_photo_is_not_reused_by_another_account(self):
+        source = '''
+import streamlit as st
+import numpy as np
+from types import SimpleNamespace
+from ecoscan.ui.learning import render_contribution
+result = SimpleNamespace(accepted=True, pipeline=SimpleNamespace(
+    loaded=SimpleNamespace(array=np.zeros((8,8,3), dtype=np.uint8))))
+render_contribution(st, None, result,
+                    SimpleNamespace(id=st.session_state.get("test_account", "supabase_a")))
+'''
+        record = {"id": "93c177b8-7bff-426a-87df-2ec8c4b459cf",
+                  "reporter_id": "supabase_a", "item_id": "drink_can",
+                  "status": "pending", "storage_key": "photo.jpg"}
+        with patch("ecoscan.ui.learning.submit_contribution", return_value=record):
+            app = AppTest.from_string(source).run()
+            app.selectbox[0].select("drink_can")
+            app.checkbox[0].check()
+            app.button[0].click().run()
+            self.assertTrue(app.success)
+            app.session_state["test_account"] = "supabase_b"
+            app.run()
+            self.assertFalse(app.exception)
+            self.assertFalse(app.success)
+            self.assertFalse(any(b.label == "Preparar cópia com foto" for b in app.button))
+
 
 if __name__ == "__main__":
     unittest.main()
