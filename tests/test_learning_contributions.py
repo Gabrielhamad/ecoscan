@@ -60,6 +60,35 @@ class LearningTests(unittest.TestCase):
             self.assertLessEqual(max(image.size), 1280)
             self.assertFalse(image.getexif())
 
+    def test_technical_context_is_preserved_without_private_pipeline_metadata(self):
+        self.result.processing_compatible = False
+        self.result.pipeline.recognition_image = np.zeros((224, 224, 3), dtype=np.uint8)
+        self.result.pipeline.metadata = {
+            "image_path": "private/photo.jpg",
+            "private": "must-not-export",
+            "recognition_preparation": {"mask_applied": False, "contract": {
+                "profile": {"version": "rgb-preserved-v2"}, "sha256": "contract-hash"}},
+        }
+        record = self.submit()
+        reviewed = review_contribution(self.config, record["id"], decision="approved", reviewer=self.admin)
+        with ZipFile(io.BytesIO(contribution_package(self.config, [reviewed], approved_only=True))) as package:
+            content = package.read("manifest.json").decode("utf-8")
+            context = json.loads(content)[0]["analysis_context"]
+            self.assertEqual(context, list_contributions(self.config)[0]["analysis_context"])
+            self.assertEqual("rgb-preserved-v2", context["processing_version"])
+            self.assertEqual("contract-hash", context["processing_contract_sha256"])
+            self.assertEqual(64, len(context["classifier_rgb_sha256"]))
+            self.assertFalse(context["model_processing_compatible"])
+            self.assertFalse(context["mask_applied_to_classifier"])
+            self.assertNotIn("private/photo.jpg", content)
+            self.assertNotIn("must-not-export", content)
+
+    def test_legacy_context_is_explicitly_unknown_not_assumed_current(self):
+        context = self.submit()["analysis_context"]
+        self.assertEqual("legacy_unavailable", context["availability"])
+        self.assertIsNone(context["processing_version"])
+        self.assertIsNone(context["classifier_rgb_sha256"])
+
     def test_only_reviewed_records_export_for_training(self):
         record = self.submit()
         def exported(rows):

@@ -40,6 +40,10 @@ class PersistenceTests(unittest.TestCase):
         fixture = LearningTests()
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)
+        fixture.result.pipeline.metadata = {"recognition_preparation": {
+            "mask_applied": False, "contract": {
+                "profile": {"version": "rgb-preserved-v2"}, "sha256": "preparation-version"}}}
+        fixture.result.processing_compatible = False
         store = MemoryRemote()
         with patch("ecoscan.services.learning_contributions.remote_store", return_value=store):
             record = fixture.submit(condition="crushed")
@@ -51,6 +55,8 @@ class PersistenceTests(unittest.TestCase):
             reviewed = review_contribution(other, record["id"], decision="approved",
                                            reviewer=fixture.admin, response="Confirmado", expected_revision=0)
             self.assertEqual("Confirmado", reviewed["response"])
+            self.assertEqual(record["analysis_context"], reviewed["analysis_context"])
+            self.assertEqual("rgb-preserved-v2", reviewed["analysis_context"]["processing_version"])
             with self.assertRaises(ValueError):
                 review_contribution(other, record["id"], decision="rejected",
                                     reviewer=fixture.admin, expected_revision=0)

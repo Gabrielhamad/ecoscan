@@ -156,6 +156,15 @@ def render_review(st, config, profile):
         st.write(f"Modelo sugeriu: {selected['feedback']['predicted_class'] or selected['feedback']['top_class'] or 'inconclusivo'}")
         st.write(selected["feedback"]["note"])
         st.write("Estado informado: " + ITEM_CONDITIONS.get(selected.get("condition", "unspecified"), "Não informado"))
+        with st.expander("Contexto técnico da análise reportada"):
+            context = selected.get("analysis_context", {})
+            if context.get("availability") == "recorded":
+                st.json(context)
+                st.caption("Modelo: " + str(selected.get("model_sha256", "não registrado")))
+                if context.get("model_processing_compatible") is False:
+                    st.warning("A hipótese usou um modelo sem preparo compatível e não foi confirmada automaticamente.")
+            else:
+                st.caption("Contribuição anterior ao registro de contexto. Não é possível reconstruir a versão do preparo.")
         with st.form(f"review_contribution_{selected['id']}_{selected.get('revision', 0)}"):
             item_id = st.selectbox("Item confirmado pelo analista", list(ITEMS),
                                    index=list(ITEMS).index(selected["item_id"]),

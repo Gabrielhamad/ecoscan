@@ -17,6 +17,7 @@ from PIL import Image
 from ecoscan.services.recognition_feedback import append_recognition_feedback, feedback_dir_from_config
 from ecoscan.services.recognition_scope import ITEMS, ITEM_CONDITIONS
 from ecoscan.services.contribution_store import remote_store
+from ecoscan.services.processing_evidence import array_digest
 
 
 _LOCK = threading.RLock()
@@ -43,6 +44,26 @@ def list_contributions(config) -> list[dict]:
         for path in sorted(contribution_dir(config).glob("*.json")):
             records.append(json.loads(path.read_text(encoding="utf-8")))
     return sorted(records, key=lambda row: row["created_at"], reverse=True)
+
+
+def _analysis_context(result) -> dict:
+    """Keep technical provenance without copying filenames or full pipeline metadata."""
+    pipeline = result.pipeline
+    metadata = getattr(pipeline, "metadata", {})
+    preparation = metadata.get("recognition_preparation", {})
+    contract = preparation.get("contract", {})
+    image = getattr(pipeline, "recognition_image", None)
+    return {
+        "schema_version": 1,
+        "availability": "recorded" if contract else "legacy_unavailable",
+        "processing_version": contract.get("profile", {}).get("version"),
+        "processing_contract_sha256": contract.get("sha256"),
+        "model_processing_compatible": getattr(result, "processing_compatible", None),
+        "filter": pipeline.filter_result.name,
+        "segmentation": pipeline.segmentation_result.name,
+        "mask_applied_to_classifier": preparation.get("mask_applied"),
+        "classifier_rgb_sha256": array_digest(image) if isinstance(image, np.ndarray) else None,
+    }
 
 
 def submit_contribution(config, result, *, item_id: str, reporter_id: str,
@@ -89,6 +110,7 @@ def submit_contribution(config, result, *, item_id: str, reporter_id: str,
             "condition": condition,
             "consent": True, "consent_version": "1", "image_sha256": digest,
             "model_sha256": getattr(result, "model_sha256", "unavailable"),
+            "analysis_context": _analysis_context(result),
             "feedback": asdict(feedback),
         }
         store = remote_store()

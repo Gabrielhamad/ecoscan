@@ -15,6 +15,12 @@ confirmadas automaticamente. O grupo pode testar o processamento, consultar
 Descarte e enviar correções consentidas. Consulte o
 [levantamento técnico e as evidências](docs/processamento_preservado_v2.md).
 
+**Continuação:** contexto técnico dos novos reportes implementado; processamento
+público e download de evidências testados. Próximo aceite: rodada do grupo entre
+participantes e secretaria, seguida de curadoria e treino de um candidato.
+O [roadmap atualizado](docs/plano_entrega.md#retomada-em-29092026) contém a ordem,
+os responsáveis e os critérios de aceite, sem confundir implementação com validação real.
+
 ## Sumário
 
 - [Proposta](#proposta)
@@ -247,6 +253,13 @@ Foto com erro + consentimento + categoria sugerida
 ```
 
 **Reportar ou aprovar uma imagem não altera automaticamente o modelo ativo.** Com persistência remota, o treino de candidatos na hospedagem está bloqueado; o fluxo previsto é exportar e treinar localmente. Separe dados por objeto/cena antes de gerar variações para evitar vazamento entre treino e teste.
+
+Novos reportes registram versão e hash do preparo, filtro, segmentação,
+compatibilidade com o modelo e hash do RGB analisado. A secretaria consulta esse
+contexto técnico, que acompanha a exportação para curadoria sem copiar caminhos
+da máquina. Registros antigos não recebem uma versão inventada retroativamente.
+A foto consentida pode ser reduzida/reencodificada no armazenamento; o hash do
+RGB refere-se à análise original, não ao arquivo JPEG exportado.
 
 ```powershell
 python scripts\train_recognition_cycle.py --overwrite --min-quality-score 55 --min-per-class 20

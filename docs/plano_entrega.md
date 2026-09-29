@@ -5,6 +5,46 @@ Metodologia: etapas sequenciais com evidência e critério de aprovação.
 Responsáveis abaixo são papéis a atribuir pelo grupo, não pessoas já designadas.
 Não há prazo informado; a sequência usa dependências, sem inventar datas.
 
+## Retomada em 29/09/2026
+
+Ponto de partida: commit `a0cf6f2`, enviado ao GitHub, com **266 testes locais
+aprovados**. O processamento preserva RGB/proporções, usa correções condicionais
+e mantém a máscara como evidência. O modelo legado aguarda treino compatível;
+não houve ganho de reconhecimento medido nesta entrega.
+
+### Roteiro operacional a partir de agora
+
+| Ordem | Entrega | Critério para avançar | Situação |
+| --- | --- | --- | --- |
+| 1 | Preparação de imagem e documentação | Fotos sem deformação, filtros comparados ao controle, evidências e testes | Implementado e enviado ao GitHub |
+| 2 | Rastreabilidade dos reportes e aceite da publicação | Reporte registra versão do preparo/modelo; secretaria e exportação mantêm o contexto; app publicado abre e analisa uma foto de teste | Implementado e testado localmente; processamento público validado |
+| 3 | Rodada coordenada do grupo | Dois participantes e um analista executam P01–P12 abaixo; protocolos persistem e não misturam contas | Pendente de contas e dispositivos reais |
+| 4 | Curadoria do próximo dataset | Origem/consentimento, classe/estado e grupos de objeto/cena registrados; desconhecidos separados | Pendente |
+| 5 | Novo candidato compatível | Treino nos originais, contrato v2, métricas por classe e comparação controlada; nenhum uso do teste final para ajustar | Pendente, após curadoria |
+| 6 | Promoção e estabilidade | Critérios de reconhecimento aprovados, teste independente, modelo e contrato publicados juntos, versão anterior recuperável | Bloqueada pela etapa 5 |
+| 7 | Fechamento do piloto | Aceite real, documentação acadêmica, retenção/backup e limites conhecidos registrados | Pendente |
+
+Na etapa 2, não serão criadas contribuições artificiais em contas de pessoas nem
+aprovadas fotos reais sem revisão autorizada. Testes locais usam dados sintéticos;
+o aceite entre contas continua separado. O roteiro abaixo detalha as entregas e
+responsabilidades, sem marcar como concluído aquilo que depende de validação externa.
+
+### Evidências desta continuação
+
+- Suíte final: **274 execuções de teste aprovadas**, incluindo contexto dos reportes,
+  revisão/exportação, preservação de privacidade e persistência remota simulada.
+- O Streamlit público foi reativado e processou uma prancha sintética como visitante,
+  exibindo antes/depois, técnicas e aviso de modelo sem preparação compatível.
+- ZIP baixado do app: 27 arquivos, manifesto de esquema 2, nove etapas, contrato
+  `rgb-preserved-v2` e `mask_applied: false` na entrada RGB do classificador.
+- Nenhum reporte artificial foi gravado no banco real. O teste entre participantes
+  e secretaria continua na etapa 3; a simulação não substitui esse aceite.
+
+Os novos registros guardam contexto técnico sem nomes de arquivos ou caminhos
+locais, consultável pela secretaria e incluído no pacote de curadoria. Registros
+antigos permanecem explicitamente sem versão conhecida. Aprovação continua sendo
+revisão de rótulo, não treinamento/publicação automática.
+
 ## Etapa 1 — Fechar o escopo
 
 Responsável: coordenação acadêmica/produto.
@@ -22,10 +62,10 @@ Situação atual: matriz preparada; confirmação externa pendente.
 
 Responsável: desenvolvimento e infraestrutura.
 
-- [ ] Confirmar o repositório correto. A pasta ecoscan deste workspace não está
+- [x] Confirmar o repositório correto: `Gabrielhamad/ecoscan`. A pasta ecoscan deste workspace não está
       rastreada no Git pai; não adicionar o Playground inteiro.
-- [ ] Revisar arquivos de código/configuração, preservando alterações existentes.
-- [ ] Excluir do pacote segredos, tokens, fotos privadas, cadastros e logs pessoais.
+- [x] Revisar arquivos de código/configuração, preservando alterações existentes.
+- [x] Excluir desta atualização segredos, tokens, fotos privadas, cadastros e logs pessoais.
 - [ ] Instalar em ambiente limpo com Python 3.12 e dependências declaradas.
 - [ ] Registrar versões resolvidas, commit/tag e hash do modelo selecionado.
 - [ ] Executar suíte completa e aceite; guardar comando, data, ambiente e resultado.
@@ -50,7 +90,8 @@ a validação real de autorização do Supabase.
 
 Responsável: dados/modelagem.
 
-- [ ] Reconciliar as 723 imagens curadas com as 672 dos splits.
+- [x] Reconciliar a rodada antiga: 723 curadas, 672 aceitas pela preparação anterior.
+- [ ] Repreparar os originais com v2 e registrar novas contagens; não assumir os mesmos 672 casos.
 - [ ] Registrar origem, direitos de uso, classe e grupo de objeto/cena.
 - [ ] Separar por grupos antes de aumentos artificiais; conferir duplicatas e similares.
 - [ ] Reservar um conjunto realmente independente de fotos, incluindo desconhecidos,
@@ -136,12 +177,12 @@ Saída: pacote revisado e apresentação coerente com o que foi demonstrado.
 | Tipo de entrega | A confirmar |
 | Enunciado/critério oficial | A confirmar |
 | Responsável pela aprovação | A atribuir |
-| Versão/commit do código | Pendente |
+| Versão/commit do processamento | `a0cf6f2`, enviado em 29/09/2026; conferir commit final da release |
 | Hash e tipo do modelo | Registrados na avaliação; reconferir na release |
-| Resultado automatizado | 243 execuções aprovadas após ativar processamento e evidências; ver adendo da avaliação |
+| Resultado automatizado do processamento | 266 testes aprovados localmente em 29/09/2026; não equivale ao aceite real |
 | Resultado do aceite real | Pendente |
 | Exceções aceitas e justificativas | A registrar |
 | Data e decisão final | Pendente |
 
-Nenhum checkbox deste plano foi marcado como concluído apenas pela existência de
-um arquivo. As pendências externas permanecem visíveis até existir evidência.
+Itens concluídos acima possuem evidência de execução/revisão desta atualização.
+As pendências externas permanecem visíveis até existir evidência de aceite real.
