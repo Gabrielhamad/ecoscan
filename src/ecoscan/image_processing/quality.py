@@ -82,14 +82,15 @@ def analyze_image_quality(image: np.ndarray) -> ImageQualityMetrics:
     edge_density = float(np.mean(gradient > 35.0))
     saturation_mean = _saturation_mean(image)
 
-    if brightness_mean < 70.0:
+    low, high = np.percentile(gray, [5, 95])
+    if high < 70.0:
         exposure_status = "underexposed"
-    elif brightness_mean > 205.0:
+    elif low > 205.0:
         exposure_status = "overexposed"
     else:
         exposure_status = "ok"
 
-    contrast_status = "low" if contrast < 0.18 else "ok"
+    contrast_status = "low" if high - low < 70.0 else "ok"
     focus_status = "low" if sharpness < 0.002 else "ok"
 
     if exposure_status != "ok" or contrast_status == "low":
@@ -97,7 +98,7 @@ def analyze_image_quality(image: np.ndarray) -> ImageQualityMetrics:
     elif focus_status == "low":
         recommendation = "capturar nova imagem mais nítida; filtro não recupera detalhe perdido"
     elif edge_density > 0.35:
-        recommendation = "usar suavização leve para reduzir excesso de bordas antes da segmentação"
+        recommendation = "cena rica em textura; bordas não comprovam ruído e devem ser preservadas"
     else:
         recommendation = "imagem adequada para pipeline padrão"
 

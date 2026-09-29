@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -34,6 +34,7 @@ class AppConfig:
     history: dict[str, Any]
     filters: dict[str, Any]
     segmentation: dict[str, Any]
+    processing: dict[str, Any] = field(default_factory=dict)
 
 
 def _as_size(value: Any, key: str) -> tuple[int, int]:
@@ -106,4 +107,5 @@ def load_config(config_path: str | Path | None = None) -> AppConfig:
         history=dict(raw.get("history", {})),
         filters=dict(raw.get("filters", {})),
         segmentation=dict(raw.get("segmentation", {})),
+        processing=dict(raw.get("processing", {})),
     )

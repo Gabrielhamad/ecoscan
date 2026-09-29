@@ -119,7 +119,7 @@ class MorphologyPipelineTests(unittest.TestCase):
         Image.fromarray(pixels).save(path)
         return path, mask, replace(load_config(), image_size=(64, 64))
 
-    def test_control_preserves_segmentation_and_processed_mask_drives_input(self):
+    def test_morphology_changes_mask_without_erasing_classifier_pixels(self):
         with tempfile.TemporaryDirectory() as folder:
             path, expected, config = self.fixture(folder)
             base = ProcessingPipelineOptions(filter_name="none", segmentation_name="otsu",
@@ -133,10 +133,10 @@ class MorphologyPipelineTests(unittest.TestCase):
             self.assertEqual(processed.segmentation_result.mask[5, 5], 0)
             np.testing.assert_array_equal(processed.segmentation_result.image,
                                           apply_mask(processed.filter_result.image, processed.morphology_result.mask))
-            np.testing.assert_array_equal(processed.model_input_preview, processed.segmentation_result.image)
+            np.testing.assert_array_equal(processed.recognition_image, processed.filter_result.image)
             self.assertEqual(processed.metadata["morphology"]["changed_pixels"], 2)
 
-    def test_classifier_receives_morphologically_processed_image(self):
+    def test_classifier_receives_rgb_and_mask_remains_diagnostic(self):
         from types import SimpleNamespace
         from ecoscan.services.analysis_service import analyze_waste_image
         from ecoscan.classification.baseline import BaselinePrediction
@@ -150,7 +150,8 @@ class MorphologyPipelineTests(unittest.TestCase):
                  patch("ecoscan.services.analysis_service.apply_material_rules", return_value=(prediction, None)):
                 result = analyze_waste_image(path, config, options=options,
                                              model_bundle=SimpleNamespace(model_type="test"))
-            np.testing.assert_array_equal(predict.call_args.args[1], result.pipeline.segmentation_result.image)
+            np.testing.assert_array_equal(predict.call_args.args[1], result.pipeline.recognition_image)
+            self.assertFalse(np.all(predict.call_args.args[1][5, 5] == 255))
             self.assertEqual(result.pipeline.segmentation_result.mask[5, 5], 0)
 
     def test_lossless_exports_and_metadata_include_intermediate_stages(self):
@@ -168,7 +169,7 @@ class MorphologyPipelineTests(unittest.TestCase):
             metadata = json.loads((target / "pipeline_report.json").read_text(encoding="utf-8"))
             self.assertEqual(metadata["morphology"]["kernel"], [[1, 1, 1]] * 3)
             self.assertEqual(metadata["morphology"]["sequence"], ["erosion", "dilation"])
-            self.assertIn("bicubic", metadata["preprocessing"]["resize"])
+            self.assertIn("aspect ratio preserved", metadata["preprocessing"]["resize"])
 
 
 if __name__ == "__main__":

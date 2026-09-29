@@ -1,6 +1,9 @@
 # Pipeline profissional de filtragem e reconhecimento
 
-Este documento descreve a versão atual do pipeline usado pelo EcoScan para atender à etapa da APS de filtrar/processar a imagem e depois realizar reconhecimento.
+> Registro histórico, anterior à revisão de 29/09/2026. Para o comportamento
+> atual, consulte [RGB preservado v2](processamento_preservado_v2.md).
+
+Este documento descreve uma versão anterior do pipeline usado pelo EcoScan para atender à etapa da APS de filtrar/processar a imagem e depois realizar reconhecimento.
 
 ## Fluxo técnico
 

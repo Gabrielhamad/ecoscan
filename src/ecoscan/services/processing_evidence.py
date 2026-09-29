@@ -68,12 +68,13 @@ def processing_evidence(pipeline) -> tuple[ProcessingEvidence, ...]:
     stages = [
         ProcessingEvidence("01_resize", "Preparação: redimensionamento",
                            pipeline.loaded.array, pipeline.preprocessing.resized,
-                           {"resampling": "bicubic", "target_size": pipeline.metadata["target_size"],
-                            "aspect_ratio": "stretch; legacy model contract",
+                           {"resampling": "area", "target_size": pipeline.preprocessing.metadata["target_size"],
+                            "aspect_ratio": "preserved; no upscaling",
                             "input": "RGB, orientação EXIF já corrigida"}),
         ProcessingEvidence("02_filter", "Filtro: " + pipeline.filter_result.name,
                            pipeline.preprocessing.resized, pipeline.filter_result.image,
-                           pipeline.filter_result.parameters, pipeline.filter_result.name != "none"),
+                           pipeline.filter_result.parameters,
+                           pipeline.filter_result.parameters.get("sequence", [pipeline.filter_result.name]) != ["none"]),
         ProcessingEvidence("03_segmentation", "Segmentação: " + raw.name,
                            pipeline.filter_result.image, raw.mask, raw.parameters, raw.name != "none"),
     ]
@@ -90,12 +91,17 @@ def processing_evidence(pipeline) -> tuple[ProcessingEvidence, ...]:
         stages.append(ProcessingEvidence("04_morphology_control", "Morfologia: controle",
                                          raw.mask, morphology.mask, {"operation": "none"}, False))
     stages.append(ProcessingEvidence(
-        "05_classifier_input", "Aplicação da máscara final",
+        "05_mask_preview", "Máscara: visualização auxiliar",
         pipeline.filter_result.image, pipeline.segmentation_result.image,
         {"background_rgb": [255, 255, 255],
          "mask_sha256": array_digest(pipeline.segmentation_result.mask),
-         "destination": "analysis_service._predict; antes da preparação própria do classificador"},
+         "destination": "inspeção; não enviada ao classificador"},
         raw.name != "none" or morphology.metadata["operation"] != "none"))
+    stages.append(ProcessingEvidence(
+        "06_classifier_input", "Entrada RGB do classificador",
+        (pipeline.preprocessing.resized if pipeline.filter_result.name in {"sobel", "canny"}
+         else pipeline.filter_result.image), pipeline.recognition_image,
+        pipeline.metadata["recognition_preparation"], True))
     return tuple(stages)
 
 
@@ -107,12 +113,12 @@ def _png(array: np.ndarray) -> bytes:
 
 def evidence_manifest(pipeline) -> dict[str, Any]:
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "source": "arrays da execução; nenhuma transformação é refeita para ilustrar",
         "digest": "SHA-256 de JSON shape/dtype (sort_keys=True), byte NUL e bytes C-order",
         "difference": "máxima diferença absoluta entre canais, escala 0–255 sem amplificação",
         "scope": "Aquisição RGB até a imagem entregue ao classificador; não mede acurácia.",
-        "classifier_input_sha256": array_digest(pipeline.segmentation_result.image),
+        "classifier_input_sha256": array_digest(pipeline.recognition_image),
         "stages": [stage.manifest() for stage in processing_evidence(pipeline)],
     }
 

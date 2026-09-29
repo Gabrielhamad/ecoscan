@@ -1,5 +1,9 @@
 # Filtragem adaptativa do EcoScan
 
+> Registro histórico. Desde 29/09/2026, o padrão usa correções condicionais
+> conservadoras, sem sequências automáticas. A implementação atual e seus
+> critérios estão em [RGB preservado v2](processamento_preservado_v2.md).
+
 ## Objetivo
 
 A filtragem adaptativa foi adicionada para que o EcoScan não aplique sempre o mesmo tratamento em todas as imagens. Cada foto de resíduo pode vir com iluminação, ruído, contraste, fundo e foco diferentes. Por isso, o modo `auto` avalia a imagem e escolhe uma sequência curta de filtros antes da segmentação e do reconhecimento.

@@ -63,10 +63,11 @@ def build_public_next_action(
         material_label=str(material_label),
         confidence_label=confidence_label,
         destination_title="Destino não confirmado",
-        destination_type="Tire outra foto ou corrija a classe antes de usar a orientação.",
+        destination_type=("Escolha o material na aba Descarte." if safety_decision.status == "needs_training"
+                          else "Tire outra foto ou corrija a classe antes de usar a orientação."),
         bin_color_hex="#d79f35",
-        preparation_steps=capture_photo_tips()[:3],
-        attention_note="Quando o sistema estiver incerto, a opção mais segura é refazer a foto ou registrar correção.",
+        preparation_steps=(() if safety_decision.status == "needs_training" else capture_photo_tips()[:3]),
+        attention_note=safety_decision.message,
         search_query=None,
         can_search_collection=False,
     )

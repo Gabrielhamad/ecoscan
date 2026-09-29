@@ -11,10 +11,11 @@ from ecoscan.image_processing.adaptive_filters import apply_adaptive_filter_pipe
 from ecoscan.image_processing.capture_quality import CaptureQualityAssessment, assess_capture_quality
 from ecoscan.image_processing.filters import FilterResult, apply_filter
 from ecoscan.image_processing.image_io import LoadedImage, load_rgb_image
+from ecoscan.image_processing.contracts import processing_contract
 from ecoscan.image_processing.preprocessing import (
     PreprocessResult,
-    model_input_preview,
-    prepare_model_input,
+    letterbox_image,
+    prepare_working_image,
 )
 from ecoscan.image_processing.quality import (
     ImageQualityMetrics,
@@ -58,20 +59,17 @@ class ProcessingPipelineResult:
     raw_segmentation_result: SegmentationResult | None = None
     morphology_result: MorphologyResult | None = None
 
+    @property
+    def recognition_image(self) -> np.ndarray:
+        return self.model_input_preview
+
 
 def _configured_filter_parameters(config: AppConfig, name: str) -> dict[str, Any]:
     return dict(config.filters.get(name, {}))
 
 
 def _adaptive_filter_parameters(config: AppConfig) -> dict[str, Any]:
-    parameters = dict(config.filters)
-    auto_parameters = dict(parameters.get("auto", {}))
-    method_parameters = dict(auto_parameters.get("method_parameters", {}))
-    for filter_name in ("none", "gaussian", "median", "bilateral", "clahe"):
-        method_parameters.setdefault(filter_name, _configured_filter_parameters(config, filter_name))
-    auto_parameters["method_parameters"] = method_parameters
-    parameters["auto"] = auto_parameters
-    return parameters
+    return dict(config.filters)
 
 
 def _configured_segmentation_parameters(config: AppConfig, name: str) -> dict[str, Any]:
@@ -110,7 +108,7 @@ def run_processing_pipeline(
         min_size=config.min_image_size,
     )
 
-    preprocessing = prepare_model_input(loaded.array, config.image_size)
+    preprocessing = prepare_working_image(loaded.array, config.processing.get("max_dimension", 640))
     quality_original = analyze_image_quality(preprocessing.resized)
 
     requested_filter = selected_options.filter_name.lower().strip()
@@ -170,7 +168,8 @@ def run_processing_pipeline(
         )
     raw_segmentation_result = segmentation_result
     morphology_result = apply_morphology(
-        raw_segmentation_result.mask, selected_options.morphology_name,
+        raw_segmentation_result.mask,
+        "none" if raw_segmentation_result.name == "none" else selected_options.morphology_name,
         **(selected_options.morphology_parameters or {}),
     )
     if morphology_result.metadata["operation"] != "none":
@@ -180,13 +179,28 @@ def run_processing_pipeline(
             image=apply_mask(filter_result.image, morphology_result.mask),
             foreground_ratio=float(np.mean(morphology_result.mask > 0)),
         )
-    element_analysis = analyze_visual_elements(segmentation_result.mask)
+    analysis_mask = (np.zeros_like(segmentation_result.mask) if segmentation_result.name == "none"
+                     else segmentation_result.mask)
+    element_analysis = analyze_visual_elements(analysis_mask)
     element_overlay = draw_element_overlay(filter_result.image, element_analysis)
-    detection_heatmap = draw_detection_heatmap(preprocessing.resized, segmentation_result.mask, element_analysis)
-    capture_quality = assess_capture_quality(quality_original, quality_filtered, element_analysis)
+    detection_heatmap = draw_detection_heatmap(preprocessing.resized, analysis_mask, element_analysis)
+    capture_quality = assess_capture_quality(
+        quality_original, quality_filtered, element_analysis,
+        use_segmentation=False,
+    )
 
-    model_preprocess = prepare_model_input(segmentation_result.image, config.image_size)
-    preview = model_input_preview(model_preprocess.normalized)
+    # Masks are diagnostic: uncertain foreground must not erase material cues.
+    recognition_source = filter_result.image
+    if requested_filter in {"sobel", "canny"}:
+        recognition_source = preprocessing.resized
+    preview, recognition_metadata = letterbox_image(
+        recognition_source, config.image_size, config.processing.get("padding_rgb", 127)
+    )
+    recognition_metadata["mask_applied"] = False
+    recognition_metadata["contract"] = processing_contract(
+        config, filter_name=selected_options.filter_name,
+        filter_parameters=selected_options.filter_parameters,
+    )
 
     return ProcessingPipelineResult(
         loaded=loaded,
@@ -208,6 +222,7 @@ def run_processing_pipeline(
             "oriented_size": [loaded.array.shape[1], loaded.array.shape[0]],
             "target_size": list(config.image_size),
             "preprocessing": preprocessing.metadata,
+            "recognition_preparation": recognition_metadata,
             "morphology": morphology_result.metadata,
             "quality": {
                 "before_filter": quality_original.to_dict(),
@@ -234,6 +249,6 @@ def run_processing_pipeline(
                 "overlay": "Caixas destacam componentes visuais relevantes encontrados na máscara.",
             },
             "capture_quality": capture_quality.to_dict(),
-            "model_input_shape": list(model_preprocess.model_input.shape),
+            "model_input_shape": [1, *preview.shape],
         },
     )

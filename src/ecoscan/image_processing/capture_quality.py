@@ -24,6 +24,8 @@ def assess_capture_quality(
     before_filter: ImageQualityMetrics,
     after_filter: ImageQualityMetrics,
     element_analysis: ElementAnalysis,
+    *,
+    use_segmentation: bool = True,
 ) -> CaptureQualityAssessment:
     score = 100
     reasons: list[str] = []
@@ -59,20 +61,20 @@ def assess_capture_quality(
         reasons.append("há muitas bordas ou textura de fundo competindo com o resíduo")
         actions.append("Remova objetos próximos e fotografe apenas o resíduo principal.")
 
-    if element_analysis.significant_count == 0:
+    if use_segmentation and element_analysis.significant_count == 0:
         score -= 25
         reasons.append("a segmentação não encontrou um elemento visual significativo")
         actions.append("Centralize o resíduo e deixe ele ocupar uma parte clara da imagem.")
-    elif element_analysis.largest_area_ratio < 0.035:
+    elif use_segmentation and element_analysis.largest_area_ratio < 0.035:
         score -= 16
         reasons.append("o resíduo parece pequeno demais no enquadramento")
         actions.append("Aproxime a câmera até o resíduo ocupar mais espaço sem cortar as bordas.")
-    elif element_analysis.foreground_ratio > 0.88:
+    elif use_segmentation and element_analysis.foreground_ratio > 0.88:
         score -= 14
         reasons.append("o objeto ou fundo ocupa quase toda a máscara")
         actions.append("Afaste um pouco a câmera e deixe uma margem visível ao redor do resíduo.")
 
-    if element_analysis.likely_multi_object:
+    if use_segmentation and element_analysis.likely_multi_object:
         score -= 10
         reasons.append("há múltiplos elementos relevantes na cena")
         actions.append("Analise um resíduo por vez para obter orientação de descarte mais confiável.")
@@ -82,7 +84,7 @@ def assess_capture_quality(
     if not unique_actions and normalized_score < 90:
         unique_actions = ("Capture em fundo simples, com boa luz e o resíduo centralizado.",)
 
-    force_retake = after_filter.focus_status == "low" or element_analysis.significant_count == 0
+    force_retake = after_filter.focus_status == "low" or (use_segmentation and element_analysis.significant_count == 0)
     if normalized_score < 55 or force_retake:
         retake_score = min(normalized_score, 54) if force_retake else normalized_score
         return CaptureQualityAssessment(

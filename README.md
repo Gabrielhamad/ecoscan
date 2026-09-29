@@ -8,6 +8,13 @@ Aplicação web para celular e computador que combina processamento digital de i
 
 > **Status: piloto acadêmico em validação.** Não é um serviço oficial da Prefeitura e não substitui a orientação do operador de coleta. O reconhecimento pode errar, inclusive em objetos comuns. Não há garantia de identificar todo resíduo.
 
+**Atualização de 29/09/2026:** preparação `rgb-preserved-v2`, com proporções e
+cores preservadas, filtros condicionais e máscaras somente para inspeção.
+O modelo antigo **aguarda novo treinamento compatível**: suas hipóteses não são
+confirmadas automaticamente. O grupo pode testar o processamento, consultar
+Descarte e enviar correções consentidas. Consulte o
+[levantamento técnico e as evidências](docs/processamento_preservado_v2.md).
+
 ## Sumário
 
 - [Proposta](#proposta)
@@ -73,7 +80,7 @@ As seis categorias ativas estão em [config/settings.json](config/settings.json)
 | --- | --- | --- |
 | Aplicação | Python 3.11+ e Streamlit | Interface para celular e computador, sessão e painéis |
 | Imagens | Pillow, NumPy e OpenCV | Leitura com orientação EXIF, filtros, segmentação e morfologia |
-| Visão computacional | scikit-image e scikit-learn | Descritores HOG/LBP, histogramas e seleção de classificador visual supervisionado |
+| Visão computacional | scikit-image, PyWavelets e scikit-learn | Estimativa de ruído, SSIM, descritores HOG/LBP, histogramas e classificador visual supervisionado |
 | Persistência | Supabase Auth, PostgreSQL e Storage privado | Contas confirmadas, protocolos e fotos consentidas |
 | Publicação | GitHub e Streamlit Community Cloud | Código versionado e implantação da aplicação pública |
 
@@ -90,20 +97,22 @@ está configurado para um experimento futuro, mas não é o modelo publicado.
 flowchart LR
     A[Foto] --> B[Validação e preparação]
     B --> C[Filtragem adaptativa]
-    C --> D[Segmentação adaptativa]
+    C --> D[Segmentação auxiliar]
     D --> M[Abertura e fechamento da máscara]
-    M --> E[Classificação e verificações]
+    M --> V[Evidências visuais]
+    C --> L[RGB completo com margens]
+    L --> E[Classificação e verificações]
     E --> F[Resultado ou incerteza]
     F --> G[Orientação de descarte]
     F --> H[Correção consentida]
     H --> I[Revisão humana]
 ```
 
-1. **Entrada:** validação do arquivo, leitura RGB, redimensionamento e diagnóstico de qualidade.
-2. **Filtragem:** seleção adaptativa entre controle sem filtro, Gaussiano, mediana, bilateral, CLAHE e combinações limitadas. Cada escolha e seus parâmetros são registrados.
-3. **Segmentação:** seleção adaptativa entre Otsu, HSV e GrabCut. O laboratório permite escolher manualmente um método para comparar resultados.
-4. **Morfologia aplicada:** abertura seguida de fechamento, com erosão/dilatação e elemento quadrado 3×3 por padrão; parâmetros e controle sem operação disponíveis.
-5. **Reconhecimento:** classificação, verificações de material e restrição às categorias do piloto.
+1. **Entrada:** validação, orientação EXIF, transparência sobre branco e RGB. Redução proporcional até 640 px no lado maior, sem ampliar a foto.
+2. **Filtragem:** diagnóstico por imagem e comparação com o controle sem alteração. Mediana seletiva para impulsos, Gaussiano/bilateral para ruído e CLAHE suave para contraste; uma correção no máximo, com limites de preservação.
+3. **Segmentação:** candidatos Otsu e GrabCut, com possibilidade de não encontrar primeiro plano confiável. HSV permanece como experimento manual.
+4. **Morfologia aplicada:** abertura/fechamento da máscara, com elemento 3×3. Máscaras, componentes e contornos são evidências auxiliares, não recortes obrigatórios para o modelo.
+5. **Reconhecimento:** RGB completo ajustado a 224×224 com margens, extração de atributos, classificação e verificações de material, escopo e compatibilidade de preparação.
 6. **Apresentação:** original/final e antes/depois de cada operação, diferenças, parâmetros, download das evidências em PNG/ZIP e orientação quando houver resultado aceito.
 
 O [roteiro prático de processamento](docs/pratica_processamento_imagens.md) orienta a demonstração acadêmica. O laboratório fica disponível na página pública e na área técnica, com exportação de máscaras sem perdas e um experimento sintético reproduzível. A página pública exibe o processamento aplicado antes do cartão de reconhecimento, com comparação antes/depois específica da foto. O controle sem operação é explícito; aplicar morfologia não comprova aumento de acurácia.
@@ -114,13 +123,17 @@ O serviço suporta baseline, KNN visual, artefato visual supervisionado e Keras.
 
 ## Sincronização do modelo
 
-O app usa automaticamente as técnicas de imagem configuradas em
-`config/settings.json` antes de chamar o modelo ativo. Treino local e inferência
-agora leem o mesmo perfil padrão: filtragem adaptativa, segmentação adaptativa e
-abertura/fechamento da máscara. A base processada salva em PNG sem perdas a
-matriz RGB entregue ao classificador. O resultado mostra as operações efetivamente
-executadas naquela foto. Ajustes manuais no laboratório reprocessam somente a
-análise atual e podem produzir entradas diferentes das usadas no treino.
+O app aplica o perfil de `config/settings.json` antes da inferência. A preparação
+do dataset usa o mesmo pipeline e salva em PNG a matriz RGB completa entregue ao
+classificador, sem aplicar a máscara. O antes/depois e os parâmetros correspondem
+à foto analisada; nenhuma correção é obrigatória só para produzir diferença visual.
+
+O contrato `rgb-preserved-v2` registra versão, filtros, dimensões e margens.
+O ciclo de treinamento vincula esse contrato ao hash do modelo em
+`<modelo>.processing.json`. Sem correspondência, inclusive com o artefato legado
+atual, a hipótese fica **não confirmada**, mesmo se o score for alto. Ajustes manuais
+de filtro também podem invalidar essa compatibilidade. Mudar apenas a máscara
+diagnóstica não muda os pixels da entrada do classificador.
 
 **Alterar um filtro no código ou aprovar um reporte não modifica os parâmetros do
 classificador.** O ciclo `scripts/train_recognition_cycle.py` prepara as fotos curadas,
@@ -128,6 +141,10 @@ cria treino/validação/teste e gera um candidato visual separado. O analista av
 as métricas e os erros reais antes de substituir o artefato ativo. O GitHub
 recebe a versão aprovada; o Streamlit atualiza a aplicação após a implantação.
 Consulte o [procedimento de treinamento](docs/treinamento_reconhecimento.md).
+
+As métricas antigas (27,5% top-1 no teste daquela rodada) não avaliam a preparação
+v2. Esta revisão não retreinou nem promoveu um modelo. Os testes com referência
+limpa medem redução de ruído, não aumento da precisão de reconhecimento.
 
 ## Execução local
 
@@ -209,6 +226,15 @@ python -m unittest discover -s tests
 
 A suíte cobre processamento, serviços, autorização, persistência com simulações e partes da interface. Não comprova acurácia, entrega de e-mail, integração real da nuvem ou funcionamento em todos os celulares. O [guia do grupo](docs/guia_do_grupo.md) complementa a suíte com testes manuais.
 
+Auditoria reproduzível, sem treinar ou enviar imagens:
+
+```bash
+python scripts/audit_preprocessing.py --synthetic --output reports/preprocessing_audit/synthetic
+python scripts/audit_preprocessing.py --output reports/preprocessing_audit/manual caminho/foto.jpg
+```
+
+As pranchas e métricas ficam locais. Consulte [técnicas, critérios e resultados](docs/processamento_preservado_v2.md).
+
 Para publicar, envie alterações revisadas ao repositório ligado ao Streamlit e confira a implantação e os logs. Um `git push` bem-sucedido não comprova que a nova versão já está disponível. Veja [hospedagem](docs/hospedagem_gratuita.md).
 
 ## Aprendizado supervisionado
@@ -229,7 +255,10 @@ python scripts\train_recognition_cycle.py --overwrite --min-quality-score 55 --m
 O candidato padrão é `models/vision_svm_classifier_candidate.joblib` (nome legado,
 não garantia de algoritmo SVM) e o relatório fica em
 `reports/recognition_training_candidate/`. O script bloqueia
-o caminho do modelo ativo. O dataset de treino não é enviado ao repositório.
+o caminho do modelo ativo. O contrato correspondente é salvo em
+`models/vision_svm_classifier_candidate.joblib.processing.json`. Reprepare a partir
+dos **originais curados**, não de imagens já mascaradas. A promoção revisada deve
+incluir o artefato e seu contrato. O dataset de treino não é enviado ao repositório.
 
 Avalie precisão, recall, F1, matriz de confusão, rejeição de desconhecidos e fotos reais. Para vídeo, avalie também latência e estabilidade. Não substitua o modelo com base somente no acerto das imagens usadas no treino. O ciclo reproduzível está em [treinamento e preparação do reconhecimento](docs/treinamento_reconhecimento.md). Veja também [operação da secretaria](docs/operacao_secretaria.md) e [gestão do dataset](docs/gestao_dataset_e_classes.md).
 
@@ -276,7 +305,7 @@ Não há resultado medido de massa reciclada, emissões evitadas ou renda gerada
 
 ## Documentação e direitos de uso
 
-Comece pelo [índice de documentação](docs/README.md). Documentos de fases anteriores podem conter escopos históricos; código/configuração e guias atuais orientam a operação. README revisado em **28/09/2026**.
+Comece pelo [índice de documentação](docs/README.md). Documentos de fases anteriores podem conter escopos históricos; código/configuração e guias atuais orientam a operação. README revisado em **29/09/2026**.
 
 Não publique senhas, chaves, exportações de usuários ou fotos pessoais em issues e commits. Dados de treinamento exigem consentimento ou licença compatível e rastreabilidade. Remover metadados não remove pessoas ou documentos visíveis.
 

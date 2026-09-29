@@ -13,7 +13,7 @@ from ecoscan.segmentation.methods import (
 )
 
 
-DEFAULT_CANDIDATE_METHODS = ("otsu", "hsv_color", "grabcut")
+DEFAULT_CANDIDATE_METHODS = ("otsu", "grabcut")
 
 
 @dataclass(frozen=True)
@@ -73,11 +73,22 @@ def segment_image_adaptive(
         candidates.append((result, score))
         skipped.append({"name": "fallback", "reason": "nenhum candidato adaptativo estava disponível"})
 
-    selected_result, selected_score = max(candidates, key=lambda item: item[1].score)
+    eligible = [(result, score) for result, score in candidates
+                if 0.01 <= score.foreground_ratio <= 0.94
+                and score.border_ratio < 0.45
+                and 1 <= score.significant_components <= 10
+                and score.score >= 0.55]
+    plausible = bool(eligible)
+    selected_result, selected_score = max(eligible or candidates, key=lambda item: item[1].score)
+    if not plausible:
+        selected_result = segment_image(image, "none")
     decision = {
         "requested": "auto",
         "selected": selected_result.name,
-        "reason": _selection_reason(selected_score, image_quality),
+        "status": "candidate" if plausible else "unresolved",
+        "reason": (_selection_reason(selected_score, image_quality) if plausible else
+                   "Não houve máscara geometricamente plausível. A foto completa foi preservada."),
+        "usage": "diagnóstico visual; não recorta a entrada do classificador",
         "quality_profile": {
             "exposure": image_quality.exposure_status,
             "contrast": image_quality.contrast_status,
@@ -116,11 +127,10 @@ def _score_candidate(
     foreground_ratio = float(result.foreground_ratio)
     min_ratio = float(params.get("min_foreground_ratio", 0.025))
     max_ratio = float(params.get("max_foreground_ratio", 0.86))
-    ideal_ratio = float(params.get("ideal_foreground_ratio", 0.38))
     border_ratio = _border_ratio(result.mask)
     component_stats = _component_stats(result.mask)
 
-    ratio_score = 1.0 - min(abs(foreground_ratio - ideal_ratio) / max(ideal_ratio, 0.001), 1.0)
+    ratio_score = 1.0 if min_ratio <= foreground_ratio <= max_ratio else 0.0
     border_score = 1.0 - min(border_ratio / 0.75, 1.0)
     component_score = _component_score(component_stats["significant_components"])
     largest_score = min(component_stats["largest_component_ratio"] / 0.28, 1.0)
@@ -246,7 +256,7 @@ def _method_prior(name: str, quality: ImageQualityMetrics) -> float:
             return -0.12
         return 0.02
     if name == "grabcut":
-        score = 0.03
+        score = 0.12
         if quality.edge_density >= 0.18:
             score += 0.08
         if quality.focus_status == "low":
@@ -254,8 +264,6 @@ def _method_prior(name: str, quality: ImageQualityMetrics) -> float:
         return score
     if name == "otsu":
         score = 0.04
-        if quality.contrast_status == "ok":
-            score += 0.06
         if quality.saturation_mean < 0.10:
             score += 0.04
         return score
@@ -277,9 +285,9 @@ def _candidate_reason(
 
 def _selection_reason(score: CandidateScore, quality: ImageQualityMetrics) -> str:
     if score.name == "hsv_color":
-        return "HSV foi escolhido por equilibrar cor, área segmentada e componentes relevantes."
+        return "HSV destaca regiões coloridas; não representa necessariamente o objeto inteiro."
     if score.name == "grabcut":
-        return "GrabCut foi escolhido por lidar melhor com objeto central e fundo mais complexo."
+        return "GrabCut produziu uma máscara candidata geometricamente plausível; confira o contorno."
     if quality.contrast_status == "ok":
-        return "Otsu foi escolhido por apresentar separação global estável para esta imagem."
+        return "Otsu produziu uma máscara candidata por intensidade; confira se partes claras e escuras foram preservadas."
     return "Otsu foi escolhido como alternativa mais estável entre os métodos disponíveis."

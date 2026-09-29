@@ -8,6 +8,7 @@ import numpy as np
 from tests.test_learning_contributions import LearningTests
 from ecoscan.classification.visual_features import VisualFeatureConfig, extract_visual_features
 from ecoscan.classification.visual_knn import VisualKnnClassifier
+from ecoscan.image_processing.contracts import processing_contract, write_model_contract
 from ecoscan.services.accounts import UserProfile
 from ecoscan.services.learning_contributions import (
     citizen_contributions, list_contributions, review_contribution,
@@ -32,6 +33,7 @@ class SecretariatTests(unittest.TestCase):
         )
         self.model_path = self.config.directories["models"] / "vision_classifier.npz"
         model.save(self.model_path)
+        write_model_contract(self.model_path, processing_contract(self.config))
 
     def approve(self):
         record = self.fixture.submit()
@@ -62,7 +64,7 @@ class SecretariatTests(unittest.TestCase):
     def test_train_candidate_never_changes_active_and_is_idempotent(self):
         record = self.approve()
         before = hashlib.sha256(self.model_path.read_bytes()).hexdigest()
-        pipeline = SimpleNamespace(segmentation_result=SimpleNamespace(image=self.image))
+        pipeline = SimpleNamespace(recognition_image=self.image)
         with patch("ecoscan.services.secretariat_training.run_processing_pipeline", return_value=pipeline) as process:
             run = train_candidate(self.config, reviewer=self.admin)
             again = train_candidate(self.config, reviewer=self.admin)
@@ -102,7 +104,7 @@ render_review(st, config, UserProfile("admin", "Analista", "admin"))
         self.assertFalse(app.exception)
         next(widget for widget in app.selectbox if widget.label == "Decisão").set_value("approved")
         next(widget for widget in app.text_area if widget.label == "Resposta ao cidadão").set_value("Lata confirmada.")
-        pipeline = SimpleNamespace(segmentation_result=SimpleNamespace(image=self.image))
+        pipeline = SimpleNamespace(recognition_image=self.image)
         with patch("ecoscan.services.secretariat_training.run_processing_pipeline", return_value=pipeline):
             next(widget for widget in app.button if widget.label == "Salvar revisão").click().run()
         self.assertFalse(app.exception)

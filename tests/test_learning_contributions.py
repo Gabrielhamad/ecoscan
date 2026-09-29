@@ -96,6 +96,7 @@ class LearningTests(unittest.TestCase):
         organic = BaselinePrediction("organic", "organic", .9, {"organic": .9}, True, .6)
         metal = BaselinePrediction("metal", "metal", .9, {"metal": .9}, True, .6)
         pipeline = SimpleNamespace(
+            recognition_image=None,
             segmentation_result=SimpleNamespace(image=None, mask=None),
             preprocessing=SimpleNamespace(resized=None), element_analysis=None,
             metadata={"filter": {"name": "gaussian"}, "segmentation": {"name": "otsu"}})

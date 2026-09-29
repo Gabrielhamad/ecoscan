@@ -6,6 +6,10 @@
   ],
   "confidence_threshold": 0.65,
   "random_seed": 42,
+  "processing": {
+    "max_dimension": 640,
+    "padding_rgb": 127
+  },
   "allowed_extensions": [
     ".jpg",
     ".jpeg",
@@ -90,21 +94,10 @@
         ],
         [
           "clahe"
-        ],
-        [
-          "clahe",
-          "gaussian"
-        ],
-        [
-          "clahe",
-          "median"
-        ],
-        [
-          "clahe",
-          "bilateral"
         ]
       ],
-      "max_steps": 2
+      "min_noise_sigma": 4.0,
+      "min_impulse_ratio": 0.0005
     },
     "gaussian": {
       "kernel_size": 5,
@@ -135,11 +128,9 @@
     "auto": {
       "candidate_methods": [
         "otsu",
-        "hsv_color",
         "grabcut"
       ],
       "min_foreground_ratio": 0.025,
-      "ideal_foreground_ratio": 0.38,
       "max_foreground_ratio": 0.86
     },
     "threshold": {
@@ -150,8 +141,8 @@
       "value_min": 35
     },
     "grabcut": {
-      "iterations": 5,
-      "margin_percent": 0.08
+      "iterations": 3,
+      "margin_percent": 0.01
     },
     "morphology": {
       "default": "open_close",

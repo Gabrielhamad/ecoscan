@@ -48,7 +48,7 @@ def _iter_split_images(split_dir: Path, classes: list[str], extensions: frozense
 
 def _prediction_image(path: Path, config: Any, *, use_pipeline: bool) -> np.ndarray:
     if use_pipeline:
-        return run_processing_pipeline(path, config).segmentation_result.image
+        return run_processing_pipeline(path, config).recognition_image
     return load_rgb_image(path, allowed_extensions=config.allowed_extensions, min_size=config.min_image_size).array
 
 

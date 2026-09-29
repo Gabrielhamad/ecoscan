@@ -21,14 +21,14 @@ a ementa oficial não foi fornecida.
 ## Sequência real do pipeline
 
     Arquivo validado e orientação EXIF corrigida
-      → conversão RGB
-      → redimensionamento bicúbico
+      → conversão RGB e transparência sobre branco
+      → redução proporcional por área (lado maior até 640 px)
       → diagnóstico e filtragem
       → segmentação (máscara binária)
       → abertura + fechamento da máscara (padrão ativo)
-      → máscara aplicada ao RGB filtrado
+      → máscara aplicada somente à prévia diagnóstica
       → componentes, área e caixas
-      → preparação específica do classificador
+      → RGB completo com margens para o classificador (224×224)
       → reconhecimento e orientação
 
 A imagem original é preservada em memória. A máscara bruta e a máscara tratada
@@ -36,7 +36,8 @@ são mantidas separadamente. O padrão seleciona **filtragem e segmentação
 adaptativas → abertura + fechamento**, com elemento quadrado 3×3, uma iteração
 por primitiva e borda zero. Para demonstrar especificamente mediana 3×3 e Otsu,
 selecione esses métodos no laboratório.
-A máscara tratada é aplicada ao RGB filtrado antes da classificação.
+A máscara tratada não apaga pixels da entrada de reconhecimento. A versão
+[RGB preservado v2](processamento_preservado_v2.md) mantém cor e proporções.
 Os parâmetros são configurados em config/settings.json; o avaliador também lê esses padrões.
 Os controles sem operação e os métodos manuais continuam disponíveis no laboratório.
 
@@ -45,7 +46,7 @@ Os controles sem operação e os métodos manuais continuam disponíveis no labo
 | Conceito | Aplicação no EcoScan | Evidência |
 | --- | --- | --- |
 | Aquisição e validação | Upload/câmera; formato, arquivo vazio, dimensão, orientação e RGB | Original, dimensões e testes de imagem |
-| Amostragem e interpolação | Redimensionamento bicúbico para dimensão configurada | Metadados de origem/destino e imagem preparada |
+| Amostragem e interpolação | Redução por área preservando proporções; margens para tamanho fixo | Escala, dimensões, caixa de conteúdo e imagem preparada |
 | Intensidade e cor | RGB preservado; luminância aproximada para tons de cinza; HSV na segmentação por cor | RGB, cinza e histograma |
 | Normalização | Conversão de uint8 para float32 em [0,1] como preparação de referência | Tipo, intervalo e forma do tensor |
 | Filtragem | Gaussiano, mediana, bilateral e CLAHE; opção sem filtro e seleção adaptativa | Antes/depois e parâmetros |
@@ -61,10 +62,9 @@ O histograma conta pixels por intensidade de 0 a 255. Não é um gráfico de
 confiança do modelo. HSV e GrabCut preservam o uso de cor; não se converte todo
 o fluxo para cinza indiscriminadamente.
 
-O redimensionamento atual ajusta largura e altura ao alvo, podendo distorcer
-proporções. Foi mantido para compatibilidade com os artefatos já treinados.
-Trocar por preservação de aspecto com preenchimento exige comparar e alinhar
-também treino e inferência. A normalização mostrada é uma referência do pipeline:
+O redimensionamento preserva a proporção e adiciona margens; não recorta nem
+estica o objeto. O modelo antigo aguarda treinamento nessa nova preparação e
+suas hipóteses não são confirmadas automaticamente. A normalização mostrada é uma referência do pipeline:
 o classificador efetivo pode normalizar ou extrair atributos de outra forma.
 
 ## Escolha das técnicas
@@ -72,7 +72,7 @@ o classificador efetivo pode normalizar ou extrair atributos de outra forma.
 | Situação observada | Experimento indicado | O que conferir |
 | --- | --- | --- |
 | Ruído pontual claro/escuro no RGB | Mediana versus sem filtro | Redução do ruído e preservação das bordas |
-| Variações suaves ou textura fina | Gaussiano/bilateral versus controle | Suavização sem apagar detalhes relevantes |
+| Ruído estimado | Gaussiano/bilateral versus controle | Redução do ruído sem apagar textura e detalhes relevantes |
 | Contraste local baixo | CLAHE versus controle | Contraste, artefatos e ruído amplificado |
 | Objeto com fundo contrastante | Otsu e polaridade clara/escura | Se branco corresponde realmente ao objeto |
 | Objeto colorido | HSV com limites de saturação e brilho | Fundo colorido e objetos transparentes podem falhar |
@@ -83,8 +83,8 @@ o classificador efetivo pode normalizar ou extrair atributos de outra forma.
 | Regiões unidas por ponte fina | Erosão controlada | Separação versus desaparecimento do objeto |
 
 Sobel/Canny descrevem bordas; não são equivalentes à máscara preenchida do
-primeiro plano. Usá-los como entrada de reconhecimento exige avaliação e
-compatibilidade com o treinamento. A seleção adaptativa existente é heurística,
+primeiro plano. No laboratório, eles não substituem o RGB entregue ao modelo.
+A seleção adaptativa existente é heurística,
 não uma garantia de melhor técnica.
 
 ## Contrato das operações morfológicas

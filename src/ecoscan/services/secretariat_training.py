@@ -12,6 +12,7 @@ import numpy as np
 from ecoscan.app.pipeline import default_processing_options, run_processing_pipeline
 from ecoscan.classification.visual_features import extract_visual_features
 from ecoscan.classification.visual_knn import VisualKnnClassifier
+from ecoscan.image_processing.contracts import model_processing_compatible, processing_contract, write_model_contract
 from ecoscan.services.contribution_store import persistent_enabled
 from ecoscan.services.learning_contributions import (
     _LOCK, _write, contribution_dir, contribution_image, list_contributions,
@@ -71,6 +72,9 @@ def _train(config, reviewer):
     if len(unique) > MAX_BATCH:
         raise ValueError("Mais de 40 fotos aprovadas: exporte o lote para treinamento fora da hospedagem gratuita.")
     base_path = config.directories["models"] / "vision_classifier.npz"
+    contract = processing_contract(config)
+    if not model_processing_compatible(base_path, contract):
+        raise ValueError("O modelo-base usa outro preparo de imagem. Execute um treino completo local com as imagens originais antes de incorporar correções.")
     base_hash = hashlib.sha256(base_path.read_bytes()).hexdigest()
     signature = hashlib.sha256(json.dumps([
         base_hash, sorted((row["id"], row.get("revision", 0), row["expected_class"])
@@ -96,7 +100,7 @@ def _train(config, reviewer):
             result = run_processing_pipeline(
                 contribution_image(config, row), config, default_processing_options(config)
             )
-            features.append(extract_visual_features(result.segmentation_result.image, baseline.metadata.feature_config))
+            features.append(extract_visual_features(result.recognition_image, baseline.metadata.feature_config))
             labels.append(row["expected_class"])
         # Refit normalization over old + reviewed examples, retaining legacy rejection classes.
         candidate = VisualKnnClassifier.fit(
@@ -117,6 +121,7 @@ def _train(config, reviewer):
                 if latest.get("status") != "approved" or latest.get("revision", 0) != row.get("revision", 0):
                     raise ValueError("Uma revisão mudou durante o treino. Gere outro candidato.")
             candidate.save(directory / "candidate.npz")
+            write_model_contract(directory / "candidate.npz", contract)
             run.update(status="awaiting_validation", completed_at=time.time(),
                        candidate_sha256=hashlib.sha256((directory / "candidate.npz").read_bytes()).hexdigest(),
                        validation="Pendente: conjunto independente, precisao/recall por classe e casos de confusao. Nenhuma acuracia nova comprovada.")

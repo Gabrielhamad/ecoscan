@@ -101,10 +101,8 @@ def segment_otsu(image: np.ndarray, *, invert: bool | None = None, **_: Any) -> 
     dark_mask = 255 - light_mask
 
     if invert is None:
-        light_ratio = float(np.mean(light_mask > 0))
-        dark_ratio = float(np.mean(dark_mask > 0))
-        target_ratio = 0.45
-        selected = dark_mask if abs(dark_ratio - target_ratio) < abs(light_ratio - target_ratio) else light_mask
+        border = np.concatenate((light_mask[0], light_mask[-1], light_mask[:, 0], light_mask[:, -1]))
+        selected = dark_mask if np.mean(border > 0) >= 0.5 else light_mask
         selected_inverted = selected is dark_mask
     else:
         selected = dark_mask if invert else light_mask
@@ -177,7 +175,11 @@ def segment_grabcut(
     bg_model = np.zeros((1, 65), np.float64)
     fg_model = np.zeros((1, 65), np.float64)
     bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
-    cv2.grabCut(bgr, mask, rectangle, bg_model, fg_model, int(iterations), cv2.GC_INIT_WITH_RECT)
+    try:
+        cv2.setRNGSeed(42)
+        cv2.grabCut(bgr, mask, rectangle, bg_model, fg_model, int(iterations), cv2.GC_INIT_WITH_RECT)
+    except cv2.error as exc:
+        raise SegmentationUnavailableError("GrabCut não conseguiu estimar primeiro plano nesta captura.") from exc
     binary = np.where((mask == cv2.GC_FGD) | (mask == cv2.GC_PR_FGD), 255, 0).astype(np.uint8)
 
     return SegmentationResult(

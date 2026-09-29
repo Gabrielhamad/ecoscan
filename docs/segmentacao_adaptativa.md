@@ -1,5 +1,9 @@
 # Segmentação adaptativa
 
+> Registro histórico. Desde 29/09/2026, o modo automático avalia Otsu e GrabCut
+> e pode se abster. HSV é manual; a máscara não apaga pixels do classificador.
+> Veja [RGB preservado v2](processamento_preservado_v2.md).
+
 ## Objetivo
 
 A segmentação não fica mais fixa em um único método para todas as imagens. O EcoScan usa o modo `auto` como padrão e escolhe a melhor alternativa disponível para cada imagem analisada.

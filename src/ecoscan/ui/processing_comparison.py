@@ -51,7 +51,8 @@ def render_processing_comparison(st, pipeline):
     columns = st.columns(2)
     columns[0].image(pipeline.segmentation_result.mask,
                      caption="Segmentação: branco indica o primeiro plano selecionado", width="stretch")
-    columns[1].image(pipeline.segmentation_result.image,
-                     caption="Imagem entregue à etapa de classificação", width="stretch")
-    st.caption("O classificador ainda aplica sua preparação específica. A máscara não confirma "
+    columns[1].image(pipeline.recognition_image,
+                     caption="Entrada RGB completa do classificador", width="stretch")
+    st.caption(pipeline.metadata["segmentation"]["decision"]["reason"])
+    st.caption("A máscara é diagnóstica e não apaga pixels da entrada RGB. Ela não confirma "
                "o material nem garante que todos os objetos foram separados.")

@@ -23,11 +23,11 @@ class PipelineTests(unittest.TestCase):
                 ProcessingPipelineOptions(filter_name="auto", segmentation_name="auto"),
             )
 
-            self.assertEqual(result.preprocessing.resized.shape, (224, 224, 3))
-            self.assertEqual(result.filter_result.image.shape, (224, 224, 3))
-            self.assertEqual(result.segmentation_result.mask.shape, (224, 224))
-            self.assertEqual(result.element_overlay.shape, (224, 224, 3))
-            self.assertEqual(result.detection_heatmap.shape, (224, 224, 3))
+            self.assertEqual(result.preprocessing.resized.shape, (80, 96, 3))
+            self.assertEqual(result.filter_result.image.shape, (80, 96, 3))
+            self.assertEqual(result.segmentation_result.mask.shape, (80, 96))
+            self.assertEqual(result.element_overlay.shape, (80, 96, 3))
+            self.assertEqual(result.detection_heatmap.shape, (80, 96, 3))
             self.assertEqual(result.model_input_preview.shape, (224, 224, 3))
             self.assertEqual(result.metadata["model_input_shape"], [1, 224, 224, 3])
             self.assertEqual(result.metadata["filter"]["decision"]["requested"], "auto")

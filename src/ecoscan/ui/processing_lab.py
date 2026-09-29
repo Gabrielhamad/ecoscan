@@ -50,8 +50,8 @@ def render_processing_lab(st, pipeline):
     st.write(f"Normalização de referência: {prepared.normalized.dtype}, "
              f"intervalo [{prepared.normalized.min():.3f}, {prepared.normalized.max():.3f}], "
              f"tensor {tuple(prepared.model_input.shape)}.")
-    st.caption("Redimensionamento bicúbico para o tamanho configurado; mantém o contrato do modelo "
-               "atual e pode alterar proporções. Cada classificador aplica sua própria preparação final.")
+    st.caption("Proporções preservadas durante o tratamento. A entrada do classificador recebe margens "
+               "para o tamanho fixo, sem cortar ou deformar o resíduo.")
     columns = st.columns(3)
     columns[0].image(raw.mask, caption="Máscara antes da morfologia (branco = primeiro plano)", width="stretch")
     columns[1].image(morphology.mask, caption="Máscara após a morfologia", width="stretch")
@@ -83,13 +83,18 @@ def render_applied_processing(st, pipeline):
         st.info("Refaça a análise para gerar o antes e depois das operações.")
         return
     st.subheader("Processamento aplicado: antes e depois")
-    st.caption("Evidência desta foto: preparação → filtro → segmentação → morfologia → classificação.")
+    st.caption("Correções desta foto, com preservação de cor e proporções.")
     columns = st.columns(2)
     columns[0].image(pipeline.loaded.array, caption="Antes: imagem original em RGB", width="stretch")
-    columns[1].image(pipeline.segmentation_result.image,
-                     caption="Depois: imagem entregue ao classificador", width="stretch")
-    st.caption("O classificador recebe a imagem da direita e aplica sua própria extração de características. "
-               "As comparações abaixo mostram os resultados reais das operações, inclusive quando não há alteração.")
+    prepared_rgb = (pipeline.preprocessing.resized if pipeline.filter_result.name in {"sobel", "canny"}
+                    else pipeline.filter_result.image)
+    columns[1].image(prepared_rgb,
+                     caption="Depois: imagem preparada, sem remoção do objeto", width="stretch")
+    st.write(pipeline.metadata["filter"]["decision"]["reason"])
+    if pipeline.filter_result.name in {"sobel", "canny"}:
+        st.caption("Bordas são um experimento visual; o RGB permanece sem esse filtro na classificação.")
+    st.caption("A máscara abaixo é auxiliar. O reconhecimento recebe o RGB completo com margens para "
+               "o tamanho fixo, preservando tampa, rótulo, transparência e contexto.")
     for tab, stage in zip(st.tabs([stage.label for stage in stages]), stages):
         with tab:
             st.write(stage.status)

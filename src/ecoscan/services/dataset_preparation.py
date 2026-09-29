@@ -9,6 +9,7 @@ from typing import Any
 
 from ecoscan.app.pipeline import default_processing_options, run_processing_pipeline
 from ecoscan.config import AppConfig
+from ecoscan.image_processing.contracts import processing_contract
 from ecoscan.image_processing.image_io import save_image
 
 
@@ -93,20 +94,13 @@ def _filter_sequence(metadata: dict[str, Any]) -> str:
 
 def _acceptance_reason(metadata: dict[str, Any], min_quality_score: int) -> tuple[str, str]:
     capture_quality = dict(metadata.get("capture_quality", {}))
-    elements = dict(metadata.get("elements", {}))
     score = int(capture_quality.get("score") or 0)
     quality_status = str(capture_quality.get("status") or "")
-    significant = int(elements.get("significant_count") or 0)
-    largest_area = float(elements.get("largest_area_ratio") or 0.0)
 
     if quality_status == "retake":
         return "rejected", "qualidade marcada como nova captura recomendada"
     if score < min_quality_score:
         return "rejected", f"pontuação de qualidade abaixo do mínimo ({score} < {min_quality_score})"
-    if significant == 0:
-        return "rejected", "nenhum elemento visual significativo após segmentação"
-    if largest_area < 0.015:
-        return "rejected", "elemento principal pequeno demais após segmentação"
     return "prepared", "imagem tratada e aprovada pela triagem automática"
 
 
@@ -191,6 +185,20 @@ def prepare_dataset_images(
         config.project_root,
     )
 
+    if source_root == output_root or source_root in output_root.parents or output_root in source_root.parents:
+        raise ValueError("Source and prepared dataset directories must not overlap.")
+    contract = processing_contract(config)
+    contract_file = output_root / "processing_contract.json"
+    if not overwrite and output_root.exists():
+        has_images = any(path.is_file() and path.suffix.lower() in config.allowed_extensions
+                         for path in output_root.rglob("*"))
+        if has_images:
+            try:
+                existing = json.loads(contract_file.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                existing = {}
+            if not isinstance(existing, dict) or existing.get("sha256") != contract["sha256"]:
+                raise ValueError("Prepared dataset has a different or missing processing contract; use a new output directory.")
     if overwrite:
         _safe_clear(output_root, config.project_root)
     output_root.mkdir(parents=True, exist_ok=True)
@@ -207,7 +215,7 @@ def prepare_dataset_images(
             target = output_root / class_id / f"{source.stem}_processed.png"
             status, reason = _acceptance_reason(result.metadata, min_quality_score)
             if status == "prepared":
-                save_image(result.segmentation_result.image, target)
+                save_image(result.recognition_image, target)
                 counts_by_class[class_id] += 1
             else:
                 rejected_by_class[class_id] += 1
@@ -245,6 +253,9 @@ def prepare_dataset_images(
         rejected_by_class=rejected_by_class,
     )
     _write_reports(summary, records, selected_report_dir)
+    contract_file.write_text(
+        json.dumps(contract, indent=2), encoding="utf-8"
+    )
     return summary, records
 
 
@@ -304,7 +315,7 @@ def _write_reports(
             "",
             "## Critério técnico",
             "",
-            "Cada imagem aceita passou pelo pipeline configurado de redimensionamento, filtragem, segmentação, morfologia, análise de elementos e avaliação de qualidade de captura. A imagem salva em `data/processed` é exatamente a matriz RGB entregue ao classificador, em PNG sem perdas.",
+            "Cada imagem aceita preserva proporções e cor, passa por correções conservadoras e avaliação de qualidade. Segmentação e morfologia são diagnósticas. O PNG salvo é exatamente a matriz RGB integral entregue ao classificador, com margens para o tamanho fixo. A versão está em processing_contract.json.",
             "",
             "Essa etapa não substitui curadoria humana; ela remove casos tecnicamente fracos e registra filtro/segmentação usados para auditoria.",
             "",

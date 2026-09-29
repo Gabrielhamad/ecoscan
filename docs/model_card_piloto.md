@@ -4,6 +4,12 @@ Este arquivo acompanha o artefato `models/vision_svm_classifier.joblib` quando
 ele estiver publicado. Ele é um modelo visual clássico de operação inicial,
 não um modelo final de produção.
 
+> **Atualização de 29/09/2026:** a preparação passou para `rgb-preserved-v2`.
+> Este artefato não foi retreinado e não possui contrato compatível. Suas
+> hipóteses permanecem não confirmadas no app. As métricas abaixo pertencem
+> à preparação anterior e não validam a nova. Consulte a
+> [revisão de processamento](processamento_preservado_v2.md).
+
 ## Escopo
 
 - Classes: `plastic`, `paper_cardboard`, `metal`, `glass`, `battery`, `electronic`.

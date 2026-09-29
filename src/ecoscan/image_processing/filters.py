@@ -138,31 +138,28 @@ def apply_clahe(
     *,
     clip_limit: float = 2.0,
     tile_grid_size: tuple[int, int] | list[int] = (8, 8),
+    strength: float = 1.0,
     **_: Any,
 ) -> FilterResult:
     rgb = ensure_uint8(image)
+    if not 0 <= float(strength) <= 1:
+        raise ValueError("CLAHE strength must be between 0 and 1.")
     if cv2 is not None:
         lab = cv2.cvtColor(rgb, cv2.COLOR_RGB2LAB)
         lightness, channel_a, channel_b = cv2.split(lab)
         clahe = cv2.createCLAHE(clipLimit=float(clip_limit), tileGridSize=tuple(tile_grid_size))
         enhanced = clahe.apply(lightness)
+        enhanced = cv2.addWeighted(lightness, 1.0 - float(strength), enhanced, float(strength), 0)
         merged = cv2.merge((enhanced, channel_a, channel_b))
         filtered = cv2.cvtColor(merged, cv2.COLOR_LAB2RGB)
         dependency = "opencv"
         explanation = "Melhora contraste local no canal de luminosidade, útil quando iluminação é irregular."
     else:
-        gray = _rgb_to_gray(rgb)
-        equalized = _global_histogram_equalization(gray)
-        filtered = _gray_to_rgb(equalized)
-        dependency = "numpy fallback"
-        explanation = (
-            "Fallback sem OpenCV: equalização global de histograma em tons de cinza. "
-            "Não substitui CLAHE, mas permite comparar melhoria de contraste."
-        )
+        raise FilterUnavailableError("CLAHE requires OpenCV; grayscale equalization would discard color.")
     return FilterResult(
         name="clahe",
         image=ensure_uint8(filtered),
-        parameters={"clip_limit": float(clip_limit), "tile_grid_size": list(tile_grid_size)},
+        parameters={"clip_limit": float(clip_limit), "tile_grid_size": list(tile_grid_size), "strength": float(strength)},
         explanation=explanation,
         dependency=dependency,
     )
@@ -248,4 +245,3 @@ def apply_filter(image: np.ndarray, name: str, parameters: dict[str, Any] | None
         available = ", ".join(sorted(FILTERS))
         raise ValueError(f"Unknown filter '{name}'. Available filters: {available}.")
     return FILTERS[normalized_name](image, **(parameters or {}))
-

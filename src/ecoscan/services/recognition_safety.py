@@ -35,6 +35,14 @@ def build_recognition_safety_decision(
             allow_disposal_guidance=False, encourage_feedback=True,
         )
 
+    if not getattr(result, "processing_compatible", True):
+        return RecognitionSafetyDecision(
+            status="needs_training", tone="warn", title="Confirme o material",
+            message="A preparação de imagem foi atualizada; o modelo ainda precisa ser treinado e validado com ela.",
+            primary_action="Consulte Descarte para escolher o material ou envie uma correção para revisão.",
+            allow_disposal_guidance=False, encourage_feedback=True,
+        )
+
     if capture_status == "retake":
         return RecognitionSafetyDecision(
             status="retake",

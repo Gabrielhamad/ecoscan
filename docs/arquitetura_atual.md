@@ -1,6 +1,6 @@
 # Arquitetura atual
 
-[Voltar ao projeto](../README.md) · Revisão de código: 28/09/2026
+[Voltar ao projeto](../README.md) · Revisão de código: 29/09/2026
 
 ## Visão geral
 
@@ -74,13 +74,20 @@ não incluem o dataset completo. O carregador rejeita artefatos com classes
 diferentes do escopo ativo.
 
 O app, a preparação do dataset e a revisão local usam o mesmo perfil padrão do
-pipeline. O treino salva exatamente a imagem RGB segmentada que alimenta a
+pipeline. O treino salva exatamente a imagem RGB integral com margens que alimenta a
 extração de atributos na análise pública; cada classificador ainda executa seu
 próprio redimensionamento. Uma escolha manual no laboratório altera a análise
 daquela foto. `scripts/train_recognition_cycle.py` seleciona um candidato visual
 entre vários algoritmos e registra a escolha, configuração e hashes, sem publicar
 ou trocar o modelo ativo. O artefato atual é Random Forest, apesar do nome
 histórico `vision_svm_classifier.joblib`.
+
+O contrato `rgb-preserved-v2` mantém segmentação e morfologia como evidências,
+sem apagar pixels antes da classificação. Cada candidato do ciclo recebe um
+arquivo `.processing.json` com configuração e hash do modelo. A inferência
+não confirma previsões de artefato sem contrato correspondente. O modelo legado
+atual aguarda novo treinamento; não recebeu certificação retroativa. A mesma
+verificação passa pelo serviço de análise usado pelo Live.
 
 As decisões adaptativas, métodos e regiões podem ser inspecionados. A análise
 registra o hash do modelo, mas isso não constitui uma plataforma completa de

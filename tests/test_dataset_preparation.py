@@ -44,7 +44,8 @@ class DatasetPreparationTests(unittest.TestCase):
             self.assertTrue((report_dir / "preparation_summary.md").exists())
             pipeline = run_processing_pipeline(image_path, load_config(), default_processing_options(load_config()))
             with Image.open(output_dir / "plastic" / "sample_processed.png") as saved:
-                np.testing.assert_array_equal(np.asarray(saved), pipeline.segmentation_result.image)
+                np.testing.assert_array_equal(np.asarray(saved), pipeline.recognition_image)
+            self.assertTrue((output_dir / "processing_contract.json").is_file())
 
 
 if __name__ == "__main__":

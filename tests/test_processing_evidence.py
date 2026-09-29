@@ -46,12 +46,10 @@ class AppliedProcessingTests(unittest.TestCase):
         self.assertEqual(result.filter_result.image.shape, (64, 64, 3))
         self.assertEqual(result.raw_segmentation_result.mask.shape, (64, 64))
         stages = processing_evidence(result)
-        self.assertEqual(len(stages), 8)
-        self.assertTrue(all(stage.applied for stage in stages))
+        self.assertEqual(len(stages), 9)
         self.assertIsNotNone(stages[1].changed_pixels)
         self.assertIsNone(stages[2].changed_pixels)  # RGB and binary mask differ in representation.
-        for stage in stages[3:7]:
-            self.assertGreater(stage.changed_pixels, 0)
+        self.assertTrue(all(stage.applied for stage in stages[3:7]))
 
     def test_actual_arrays_form_morphology_chain_and_classifier_input(self):
         prediction = BaselinePrediction(None, "metal", .1, {"metal": .1}, False, .6)
@@ -67,11 +65,11 @@ class AppliedProcessingTests(unittest.TestCase):
         for previous, current in zip(stages[2:6], stages[3:7]):
             self.assertIs(current.before, previous.after)
         self.assertIs(stages[-1].after, predict.call_args.args[1])
-        np.testing.assert_array_equal(stages[-1].after,
-                                      apply_mask(stages[-1].before, stages[-2].after))
+        np.testing.assert_array_equal(stages[-1].after, pipeline.filter_result.image)
+        self.assertFalse(stages[-1].parameters["mask_applied"])
         manifest = evidence_manifest(pipeline)
         self.assertEqual(manifest["classifier_input_sha256"], array_digest(predict.call_args.args[1]))
-        self.assertEqual(stages[-1].parameters["mask_sha256"], array_digest(stages[-2].after))
+        self.assertEqual(stages[-2].parameters["mask_sha256"], array_digest(pipeline.segmentation_result.mask))
 
     def test_controls_and_unchanged_execution_are_distinct(self):
         pixels = np.zeros((3, 3), dtype=np.uint8)
@@ -84,7 +82,7 @@ class AppliedProcessingTests(unittest.TestCase):
             filter_name="none", segmentation_name="none", morphology_name="none"))
         stages = processing_evidence(result)
         self.assertTrue(stages[0].applied)
-        self.assertTrue(all(not stage.applied for stage in stages[1:]))
+        self.assertTrue(all(not stage.applied for stage in stages[1:-1]))
         self.assertEqual(stages[-1].changed_pixels, 0)
 
     def test_lossless_package_matches_arrays_without_private_paths(self):
@@ -102,7 +100,7 @@ class AppliedProcessingTests(unittest.TestCase):
                         np.testing.assert_array_equal(decoded, getattr(stage, position))
                         self.assertEqual(array_digest(decoded), record[position]["sha256"])
             with Image.open(io.BytesIO(package.read("antes_depois.png"))) as image:
-                self.assertEqual(image.size, (960, 2472))
+                self.assertEqual(image.size, (960, 72 + 300 * len(processing_evidence(pipeline))))
 
     def test_difference_uses_wide_arithmetic_no_uint8_wrap_or_amplification(self):
         before = np.array([[[255, 0, 90], [3, 3, 3]]], dtype=np.uint8)
@@ -129,7 +127,7 @@ render_applied_processing(st, st.session_state.pipeline)
         app.session_state["pipeline"] = pipeline
         app.run()
         self.assertFalse(app.exception)
-        self.assertEqual(len(app.tabs), 8)
+        self.assertEqual(len(app.tabs), len(processing_evidence(pipeline)))
         self.assertEqual(len(app.get("download_button")), 1)
         self.assertTrue(any("Processamento aplicado" in item.value for item in app.subheader))
         for tab in app.tabs:

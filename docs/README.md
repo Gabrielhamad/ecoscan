@@ -20,6 +20,8 @@
 
 ## Referências técnicas
 
+- [Preparação RGB preservado v2: técnicas, critérios e auditoria](processamento_preservado_v2.md)
+
 - [Prática acadêmica: preparação, segmentação e morfologia](pratica_processamento_imagens.md)
 
 - [Filtragem adaptativa](filtragem_adaptativa.md)
@@ -34,8 +36,8 @@
 
 ## Como interpretar os documentos
 
-README, guia do grupo e arquitetura atual foram revisados em 23/09/2026 contra o
-código. Os documentos de fases, roadmaps e resultados de captura preservam o
+README, arquitetura e guias de processamento/treinamento foram revisados em
+29/09/2026 contra o código. Os documentos de fases, roadmaps e resultados de captura preservam o
 histórico acadêmico: números, classes e pendências neles não devem ser assumidos
 como o estado atual da implantação.
 

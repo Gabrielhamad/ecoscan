@@ -18,6 +18,7 @@ if str(PROJECT_ROOT / "scripts") not in sys.path:
 
 from ecoscan.config import load_config
 from ecoscan.app.pipeline import default_processing_options
+from ecoscan.image_processing.contracts import processing_contract, write_model_contract
 from ecoscan.services.dataset_preparation import prepare_dataset_images
 from ecoscan.services.dataset_split import split_dataset
 from train_visual_svm import main as train_visual_svm
@@ -161,6 +162,8 @@ def main(argv: list[str] | None = None) -> int:
     if train_exit != 0:
         return int(train_exit)
     selection = json.loads((args.report_dir / "visual_svm_summary.json").read_text(encoding="utf-8"))
+    contract = processing_contract(config)
+    write_model_contract(args.output_model, contract)
 
     run = {
         "source": str(source),
@@ -168,6 +171,7 @@ def main(argv: list[str] | None = None) -> int:
         "model_family": "visual_supervised",
         "selected_algorithm": selection["selected_candidate"],
         "processing_options": asdict(default_processing_options(config)),
+        "processing_contract": contract,
         "config_sha256": hashlib.sha256(config.config_path.read_bytes()).hexdigest(),
         "source_counts": source_counts,
         "preparation": {

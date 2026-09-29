@@ -28,7 +28,12 @@ def load_rgb_image(
     )
     with Image.open(info.path) as image:
         image = ImageOps.exif_transpose(image)
-        rgb = image.convert("RGB")
+        if "A" in image.getbands() or "transparency" in image.info:
+            rgba = image.convert("RGBA")
+            background = Image.new("RGBA", rgba.size, (255, 255, 255, 255))
+            rgb = Image.alpha_composite(background, rgba).convert("RGB")
+        else:
+            rgb = image.convert("RGB")
         array = np.asarray(rgb, dtype=np.uint8)
     return LoadedImage(info=info, array=array)
 
@@ -52,4 +57,3 @@ def ensure_uint8(image: np.ndarray) -> np.ndarray:
     if image.dtype == np.uint8:
         return image
     return np.clip(image, 0, 255).astype(np.uint8)
-

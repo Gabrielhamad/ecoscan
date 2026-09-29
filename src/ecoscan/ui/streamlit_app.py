@@ -2937,7 +2937,7 @@ def _render_recognition_feedback_form(
 
 def _select_filter_parameters(st: Any, filter_name: str, config=None) -> dict[str, Any]:
     if filter_name == "auto":
-        st.caption("Pipeline adaptativo por brilho, contraste, nitidez, densidade de bordas e preservação de cor.")
+        st.caption("Correções condicionais por ruído e faixa tonal, com limites para preservar cor e contornos.")
         return {}
     if filter_name == "gaussian":
         return {
@@ -2970,7 +2970,7 @@ def _select_filter_parameters(st: Any, filter_name: str, config=None) -> dict[st
 
 def _select_segmentation_parameters(st: Any, segmentation_name: str) -> dict[str, Any]:
     if segmentation_name == "auto":
-        st.caption("Escolha adaptativa entre Otsu, HSV e GrabCut conforme contraste, cor, bordas e máscara gerada.")
+        st.caption("Máscara auxiliar por Otsu ou GrabCut. Se a separação falhar, a foto completa é preservada.")
         return {}
     if segmentation_name == "otsu":
         mode = st.radio("Máscara Otsu", ["automática", "objeto claro", "objeto escuro"], horizontal=True)
@@ -2993,8 +2993,13 @@ def _select_segmentation_parameters(st: Any, segmentation_name: str) -> dict[str
 
 
 def _render_model_status(st: Any, config: Any) -> None:
+    from ecoscan.image_processing.contracts import model_processing_compatible, processing_contract
+
     status = model_status(config)
-    if status.selected_kind == "transfer_learning":
+    if status.selected_path and not model_processing_compatible(Path(status.selected_path), processing_contract(config)):
+        st.markdown(_badge("Modelo aguarda novo treinamento", "warn"), unsafe_allow_html=True)
+        st.caption("Preparação atualizada. Hipóteses não são confirmadas até treinar e validar um modelo compatível.")
+    elif status.selected_kind == "transfer_learning":
         st.markdown(_badge("Modelo final ativo", "ok"), unsafe_allow_html=True)
     elif status.selected_kind == "visual_svm":
         st.markdown(_badge("Modelo visual supervisionado ativo", "ok"), unsafe_allow_html=True)
@@ -4576,9 +4581,11 @@ def _render_admin_tab(
 
 
 def _input_signature(uploaded_file: Any, source_kind: str, options: ProcessingPipelineOptions) -> str:
+    from ecoscan.image_processing.contracts import PROCESSING_VERSION
+
     data = uploaded_file.getvalue()
     payload = {
-        "processing_version": "applied-evidence-v1",
+        "processing_version": PROCESSING_VERSION,
         "source_kind": source_kind,
         "name": uploaded_file.name,
         "size": len(data),
@@ -4857,7 +4864,10 @@ def main() -> None:
                     else:
                         st.subheader("Não identificado com segurança")
                         st.metric("Maior pontuação", _format_percent(result.probability))
-                        st.write("Tente outra foto com melhor iluminação, fundo simples e objeto centralizado.")
+                        if not getattr(result, "processing_compatible", True):
+                            st.info(result.message)
+                        else:
+                            st.write("Tente outra foto com melhor iluminação, fundo simples e objeto centralizado.")
                         st.caption(f"Classe mais próxima: {result.top_class}")
                     st.markdown('<div class="ecoscan-soft-divider"></div>', unsafe_allow_html=True)
                     if active_profile.is_admin:
