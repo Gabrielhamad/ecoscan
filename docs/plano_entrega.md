@@ -170,6 +170,36 @@ Responsável: coordenação e mantenedor.
 
 Saída: pacote revisado e apresentação coerente com o que foi demonstrado.
 
+## Continuidade em 01/10/2026
+
+### Concluído nesta etapa
+
+- Validação estrita de configuração: listas, identificadores únicos, títulos,
+  pontuação inteira de 0 a 10000, classes não vazias e ações conhecidas.
+- Bloqueio no serviço e na interface da validação de denúncias por reconhecimento.
+  Não foi implementada concessão automática de pontos após revisão de denúncia.
+- Rejeição de confiança ausente, não numérica, infinita ou fora de 0 a 1.
+- Resultado da missão exibido somente quando corresponde à missão selecionada.
+- Suíte local: 277 testes aprovados. Não equivale a teste de produção.
+
+### Próximas etapas e critérios de saída
+
+1. Persistência compartilhada de campanhas e denúncias: migração aditiva,
+   evidências privadas, autorização verificada no servidor e proteção contra
+   edição concorrente. Reiniciar o serviço não pode perder registros.
+2. Aceite integrado: duas contas de participantes e uma de analista; comprovar
+   isolamento de dados, recebimento, revisão, falha de conexão e reenvio sem
+   duplicação. Visitantes não devem gerar registros persistentes.
+3. Curadoria e treinamento: revisar reportes, separar treino e teste sem
+   duplicatas, treinar com o processamento atual e medir resultados por classe.
+   Aprovar um reporte não publica um modelo automaticamente.
+4. Publicação: revisar o diff, versionar, publicar e confirmar a versão executada
+   no Streamlit; testar captura no celular e preservar uma versão de retorno.
+
+Campanhas continuam em `config/campaigns.json`; denúncias e revisões continuam
+em arquivos locais. Esta entrega não alterou o banco de produção nem migrou esses
+registros. Não considerar a integração completa antes do aceite acima.
+
 ## Registro de aceite a preencher
 
 | Campo | Preenchimento |

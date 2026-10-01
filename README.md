@@ -21,6 +21,19 @@ participantes e secretaria, seguida de curadoria e treino de um candidato.
 O [roadmap atualizado](docs/plano_entrega.md#retomada-em-29092026) contém a ordem,
 os responsáveis e os critérios de aceite, sem confundir implementação com validação real.
 
+## Segurança das missões
+
+A validação por imagem se aplica somente às missões `recognize_waste`.
+Denúncias exigem o fluxo da secretaria e **não recebem pontos automaticamente**
+por uma foto reconhecida. Pontuação inválida, identificadores duplicados e ações
+desconhecidas são rejeitados na configuração. Resultados sem confiança numérica
+finita entre 0 e 1 não validam missões; isso não substitui a calibração do modelo.
+
+Verificação local em 01/10/2026: **277 testes aprovados**. Esta execução não
+comprova publicação no Streamlit nem aceite com contas reais. Campanhas e denúncias
+ainda dependem de armazenamento local; sua migração para persistência compartilhada
+continua no [roteiro de entrega](docs/plano_entrega.md#continuidade-em-01102026).
+
 ## Sumário
 
 - [Proposta](#proposta)

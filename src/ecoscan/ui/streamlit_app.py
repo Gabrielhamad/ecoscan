@@ -3863,6 +3863,9 @@ def _render_campaign_tab(
             unsafe_allow_html=True,
         )
     with proof_col:
+        requires_review = selected_mission.verification_action != "recognize_waste"
+        if requires_review:
+            st.info("Envie esta ocorrência pela área Denunciar. Ela exige análise da secretaria e não recebe pontos automaticamente por reconhecimento de imagem.")
         proof_source = st.radio("Comprovação", ["Câmera", "Imagem"], horizontal=True, key="campaign_proof_source")
         if proof_source == "Câmera":
             proof_file = st.camera_input("Fotografar missão", key="campaign_camera")
@@ -3880,7 +3883,7 @@ def _render_campaign_tab(
         is_visitor = active_profile.id.startswith("visitor_")
         if is_visitor:
             st.info("Entre em uma conta para registrar a participação e acumular pontos. Você pode consultar as missões sem login.")
-        if st.button("Validar missão", disabled=proof_file is None or is_visitor):
+        if st.button("Validar missão", disabled=proof_file is None or is_visitor or requires_review):
             temp_path = _temporary_upload(proof_file, prefix="mission")
             evidence_sha256 = hashlib.sha256(proof_file.getvalue()).hexdigest()
             try:
@@ -3929,7 +3932,8 @@ def _render_campaign_tab(
 
     evaluation = st.session_state.get("last_mission_evaluation")
     mission_result = st.session_state.get("last_mission_result")
-    if evaluation is not None and mission_result is not None:
+    if (evaluation is not None and mission_result is not None
+            and evaluation.mission_id == selected_mission.id):
         status_label = "validada" if evaluation.accepted else "pendente"
         st.markdown(
             f"""
