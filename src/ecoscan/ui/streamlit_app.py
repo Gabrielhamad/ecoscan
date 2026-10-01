@@ -4188,6 +4188,10 @@ def _render_account_tab(
 ) -> None:
     st.markdown('<div class="ecoscan-section-title">Minha participação</div>', unsafe_allow_html=True)
     _render_active_profile_card(st, active_profile)
+    from ecoscan.services.release_info import release_info
+    release = release_info()
+    revision = (release["code_revision"] or "indisponível")[:12]
+    st.caption(f"EcoScan {release['app_version']} · Revisão {revision}")
     render_citizen_protocols(st, config, active_profile)
     if active_profile.id.startswith("visitor_"):
         return

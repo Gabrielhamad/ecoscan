@@ -182,6 +182,12 @@ Saída: pacote revisado e apresentação coerente com o que foi demonstrado.
 - Resultado da missão exibido somente quando corresponde à missão selecionada.
 - Suíte local: 277 testes aprovados. Não equivale a teste de produção.
 
+Complemento da publicação: correções de missões enviadas ao GitHub (`8b3bc91`).
+Identificação da revisão adicionada ao Perfil e ao contexto dos novos reportes,
+com falha tolerada quando Git estiver indisponível. Suíte após esse complemento:
+281 testes aprovados. Template de confirmação em português salvo no Supabase;
+envio dos convites pendente da verificação de telefone solicitada pelo Brevo.
+
 ### Próximas etapas e critérios de saída
 
 1. Persistência compartilhada de campanhas e denúncias: migração aditiva,

@@ -1,0 +1,18 @@
+Assunto: Seu acesso de analista ao EcoScan
+
+Ola!
+
+Seu e-mail foi autorizado para atuar como analista da secretaria no projeto EcoScan.
+
+Acesse https://ecoscan-gabrielhamad.streamlit.app/
+
+1. Abra "Entrar ou criar conta" e escolha "Criar conta".
+2. Use o mesmo e-mail que recebeu este convite e crie sua propria senha, com pelo menos 12 caracteres.
+3. Confirme o cadastro pelo e-mail enviado automaticamente pelo sistema. Confira tambem o spam.
+4. Volte ao aplicativo e entre. Se voce ja tem conta confirmada, basta entrar novamente.
+
+Como analista, voce podera acessar as funcoes da secretaria e os reportes dos participantes. Use somente os dados necessarios ao trabalho e nao compartilhe imagens ou dados pessoais fora da equipe autorizada.
+
+Nao responda com sua senha. Este convite nao cria uma conta nem confirma seu e-mail automaticamente. A aprovacao de um reporte nao treina nem publica um novo modelo sozinha: ele passa por curadoria e validacao.
+
+EcoScan - Projeto academico de educacao ambiental; nao e um servico oficial da Prefeitura.

@@ -6,6 +6,28 @@ O cliente de Auth e separado do cliente de banco e nao fica em cache compartilha
 
 ## Provisionamento
 
+### Convite e confirmacao sao etapas distintas
+
+O convite da equipe apenas informa o endereco do aplicativo e o procedimento de
+cadastro. Usar `templates/analyst_invitation.txt` com envio individual, sem expor
+a lista de destinatarios. Nao criar senhas compartilhadas nem usar convite
+administrativo do Supabase neste fluxo: o app nao implementa callback de convite.
+
+Ao enviar o formulario Criar conta, o Supabase envia a confirmacao automatica.
+O template em portugues esta versionado em `templates/auth_confirm_signup.html`;
+aplicar em Authentication > Emails > Confirm sign up com assunto
+`EcoScan | Confirme seu cadastro`. Preservar `{{ .ConfirmationURL }}` e manter
+Confirm email ativado. Alterar o arquivo no GitHub nao altera o template remoto.
+
+Em 01/10/2026 foram conferidos Confirm email e SMTP personalizado ativos, e o
+template em portugues foi salvo no Supabase. O Brevo solicitou verificacao de
+telefone antes de novos envios. Convites aos analistas ainda nao foram enviados;
+nao confundir template salvo com email entregue.
+
+Nao ha email adicional de boas-vindas depois da confirmacao. Se necessario,
+implementar esse evento no servidor com fila e deduplicacao, nunca em cada login
+ou rerun do Streamlit. A mensagem automatica atual e a verificacao do cadastro.
+
 ### Cadastro breve preparado
 
 O app possui abas Entrar/Criar conta. Cadastro solicita email, senha de 12 a 128

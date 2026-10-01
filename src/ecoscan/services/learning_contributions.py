@@ -18,6 +18,7 @@ from ecoscan.services.recognition_feedback import append_recognition_feedback, f
 from ecoscan.services.recognition_scope import ITEMS, ITEM_CONDITIONS
 from ecoscan.services.contribution_store import remote_store
 from ecoscan.services.processing_evidence import array_digest
+from ecoscan.services.release_info import release_info
 
 
 _LOCK = threading.RLock()
@@ -55,6 +56,7 @@ def _analysis_context(result) -> dict:
     image = getattr(pipeline, "recognition_image", None)
     return {
         "schema_version": 1,
+        "release": release_info(),
         "availability": "recorded" if contract else "legacy_unavailable",
         "processing_version": contract.get("profile", {}).get("version"),
         "processing_contract_sha256": contract.get("sha256"),
