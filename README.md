@@ -244,11 +244,25 @@ Falha do banco configurado não deve virar gravação local silenciosa. Arquivos
 
 ## Testes e publicação
 
+**Controle de entrega atualizado:** [marcos M1–M5, riscos e aceite](docs/controle_entrega.md).
+Em 03/10/2026 foram aprovados **291 testes locais**. O diagnóstico foi alinhado ao
+modelo realmente selecionado; existência de arquivos e perfis locais não aprova
+reconhecimento, autorização ou persistência real. O fluxo de GitHub Actions está
+em `.github/workflows/quality.yml`; sua execução remota deve ser conferida na aba Actions.
+
 Com o pacote instalado em modo editável:
 
 ```bash
 python -m unittest discover -s tests
+python scripts/run_acceptance_checks.py --diagnostic --output reports/diagnostico
+python scripts/run_acceptance_checks.py --output reports/acceptance_checks
 ```
+
+Sem `--diagnostic`, o aceite retorna **2 para pendências** e **1 para falhas**.
+No modo diagnóstico, zero significa apenas ausência de falhas detectadas, não
+aprovação final. CI não usa credenciais reais nem comprova entrega de e-mail,
+isolamento em produção ou precisão. A aprovação humana e os testes publicados
+continuam no [plano de entrega](docs/plano_entrega.md).
 
 A suíte cobre processamento, serviços, autorização, persistência com simulações e partes da interface. Não comprova acurácia, entrega de e-mail, integração real da nuvem ou funcionamento em todos os celulares. O [guia do grupo](docs/guia_do_grupo.md) complementa a suíte com testes manuais.
 

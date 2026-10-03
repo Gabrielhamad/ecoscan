@@ -15,6 +15,8 @@
 
 ## Entrega e avaliação
 
+- [Controle atual de entrega: marcos, validação, riscos e responsabilidades](controle_entrega.md)
+
 - [Avaliação de conformidade e evidências — 27/09/2026](avaliacao_e_entrega.md)
 - [Plano de entrega, responsáveis e critérios de aceite](plano_entrega.md)
 

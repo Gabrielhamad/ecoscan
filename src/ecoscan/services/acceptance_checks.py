@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 import json
 import tempfile
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
@@ -23,6 +23,7 @@ from ecoscan.services.campaigns import load_campaign
 from ecoscan.services.dataset_governance import build_dataset_readiness
 from ecoscan.services.diagnostics import model_status
 from ecoscan.services.photo_requirements import load_photo_requirements, missing_requirements_for_classes
+from ecoscan.services.release_info import release_info
 from ecoscan.services.visual_report import save_pipeline_artifacts
 
 
@@ -33,6 +34,7 @@ class AcceptanceCheckResult:
     status: str
     evidence: str
     details: str
+    evidence_kind: str = "automated"
 
 
 @dataclass(frozen=True)
@@ -40,6 +42,50 @@ class AcceptanceCheckReport:
     generated_at_utc: str
     summary: dict[str, int]
     checks: tuple[AcceptanceCheckResult, ...]
+    release: dict[str, Any] = field(default_factory=dict)
+
+
+REQUIRED_CHECK_CODES = frozenset(f"QA-{number:02}" for number in range(1, 22))
+
+
+def acceptance_exit_code(report: AcceptanceCheckReport, *, diagnostic: bool = False) -> int:
+    """0: diagnostic passed/all gates passed; 1: failure; 2: incomplete acceptance."""
+    statuses = {check.status for check in report.checks}
+    if statuses - {"ok", "attention", "pending"}:
+        return 1
+    if diagnostic:
+        return 0 if report.checks else 2
+    codes = [check.code for check in report.checks]
+    if (set(codes) != REQUIRED_CHECK_CODES or len(codes) != len(set(codes))
+            or statuses != {"ok"}):
+        return 2
+    return 0
+
+
+def _external_acceptance_checks() -> list[AcceptanceCheckResult]:
+    # Local inspection cannot attest to production or another person's account.
+    return [
+        AcceptanceCheckResult(
+            "QA-18", "Identidade real", "pending", "docs/plano_entrega.md: P01-P10",
+            "Executar cadastro, confirmação, isolamento entre duas contas, revisão e recuperação na nuvem.",
+            "manual_required",
+        ),
+        AcceptanceCheckResult(
+            "QA-19", "Persistência integrada", "pending", "docs/plano_entrega.md: P07/P11",
+            "Campanhas e denúncias ainda locais. Migrar e testar reinício, concorrência e falha do banco.",
+            "manual_required",
+        ),
+        AcceptanceCheckResult(
+            "QA-20", "Dispositivos", "pending", "docs/plano_entrega.md: P12",
+            "Validar celular e computador reais; câmera Live possui implantação separada.",
+            "manual_required",
+        ),
+        AcceptanceCheckResult(
+            "QA-21", "Operação e recuperação", "pending", "docs/plano_entrega.md: Etapa 5",
+            "Ensaiar restauração de backup e retorno de versão; definir retenção e responsável pelo suporte.",
+            "manual_required",
+        ),
+    ]
 
 
 def run_acceptance_checks(
@@ -67,11 +113,20 @@ def run_acceptance_checks(
     checks.append(_check_campaign_and_reports(config))
     checks.append(_check_accounts_and_admin(config))
     checks.append(_check_device_interface(config))
+    checks.extend(_external_acceptance_checks())
+    present = {check.code for check in checks}
+    for code in sorted(REQUIRED_CHECK_CODES - present):
+        checks.append(AcceptanceCheckResult(
+            code, "Dependência ausente", "pending", "Modelo e imagem de amostra",
+            "Verificação não executada. Consulte a falha ou dependência indicada nos itens anteriores.",
+            "not_executed",
+        ))
 
     report = AcceptanceCheckReport(
         generated_at_utc=datetime.now(timezone.utc).isoformat(timespec="seconds"),
         summary=_summarize(checks),
         checks=tuple(checks),
+        release=release_info(),
     )
     _write_report(report, report_dir)
     return report
@@ -118,6 +173,7 @@ def _check_static_structure(config: AppConfig) -> AcceptanceCheckResult:
         "ok" if not missing else "failed",
         ", ".join(required),
         "Estrutura principal encontrada." if not missing else "Itens ausentes: " + ", ".join(missing),
+        "static",
     )
 
 
@@ -373,7 +429,8 @@ def _check_device_interface(config: AppConfig) -> AcceptanceCheckResult:
         "Interface",
         "ok" if all(expected) else "attention",
         "streamlit_app.py e live_camera/server.py",
-        "Interface possui resumo executivo, perfis, campanha, denúncia, conta, gestão, link live, barras de confiança, destino visual, impacto ambiental, busca no mapa, painel mobile e prioridade verificável para câmera traseira." if all(expected) else "Interface visual parcialmente aplicada.",
+        "Marcadores de interface encontrados no código; não comprova funcionamento ou usabilidade em dispositivos." if all(expected) else "Marcadores de interface parcialmente encontrados; verificar refatorações e teste funcional.",
+        "static",
     )
 
 
@@ -398,7 +455,8 @@ def _check_campaign_and_reports(config: AppConfig) -> AcceptanceCheckResult:
         "Campanha e denúncias",
         status,
         "config/campaigns.json; src/ecoscan/services/campaigns.py; src/ecoscan/services/civic_reports.py",
-        f"{mission_count} missão(ões), {reward_count} recompensa(s) e triagem de denúncia por imagem configuradas.",
+        f"{mission_count} missão(ões) e {reward_count} recompensa(s) configuradas; serviço de denúncia presente. Não comprova persistência compartilhada.",
+        "static",
     )
 
 
@@ -436,7 +494,8 @@ def _check_accounts_and_admin(config: AppConfig) -> AcceptanceCheckResult:
         "Perfis e gestão",
         status,
         "config/user_profiles.json; src/ecoscan/services/accounts.py; src/ecoscan/ui/streamlit_app.py",
-        f"{len(profiles)} perfil(is) ativo(s), com usuário={has_user}, admin={has_admin}, pontos persistentes e revisão administrativa.",
+        f"{len(profiles)} perfil(is) de demonstração; usuário={has_user}, admin={has_admin}. Não verifica contas Supabase, autorização real nem persistência.",
+        "static",
     )
 
 
@@ -525,7 +584,7 @@ def _check_model_and_pipeline(
                 "Câmera ao vivo",
                 "ok" if live_payload.get("ok") else "failed",
                 "src/ecoscan/live_camera",
-                f"Frame analisado; detecções rastreadas: {len(detections)}.",
+                f"Arquivo analisado como frame; regiões: {len(detections)}. Não acessa câmera física nem comprova detecção semântica.",
             )
         )
     except Exception as exc:
@@ -559,10 +618,11 @@ def _check_final_model(config: AppConfig) -> AcceptanceCheckResult:
     selected_model = model_status(config)
     return AcceptanceCheckResult(
         "QA-09",
-        "Modelo final",
-        "ok" if selected_model.final_model_exists else "pending",
-        selected_model.final_model_path,
-        "Modelo final encontrado." if selected_model.final_model_exists else "Aguardando dataset curado e treino final.",
+        "Aceite do reconhecimento",
+        "pending",
+        selected_model.selected_path,
+        "A existência do artefato não aprova o modelo. Exige contrato de preparo compatível, teste independente, métricas por classe e decisão de promoção registrada.",
+        "manual_required",
     )
 
 
@@ -610,7 +670,7 @@ def _write_report(report: AcceptanceCheckReport, report_dir: Path) -> None:
 def _write_csv(path: Path, rows: Iterable[AcceptanceCheckResult]) -> None:
     rows = list(rows)
     with path.open("w", newline="", encoding="utf-8") as file:
-        writer = csv.DictWriter(file, fieldnames=["code", "area", "status", "evidence", "details"])
+        writer = csv.DictWriter(file, fieldnames=["code", "area", "status", "evidence", "details", "evidence_kind"])
         writer.writeheader()
         for row in rows:
             writer.writerow(asdict(row))
@@ -622,6 +682,9 @@ def _format_markdown(report: AcceptanceCheckReport) -> str:
         "# Validação de aceite - EcoScan",
         "",
         f"Gerado em UTC: `{report.generated_at_utc}`.",
+        f"Versão: `{report.release.get('app_version', 'desconhecida')}`; commit: `{report.release.get('code_revision') or 'desconhecido'}`.",
+        "O commit não atesta ausência de alterações locais. Verificar o diff antes de publicar.",
+        "Inspeção estática e smoke test não equivalem a aceite real ou acurácia.",
         "",
         "## Resumo",
         "",
@@ -632,12 +695,12 @@ def _format_markdown(report: AcceptanceCheckReport) -> str:
         "",
         "## Checks",
         "",
-        "| Código | Área | Status | Evidência | Detalhes |",
-        "|---|---|---:|---|---|",
+        "| Código | Área | Status | Tipo | Evidência | Detalhes |",
+        "|---|---|---:|---|---|---|",
     ]
     for check in report.checks:
         lines.append(
-            f"| {check.code} | {check.area} | {check.status} | `{check.evidence}` | {check.details} |"
+            f"| {check.code} | {check.area} | {check.status} | {check.evidence_kind} | `{check.evidence}` | {check.details} |"
         )
     lines.append("")
     return "\n".join(lines)

@@ -20,9 +20,9 @@ aplicar em Authentication > Emails > Confirm sign up com assunto
 Confirm email ativado. Alterar o arquivo no GitHub nao altera o template remoto.
 
 Em 01/10/2026 foram conferidos Confirm email e SMTP personalizado ativos, e o
-template em portugues foi salvo no Supabase. O Brevo solicitou verificacao de
-telefone antes de novos envios. Convites aos analistas ainda nao foram enviados;
-nao confundir template salvo com email entregue.
+template em portugues foi salvo no Supabase. Em 03/10/2026, os tres convites
+foram enviados pelo recurso de teste da equipe no Brevo; os logs registraram
+entrega para cada destinatario. Isso nao comprova cadastro ou login concluido.
 
 Nao ha email adicional de boas-vindas depois da confirmacao. Se necessario,
 implementar esse evento no servidor com fila e deduplicacao, nunca em cada login
@@ -56,7 +56,7 @@ servidor e pode usar arquivo temporario, removido ao final; logs tecnicos da
 infraestrutura nao equivalem a perfil persistente. Dados antigos de visitantes
 nao sao apagados nem vinculados automaticamente a novas contas.
 
-1. Criar/convidar cada participante em Supabase Authentication > Users.
+1. Cada participante cria sua propria conta pelo formulario do aplicativo.
    Manter confirmacao de email; nao declarar emails confirmados sem verificar.
 2. Configurar SITE_URL e redirecionamentos no Supabase antes de enviar convites.
    Para o piloto, preferir cadastro com confirmacao e entrada por senha. O callback
@@ -75,7 +75,8 @@ Nao usar a senha do banco como senha do usuario. Nunca versionar credenciais.
 
 ## Limites atuais
 
-- Cadastro publico fica desativado ate SMTP e confirmacao serem validados.
+- No piloto publicado o cadastro foi ativado apos configuracao de SMTP e
+  confirmacao. Em novos ambientes deve permanecer desativado ate essa validacao.
 - Token fica somente na sessao Streamlit, sem cookie duravel e sem refresh nesta
   etapa. Se expirar ou falhar a verificacao, exige nova entrada e volta a visitante.
 - get_user valida o token remotamente a cada execucao; falha nunca mantem admin.

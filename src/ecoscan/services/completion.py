@@ -80,6 +80,7 @@ def build_completion_plan(config: AppConfig) -> CompletionPlan:
     readiness_score = float(audit_summary["readiness_score"])
     ready_for_demo = (
         acceptance.get("failed", 0) == 0
+        and acceptance.get("ok", 0) > 0
         and selected_model.selected_kind != "none"
         and readiness_score >= 70.0
     )
@@ -128,7 +129,7 @@ def build_completion_plan(config: AppConfig) -> CompletionPlan:
             priority="alta",
             evidence=selected_model.final_model_path,
             detail=(
-                "Modelo final carregável encontrado."
+                "Artefato encontrado; existência não comprova carregamento, compatibilidade ou aceite."
                 if selected_model.final_model_exists
                 else "A aplicação usa o modelo inicial até existir dataset curado e treino final."
             ),
@@ -137,7 +138,7 @@ def build_completion_plan(config: AppConfig) -> CompletionPlan:
         CompletionAction(
             area="Qualidade",
             title="Validação de aceite sem falhas",
-            status="failed" if acceptance.get("failed", 0) else ("ok" if acceptance.get("total", 0) else "attention"),
+            status="failed" if acceptance.get("failed", 0) else "attention",
             priority="alta",
             evidence="reports/acceptance_checks/acceptance_checks.md",
             detail=(
@@ -162,11 +163,11 @@ def build_completion_plan(config: AppConfig) -> CompletionPlan:
         CompletionAction(
             area="Operação",
             title="Uso diário pela Secretaria e pelo cidadão",
-            status="ok",
+            status="attention",
             priority="média",
             evidence="Perfis, campanha, denúncia, pontos de coleta e painel de gestão.",
-            detail="A experiência já separa o fluxo cidadão do fluxo administrativo da gestão ambiental.",
-            next_step="Validar textos, pontos oficiais e regras locais antes de um uso institucional real.",
+            detail="Fluxos implementados; campanhas e denúncias ainda dependem de arquivos locais.",
+            next_step="Migrar persistência e executar o aceite entre participantes e secretaria.",
         ),
     ]
 
@@ -190,7 +191,7 @@ def build_completion_plan(config: AppConfig) -> CompletionPlan:
 
 def format_completion_markdown(plan: CompletionPlan) -> str:
     demo_text = "sim" if plan.ready_for_demo else "não"
-    final_text = "sim" if plan.ready_for_final_training and plan.final_model_exists else "não"
+    final_text = "não atestado; exige avaliação independente e decisão de promoção"
     lines = [
         "# Checklist de conclusão - EcoScan",
         "",
@@ -214,9 +215,9 @@ def format_completion_markdown(plan: CompletionPlan) -> str:
             "",
             "## Leitura correta",
             "",
-            "O sistema está próximo de pronto para apresentação e uso demonstrativo. "
-            "A etapa que ainda não deve ser vendida como final é o reconhecimento definitivo, "
-            "porque depende de dataset curado e modelo final treinado.",
+            "Este inventário não aprova uma entrega. O score representa cobertura estrutural, "
+            "não percentual de conclusão. Aceite entre contas, persistência compartilhada, "
+            "dispositivos, recuperação e avaliação independente do modelo continuam exigindo evidências.",
             "",
         ]
     )

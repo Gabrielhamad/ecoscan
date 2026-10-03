@@ -1,5 +1,13 @@
 # Plano de entrega do EcoScan
 
+## Marco atual: controle de qualidade
+
+Atualizacao de 03/10/2026: [quadro de entrega e validacao](controle_entrega.md).
+Esse quadro orienta a sequencia atual M1-M5; as secoes datadas abaixo preservam
+o historico. M1 implementado e validado localmente com 291 testes. Proximo marco:
+persistencia compartilhada de campanhas e denuncias, seguido do aceite real P01-P12.
+Convites dos tres analistas entregues; cadastro e login do grupo ainda a confirmar.
+
 Referência: [avaliação de 27/09/2026](avaliacao_e_entrega.md).
 Metodologia: etapas sequenciais com evidência e critério de aprovação.
 Responsáveis abaixo são papéis a atribuir pelo grupo, não pessoas já designadas.
@@ -82,9 +90,9 @@ Comandos de referência a partir da raiz ecoscan, com ambiente virtual ativo:
     python scripts/run_acceptance_checks.py --output reports/aceite_release
     python -m streamlit run streamlit_app.py
 
-Não usar somente o código de saída do aceite: ele pode retornar zero com pendências.
-Revisar cada item do relatório. O aceite QA-17 de perfis locais não substitui
-a validação real de autorização do Supabase.
+O aceite agora é estrito por padrão: pendências retornam código 2; falhas,
+código 1. `--diagnostic` permite inspeção local sem aprovar a entrega. Revisar
+cada item; QA-17 de perfis locais não substitui o aceite real QA-18 do Supabase.
 
 ## Etapa 3 — Fechar o experimento de visão computacional
 
@@ -186,7 +194,8 @@ Complemento da publicação: correções de missões enviadas ao GitHub (`8b3bc9
 Identificação da revisão adicionada ao Perfil e ao contexto dos novos reportes,
 com falha tolerada quando Git estiver indisponível. Suíte após esse complemento:
 281 testes aprovados. Template de confirmação em português salvo no Supabase;
-envio dos convites pendente da verificação de telefone solicitada pelo Brevo.
+naquela data o envio aguardava a verificação de telefone do Brevo. Pendência
+resolvida em 03/10/2026: entrega dos três convites confirmada nos logs do provedor.
 
 ### Próximas etapas e critérios de saída
 

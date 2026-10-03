@@ -1,0 +1,54 @@
+name: Qualidade do EcoScan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validation:
+    name: Testes e diagnostico local
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PYTHONUTF8: '1'
+      ECOSCAN_OPERATIONS_ENABLED: 'false'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Instalar dependencias declaradas
+        run: python -m pip install -e .
+      - name: Testes automatizados
+        run: python -m unittest discover -s tests -v
+      - name: Diagnostico (nao aprova entrega final)
+        run: python scripts/run_acceptance_checks.py --diagnostic --output reports/ci
+      - name: Registrar ambiente resolvido
+        if: always()
+        run: |
+          mkdir -p reports/ci
+          python --version > reports/ci/python.txt
+          python -m pip freeze > reports/ci/dependencies.txt
+      - name: Guardar relatorios tecnicos
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-${{ github.sha }}
+          path: |
+            reports/ci/*.json
+            reports/ci/*.csv
+            reports/ci/*.md
+            reports/ci/*.txt
+          retention-days: 14

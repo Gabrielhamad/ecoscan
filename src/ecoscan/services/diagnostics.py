@@ -84,12 +84,12 @@ def model_status(config: AppConfig) -> ModelStatus:
     if final_model_path.exists():
         selected_kind = "transfer_learning"
         selected_path = str(final_model_path)
-    elif visual_model_path.exists():
-        selected_kind = "visual_knn"
-        selected_path = str(visual_model_path)
     elif visual_svm_model_path.exists():
         selected_kind = "visual_svm"
         selected_path = str(visual_svm_model_path)
+    elif visual_model_path.exists():
+        selected_kind = "visual_knn"
+        selected_path = str(visual_model_path)
     elif baseline_model_path.exists():
         selected_kind = "baseline"
         selected_path = str(baseline_model_path)

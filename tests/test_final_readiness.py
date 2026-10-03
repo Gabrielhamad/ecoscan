@@ -11,6 +11,12 @@ from ecoscan.services.final_readiness import (
 
 
 class FinalReadinessTests(unittest.TestCase):
+    def test_local_inventory_does_not_approve_real_operation(self) -> None:
+        items = build_final_readiness_items(load_config())
+        for item in items:
+            if item.area in {"Produto", "Operação", "Qualidade", "Modelo"}:
+                self.assertNotEqual("ready", item.status)
+
     def test_final_readiness_exposes_final_workstreams(self) -> None:
         items = build_final_readiness_items(load_config())
         titles = {item.title for item in items}
