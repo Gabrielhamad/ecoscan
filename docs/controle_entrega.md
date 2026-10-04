@@ -97,6 +97,15 @@ Os artefatos locais ficam em `reports/acceptance_checks`, fora do Git. O commit
 registrado antes do commit desta entrega identifica a base; mudancas locais
 devem ser conferidas no diff. Reexecutar apos a publicacao para registrar a revisao final.
 
+Continuacao em 04/10/2026: a primeira CI instalou Python 3.12 e executou os
+291 testes, identificando uma incompatibilidade do teste visual com o tipo
+`image` do AppTest no Streamlit 1.65 (a versao local 1.57 usava `imgs`). O teste
+foi ajustado para ambos e agora verifica tambem as URLs de cada imagem. Nao foi
+removida a verificacao do antes/depois. Os sete testes de evidencias passaram
+na versao 1.57, e a suite completa de 291 passou localmente com a 1.65 isolada.
+A primeira publicacao foi conferida no Perfil do app, revisao `0c66a2e37ab9`.
+O resultado da nova CI deve ser conferido antes de encerrar M1.
+
 ## Preparacao da proxima entrega (M2)
 
 1. Inventariar campanhas e denuncias atuais sem enviar dados privados ao Git.

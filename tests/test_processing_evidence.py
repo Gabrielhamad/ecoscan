@@ -131,7 +131,12 @@ render_applied_processing(st, st.session_state.pipeline)
         self.assertEqual(len(app.get("download_button")), 1)
         self.assertTrue(any("Processamento aplicado" in item.value for item in app.subheader))
         for tab in app.tabs:
-            self.assertGreaterEqual(len(tab.get("imgs")), 2)
+            # Newer AppTest versions expose Image; older ones use the proto name.
+            images = list(tab.get("image")) + list(tab.get("imgs"))
+            self.assertGreaterEqual(len(images), 2)
+            for element in images:
+                self.assertTrue(element.proto.imgs)
+                self.assertTrue(all(image.url for image in element.proto.imgs))
 
 
 if __name__ == "__main__":
