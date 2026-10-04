@@ -248,7 +248,10 @@ Falha do banco configurado não deve virar gravação local silenciosa. Arquivos
 Em 03/10/2026 foram aprovados **291 testes locais**. O diagnóstico foi alinhado ao
 modelo realmente selecionado; existência de arquivos e perfis locais não aprova
 reconhecimento, autorização ou persistência real. O fluxo de GitHub Actions está
-em `.github/workflows/quality.yml`; sua execução remota deve ser conferida na aba Actions.
+em `.github/workflows/quality.yml`. Em 04/10/2026, os **291 testes passaram também
+na CI em Python 3.12/Linux**, após ajustar o teste visual ao Streamlit atual:
+[execução validada](https://github.com/Gabrielhamad/ecoscan/actions/runs/37200298709).
+Novas publicações devem conferir a execução correspondente na aba Actions.
 
 Com o pacote instalado em modo editável:
 

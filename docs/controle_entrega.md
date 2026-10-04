@@ -16,7 +16,7 @@ os papeis abaixo nao representam atribuicoes pessoais ja aceitas.
 
 | Marco | Prioridade / papel | Entrega e dependencia | Criterio de saida | Situacao |
 | --- | --- | --- | --- | --- |
-| M1 | P0 / desenvolvimento | Controle de qualidade e diagnostico coerente | Suite aprovada, selecao de modelo consistente, comando estrito bloqueia pendencias, CI executada em clone limpo | Implementado; validado localmente; CI remota a conferir |
+| M1 | P0 / desenvolvimento | Controle de qualidade e diagnostico coerente | Suite aprovada, selecao de modelo consistente, comando estrito bloqueia pendencias, CI executada em clone limpo | Validado localmente e na CI, execucao #2; nao e aceite de producao |
 | M2 | P0 / backend e infraestrutura | Campanhas e denuncias compartilhadas, apos M1 | Migracao aditiva, autorizacao no servidor, revisoes atomicas com versao, evidencias privadas; sem perda ao reiniciar nem fallback local silencioso | Proxima entrega |
 | M3 | P0 / QA e analistas | Aceite entre contas, apos M2 | P01-P12 do plano executados; duas contas e um analista; autor recebe resposta, outra conta nao acessa; reenvio nao duplica | Preparado, aguarda execucao real |
 | M4 | P1 / dados e modelagem | Candidato de reconhecimento compativel | Curadoria com origem, separacao por objeto/cena, teste independente, metricas por classe, criterios definidos antes de avaliar, promocao revisada | Pendente; nao retreinado nesta etapa |
@@ -104,7 +104,11 @@ foi ajustado para ambos e agora verifica tambem as URLs de cada imagem. Nao foi
 removida a verificacao do antes/depois. Os sete testes de evidencias passaram
 na versao 1.57, e a suite completa de 291 passou localmente com a 1.65 isolada.
 A primeira publicacao foi conferida no Perfil do app, revisao `0c66a2e37ab9`.
-O resultado da nova CI deve ser conferido antes de encerrar M1.
+A [CI #2](https://github.com/Gabrielhamad/ecoscan/actions/runs/37200298709) concluiu
+com sucesso no commit `bcab11c`: 291 testes em Python 3.12/Linux, diagnostico e
+artefato de validacao. M1 validado. O fluxo foi subsequentemente atualizado para
+Ubuntu 24.04 explicito e actions v6 com Node 24, eliminando a dependencia dos
+runtimes antigos sinalizados nessa execucao. Conferir a nova execucao ao publicar.
 
 ## Preparacao da proxima entrega (M2)
 
