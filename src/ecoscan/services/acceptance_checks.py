@@ -72,7 +72,7 @@ def _external_acceptance_checks() -> list[AcceptanceCheckResult]:
         ),
         AcceptanceCheckResult(
             "QA-19", "Persistência integrada", "pending", "docs/plano_entrega.md: P07/P11",
-            "Campanhas e denúncias ainda locais. Migrar e testar reinício, concorrência e falha do banco.",
+            "Validar ativação da migração 003, campanhas e relatos entre contas, reinício e falha do banco. Testes locais não comprovam operação publicada.",
             "manual_required",
         ),
         AcceptanceCheckResult(
@@ -485,7 +485,7 @@ def _check_accounts_and_admin(config: AppConfig) -> AcceptanceCheckResult:
             "_render_admin_tab",
             "points_ledger_path_from_config",
             "append_point_transaction",
-            "append_civic_report_review",
+            "render_reports",
         ]
     )
     status = "ok" if has_user and has_admin and account_service.exists() and ui_ok else "attention"

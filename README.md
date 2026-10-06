@@ -36,10 +36,10 @@ por uma foto reconhecida. Pontuação inválida, identificadores duplicados e a�
 desconhecidas são rejeitados na configuração. Resultados sem confiança numérica
 finita entre 0 e 1 não validam missões; isso não substitui a calibração do modelo.
 
-Verificação local em 01/10/2026: **281 testes aprovados**. Esta execução não
-comprova publicação no Streamlit nem aceite com contas reais. Campanhas e denúncias
-ainda dependem de armazenamento local; sua migração para persistência compartilhada
-continua no [roteiro de entrega](docs/plano_entrega.md#continuidade-em-01102026).
+Campanhas e relatos possuem uma camada compartilhada com revisão protegida contra
+concorrência e fotos privadas. O recebimento exige a migração 003 e ativação
+explícita; não há gravação local alternativa na interface. Consulte o
+[fluxo, ativação e limites operacionais](docs/campanhas_e_relatos.md).
 
 ## Sumário
 
@@ -225,6 +225,9 @@ url = "https://SEU_PROJETO.supabase.co"
 service_key = "CHAVE_PRIVADA_SOMENTE_NO_SERVIDOR"
 operations_enabled = true
 
+[community]
+enabled = false # Ativar após migration 003 e validação
+
 [access]
 public_signup_enabled = false
 supabase_admin_emails = []
@@ -237,7 +240,8 @@ Ative `public_signup_enabled` somente após validar SMTP e confirmação. Autori
 | Identidade e confirmação de e-mail | Supabase Auth |
 | Correções de reconhecimento, revisão e resposta | PostgreSQL e foto no Storage privado, quando configurados |
 | Pontos e registros de testes | PostgreSQL com `operations_enabled = true` e migration 002 |
-| Campanhas, denúncias cívicas e artefatos de treino | Arquivos locais; ainda não totalmente migrados |
+| Campanha ativa, relatos cívicos e respostas | PostgreSQL e Storage privado com `[community] enabled = true` e migration 003 |
+| Artefatos de treino | Arquivos locais; exigem promoção e publicação separadas |
 | Histórico técnico local | Não deve ser tratado como histórico durável compartilhado |
 
 Falha do banco configurado não deve virar gravação local silenciosa. Arquivos locais da hospedagem não garantem durabilidade. A chave privilegiada é exclusiva do servidor; a aplicação também valida identidade e acesso. Veja [banco](docs/banco_gratuito.md), [login](docs/login_piloto.md) e [aceite](docs/aceite_banco_piloto.md).
@@ -245,6 +249,9 @@ Falha do banco configurado não deve virar gravação local silenciosa. Arquivos
 ## Testes e publicação
 
 **Controle de entrega atualizado:** [marcos M1–M5, riscos e aceite](docs/controle_entrega.md).
+Em 05/10/2026: **314 testes locais aprovados**, incluindo 23 casos novos de
+campanhas, autorização, protocolos e revisões. Migração validada no PostgreSQL
+em transação desfeita ao final; detalhes no [registro M2](docs/campanhas_e_relatos.md).
 Em 03/10/2026 foram aprovados **291 testes locais**. O diagnóstico foi alinhado ao
 modelo realmente selecionado; existência de arquivos e perfis locais não aprova
 reconhecimento, autorização ou persistência real. O fluxo de GitHub Actions está
@@ -345,7 +352,7 @@ Consulte a [avaliação de conformidade e resultados](docs/avaliacao_e_entrega.m
 
 - Validar ponta a ponta: cadastro, confirmação, analista, reporte e resposta entre contas reais.
 - Melhorar reconhecimento com curadoria e avaliação independente por classe e estado.
-- Migrar campanhas e denúncias para armazenamento compartilhado durável.
+- Concluir aceite entre contas das campanhas e relatos compartilhados, incluindo reinício.
 - Validar recuperação de senha na nuvem (fluxo implementado); evoluir gestão de sessões e proteção contra abuso.
 - Definir retenção, exclusão, backups e procedimento de incidentes antes do uso amplo.
 - Ampliar coleta com fontes auditáveis e coordenadas verificadas.

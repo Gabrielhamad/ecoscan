@@ -166,8 +166,8 @@ def build_completion_plan(config: AppConfig) -> CompletionPlan:
             status="attention",
             priority="média",
             evidence="Perfis, campanha, denúncia, pontos de coleta e painel de gestão.",
-            detail="Fluxos implementados; campanhas e denúncias ainda dependem de arquivos locais.",
-            next_step="Migrar persistência e executar o aceite entre participantes e secretaria.",
+            detail="Fluxos compartilhados implementados; dependem da migração 003 e ativação no ambiente.",
+            next_step="Executar o aceite entre participantes e secretaria, incluindo reinício e concorrência.",
         ),
     ]
 

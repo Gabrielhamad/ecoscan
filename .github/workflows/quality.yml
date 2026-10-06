@@ -21,6 +21,7 @@ jobs:
     env:
       PYTHONUTF8: '1'
       ECOSCAN_OPERATIONS_ENABLED: 'false'
+      ECOSCAN_COMMUNITY_ENABLED: 'false'
     steps:
       - uses: actions/checkout@v6
         with:
@@ -52,3 +53,37 @@ jobs:
             reports/ci/*.md
             reports/ci/*.txt
           retention-days: 14
+
+  community-database:
+    name: Migracao e permissoes PostgreSQL
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: local-ci-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: local-ci-only
+      PGDATABASE: postgres
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Preparar banco isolado da CI
+        run: psql -v ON_ERROR_STOP=1 -f tests/community_database_fixture.sql
+      - name: Aplicar e reaplicar migracao aditiva
+        run: |
+          psql -v ON_ERROR_STOP=1 -f migrations/003_community.sql
+          psql -v ON_ERROR_STOP=1 -f migrations/003_community.sql
+      - name: Verificar permissoes, revisoes e auditoria sem manter fixtures
+        run: psql -v ON_ERROR_STOP=1 -c BEGIN -f tests/community_database_checks.sql

@@ -39,7 +39,7 @@ def build_final_readiness_items(config: AppConfig) -> tuple[FinalReadinessItem, 
             status="attention",
             prepared_for_later=True,
             evidence="config/campaigns.json; config/collection_points.json; reports/civic_reports",
-            next_step="Migrar campanhas e denúncias locais; validar persistência, revisão e concorrência após reinício.",
+            next_step="Conferir ativação da migração 003 e validar campanhas/relatos entre contas, revisão e persistência após reinício.",
         ),
         FinalReadinessItem(
             area="Dados",

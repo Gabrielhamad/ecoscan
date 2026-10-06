@@ -1,11 +1,12 @@
 # Plano de entrega do EcoScan
 
-## Marco atual: controle de qualidade
+## Marco atual: campanhas e relatos compartilhados
 
-Atualizacao de 03/10/2026: [quadro de entrega e validacao](controle_entrega.md).
+Atualizacao de 05/10/2026: [quadro de entrega e validacao](controle_entrega.md).
 Esse quadro orienta a sequencia atual M1-M5; as secoes datadas abaixo preservam
-o historico. M1 implementado e validado localmente com 291 testes. Proximo marco:
-persistencia compartilhada de campanhas e denuncias, seguido do aceite real P01-P12.
+o historico. M1 validado localmente e na CI. M2 implementado com 314 testes
+locais aprovados e migracao SQL validada; agora falta o aceite publicado entre
+contas (M3/P01-P12). Veja [operacao M2](campanhas_e_relatos.md).
 Convites dos tres analistas entregues; cadastro e login do grupo ainda a confirmar.
 
 Referência: [avaliação de 27/09/2026](avaliacao_e_entrega.md).

@@ -17,7 +17,7 @@ os papeis abaixo nao representam atribuicoes pessoais ja aceitas.
 | Marco | Prioridade / papel | Entrega e dependencia | Criterio de saida | Situacao |
 | --- | --- | --- | --- | --- |
 | M1 | P0 / desenvolvimento | Controle de qualidade e diagnostico coerente | Suite aprovada, selecao de modelo consistente, comando estrito bloqueia pendencias, CI executada em clone limpo | Validado localmente e na CI, execucao #2; nao e aceite de producao |
-| M2 | P0 / backend e infraestrutura | Campanhas e denuncias compartilhadas, apos M1 | Migracao aditiva, autorizacao no servidor, revisoes atomicas com versao, evidencias privadas; sem perda ao reiniciar nem fallback local silencioso | Proxima entrega |
+| M2 | P0 / backend e infraestrutura | Campanhas e denuncias compartilhadas, apos M1 | Migracao aditiva, autorizacao no servidor, revisoes atomicas com versao, evidencias privadas; sem perda ao reiniciar nem fallback local silencioso | Implementado; suite e SQL validados em 05/10; aceite publicado entre contas pendente |
 | M3 | P0 / QA e analistas | Aceite entre contas, apos M2 | P01-P12 do plano executados; duas contas e um analista; autor recebe resposta, outra conta nao acessa; reenvio nao duplica | Preparado, aguarda execucao real |
 | M4 | P1 / dados e modelagem | Candidato de reconhecimento compativel | Curadoria com origem, separacao por objeto/cena, teste independente, metricas por classe, criterios definidos antes de avaliar, promocao revisada | Pendente; nao retreinado nesta etapa |
 | M5 | P1 / mantenedor e coordenacao | Entrega operacional, apos M3/M4 | Backup restaurado em ambiente isolado, retorno de versao ensaiado, retencao e suporte definidos, documentacao e demonstracao aceitas | Pendente |
@@ -112,6 +112,11 @@ runtimes antigos sinalizados nessa execucao. Conferir a nova execucao ao publica
 
 ## Preparacao da proxima entrega (M2)
 
+Implementacao de 05/10/2026: [campanhas e relatos compartilhados](campanhas_e_relatos.md).
+314 testes passaram; SQL validado com rollback, permissao real do papel de servico,
+acesso direto negado e protecao de revisao. O roteiro abaixo continua sendo o
+criterio de aceite, nao uma declaracao de que contas reais ja executaram o fluxo.
+
 1. Inventariar campanhas e denuncias atuais sem enviar dados privados ao Git.
 2. Criar migracao aditiva separando campanha publicada, relato e revisao.
 3. Manter identidade verificada no servidor; visitante nao grava; analista
@@ -122,7 +127,7 @@ runtimes antigos sinalizados nessa execucao. Conferir a nova execucao ao publica
    deve informar indisponibilidade, nunca apresentar sucesso ou lista vazia falsos.
 6. Preservar originais e dados anteriores; rollback do codigo nao deve apagar banco.
 
-Nao ha nova migracao aplicada em producao nesta rodada.
+Migracao desta entrega: `003_community.sql`. Nao importa nem apaga dados locais.
 
 ## Riscos e resposta
 

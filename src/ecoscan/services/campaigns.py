@@ -63,6 +63,11 @@ def campaign_path_from_config(config: AppConfig) -> Path:
 
 def load_campaign(path: str | Path) -> Campaign:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    return campaign_from_payload(payload)
+
+
+def campaign_from_payload(payload: dict[str, Any]) -> Campaign:
+    """Validate the same contract for file configuration and published campaigns."""
     if not isinstance(payload, dict):
         raise CampaignConfigError("A campanha deve ser um objeto JSON.")
     for field in ("missions", "rewards"):

@@ -69,16 +69,7 @@ from ecoscan.services.campaigns import (
     load_campaign,
 )
 from ecoscan.services.civic_reports import (
-    append_civic_report,
-    append_civic_report_review,
-    build_civic_report_review,
     build_civic_report_record,
-    civic_report_reviews_path_from_config,
-    civic_reports_path_from_config,
-    latest_reviews_by_report,
-    read_civic_reports,
-    read_civic_report_reviews,
-    save_civic_report_evidence,
 )
 from ecoscan.services.completion import build_completion_plan
 from ecoscan.services.dataset_governance import build_dataset_readiness
@@ -1935,10 +1926,21 @@ def _load_user_profile_list(config: Any) -> tuple[UserProfile, ...]:
 
 
 def _load_campaign_config(config: Any) -> Campaign | None:
+    from ecoscan.services.community_store import community_enabled, community_store
+    from ecoscan.services.campaigns import campaign_from_payload
     try:
+        if community_enabled():
+            snapshot = community_store().campaign()
+            if snapshot:
+                return campaign_from_payload(snapshot["record"])
+            import streamlit as st
+            st.caption("Campanha de referência do EcoScan. A primeira publicação da equipe ainda está pendente.")
+            return load_campaign(campaign_path_from_config(config))
         return load_campaign(campaign_path_from_config(config))
     except Exception as exc:
         LOGGER.warning("campaign_load_failed detail=%s", exc)
+        import streamlit as st
+        st.warning("Campanha indisponível no momento. A análise de fotos e as orientações continuam disponíveis.")
         return None
 
 
@@ -3997,6 +3999,13 @@ def _render_civic_reports_tab(
     if active_profile.id.startswith("visitor_"):
         st.info("Entre em uma conta verificada para enviar um relato à secretaria. Visitantes podem consultar o mapa e as orientações de descarte.")
         return
+    from ecoscan.services.community_store import community_enabled, community_store
+    from ecoscan.ui.community import credentials, render_reports
+    from uuid import uuid4
+    if not community_enabled():
+        st.info("O recebimento compartilhado está em preparação. Nenhum relato novo será salvo em arquivos temporários.")
+        return
+    st.session_state.setdefault("civic_submission_id", str(uuid4()))
     st.markdown(
         '<div class="ecoscan-note">A denúncia usa o mesmo tratamento de imagem, segmentação e reconhecimento '
         "para fazer triagem técnica da evidência. O resultado indica consistência visual, não substitui vistoria oficial.</div>",
@@ -4016,37 +4025,43 @@ def _render_civic_reports_tab(
                 key="civic_report_upload",
             )
             source_kind = "upload"
-        location_note = st.text_input("Local aproximado", placeholder="ex.: rua, bairro, ponto de referência")
-        description = st.text_area("Descrição breve", placeholder="ex.: resíduos descartados perto de área verde")
-        contact = st.text_input("Contato opcional", placeholder="telefone ou e-mail, se quiser retorno")
+        location_note = st.text_input("Local aproximado", placeholder="ex.: rua, bairro, ponto de referência", max_chars=300)
+        description = st.text_area("Descrição breve", placeholder="ex.: resíduos descartados perto de área verde", max_chars=2000)
+        contact = ""  # Responses are delivered through the authenticated profile.
+        consent = st.checkbox("Autorizo enviar esta foto e o relato para análise da equipe. Evitarei rostos, placas e dados de terceiros.")
+        st.caption("Projeto educativo: não substitui os canais oficiais de atendimento da Prefeitura.")
+        if st.button("Iniciar outro relato", key="civic_new_submission"):
+            st.session_state["civic_submission_id"] = str(uuid4())
+            st.session_state.pop("last_civic_report_record", None)
+            st.session_state.pop("last_civic_report_result", None)
 
         if report_file is None:
             st.caption("Adicione uma foto da situação para liberar o registro da denúncia.")
-        if st.button("Analisar e registrar denúncia", disabled=report_file is None):
+        if st.button("Analisar e registrar denúncia", disabled=report_file is None or not consent or not location_note.strip() or not description.strip()):
             temp_path = _temporary_upload(report_file, prefix="report")
             try:
                 with st.spinner("Processando evidência da denúncia..."):
                     report_result = analyze_waste_image(temp_path, config, options=pipeline_options)
-                evidence_path = save_civic_report_evidence(
-                    config,
-                    original_name=report_file.name,
-                    data=report_file.getvalue(),
-                )
                 record = build_civic_report_record(
                     report_result,
-                    evidence_path=evidence_path,
+                    evidence_path=temp_path,
                     location_note=location_note,
                     description=description,
                     contact=contact,
                     source_kind=source_kind,
                     submitted_by=active_profile.id,
                 )
-                append_civic_report(civic_reports_path_from_config(config), record)
-                st.session_state["last_civic_report_record"] = record
+                from ecoscan.services.civic_reports import CivicReportRecord
+                saved = community_store().submit(record, report_file.getvalue(),
+                    submission_id=st.session_state["civic_submission_id"],
+                    consent=consent, **credentials(st))
+                st.session_state["last_civic_report_record"] = CivicReportRecord(**saved["record"])
                 st.session_state["last_civic_report_result"] = report_result
-                st.success("Denúncia registrada para triagem.")
+                st.success("Relato confirmado no banco e disponível para a equipe. Protocolo: " + saved["id"])
             except Exception as exc:
                 _render_user_error(st, exc, context="civic_report")
+            finally:
+                temp_path.unlink(missing_ok=True)
     with info_col:
         st.markdown(
             """
@@ -4063,8 +4078,7 @@ def _render_civic_reports_tab(
             """,
             unsafe_allow_html=True,
         )
-        report_path = civic_reports_path_from_config(config)
-        st.caption(f"Manifesto local: {report_path}")
+        st.caption("Foto privada no banco compartilhado. A resposta poderá ser acompanhada no Perfil.")
 
     record = st.session_state.get("last_civic_report_record")
     report_result = st.session_state.get("last_civic_report_result")
@@ -4073,26 +4087,7 @@ def _render_civic_reports_tab(
     if report_result is not None:
         _render_photo_processing_summary(st, report_result.pipeline)
 
-    recent = read_civic_reports(civic_reports_path_from_config(config))
-    if not active_profile.is_admin:
-        recent = [item for item in recent if item.submitted_by == active_profile.id]
-    recent = recent[-8:]
-    if recent:
-        st.markdown('<div class="ecoscan-section-title">Últimas denúncias registradas</div>', unsafe_allow_html=True)
-        rows = [
-            {
-                "data_utc": item.timestamp_utc,
-                "status": item.verification_status,
-                "classe": item.detected_class or item.top_class or "",
-                "confiança": item.probability,
-                "local": item.location_note,
-                "qualidade": item.capture_quality_status,
-                "elementos": item.elements_count,
-                "usuário": item.submitted_by,
-            }
-            for item in reversed(recent)
-        ]
-        st.dataframe(rows, width="stretch", hide_index=True)
+    render_reports(st, key="civic_history")
 
 
 def _render_field_test_form(
@@ -4228,31 +4223,8 @@ def _render_account_tab(
 
     _render_field_test_form(st, config, active_profile, guidance_by_class)
 
-    st.markdown('<div class="ecoscan-section-title">Minhas denúncias</div>', unsafe_allow_html=True)
-    report_rows = [
-        report
-        for report in read_civic_reports(civic_reports_path_from_config(config), limit=100)
-        if report.submitted_by == active_profile.id
-    ]
-    if not report_rows:
-        st.write("Nenhuma denúncia registrada por este perfil.")
-        return
-
-    reviews = latest_reviews_by_report(read_civic_report_reviews(civic_report_reviews_path_from_config(config)))
-    st.dataframe(
-        [
-            {
-                "data_utc": report.timestamp_utc,
-                "triagem": report.verification_status,
-                "classe": report.detected_class or report.top_class or "",
-                "local": report.location_note,
-                "revisão_admin": reviews.get(report.id).decision if report.id in reviews else "aguardando",
-            }
-            for report in reversed(report_rows[-12:])
-        ],
-        width="stretch",
-        hide_index=True,
-    )
+    from ecoscan.ui.community import render_reports
+    render_reports(st, key="profile_reports")
 
 
 def _render_admin_campaign_operations(
@@ -4480,18 +4452,12 @@ def _render_admin_tab(
     render_review(st, config, active_profile)
 
     ledger_path = points_ledger_path_from_config(config)
-    reports_path = civic_reports_path_from_config(config)
-    reviews_path = civic_report_reviews_path_from_config(config)
-    reports = read_civic_reports(reports_path, limit=200)
-    reviews = read_civic_report_reviews(reviews_path)
-    latest_reviews = latest_reviews_by_report(reviews)
     point_transactions = read_point_transactions(ledger_path, limit=500)
 
-    cols = st.columns(4)
+    cols = st.columns(3)
     cols[0].metric("Perfis locais de demonstração", len(profiles))
     cols[1].metric("Missões", len(campaign.missions) if campaign else 0)
-    cols[2].metric("Denúncias", len(reports))
-    cols[3].metric("Pontos de coleta", len(collection_points))
+    cols[2].metric("Pontos de coleta", len(collection_points))
 
     with st.expander("Cadastros reais e confirmação de e-mail"):
         st.button("Atualizar cadastros", key="refresh_real_users")
@@ -4511,6 +4477,8 @@ def _render_admin_tab(
         point_transactions,
         guidance_by_class,
     )
+    from ecoscan.ui.community import render_campaign_editor, render_reports
+    render_campaign_editor(st, config)
 
     _render_admin_recognition_quality(st, config, guidance_by_class)
     _render_admin_field_tests(st, config, guidance_by_class)
@@ -4522,70 +4490,7 @@ def _render_admin_tab(
     else:
         st.info("Ainda não há pontuação registrada.")
 
-    st.markdown('<div class="ecoscan-section-title">Triagem de denúncias</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div class="ecoscan-admin-table-note">A triagem automática orienta a gestão, mas a decisão administrativa fica registrada separadamente.</div>',
-        unsafe_allow_html=True,
-    )
-    if not reports:
-        st.write("Nenhuma denúncia registrada.")
-    else:
-        report_rows = [
-            {
-                "id": report.id,
-                "data_utc": report.timestamp_utc,
-                "triagem": report.verification_status,
-                "revisão_admin": latest_reviews.get(report.id).decision if report.id in latest_reviews else "aguardando",
-                "classe": report.detected_class or report.top_class or "",
-                "confiança": report.probability,
-                "local": report.location_note,
-                "usuário": report.submitted_by,
-                "qualidade": report.capture_quality_status,
-            }
-            for report in reversed(reports[-30:])
-        ]
-        st.dataframe(report_rows, width="stretch", hide_index=True)
-
-        selected_report = st.selectbox(
-            "Denúncia para revisar",
-            list(reversed(reports[-30:])),
-            format_func=lambda report: f"{report.timestamp_utc} · {report.location_note or report.id}",
-            key="admin_selected_report",
-        )
-        decision_label_map = {
-            "Encaminhar para fiscalização": "encaminhar",
-            "Arquivar como insuficiente": "arquivar",
-            "Solicitar nova foto": "solicitar_nova_foto",
-        }
-        decision_label = st.selectbox(
-            "Decisão administrativa",
-            list(decision_label_map.keys()),
-            key="admin_report_decision",
-        )
-        review_note = st.text_area(
-            "Observação da gestão",
-            placeholder="ex.: endereço incompleto, evidência boa ou encaminhamento necessário",
-            key="admin_review_note",
-        )
-        if st.button("Registrar decisão administrativa"):
-            try:
-                review = build_civic_report_review(
-                    report_id=selected_report.id,
-                    admin_user_id=active_profile.id,
-                    decision=decision_label_map[decision_label],
-                    note=review_note,
-                )
-                append_civic_report_review(reviews_path, review)
-                st.success("Decisão administrativa registrada.")
-            except Exception as exc:
-                _render_user_error(st, exc, context="admin_report_review")
-
-    st.markdown('<div class="ecoscan-section-title">Arquivos de gestão</div>', unsafe_allow_html=True)
-    st.write(f"Perfis: `{profiles_path_from_config(config)}`")
-    st.write(f"Campanha: `{campaign_path_from_config(config)}`")
-    st.write(f"Pontuação: `{ledger_path}`")
-    st.write(f"Denúncias: `{reports_path}`")
-    st.write(f"Revisões: `{reviews_path}`")
+    render_reports(st, admin=True, key="admin_civic_reports")
 
 
 def _input_signature(uploaded_file: Any, source_kind: str, options: ProcessingPipelineOptions) -> str:
@@ -4629,10 +4534,10 @@ def main() -> None:
     impacts_by_class = _load_environmental_impact_map(config)
     requirements_by_class = _load_photo_requirement_map(config)
     collection_points = _load_collection_point_list(config)
-    campaign = _load_campaign_config(config)
     profiles = _load_user_profile_list(config)
     st.set_page_config(page_title="EcoScan", layout="wide", initial_sidebar_state="collapsed")
     _render_theme(st)
+    campaign = _load_campaign_config(config)
 
     from ecoscan.app.pipeline import default_processing_options
     defaults = default_processing_options(config)

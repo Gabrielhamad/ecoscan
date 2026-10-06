@@ -16,6 +16,7 @@
 ## Entrega e avaliação
 
 - [Controle atual de entrega: marcos, validação, riscos e responsabilidades](controle_entrega.md)
+- [Campanhas e relatos compartilhados: operação, ativação e retorno](campanhas_e_relatos.md)
 
 - [Avaliação de conformidade e evidências — 27/09/2026](avaliacao_e_entrega.md)
 - [Plano de entrega, responsáveis e critérios de aceite](plano_entrega.md)
