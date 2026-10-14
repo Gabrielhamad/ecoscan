@@ -5,14 +5,14 @@
     "coverage": [
       "São Paulo - SP"
     ],
-    "source_label": "Prefeitura de São Paulo · Subprefeitura Sé",
-    "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse",
+    "source_label": "Prefeitura de São Paulo · Subprefeituras",
+    "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
     "source_urls": [
-      "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse",
+      "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
       "https://coleta.prefeitura.sp.gov.br/"
     ],
-    "retrieved_at": "2026-09-20",
-    "notes": "Lista parcial de seis unidades conferidas. General Flores excluído por indicação de fechamento temporário. Consulte o mapa municipal para toda a capital. Sem coordenadas auditadas, não há cálculo interno de proximidade."
+    "retrieved_at": "2026-10-14",
+    "notes": "Seleção de unidades nas cinco regiões. Lista parcial, sem distâncias calculadas. General Flores fora de operação foi excluído. Mapa municipal incorporado como referência externa."
   },
   "points": [
     {
@@ -21,6 +21,34 @@
       "city": "São Paulo",
       "state": "SP",
       "address": "Rua Jaceguai, 67",
+      "neighborhood": "Bela Vista",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Centro",
+      "postal_code": "01315-010",
+      "subprefecture": "Sé"
+    },
+    {
+      "point_id": "sp-audit-2",
+      "name": "Ecoponto Glicério",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Praça Ministro Francisco Sá Carneiro, 6; acesso pela Avenida do Estado, 4434",
       "neighborhood": "Liberdade",
       "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
       "accepted_classes": [
@@ -37,33 +65,11 @@
       ],
       "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
       "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
-      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse",
-      "source_label": "Prefeitura de São Paulo · Subprefeitura Sé"
-    },
-    {
-      "point_id": "sp-audit-2",
-      "name": "Ecoponto Glicério",
-      "city": "São Paulo",
-      "state": "SP",
-      "address": "Praça Ministro Francisco Sá Carneiro, 6; acesso pela Avenida do Estado, 4434",
-      "neighborhood": "Glicério",
-      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
-      "accepted_classes": [
-        "plastic",
-        "paper_cardboard",
-        "metal",
-        "glass"
-      ],
-      "accepted_materials": [
-        "Papelão",
-        "Plástico",
-        "Vidros de embalagem",
-        "Metais"
-      ],
-      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
-      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
-      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse",
-      "source_label": "Prefeitura de São Paulo · Subprefeitura Sé"
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Centro",
+      "postal_code": "01517-100",
+      "subprefecture": "Sé"
     },
     {
       "point_id": "sp-audit-3",
@@ -71,7 +77,7 @@
       "city": "São Paulo",
       "state": "SP",
       "address": "Rua General Carmona, 156",
-      "neighborhood": "Armênia",
+      "neighborhood": "Luz",
       "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
       "accepted_classes": [
         "plastic",
@@ -87,8 +93,11 @@
       ],
       "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
       "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
-      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse",
-      "source_label": "Prefeitura de São Paulo · Subprefeitura Sé"
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Centro",
+      "postal_code": "01102-030",
+      "subprefecture": "Sé"
     },
     {
       "point_id": "sp-audit-4",
@@ -112,8 +121,11 @@
       ],
       "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
       "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
-      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse",
-      "source_label": "Prefeitura de São Paulo · Subprefeitura Sé"
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Centro",
+      "postal_code": "",
+      "subprefecture": "Sé"
     },
     {
       "point_id": "sp-audit-5",
@@ -121,7 +133,7 @@
       "city": "São Paulo",
       "state": "SP",
       "address": "Avenida Dom Pedro I, 38",
-      "neighborhood": "Cambuci",
+      "neighborhood": "Vila Monumento",
       "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
       "accepted_classes": [
         "plastic",
@@ -137,8 +149,11 @@
       ],
       "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
       "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
-      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse",
-      "source_label": "Prefeitura de São Paulo · Subprefeitura Sé"
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Centro",
+      "postal_code": "01552-001",
+      "subprefecture": "Sé"
     },
     {
       "point_id": "sp-audit-6",
@@ -162,8 +177,459 @@
       ],
       "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
       "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
-      "source_url": "https://prefeitura.sp.gov.br/web/se/w/ecopontos/subse",
-      "source_label": "Prefeitura de São Paulo · Subprefeitura Sé"
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Centro",
+      "postal_code": "01324-040",
+      "subprefecture": "Sé"
+    },
+    {
+      "point_id": "sp-regional-1",
+      "name": "Ecoponto Santana",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Avenida Zaki Narchi, 375",
+      "neighborhood": "Carandiru",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Norte",
+      "postal_code": "02029-000",
+      "subprefecture": "Santana / Tucuruvi"
+    },
+    {
+      "point_id": "sp-regional-2",
+      "name": "Ecoponto Tucuruvi",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Eduardo Vicente Nasser, 519",
+      "neighborhood": "Barro Branco",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Norte",
+      "postal_code": "02344-050",
+      "subprefecture": "Santana / Tucuruvi"
+    },
+    {
+      "point_id": "sp-regional-3",
+      "name": "Ecoponto Parque Peruche",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Avenida Engenheiro Caetano Álvares, 3142",
+      "neighborhood": "Parque Peruche",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Norte",
+      "postal_code": "02535-008",
+      "subprefecture": "Casa Verde / Limão / Cachoeirinha"
+    },
+    {
+      "point_id": "sp-regional-4",
+      "name": "Ecoponto Freguesia do Ó",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Sousa Filho, 690",
+      "neighborhood": "Vila União",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Norte",
+      "postal_code": "02911-135",
+      "subprefecture": "Freguesia do Ó / Brasilândia"
+    },
+    {
+      "point_id": "sp-regional-5",
+      "name": "Ecoponto Alceu Maynard de Araújo",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Avenida Professor Alceu Maynard de Araújo, 330",
+      "neighborhood": "Vila Cruzeiro",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Sul",
+      "postal_code": "04728-110",
+      "subprefecture": "Santo Amaro"
+    },
+    {
+      "point_id": "sp-regional-6",
+      "name": "Ecoponto Vila Mariana",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Mauricio Francisco Klabin, 37",
+      "neighborhood": "Vila Mariana",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Sul",
+      "postal_code": "04120-020",
+      "subprefecture": "Vila Mariana"
+    },
+    {
+      "point_id": "sp-regional-7",
+      "name": "Ecoponto Santo Dias",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Travessa Rosifloras, 301",
+      "neighborhood": "Conjunto Habitacional Instituto Adventista",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Sul",
+      "postal_code": "05868-600",
+      "subprefecture": "Campo Limpo"
+    },
+    {
+      "point_id": "sp-regional-8",
+      "name": "Ecoponto Cidade Saudável",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Ptolomeu, 869",
+      "neighborhood": "Vila Socorro",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Sul",
+      "postal_code": "04762-040",
+      "subprefecture": "Capela do Socorro"
+    },
+    {
+      "point_id": "sp-regional-9",
+      "name": "Ecoponto Astarte",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Astarte, 500",
+      "neighborhood": "Vila Carrão",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Leste",
+      "postal_code": "03446-090",
+      "subprefecture": "Aricanduva / Formosa / Carrão"
+    },
+    {
+      "point_id": "sp-regional-10",
+      "name": "Ecoponto Parque Guarani",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Manuel Alves da Rocha, 584",
+      "neighborhood": "Parque Guarani",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Leste",
+      "postal_code": "08235-620",
+      "subprefecture": "Itaquera"
+    },
+    {
+      "point_id": "sp-regional-11",
+      "name": "Ecoponto Imperador",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Avenida Ribeirão Jacu, 201",
+      "neighborhood": "Jardim das Camélias",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Leste",
+      "postal_code": "08050-420",
+      "subprefecture": "São Miguel Paulista"
+    },
+    {
+      "point_id": "sp-regional-12",
+      "name": "Ecoponto Guaiaponto",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua da Passagem Funda, 250",
+      "neighborhood": "Vila Santa Cruz",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Leste",
+      "postal_code": "08411-010",
+      "subprefecture": "Guaianases"
+    },
+    {
+      "point_id": "sp-regional-13",
+      "name": "Ecoponto Jardim Maria do Carmo",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Caminho do Engenho, 800",
+      "neighborhood": "Ferreira",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Oeste",
+      "postal_code": "05524-000",
+      "subprefecture": "Butantã"
+    },
+    {
+      "point_id": "sp-regional-14",
+      "name": "Ecoponto Vila Madalena",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Girassol, 15, esquina com Rua Luís Murat",
+      "neighborhood": "Vila Madalena",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Oeste",
+      "postal_code": "05433-000",
+      "subprefecture": "Pinheiros"
+    },
+    {
+      "point_id": "sp-regional-15",
+      "name": "Ecoponto Vila Jaguara",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Agrestina, 189",
+      "neighborhood": "Vila Jaguara",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Oeste",
+      "postal_code": "05117-100",
+      "subprefecture": "Lapa"
+    },
+    {
+      "point_id": "sp-regional-16",
+      "name": "Ecoponto Politécnica",
+      "city": "São Paulo",
+      "state": "SP",
+      "address": "Rua Paulino Baptista Conti, 2",
+      "neighborhood": "Jardim Sarah",
+      "hours": "Segunda a sábado: 6h às 22h; domingos e feriados: 6h às 18h",
+      "accepted_classes": [
+        "plastic",
+        "paper_cardboard",
+        "metal",
+        "glass"
+      ],
+      "accepted_materials": [
+        "Papelão",
+        "Plástico",
+        "Vidros de embalagem",
+        "Metais"
+      ],
+      "limit_note": "Confirme volume, acondicionamento e aceitação antes da viagem.",
+      "notes": "Não presume recebimento de pilhas, eletrônicos, óleo ou medicamentos.",
+      "source_url": "https://prefeitura.sp.gov.br/web/subprefeituras/w/ecoponto-esta%C3%A7%C3%A3o-de-entrega-volunt%C3%A1ria-de-inserv%C3%ADveis",
+      "source_label": "Prefeitura de São Paulo · Subprefeituras",
+      "region": "Oeste",
+      "postal_code": "05382-140",
+      "subprefecture": "Butantã"
     }
   ]
 }

@@ -7,10 +7,13 @@ from ecoscan.ui.education import LESSONS
 
 class EducationTests(unittest.TestCase):
     def test_material_assets_and_sources(self):
-        self.assertEqual(set(LESSONS), {'plastic', 'metal', 'paper_cardboard', 'glass', 'battery', 'electronic'})
+        self.assertEqual(set(LESSONS), {'plastic', 'metal', 'paper_cardboard', 'glass', 'battery', 'electronic', 'oil', 'medicine'})
         for lesson in LESSONS.values():
-            self.assertTrue((PROJECT_ROOT / 'assets' / 'disposal_targets' / lesson[1]).is_file())
-            self.assertTrue(lesson[-1].startswith('https://'))
+            self.assertTrue((PROJECT_ROOT / 'assets' / 'disposal_targets' / lesson['asset']).is_file())
+            self.assertTrue(all(url.startswith('https://') for _, url in lesson['sources']))
+            self.assertIn(lesson['answer'], range(len(lesson['options'])))
+            for field in ('harm', 'benefit', 'cycle', 'steps', 'avoid', 'question', 'explanation'):
+                self.assertTrue(lesson[field])
 
     def test_all_material_views_render(self):
         app = AppTest.from_string('from ecoscan.ui.education import render_education\nfrom ecoscan.config import PROJECT_ROOT\nimport streamlit as st\nrender_education(st, PROJECT_ROOT)').run()

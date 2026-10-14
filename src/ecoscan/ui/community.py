@@ -120,6 +120,18 @@ def render_campaign_editor(st, config):
                 mission["proof_hint"] = st.text_area("Orientação da evidência", mission["proof_hint"], max_chars=1000, key=f"{draft['form_id']}_proof_{index}")
                 mission["points"] = st.number_input("Pontos educativos", min_value=0, max_value=10000,
                     value=mission["points"], step=1, key=f"{draft['form_id']}_points_{index}")
+        for index, reward in enumerate(payload.get("rewards", [])):
+            with st.expander("Incentivo: " + reward["title"]):
+                reward["title"] = st.text_input("Nome do incentivo", reward["title"], max_chars=120, key=f"{draft['form_id']}_reward_title_{index}")
+                reward["description"] = st.text_area("Descrição e condições", reward["description"], max_chars=1000, key=f"{draft['form_id']}_reward_desc_{index}")
+                reward["points_required"] = st.number_input("Pontos para conquistar", min_value=0, max_value=10000,
+                    value=reward["points_required"], step=1, key=f"{draft['form_id']}_reward_points_{index}")
+                kinds = ["digital_badge", "partner_planned"]
+                reward["kind"] = st.selectbox("Disponibilidade", kinds,
+                    index=kinds.index(reward.get("kind", "partner_planned")),
+                    format_func=lambda kind: "Selo digital disponível" if kind == "digital_badge" else "Parceria planejada, sem resgate",
+                    key=f"{draft['form_id']}_reward_kind_{index}")
+        st.caption("Não anuncie benefício público ou material sem parceria e regulamento. Alterar uma missão não libera novamente pontos para quem já a concluiu.")
         publish = st.form_submit_button("Publicar para todos")
     if publish:
         try:

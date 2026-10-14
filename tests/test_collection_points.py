@@ -17,7 +17,8 @@ class CollectionPointTests(unittest.TestCase):
     def test_loads_official_initial_points(self) -> None:
         points = load_collection_points(PROJECT_ROOT / "config" / "collection_points.json")
 
-        self.assertEqual(len(points), 6)
+        self.assertEqual(len(points), 22)
+        self.assertEqual({p.region for p in points}, {"Centro", "Norte", "Sul", "Leste", "Oeste"})
         self.assertEqual({"São Paulo"}, {point.city for point in points})
         self.assertEqual({"SP"}, {point.state for point in points})
         self.assertTrue(all(point.source_url.startswith("https://") for point in points))
@@ -29,7 +30,7 @@ class CollectionPointTests(unittest.TestCase):
         sao_paulo_metal_points = filter_collection_points(points, class_id="metal", city_query="São Paulo")
 
         self.assertEqual([], battery_points)
-        self.assertEqual(len(sao_paulo_metal_points), 6)
+        self.assertEqual(len(sao_paulo_metal_points), 22)
         self.assertEqual([], organic_points)
 
     def test_builds_map_and_directions_urls(self) -> None:

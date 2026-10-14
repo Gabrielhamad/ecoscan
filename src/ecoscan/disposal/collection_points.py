@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+import unicodedata
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -29,6 +30,9 @@ class CollectionPoint:
     source_url: str
     latitude: float | None = None
     longitude: float | None = None
+    region: str = ""
+    postal_code: str = ""
+    subprefecture: str = ""
 
     @property
     def full_address(self) -> str:
@@ -66,12 +70,14 @@ def filter_collection_points(
     class_id: str | None = None,
     city_query: str | None = None,
 ) -> list[CollectionPoint]:
-    city = city_query.lower().strip() if city_query else ""
+    def normalized(text):
+        return "".join(c for c in unicodedata.normalize("NFKD", text.casefold()) if not unicodedata.combining(c)).replace("-", "")
+    city = normalized(city_query.strip()) if city_query else ""
     filtered: list[CollectionPoint] = []
     for point in points:
         if class_id and not point.accepts(class_id):
             continue
-        if city and city not in f"{point.city} {point.state} {point.neighborhood} {point.address}".lower():
+        if city and city not in normalized(f"{point.name} {point.city} {point.state} {point.neighborhood} {point.address} {point.postal_code} {point.subprefecture}"):
             continue
         filtered.append(point)
     return filtered
@@ -91,7 +97,7 @@ def rank_collection_points(
         )
         for point in points
     ]
-    ranked.sort(key=lambda item: (item.distance_km is None, item.distance_km or math.inf, item.point.name))
+    ranked.sort(key=lambda item: (item.distance_km is None, item.distance_km if item.distance_km is not None else math.inf, item.point.name))
     return ranked[:limit]
 
 
@@ -155,6 +161,9 @@ def _build_point(value: dict[str, Any], metadata: dict[str, Any]) -> CollectionP
         source_url=str(value.get("source_url") or metadata.get("source_url") or ""),
         latitude=latitude,
         longitude=longitude,
+        region=str(value.get("region", "")),
+        postal_code=str(value.get("postal_code", "")),
+        subprefecture=str(value.get("subprefecture", "")),
     )
 
 

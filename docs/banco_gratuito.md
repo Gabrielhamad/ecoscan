@@ -9,13 +9,19 @@ o sistema falha explicitamente: nao troca silenciosamente para arquivos locais.
 
 Pontos de missao e registros de testes possuem adaptador remoto com ativacao
 separada, apos a migration 002. Arquivos CSV antigos nao sao importados automaticamente.
-Nao migrados: campanhas, denuncias e artefatos de modelos. Login Supabase foi
+Campanhas e relatos possuem persistencia compartilhada pela migration 003,
+com ativacao separada; veja [campanhas e relatos](campanhas_e_relatos.md).
+Artefatos de modelos nao sao armazenados por essa integracao. Login Supabase foi
 implementado, mas provisionamento das contas e autorizacao de analistas exigem
 configuracao e aceite (ver login_piloto.md).
 Treino na hospedagem fica desativado quando o banco esta ativo: exportar aprovadas
 e treinar localmente ate implementar persistencia dos candidatos.
 
 ## Ativacao pelo responsavel
+
+Para copia privada, integridade e ensaio de restauracao, consulte
+[recuperacao operacional](recuperacao_operacional.md). Exportar somente
+contribuicoes aprovadas nao constitui backup do sistema.
 
 1. Criar conta em https://supabase.com/dashboard e um projeto numa organizacao Free.
    Nao contratar Pro nem habilitar recursos pagos para este piloto.

@@ -131,6 +131,27 @@ Migracao desta entrega: `003_community.sql`. Nao importa nem apaga dados locais.
 
 ## Riscos e resposta
 
+Entrega cidada em 14/10/2026: [mapa, educacao e incentivos](programa_cidadao_sp.md).
+346 testes aprovados, 1 ignorado por criacao de symlink indisponivel no Windows.
+Consulta real do CEP publico da Praca da Se validada. Nao houve gravacao de dados
+de teste em producao. Programacao nativa dos caminhoes e resgate material nao
+estao implementados: portais oficiais e selos digitais sao as entregas atuais.
+
+Preparacao de M5 em 14/10/2026: roteiro em
+[recuperacao operacional](recuperacao_operacional.md) e verificador offline
+`scripts/check_backup.py`, sem acesso a producao. A ferramenta confere hashes,
+arquivos ausentes/adicionais e estrutura minima de banco e dois buckets privados.
+Isso nao encerra M5: backup real, restauracao isolada e aceite de identidade e
+permissoes continuam pendentes. O cadastro dos analistas nao bloqueia essa
+preparacao, mas permanece necessario para o aceite entre contas de M2/M3.
+
+Validacao local desta preparacao: 9 testes de integridade aprovados e 1 ignorado
+por indisponibilidade de criacao de link simbolico no Windows. `git diff --check`
+sem erros. A suite completa nao foi executada nesta rodada devido a bloqueio
+temporario da ferramenta de autorizacao. Na rodada seguinte, a suite completa
+incluindo esta ferramenta passou junto da entrega cidada (346 aprovados,
+1 ignorado). Isso nao substitui ensaio de restauracao real.
+
 | Risco | Resposta / evidencia exigida |
 | --- | --- |
 | Perda de campanha ou denuncia em reinicio | M2; teste de leitura apos reinicio em outra sessao |

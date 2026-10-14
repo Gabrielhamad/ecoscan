@@ -26,6 +26,7 @@ class Reward:
     title: str
     points_required: int
     description: str
+    kind: str = "partner_planned"
 
 
 @dataclass(frozen=True)
@@ -197,11 +198,15 @@ def _reward_from_payload(payload: dict[str, Any]) -> Reward:
         raise CampaignConfigError("Reward is missing fields: " + ", ".join(missing))
     _validate_identity(payload)
     _validate_points(payload["points_required"])
+    kind = payload.get("kind", "partner_planned")
+    if kind not in ("digital_badge", "partner_planned"):
+        raise CampaignConfigError("Tipo de recompensa desconhecido.")
     return Reward(
         id=str(payload["id"]).strip(),
         title=str(payload["title"]).strip(),
         points_required=int(payload["points_required"]),
         description=str(payload["description"]).strip(),
+        kind=kind,
     )
 
 

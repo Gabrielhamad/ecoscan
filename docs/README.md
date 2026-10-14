@@ -15,6 +15,10 @@
 
 ## Entrega e avaliação
 
+- [Programa cidadão SP: mapa, CEP, educação, missões e recompensas](programa_cidadao_sp.md)
+
+- [Backup, recuperação e retorno de versão](recuperacao_operacional.md)
+
 - [Controle atual de entrega: marcos, validação, riscos e responsabilidades](controle_entrega.md)
 - [Campanhas e relatos compartilhados: operação, ativação e retorno](campanhas_e_relatos.md)
 

@@ -1,6 +1,9 @@
 # Education and collection audit
 
-Reviewed: 2026-09-20.
+Historical review: 2026-09-20. Superseded for education, points and collection
+coverage by [the citizen program review of 2026-10-14](programa_cidadao_sp.md).
+The current directory has 22 locations; education now covers eight materials.
+The following account and content notes preserve the earlier audit, not current totals.
 
 ## Scope and evidence
 

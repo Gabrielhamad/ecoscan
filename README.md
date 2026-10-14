@@ -347,6 +347,26 @@ reports/ e logs/          Saídas locais, em geral fora do Git
 
 ## Próximas entregas
 
+### Mapa, educação e participação
+
+- **Mapa SP:** 22 ecopontos nas cinco regiões, filtros e mapa oficial incorporado.
+- **CEP:** valida endereço da capital e oferece consultas oficiais de coleta.
+  Dias e horários ainda são consultados nos portais; não são calculados pelo CEP.
+- **Aprender:** oito materiais, impactos, reaproveitamento, preparo seguro, fontes
+  e desafios de 10 pontos. Óleo e medicamentos permanecem orientação manual.
+- **Missões:** pontos uma vez por missão e conta; selos digitais para baixar.
+  Benefícios materiais dependem de parceiros e não têm resgate ativo.
+
+Veja [critérios, fontes e planejamento do programa cidadão](docs/programa_cidadao_sp.md).
+Campanhas já publicadas no banco são preservadas; a secretaria revisa incentivos
+no editor e publica as alterações para os participantes.
+
+A preparação operacional inclui um [roteiro de backup, recuperação e retorno de
+versão](docs/recuperacao_operacional.md) e o verificador offline
+`scripts/check_backup.py`. Ele verifica integridade de exportações privadas de
+banco e fotos, sem acessar produção. O ensaio de restauração e o aceite entre
+contas reais continuam necessários antes de encerrar a entrega.
+
 Consulte a [avaliação de conformidade e resultados](docs/avaliacao_e_entrega.md) e o
 [plano de entrega por etapas](docs/plano_entrega.md), preparados em 27/09/2026.
 

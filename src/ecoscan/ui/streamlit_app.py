@@ -44,10 +44,7 @@ from ecoscan.services.analysis_service import analyze_waste_image
 from ecoscan.services.aps_audit import build_aps_audit, summarize_audit
 from ecoscan.services.accounts import (
     UserProfile,
-    append_point_transaction,
-    build_point_transaction,
     fallback_profiles,
-    has_awarded_evidence,
     load_user_profiles,
     points_ledger_path_from_config,
     profiles_path_from_config,
@@ -3627,91 +3624,8 @@ def _render_collection_points_tab(
     guidance_by_class: dict[str, DisposalGuidance],
     collection_points: list[CollectionPoint],
 ) -> None:
-    st.markdown('<div class="ecoscan-section-title">Encontrar ponto de coleta</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div class="ecoscan-note">Use a base cadastrada para consultar pontos compatíveis por material. '
-        'Cobertura: município de São Paulo. Lista local parcial, conferida em 20/09/2026. '
-        'Consulte a rede completa no mapa oficial da Prefeitura e confirme a aceitação antes de sair.</div>',
-        unsafe_allow_html=True,
-    )
-    control_col, source_col = st.columns([1.05, 0.95])
-    with control_col:
-        selected_class = st.selectbox(
-            "Material",
-            config.classes,
-            format_func=lambda class_id: _class_label(class_id, guidance_by_class),
-            key="collection_point_class",
-        )
-        origin = st.text_input(
-            "Local de origem para rota",
-            placeholder="Bairro ou CEP de São Paulo",
-            key="collection_point_origin",
-        )
-        city_query = st.text_input(
-            "Filtrar por bairro ou rua",
-            placeholder="ex.: Liberdade, Jaceguai ou Cambuci",
-            key="collection_point_city_query",
-        )
-    with source_col:
-        covered_cities = sorted({f"{point.city}/{point.state}" for point in collection_points if point.city})
-        st.metric("Pontos cadastrados", len(collection_points))
-        st.metric("Cidades cobertas", len(covered_cities))
-        source_labels = sorted({point.source_label for point in collection_points if point.source_label})
-        if source_labels:
-            st.caption("Fonte: " + "; ".join(source_labels))
-        if covered_cities:
-            city_chips = "".join(
-                f'<span class="ecoscan-territory-chip">{html.escape(city)}</span>'
-                for city in covered_cities
-            )
-            st.markdown(
-                f'<div class="ecoscan-territory-chip-row">{city_chips}</div>',
-                unsafe_allow_html=True,
-            )
-        st.link_button(
-            "Buscar no mapa",
-            build_map_search_url(
-                "ecoponto coleta seletiva São Paulo SP",
-                (origin + ", São Paulo SP") if origin else "São Paulo SP",
-            ),
-            width="stretch",
-        )
-
-    st.link_button("Mapa oficial: todos os ecopontos de São Paulo", "https://coleta.prefeitura.sp.gov.br/", width="stretch")
-    scoped_points = [point for point in collection_points if point.city == "São Paulo" and point.state == "SP"]
-    filtered_points = filter_collection_points(
-        scoped_points,
-        class_id=selected_class,
-        city_query=city_query or None,
-    )
-    if not filtered_points:
-        guidance = guidance_by_class.get(selected_class)
-        label = guidance.display_name if guidance else selected_class
-        st.info(
-            f"A base local ainda não tem ponto cadastrado para {label}. "
-            "Consulte uma rede especializada e confirme o recebimento. Não leve pilhas ou eletrônicos a um ecoponto sem confirmação."
-        )
-        fallback = build_map_search_url(
-            f"ponto de coleta {label} descarte reciclagem São Paulo SP",
-            (origin + ", São Paulo SP") if origin else "São Paulo SP",
-        )
-        st.link_button("Procurar ponto externo", fallback, width="stretch")
-        return
-
-    st.markdown('<div class="ecoscan-section-title">Pontos compatíveis</div>', unsafe_allow_html=True)
-    _render_collection_point_cards(st, filtered_points, origin=origin or None, limit=8)
-    rows = [
-        {
-            "nome": point.name,
-            "bairro": point.neighborhood,
-            "endereço": point.full_address,
-            "horário": point.hours,
-            "materiais": _format_point_materials(point, limit=8),
-            "rota": build_collection_point_directions_url(point, origin=origin or None),
-        }
-        for point in filtered_points
-    ]
-    st.dataframe(rows, width="stretch", hide_index=True)
+    from ecoscan.ui.collection_map import render_collection_map
+    render_collection_map(st, collection_points, guidance_by_class)
 
 
 def _render_campaign_cards(st: Any, campaign: Campaign, guidance_by_class: dict[str, DisposalGuidance]) -> None:
@@ -3796,10 +3710,11 @@ def _render_active_profile_card(st: Any, profile: UserProfile) -> None:
 
 
 def _next_reward_text(campaign: Campaign, points: int) -> str:
-    next_reward = next((reward for reward in campaign.rewards if reward.points_required > points), None)
+    next_reward = next((reward for reward in sorted(campaign.rewards, key=lambda r: r.points_required)
+                        if reward.kind == "digital_badge" and reward.points_required > points), None)
     if next_reward:
         return f"Próxima recompensa: {next_reward.title} ({next_reward.points_required} pontos)."
-    return "Todas as recompensas configuradas já estão ao seu alcance."
+    return "Consulte seus selos e os critérios de cada incentivo abaixo."
 
 
 def _render_campaign_tab(
@@ -3842,8 +3757,8 @@ def _render_campaign_tab(
         st.metric("Seus pontos", points)
         st.caption(_next_reward_text(campaign, points))
 
-    st.markdown('<div class="ecoscan-section-title">Missões rotativas</div>', unsafe_allow_html=True)
-    _render_campaign_cards(st, campaign, guidance_by_class)
+    st.markdown('<div class="ecoscan-section-title">Sua próxima ação</div>', unsafe_allow_html=True)
+    st.caption("Uma pontuação por missão e conta. As atividades identificam materiais; não comprovam entrega. Na área Aprender, complete também os desafios educativos.")
 
     mission_col, proof_col = st.columns([0.95, 1.05])
     with mission_col:
@@ -3854,16 +3769,7 @@ def _render_campaign_tab(
             key="campaign_selected_mission",
         )
         st.info(selected_mission.proof_hint)
-        admin_items = "".join(f"<li>{html.escape(item)}</li>" for item in campaign.admin_responsibilities)
-        st.markdown(
-            f"""
-            <div class="ecoscan-admin-panel">
-                <strong>Visão da gestão ambiental</strong>
-                <ul>{admin_items}</ul>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+        st.write(selected_mission.description)
     with proof_col:
         requires_review = selected_mission.verification_action != "recognize_waste"
         if requires_review:
@@ -3895,42 +3801,21 @@ def _render_campaign_tab(
                 st.session_state["last_mission_result"] = mission_result
                 st.session_state["last_mission_evaluation"] = evaluation
                 if evaluation.accepted:
-                    if has_awarded_evidence(
-                        ledger_path,
-                        user_id=active_profile.id,
-                        mission_id=selected_mission.id,
-                        evidence_sha256=evidence_sha256,
-                    ):
-                        st.info("Essa mesma comprovação já foi pontuada para este perfil.")
-                    else:
-                        append_point_transaction(
-                            ledger_path,
-                            build_point_transaction(
-                                user_id=active_profile.id,
-                                mission_id=selected_mission.id,
-                                points=evaluation.points_awarded,
-                                evidence_sha256=evidence_sha256,
-                                detected_class=evaluation.detected_class,
-                                probability=evaluation.probability,
-                                note=evaluation.reason,
-                            ),
-                        )
-                        st.success(f"Participação registrada: +{evaluation.points_awarded} pontos.")
-                        try:
-                            append_history_entry(
-                                history_path_from_config(config),
-                                build_history_entry(mission_result, source_path=source_kind),
-                            )
-                        except OSError:
-                            st.warning("Os pontos foram registrados, mas a cópia local da análise não pôde ser salva.")
-                        updated_points = total_points_for_user(ledger_path, active_profile.id)
-                        st.success(
-                            f"Missão validada. +{evaluation.points_awarded} pontos. Total: {updated_points}."
-                        )
+                    from ecoscan.services.engagement import award_once
+                    award_once(
+                        ledger_path, user_id=active_profile.id, mission_id=selected_mission.id,
+                        points=evaluation.points_awarded, detected_class=evaluation.detected_class,
+                        probability=evaluation.probability,
+                        note=evaluation.reason + " Foto SHA-256: " + evidence_sha256,
+                    )
+                    updated_points = total_points_for_user(ledger_path, active_profile.id)
+                    st.success(f"+{evaluation.points_awarded} pontos educativos. Total: {updated_points}.")
                 else:
                     st.warning(evaluation.reason)
             except Exception as exc:
                 _render_user_error(st, exc, context="campaign_mission")
+            finally:
+                Path(temp_path).unlink(missing_ok=True)
 
     evaluation = st.session_state.get("last_mission_evaluation")
     mission_result = st.session_state.get("last_mission_result")
@@ -3949,7 +3834,13 @@ def _render_campaign_tab(
         _render_photo_processing_summary(st, mission_result.pipeline)
 
     st.markdown('<div class="ecoscan-section-title">Recompensas e incentivo</div>', unsafe_allow_html=True)
-    _render_reward_cards(st, campaign)
+    from ecoscan.ui.rewards import render_rewards
+    try:
+        current_points = total_points_for_user(ledger_path, active_profile.id)
+    except OSError as exc:
+        st.error(str(exc))
+    else:
+        render_rewards(st, campaign, current_points, active_profile)
 
     st.markdown('<div class="ecoscan-section-title">Guia educativo rápido</div>', unsafe_allow_html=True)
     guide_class = st.selectbox(
@@ -4662,7 +4553,7 @@ def main() -> None:
     result = st.session_state.get("last_analysis_result")
 
     with tabs["Aprender"]:
-        render_education(st, config.project_root)
+        render_education(st, config.project_root, active_profile, points_ledger_path_from_config(config))
 
     if "Descarte" in tabs:
         with tabs["Descarte"]:

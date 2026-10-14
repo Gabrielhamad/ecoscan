@@ -1,0 +1,245 @@
+{
+  "reviewed_at": "2026-10-14",
+  "materials": {
+    "plastic": {
+      "title": "Plástico e PET",
+      "asset": "plastic_red_bin.png",
+      "recognition": true,
+      "examples": "Garrafas PET, frascos e potes vazios. Plásticos de resinas diferentes nem sempre seguem a mesma rota.",
+      "harm": "Embalagens abandonadas podem alcançar rios e se fragmentar em microplásticos. A poluição plástica afeta organismos e ecossistemas. Reciclar não elimina os impactos da produção e do consumo de descartáveis.",
+      "benefit": "Triagem e processamento permitem substituir parte da matéria-prima virgem. Reduzir embalagens desnecessárias e reutilizar produtos adequados para isso vêm antes de reciclar.",
+      "cycle": "Separação → coleta → triagem por resina → lavagem e processamento industrial → nova matéria-prima. PET pode virar fibras, peças e, em processos próprios, novas embalagens.",
+      "steps": [
+        "Esvazie e retire restos sem desperdiçar água.",
+        "Confirme se o serviço aceita a embalagem; nem todo plástico é recuperado.",
+        "Embalagens com produto químico ou óleo dentro exigem outra orientação."
+      ],
+      "avoid": "Não queime nem compre descartáveis só para ganhar pontos.",
+      "question": "Uma garrafa ainda contém produto químico. O que fazer?",
+      "options": [
+        "Tratar como PET vazio",
+        "Consultar a orientação específica do conteúdo",
+        "Despejar no ralo"
+      ],
+      "answer": 1,
+      "explanation": "O conteúdo pode mudar a rota. O formato da embalagem não garante um descarte seguro.",
+      "sources": [
+        [
+          "PNUMA · poluição plástica",
+          "https://www.unep.org/news-and-stories/story/everything-you-need-know-about-plastic-pollution"
+        ],
+        [
+          "ABIPET · revalorização",
+          "https://abipet.org.br/revalorizacao/"
+        ]
+      ]
+    },
+    "metal": {
+      "title": "Latas e metais",
+      "asset": "metal_yellow_bin.png",
+      "recognition": true,
+      "examples": "Latas de bebidas e alimentos, inteiras ou amassadas. Aço e alumínio têm cadeias industriais diferentes.",
+      "harm": "Latas abandonadas desperdiçam material recuperável e podem deixar bordas cortantes expostas. Perder o metal mantém maior demanda por extração e produção primária, que consomem recursos e energia.",
+      "benefit": "A reciclagem de alumínio utiliza muito menos energia que a produção primária. Coleta e triagem abastecem essa cadeia. A vantagem industrial não permite calcular uma economia individual pela foto.",
+      "cycle": "Lata vazia → coleta → separação de metais → processamento e fusão → matéria-prima para novos produtos, incluindo embalagens.",
+      "steps": [
+        "Retire restos e separe do rejeito.",
+        "Não corte nem perfure para demonstrar o material. Proteja bordas cortantes.",
+        "Confirme orientação para aerossóis e recipientes contaminados; não são equivalentes a latas de bebida."
+      ],
+      "avoid": "Não abra recipientes pressurizados para fotografar ou cumprir missões.",
+      "question": "É preciso cortar uma lata para cumprir uma missão?",
+      "options": [
+        "Não; apresente sem criar risco",
+        "Sim, para mostrar o metal",
+        "Sim, guardando bordas soltas"
+      ],
+      "answer": 0,
+      "explanation": "Uma ação ambiental deve reduzir riscos, não incentivar manuseio perigoso.",
+      "sources": [
+        [
+          "ABAL · energia e reciclagem",
+          "https://abal.org.br/referencia-global-aluminio-brasileiro-avanca-na-agenda-sustentavel-com-emissoes-35-vezes-abaixo-da-media-mundial/"
+        ]
+      ]
+    },
+    "paper_cardboard": {
+      "title": "Papel e papelão",
+      "asset": "paper_blue_bin.png",
+      "recognition": true,
+      "examples": "Caixas, folhas e embalagens limpas e secas. Dobrar ou desmontar a caixa não muda o material.",
+      "harm": "Gordura, alimentos e umidade prejudicam a triagem e podem inviabilizar fibras aproveitáveis. Descartar papel recuperável como rejeito perde uma matéria-prima que poderia retornar à indústria.",
+      "benefit": "Preservar as fibras favorece a produção de outros papéis e embalagens. Reciclagem depende da qualidade e não dispensa água, energia ou a necessidade de fibras novas.",
+      "cycle": "Separação a seco → coleta → classificação → desagregação e limpeza das fibras na indústria → novos papéis e embalagens.",
+      "steps": [
+        "Dobre caixas para reduzir volume.",
+        "Mantenha papel limpo separado de papel sanitário, gordura e restos de alimentos.",
+        "Reutilize folhas e caixas em bom estado antes da coleta."
+      ],
+      "avoid": "Uma caixa engordurada não equivale a papelão limpo.",
+      "question": "Como preparar uma caixa limpa?",
+      "options": [
+        "Molhar para pesar mais",
+        "Misturar com comida",
+        "Dobrar e manter seca"
+      ],
+      "answer": 2,
+      "explanation": "Manter o papel seco e sem contaminantes ajuda a preservar fibras.",
+      "sources": [
+        [
+          "Ibá · reciclagem do papel",
+          "https://iba.org/?publications=reciclagem-do-papel-do-cidadao-a-industria"
+        ],
+        [
+          "Ibá · papel",
+          "https://iba.org/o-setor/produtos-florestais/papel/"
+        ]
+      ]
+    },
+    "glass": {
+      "title": "Vidro de embalagem",
+      "asset": "glass_green_bin.png",
+      "recognition": true,
+      "examples": "Garrafas e potes. Espelhos, cerâmica e lâmpadas não são equivalentes ao vidro de embalagem.",
+      "harm": "Cacos soltos expõem coletores e trabalhadores da triagem a cortes. Misturar materiais incompatíveis prejudica a reciclagem. Abandonar vidro desperdiça material que pode voltar à produção.",
+      "benefit": "Cacos adequados na fabricação reduzem a necessidade de matérias-primas e podem reduzir energia e emissões do processo. O resultado depende da cadeia, não é uma economia medida pela imagem.",
+      "cycle": "Embalagem separada → coleta → triagem e remoção de contaminantes → caco preparado → forno industrial → novas garrafas e potes.",
+      "steps": [
+        "Esvazie o recipiente. Não quebre de propósito.",
+        "Para cacos, confirme o acondicionamento com o ponto; use embalagem resistente, fechada e sinalizada.",
+        "Não misture cerâmica, espelhos ou lâmpadas."
+      ],
+      "avoid": "Não manuseie cacos para melhorar uma fotografia.",
+      "question": "Espelho quebrado pode ir junto com garrafas?",
+      "options": [
+        "Sempre",
+        "Não; consulte rota específica",
+        "Sim, se quebrar mais"
+      ],
+      "answer": 1,
+      "explanation": "Materiais visualmente parecidos podem ter composições incompatíveis.",
+      "sources": [
+        [
+          "Abividro · guia técnico",
+          "https://abividro.org.br/wp-content/uploads/2024/08/Guia-Tecnico-de-Reciclagem-do-Vidro.pdf"
+        ]
+      ]
+    },
+    "battery": {
+      "title": "Pilhas e baterias",
+      "asset": "battery_orange_dropoff.png",
+      "recognition": true,
+      "examples": "Pilhas portáteis e baterias. Aceitação depende do tipo e da condição; baterias automotivas têm cadeia própria.",
+      "harm": "Descarte inadequado pode contaminar solo e água com substâncias presentes no material, conforme a composição. Baterias danificadas exigem cuidados específicos.",
+      "benefit": "Logística reversa encaminha o material para operadores preparados para recuperar componentes e tratar rejeitos, sem misturá-lo aos recicláveis secos e ao lixo comum.",
+      "cycle": "Consumidor → ponto que aceite o tipo → armazenamento e transporte especializados → tratamento e recuperação conforme a composição.",
+      "steps": [
+        "Confirme o tipo aceito pelo coletor.",
+        "Mantenha fora do alcance de crianças; não abra, amasse ou perfure.",
+        "Em caso de inchaço, vazamento ou aquecimento, suspenda o manuseio e peça orientação ao fabricante ou operador."
+      ],
+      "avoid": "Não entregue material danificado a um coletor comum sem orientação.",
+      "question": "Qual é o destino de uma pilha usada íntegra?",
+      "options": [
+        "Coletor específico que aceite o tipo",
+        "Saco de papel reciclável",
+        "Ralo"
+      ],
+      "answer": 0,
+      "explanation": "Pilhas exigem logística reversa, não coleta seletiva comum.",
+      "sources": [
+        [
+          "SINIR · pilhas e baterias",
+          "https://sinir.gov.br/perfis/logistica-reversa/logistica-reversa/pilhas-e-baterias/"
+        ]
+      ]
+    },
+    "electronic": {
+      "title": "Pequenos eletrônicos",
+      "asset": "electronic_orange_dropoff.png",
+      "recognition": true,
+      "examples": "Celulares, mouses e carregadores. Nem todo equipamento ou componente é reconhecido automaticamente.",
+      "harm": "Tratamento inadequado pode expor substâncias dos componentes e contaminar solo e água. Queima e desmontagem improvisada criam riscos; aparelhos também podem conter dados pessoais.",
+      "benefit": "Conserto e reutilização prolongam a vida útil. No fim dela, a cadeia especializada pode recuperar metais, plásticos e outros materiais e destinar os rejeitos adequadamente.",
+      "cycle": "Avaliar reparo ou reutilização → proteger dados → entrega a operador compatível → tratamento especializado → materiais recuperados e rejeitos destinados.",
+      "steps": [
+        "Avalie conserto ou doação de aparelho funcional.",
+        "Apague dados e retire contas antes da entrega, quando for seguro.",
+        "Confirme a aceitação; não desmonte para separar placas ou baterias em casa."
+      ],
+      "avoid": "Não queime fios nem perfure baterias. Ecoponto não implica recebimento de eletrônicos.",
+      "question": "O que fazer primeiro com um celular funcional?",
+      "options": [
+        "Quebrar a tela",
+        "Jogar no lixo comum",
+        "Avaliar reutilização e proteger os dados"
+      ],
+      "answer": 2,
+      "explanation": "Prolongar a vida útil evita descarte desnecessário; a entrega exige proteção dos dados.",
+      "sources": [
+        [
+          "SINIR · eletroeletrônicos",
+          "https://sinir.gov.br/perfis/logistica-reversa/logistica-reversa/eletroeletronicos/"
+        ]
+      ]
+    },
+    "oil": {
+      "title": "Óleo de cozinha usado",
+      "asset": "oil_amber_dropoff.png",
+      "recognition": false,
+      "examples": "Óleo de fritura doméstico. Lubrificantes e produtos químicos não fazem parte desta rota.",
+      "harm": "Na pia ou no vaso, o óleo pode se acumular na rede e contribuir para entupimentos. O descarte em rios, córregos ou solo causa poluição. Diluir com detergente não resolve o problema.",
+      "benefit": "Coleta específica reduz a entrada de óleo na rede e permite aproveitamento em cadeias produtoras de sabão e biodiesel. Também pode apoiar iniciativas de geração de renda.",
+      "cycle": "Óleo já frio → recipiente adequado fechado → ponto que confirme recebimento → processamento autorizado → novos produtos.",
+      "steps": [
+        "Espere esfriar completamente.",
+        "Use recipiente resistente, fechado e identificado, conforme orientação do ponto.",
+        "Não misture químicos. Confirme a coleta antes de transportar."
+      ],
+      "avoid": "Não despeje no ralo nem faça preparações com substâncias corrosivas para cumprir missões.",
+      "question": "Como preparar óleo de fritura para entregar?",
+      "options": [
+        "Diluir na pia",
+        "Guardar frio em recipiente fechado aceito pelo ponto",
+        "Despejar no solo"
+      ],
+      "answer": 1,
+      "explanation": "Óleo precisa de coleta específica, não de diluição ou descarte na rede.",
+      "sources": [
+        [
+          "Sabesp · reciclagem de óleo",
+          "https://www.sabesp.com.br/o-que-fazemos/obras-programas/reciclagem-oleo"
+        ]
+      ]
+    },
+    "medicine": {
+      "title": "Medicamentos em desuso",
+      "asset": "medicine_white_dropoff.png",
+      "recognition": false,
+      "examples": "Medicamentos domiciliares vencidos ou sem uso. Não altere tratamento médico para participar de campanha.",
+      "harm": "Resíduos de medicamentos no lixo comum, pia ou vaso podem contaminar solo e água e atingir organismos. Guardar sobras sem cuidado também cria risco de uso indevido.",
+      "benefit": "Devolver a pontos apropriados permite destinação controlada. A finalidade é evitar a liberação inadequada das substâncias, não transformar remédio vencido em outro remédio.",
+      "cycle": "Separação segura → coletor habilitado → transporte e destinação especializada. Embalagens externas limpas sem contato com medicamento podem ter outra rota.",
+      "steps": [
+        "Consulte farmácia ou serviço de saúde que confirme recebimento; nem toda unidade possui coletor.",
+        "Mantenha protegido até entregar. Não despeje líquidos nem abra cápsulas.",
+        "Agulhas e perfurocortantes exigem orientação específica do serviço de saúde."
+      ],
+      "avoid": "Não doe medicamentos vencidos nem use reconhecimento de imagem para decidir sobre consumo.",
+      "question": "O remédio venceu. Qual é a ação correta?",
+      "options": [
+        "Consultar ponto habilitado",
+        "Jogar no vaso",
+        "Oferecer a outra pessoa"
+      ],
+      "answer": 0,
+      "explanation": "O destino é controlado; não é reutilização do medicamento nem descarte no esgoto.",
+      "sources": [
+        [
+          "Cofen · descarte de medicamentos",
+          "https://www.cofen.gov.br/medicamentos-nao-devem-ser-descartados-em-lixos-comuns/"
+        ]
+      ]
+    }
+  }
+}
