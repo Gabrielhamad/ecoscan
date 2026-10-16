@@ -10,6 +10,9 @@ O cliente de Auth e separado do cliente de banco e nao fica em cache compartilha
   confirmacao obrigatoria, SMTP Brevo ativo e Site URL HTTPS do aplicativo publicado.
 - Corrigida a espera indevida de 60 segundos apos erros locais de email, tamanho
   ou confirmacao de senha. O intervalo continua aplicado a pedidos enviados ao provedor.
+- Reenvio de confirmacao disponivel abaixo das abas de entrada e cadastro. Um
+  link expirado exige novo envio; criar uma solicitacao ou receber o convite da
+  equipe nao confirma o email automaticamente. Usar o link mais recente.
 - Erros conhecidos do Auth orientam sobre confirmacao pendente, credenciais,
   limite de envio, politica de senha e configuracao do servico.
 - Falhas recebem codigo de atendimento correlacionado ao log `auth_failure`.

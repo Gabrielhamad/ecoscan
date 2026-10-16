@@ -81,10 +81,10 @@ def _render_password_identity(st, access):
             login_tab, signup_tab = st.tabs(["Entrar", "Criar conta"])
             with signup_tab:
                 _render_registration(st, access)
-                if access.get("public_signup_enabled") is True:
-                    _render_resend_confirmation(st)
             with login_tab:
                 _render_login_form(st)
+            if access.get("public_signup_enabled") is True:
+                _render_resend_confirmation(st)
     if st.query_params.get("profile") == "admin_secretaria" and not profile.is_admin:
         st.info("A gestão requer uma conta autorizada pela secretaria.")
     return profile
@@ -144,6 +144,7 @@ def _render_login_form(st):
 def _render_resend_confirmation(st):
     from ecoscan.services.password_identity import resend_confirmation, validate_email
     with st.expander("Não recebi a confirmação"):
+        st.caption("Se o link expirou ou não chegou, solicite uma nova confirmação. Use o link mais recente recebido por e-mail.")
         with st.form("resend_confirmation", clear_on_submit=True):
             email = st.text_input("E-mail do cadastro", max_chars=254)
             sent = st.form_submit_button("Reenviar confirmação")
