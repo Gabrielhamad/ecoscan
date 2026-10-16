@@ -4,6 +4,40 @@ Com persistencia Supabase configurada e OIDC ausente, o app oferece entrada por
 email e senha usando Supabase Auth. Nao armazena senhas nem cria autenticacao propria.
 O cliente de Auth e separado do cliente de banco e nao fica em cache compartilhado.
 
+## Revisao operacional de 16/10/2026
+
+- Conferidos no painel de producao: projeto saudavel, cadastro publico habilitado,
+  confirmacao obrigatoria, SMTP Brevo ativo e Site URL HTTPS do aplicativo publicado.
+- Corrigida a espera indevida de 60 segundos apos erros locais de email, tamanho
+  ou confirmacao de senha. O intervalo continua aplicado a pedidos enviados ao provedor.
+- Erros conhecidos do Auth orientam sobre confirmacao pendente, credenciais,
+  limite de envio, politica de senha e configuracao do servico.
+- Falhas recebem codigo de atendimento correlacionado ao log `auth_failure`.
+  Esse log contem somente operacao, codigo previamente permitido e referencia
+  aleatoria. Nao registrar excecao bruta, senha, email, token ou corpo da requisicao.
+- A origem da falha relatada pelos colegas ainda depende da reproducao. Convites
+  entregues nao comprovam signup, confirmacao ou login. Nao declarar esse aceite
+  concluido somente com mocks ou configuracao aparentemente correta.
+
+### Roteiro de aceite remoto
+
+1. Participante abre a URL publica no celular, faz cadastro com seu proprio email
+   e senha e verifica caixa de entrada e spam. Nunca enviar senha ao grupo.
+2. Confirma o email recebido e entra no aplicativo. Uma conta sem confirmacao
+   deve continuar bloqueada, mesmo quando estiver na lista de analistas.
+3. A mesma pessoa entra pelo computador e confere sua identidade e seus protocolos.
+4. Envia uma contribuicao consentida; um analista confere recebimento e responde.
+   O participante confirma o retorno; outra conta nao deve acessar esse protocolo.
+5. Testa sair, entrar novamente e recuperar senha. O link de recuperacao e privado.
+
+Se falhar, informar acao, horario aproximado e codigo de atendimento. O operador
+consulta Streamlit Logs (`auth_failure`), Auth Logs do Supabase e logs transacionais
+do Brevo. Conferir limites e entrega antes de reenviar; nao desativar confirmacao,
+RLS ou controles de acesso para contornar erro. A retencao de Auth Logs mostrada
+no plano gratuito e de um dia: registrar o diagnostico enquanto estiver disponivel.
+
+Contrato dos codigos: [Supabase Auth](https://supabase.com/docs/guides/auth/debugging/error-codes).
+
 ## Provisionamento
 
 ### Convite e confirmacao sao etapas distintas

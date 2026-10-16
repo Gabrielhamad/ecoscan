@@ -91,7 +91,7 @@ def _render_password_identity(st, access):
 
 
 def _render_registration(st, access):
-    from ecoscan.services.password_identity import register
+    from ecoscan.services.password_identity import register, validate_registration
     enabled = access.get("public_signup_enabled") is True
     if not enabled:
         st.info("Cadastro em preparação. O modo visitante continua disponível, sem salvar fotos, relatos ou pontos no perfil.")
@@ -106,6 +106,11 @@ def _render_registration(st, access):
     if submit:
         if not consent:
             st.error("Confirme o uso do e-mail antes de continuar.")
+            return
+        try:
+            validate_registration(email, password, confirmation)
+        except ValueError as exc:
+            st.error(str(exc))
             return
         now = time.monotonic()
         if now - st.session_state.get("signup_last_attempt", -60) < 60:
@@ -137,12 +142,17 @@ def _render_login_form(st):
 
 
 def _render_resend_confirmation(st):
-    from ecoscan.services.password_identity import resend_confirmation
+    from ecoscan.services.password_identity import resend_confirmation, validate_email
     with st.expander("Não recebi a confirmação"):
         with st.form("resend_confirmation", clear_on_submit=True):
             email = st.text_input("E-mail do cadastro", max_chars=254)
             sent = st.form_submit_button("Reenviar confirmação")
         if sent:
+            try:
+                validate_email(email)
+            except ValueError as exc:
+                st.error(str(exc))
+                return
             now = time.monotonic()
             if now - st.session_state.get("signup_last_attempt", -60) < 60:
                 st.warning("Aguarde um minuto antes de solicitar outro e-mail.")
@@ -157,12 +167,17 @@ def _render_resend_confirmation(st):
 
 
 def _render_reset_request(st):
-    from ecoscan.services.password_identity import request_password_reset
+    from ecoscan.services.password_identity import request_password_reset, validate_email
     with st.expander("Esqueci minha senha"):
         with st.form("password_reset_request", clear_on_submit=True):
             email = st.text_input("E-mail da conta", max_chars=254)
             sent = st.form_submit_button("Enviar link de recuperação")
         if sent:
+            try:
+                validate_email(email)
+            except ValueError as exc:
+                st.error(str(exc))
+                return
             now = time.monotonic()
             if now - st.session_state.get("reset_last_attempt", -60) < 60:
                 st.warning("Aguarde um minuto antes de solicitar outro e-mail.")

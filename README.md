@@ -23,6 +23,12 @@ os responsáveis e os critérios de aceite, sem confundir implementação com va
 
 ## Segurança das missões
 
+**Acesso remoto (16/10/2026):** cadastro, reenvio e recuperacao validam os dados
+antes de consumir o intervalo entre envios. Falhas de autenticacao possuem
+orientacao em portugues e codigo de atendimento sem expor credenciais.
+O [roteiro de aceite com contas reais](docs/login_piloto.md#revisao-operacional-de-16102026)
+separa configuracao verificada de cadastro e entrega de email ainda a validar pelo grupo.
+
 A área **Perfil** apresenta a revisão do código quando o checkout Git está
 disponível. Novos reportes guardam essa revisão junto ao contexto de processamento
 para comparar testes entre versões; registros anteriores não são reescritos.
