@@ -29,6 +29,10 @@ manifesto e metricas por classe. Consulte o
 [procedimento de treino e criterios de publicacao](docs/treinamento_mobilenet.md).
 Gerar o candidato nao substitui automaticamente o reconhecimento publicado.
 Primeira rodada executada: [resultados, limitacoes e casos de regressao](docs/resultado_treino_20261016.md).
+O treino agora extrai 1280 caracteristicas internas antes da classificacao.
+[Comparacao medida e proximos criterios de reconhecimento](docs/resultado_embeddings_20261016.md):
+ganho no lote exploratorio, com erros reais ainda pendentes. O comando de
+avaliacao de casos registra o preparo de cada foto e os erros aceitos.
 
 **Acesso remoto (16/10/2026):** cadastro, reenvio e recuperacao validam os dados
 antes de consumir o intervalo entre envios. Falhas de autenticacao possuem

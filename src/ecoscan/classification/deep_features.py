@@ -27,20 +27,33 @@ def mobilenet_input(rgb: np.ndarray) -> np.ndarray:
 
 
 class MobileNetFeatures:
-    """Use 1000 ImageNet logits as a frozen representation, not as waste labels."""
+    """Extract frozen visual embeddings or legacy logits, never waste labels."""
 
-    def __init__(self, path: Path):
+    def __init__(self, path: Path, representation: str = "logits"):
+        if representation not in {"logits", "embedding"}:
+            raise ValueError("Unknown MobileNet representation.")
         if hashlib.sha256(path.read_bytes()).hexdigest() != BACKBONE_SHA256:
             raise ValueError("MobileNet weights do not match the verified training backbone.")
         self.net = cv2.dnn.readNetFromONNX(str(path))
+        self.representation = representation
+        self.size = 1280 if representation == "embedding" else 1000
+        # OpenCV 5 addresses ONNX tensors; OpenCV 4 addresses imported layers.
+        self.output_name = "472"
+        if representation == "embedding" and int(cv2.__version__.split(".")[0]) < 5:
+            names = [name for name in self.net.getLayerNames()
+                     if name in {"Reshape_103", "onnx_node!Reshape_103"}]
+            if len(names) != 1:
+                raise ValueError("OpenCV cannot locate the verified embedding layer.")
+            self.output_name = names[0]
         self.lock = Lock()
 
     def extract(self, rgb: np.ndarray) -> np.ndarray:
         blob = mobilenet_input(rgb)
         with self.lock:
             self.net.setInput(blob)
-            feature = self.net.forward().reshape(-1).astype(np.float32)
-        if feature.shape != (1000,) or not np.isfinite(feature).all():
+            output = self.net.forward(self.output_name) if self.representation == "embedding" else self.net.forward()
+            feature = output.reshape(-1).astype(np.float32)
+        if feature.shape != (self.size,) or not np.isfinite(feature).all():
             raise ValueError("Invalid MobileNet representation.")
         return feature
 
@@ -63,13 +76,18 @@ class DeepFeatureClassifier:
         if not model_processing_compatible(path, contract):
             raise ValueError("Candidate is not compatible with the current image preparation.")
         payload = joblib.load(path)
-        if (payload.get("model_type") != "mobilenetv2_logits_logistic"
+        representation = payload.get("representation", "logits")
+        if (representation not in {"logits", "embedding"}
+                or payload.get("model_type") != f"mobilenetv2_{representation}_logistic"
                 or payload.get("processing") != contract
                 or payload.get("backbone_sha256") != BACKBONE_SHA256
                 or sorted(payload.get("classes", [])) != sorted(config.classes)
                 or list(payload["head"].classes_) != payload["classes"]):
             raise ValueError("Candidate metadata or class labels are incompatible.")
-        return cls(payload["head"], MobileNetFeatures(directory / "mobilenetv2-12.onnx"), payload["threshold"])
+        backbone = MobileNetFeatures(directory / "mobilenetv2-12.onnx", representation)
+        if payload["head"].n_features_in_ != backbone.size:
+            raise ValueError("Candidate feature dimensions are incompatible.")
+        return cls(payload["head"], backbone, payload["threshold"])
 
     def predict_image(self, image: np.ndarray) -> BaselinePrediction:
         scores = np.asarray(self.head.predict_proba(self.backbone.extract(image)[None])[0])

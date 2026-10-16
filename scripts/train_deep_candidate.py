@@ -73,6 +73,7 @@ def main(argv=None):
     parser.add_argument("--output", type=Path, required=True, help="NEW isolated run directory")
     parser.add_argument("--groups", type=Path, help="CSV path,group_id: same object/capture session together")
     parser.add_argument("--resume", action="store_true", help="Reuse verified per-image checkpoints")
+    parser.add_argument("--representation", choices=("embedding", "logits"), default="embedding")
     args = parser.parse_args(argv)
     config = load_config()
     if config.image_size != (224, 224):
@@ -84,7 +85,7 @@ def main(argv=None):
         raise ValueError("Source and output must be isolated.")
     if output.is_relative_to(config.directories["models"]):
         raise ValueError("Save training runs outside the active models directory.")
-    backbone = MobileNetFeatures(args.backbone)
+    backbone = MobileNetFeatures(args.backbone, args.representation)
     captures = _capture_groups(args.groups, source)
     paths = [(label, path) for label in config.classes for path in sorted((source / label).glob("*"))
              if path.is_file() and path.suffix.lower() in config.allowed_extensions]
@@ -104,6 +105,7 @@ def main(argv=None):
     options = replace(default_processing_options(config), segmentation_name="none", morphology_name="none")
     contract = processing_contract(config)
     cache_profile = {"source": str(source), "processing": contract["sha256"],
+                     "representation": args.representation,
                      "backbone": BACKBONE_SHA256,
                      "baseline": _digest(baseline_path.read_bytes()) if baseline else None}
     profile_path = output / "cache_profile.json"
@@ -121,7 +123,7 @@ def main(argv=None):
             cached = json.loads(record_path.read_text(encoding="utf-8"))
             feature = np.load(feature_path, allow_pickle=False)
             if (cached["feature_sha256"] == _digest(feature_path.read_bytes())
-                    and feature.shape == (1000,) and np.isfinite(feature).all()):
+                    and feature.shape == (backbone.size,) and np.isfinite(feature).all()):
                 record = cached["record"]
                 record["capture_group"] = captures.get(path.resolve(), "")
                 return record, feature, cached["baseline_prediction"]
@@ -190,7 +192,8 @@ def main(argv=None):
         )
         test_report["legacy_comparison_note"] = "Legacy model may have trained on these source images; comparison is diagnostic, not an independent experiment."
     model_path = output / "candidate.joblib"
-    joblib.dump({"model_type": "mobilenetv2_logits_logistic", "head": head, "classes": classes,
+    joblib.dump({"model_type": f"mobilenetv2_{args.representation}_logistic",
+                 "representation": args.representation, "head": head, "classes": classes,
                  "threshold": threshold, "backbone_sha256": BACKBONE_SHA256,
                  "processing": contract}, model_path)
     shutil.copy2(args.backbone, output / "mobilenetv2-12.onnx")
@@ -205,7 +208,8 @@ def main(argv=None):
                       "candidates": [{"C": c, "validation_macro_f1": f} for f, c, _ in candidates]},
         "validation": validation_report, "test": test_report,
         "processing_options": asdict(options), "processing": contract,
-        "backbone": {"source": BACKBONE_URL, "sha256": BACKBONE_SHA256, "features": "1000 frozen logits"},
+        "backbone": {"source": BACKBONE_URL, "sha256": BACKBONE_SHA256,
+                     "features": f"{backbone.size} frozen {args.representation}"},
         "manifest_sha256": _digest((output / "dataset_manifest.json").read_bytes()),
         "model_sha256": _digest(model_path.read_bytes()),
         "environment": {"python": platform.python_version(), "opencv": cv2.__version__, "sklearn": sklearn.__version__, "numpy": np.__version__},

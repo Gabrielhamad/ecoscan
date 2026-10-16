@@ -1,8 +1,10 @@
 # Treinamento com representacoes MobileNetV2
 
 O novo ciclo usa uma rede MobileNetV2 pre-treinada no ImageNet, executada no
-OpenCV DNN. Os 1000 logits da rede sao usados como caracteristicas visuais;
-eles nao sao interpretados como categorias de residuos. Uma regressao logistica
+OpenCV DNN. O padrao agora extrai 1280 caracteristicas internas, antes da camada
+de classificacao ImageNet (`--representation embedding`). O modo anterior de
+1000 logits continua disponivel com `--representation logits`; os dois formatos
+tem metadados e caches separados. Uma regressao logistica
 supervisionada aprende as seis classes do EcoScan, com pesos balanceados.
 Nao e fine-tuning da rede nem deteccao de objetos por caixas.
 
@@ -65,6 +67,32 @@ Checkpoints por foto verificam o hash dos dados, das caracteristicas, do
 processamento e da rede. Alterar a rede, preparo ou baseline exige nova rodada.
 Novas fotos ou alteracoes de grupo recalculam o split; nao tratar essa nova
 rodada como comparacao com teste congelado anterior.
+
+O nome da representacao tambem integra o cache. Diretorios de rodadas antigas
+sem esse campo devem ser preservados; iniciar um novo diretorio para treinar.
+
+## Casos reais e evolucao
+
+Manter um CSV `path,expected_class` com fotos revisadas que ja provocaram erros.
+Os caminhos podem ser relativos ao CSV. Executar o preparo completo antes de
+classificar, registrando as tecnicas e decisoes de cada imagem:
+
+```powershell
+python scripts/evaluate_recognition_cases.py --candidate reports/treino_001 --cases data/casos_reais.csv --output reports/casos_001.json
+```
+
+O relatorio registra acertos, rejeicoes e erros aceitos, junto ao hash do modelo
+e das fotos. Esses casos sao regressoes conhecidas; depois de usa-los para orientar
+melhorias, reservar outras fotos para estimar o desempenho real. Repetir medidas
+no mesmo teste para escolher arquiteturas tambem torna esse teste exploratorio.
+
+Para aumentar a utilidade: revisar rotulos e objeto principal; reunir variacoes
+de latas, PET, vidro, papel, pilhas e eletronicos; agrupar fotos do mesmo objeto;
+avaliar deteccao de objetos com caixas anotadas quando houver varios residuos.
+O extrator atual classifica a imagem inteira e nao fornece caixas semanticas.
+Comparar futuramente fine-tuning e recortes de objetos em um protocolo separado.
+Filtros devem preservar evidencias: aplicar mais suavizacao nao garante acerto.
+Um mapa de segmentacao mostra regioes visuais, nao comprova por si so o material.
 
 ## Selecao e avaliacao
 

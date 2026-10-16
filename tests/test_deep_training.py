@@ -28,6 +28,23 @@ def test_unverified_backbone_is_rejected_before_loading(tmp_path):
         load.assert_not_called()
 
 
+@pytest.mark.parametrize('version,layer', [('5.0.0', '472'), ('4.12.0', 'onnx_node!Reshape_103')])
+def test_embedding_uses_internal_features_and_checks_dimensions(tmp_path, version, layer):
+    weights = tmp_path / 'weights.onnx'
+    weights.write_bytes(b'verified fixture')
+    import hashlib
+    with patch('ecoscan.classification.deep_features.BACKBONE_SHA256', hashlib.sha256(weights.read_bytes()).hexdigest()), patch('cv2.__version__', version), patch('cv2.dnn.readNetFromONNX') as load:
+        net = load.return_value
+        net.getLayerNames.return_value = ['onnx_node!Reshape_103']
+        net.forward.return_value = np.ones((1, 1280), dtype=np.float32)
+        extractor = MobileNetFeatures(weights, 'embedding')
+        assert extractor.extract(np.zeros((224, 224, 3), dtype=np.uint8)).shape == (1280,)
+        net.forward.assert_called_once_with(layer)
+        net.forward.return_value = np.ones((1, 1000), dtype=np.float32)
+        with pytest.raises(ValueError, match='representation'):
+            extractor.extract(np.zeros((224, 224, 3), dtype=np.uint8))
+
+
 def test_classifier_rejects_uncertain_and_invalid_probabilities():
     head, backbone = MagicMock(), MagicMock()
     head.classes_ = np.array(['glass', 'metal'])
