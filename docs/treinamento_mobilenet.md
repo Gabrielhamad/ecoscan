@@ -1,0 +1,105 @@
+# Treinamento com representacoes MobileNetV2
+
+O novo ciclo usa uma rede MobileNetV2 pre-treinada no ImageNet, executada no
+OpenCV DNN. Os 1000 logits da rede sao usados como caracteristicas visuais;
+eles nao sao interpretados como categorias de residuos. Uma regressao logistica
+supervisionada aprende as seis classes do EcoScan, com pesos balanceados.
+Nao e fine-tuning da rede nem deteccao de objetos por caixas.
+
+## Preparacao compativel
+
+As imagens originais passam pelo preparo RGB `rgb-preserved-v2`: orientacao,
+reducao proporcional, filtro adaptativo e letterbox 224x224. A normalizacao
+ImageNet ocorre uma vez, imediatamente antes da rede. As cores nao sao
+substituidas por mascaras binarias. Segmentacao e mapas continuam disponiveis
+na analise do aplicativo; o lote dispensa esses diagnosticos porque eles nao
+alteram a entrada do classificador. Um teste compara os pixels dos dois modos.
+
+## Dados e separacao
+
+Usar somente pastas curadas das classes `plastic`, `paper_cardboard`, `metal`,
+`glass`, `battery`, `electronic`. Oleo e medicamentos permanecem educativos.
+Nao importar fotos de usuarios sem consentimento e aprovacao do analista.
+O treinamento nao executa download de contribuicoes privadas automaticamente.
+
+O manifesto registra arquivo, classe, SHA-256 original e dos pixels, dHash,
+grupo, filtro aplicado, qualidade e split. Copias identicas com rotulos
+conflitantes interrompem a rodada. Copias exatas, proximas por dHash e grupos
+de captura declarados ficam no mesmo conjunto. Cinco folds estratificados
+por grupo produzem aproximadamente 60% treino, 20% validacao e 20% teste.
+Cada classe precisa estar presente nos tres conjuntos.
+
+O dHash nao identifica necessariamente o mesmo objeto fotografado de outro
+angulo. Para uma avaliacao mais forte, fornecer um CSV completo:
+
+```csv
+path,group_id
+metal/lata_frente.jpg,lata_001_sessao_01
+metal/lata_lateral.jpg,lata_001_sessao_01
+plastic/garrafa_amassada.jpg,garrafa_002_sessao_02
+```
+
+Todas as fotos do mesmo objeto devem compartilhar o grupo, inclusive em dias
+ou fundos diferentes. O CSV deve cobrir todas as imagens selecionadas. As
+variacoes sinteticas futuras devem manter o grupo da foto original e ser
+aplicadas apenas depois da divisao, somente ao treino.
+
+## Executar em CPU
+
+Nao exige TensorFlow, PyTorch, GPU ou servico pago. Usa as dependencias existentes.
+Baixar o arquivo oficial ONNX indicado abaixo; o script confere o hash antes de
+carregar a rede. Executar a partir da raiz do repositorio:
+
+```powershell
+python scripts/train_deep_candidate.py --source data/curated --backbone CAMINHO/mobilenetv2-12.onnx --output reports/treino_001 --groups data/capture_groups.csv
+```
+
+Sem CSV, omitir `--groups`; o relatorio registra essa limitacao. O destino deve
+ser novo e separado das imagens e dos modelos ativos. Para retomar uma rodada:
+
+```powershell
+python scripts/train_deep_candidate.py --source data/curated --backbone CAMINHO/mobilenetv2-12.onnx --output reports/treino_001 --resume
+```
+
+Checkpoints por foto verificam o hash dos dados, das caracteristicas, do
+processamento e da rede. Alterar a rede, preparo ou baseline exige nova rodada.
+Novas fotos ou alteracoes de grupo recalculam o split; nao tratar essa nova
+rodada como comparacao com teste congelado anterior.
+
+## Selecao e avaliacao
+
+Tres regularizacoes da regressao logistica sao comparadas pelo macro-F1 da
+validacao. O teste nao escolhe parametros. A politica de rejeicao busca 90%
+de acerto em pelo menos 20 respostas aceitas na validacao; quando isso nao
+acontece, usa limiar conservador de 0,95, sem declarar a meta atingida.
+
+`training_summary.json` apresenta precisao, recall e F1 por classe, matriz de
+confusao, acuracia total, cobertura e acerto entre respostas aceitas. Avaliar
+essas medidas juntas: rejeitar quase tudo nao torna o sistema util. Os escores
+da regressao nao foram calibrados como probabilidade de descarte correto.
+`test_predictions.csv` identifica erros para revisao.
+
+A comparacao com o modelo antigo utiliza os mesmos pixels preparados. Esse
+modelo pode ter visto as imagens em rodadas anteriores; portanto, essa
+comparacao e diagnostica e nao prova um ganho independente em campo.
+
+## Artefatos e publicacao
+
+O diretorio da rodada contem `candidate.joblib`, backbone ONNX, contrato de
+processamento, manifesto, metricas, predicoes e checkpoints. Pesos MobileNet
+sao verificados pelo SHA-256
+`c0c3f76d93fa3fd6580652a45618618a220fced18babf65774ed169de0432ad5`.
+O carregador local valida classes, integridade e contrato antes da inferencia.
+Carregar joblib apenas de artefatos confiaveis produzidos pela equipe.
+
+O treino nao altera o reconhecimento publicado. Para promover: revisar erros,
+avaliar fotos novas do grupo fora do treino (latas e garrafas amassadas, caixas
+dobradas, luz/fundos variados), medir tempo de resposta no servidor e integrar
+explicitamente o novo bundle. Ate isso ocorrer, o app continua com o modelo
+anterior. Reportes aprovados alimentam uma proxima rodada supervisionada;
+nao existe aprendizado instantaneo por clicar em reportar.
+
+Fontes tecnicas:
+[ONNX Model Zoo e normalizacao](https://github.com/onnx/models/blob/main/validated/vision/classification/mobilenet/README.md),
+[pesos oficiais](https://github.com/onnx/models/blob/main/validated/vision/classification/mobilenet/model/mobilenetv2-12.onnx),
+[MobileNetV2](https://arxiv.org/abs/1801.04381).

@@ -23,6 +23,13 @@ os responsáveis e os critérios de aceite, sem confundir implementação com va
 
 ## Segurança das missões
 
+**Novo ciclo de treinamento:** candidato MobileNetV2 + regressao logistica,
+executado em CPU, com preparo RGB compativel, agrupamento de duplicatas,
+manifesto e metricas por classe. Consulte o
+[procedimento de treino e criterios de publicacao](docs/treinamento_mobilenet.md).
+Gerar o candidato nao substitui automaticamente o reconhecimento publicado.
+Primeira rodada executada: [resultados, limitacoes e casos de regressao](docs/resultado_treino_20261016.md).
+
 **Acesso remoto (16/10/2026):** cadastro, reenvio e recuperacao validam os dados
 antes de consumir o intervalo entre envios. Falhas de autenticacao possuem
 orientacao em portugues e codigo de atendimento sem expor credenciais.
