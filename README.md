@@ -2,6 +2,10 @@
 
 **Da imagem à orientação de descarte, com educação ambiental e revisão humana.**
 
+**Avaliação por material:** implementada e testada uma política experimental
+de limites e margem entre hipóteses. Ela não melhorou o teste e não foi ativada.
+Veja [resultados medidos e próximos critérios de aceite](docs/validacao_seletiva_20261017.md).
+
 **Proteção no resultado público:** baixa pontuação, evidência insuficiente da
 classe e pontuações inválidas bloqueiam a orientação automática de destino.
 Regras visuais não contornam o limite de pontuação. A consulta manual de
