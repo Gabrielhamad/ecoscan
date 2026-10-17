@@ -33,6 +33,9 @@ O treino agora extrai 1280 caracteristicas internas antes da classificacao.
 [Comparacao medida e proximos criterios de reconhecimento](docs/resultado_embeddings_20261016.md):
 ganho no lote exploratorio, com erros reais ainda pendentes. O comando de
 avaliacao de casos registra o preparo de cada foto e os erros aceitos.
+**Rodada de 17/10/2026:** variacoes de luz e inclinacao geradas exclusivamente
+no treino, com manifesto e comparacao automatica pela validacao. Nesta rodada,
+o treino original venceu; [resultados e decisao tecnica](docs/treino_variacoes_20261017.md).
 
 **Acesso remoto (16/10/2026):** cadastro, reenvio e recuperacao validam os dados
 antes de consumir o intervalo entre envios. Falhas de autenticacao possuem

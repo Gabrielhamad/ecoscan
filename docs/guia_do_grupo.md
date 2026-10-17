@@ -51,6 +51,24 @@ Cadastro confirmado não significa que uma contribuição foi enviada.
 
 ## Registro de uma rodada
 
+### Fotos que ajudam o reconhecimento
+
+| Material | Variacoes uteis |
+| --- | --- |
+| Metal | Latas baixas e altas, coloridas e sem rotulo, inteiras e amassadas |
+| Plastico | PET transparente e colorido, garrafas inteiras e amassadas, potes |
+| Vidro | Garrafas e potes, transparentes e coloridos, diferentes espessuras |
+| Papel e papelao | Caixas abertas, fechadas e dobradas, folhas e embalagens |
+| Pilhas | AA, AAA e formatos suportados, marcas e fundos diferentes |
+| Eletronicos | Apenas os pequenos equipamentos definidos no escopo |
+
+Fotografar objetos diferentes, alem de repetir angulos do mesmo objeto. Registrar
+um identificador comum para todas as fotos de cada objeto/sessao; isso permite
+separar objetos de treino e avaliacao. O material esperado precisa de revisao
+humana, especialmente quando plastico e vidro tem aparencia semelhante.
+Os reportes revisados orientam a curadoria. Variacoes sinteticas de luz nao
+equivalem a coletar novos objetos nem comprovam generalizacao.
+
 Registre data, versão/commit se conhecido, dispositivo, navegador, cenário,
 categoria esperada, resultado, método de captura e situação final. Para erros de
 interface, inclua passos reproduzíveis e captura sem informações privadas.

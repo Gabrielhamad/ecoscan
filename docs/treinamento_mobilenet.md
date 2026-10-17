@@ -96,6 +96,34 @@ Um mapa de segmentacao mostra regioes visuais, nao comprova por si so o material
 
 ## Selecao e avaliacao
 
+### Variacoes de captura somente no treino
+
+Opcao `--augment`: compara o treino original com uma versao ampliada por tres
+variacoes deterministicas: exposicao mais escura, mais clara e inclinacao de
+7 graus com canvas expandido para evitar cortar o objeto. Cada variacao passa
+pelo preparo adaptativo do aplicativo antes da extracao neural. A reducao de
+trabalho proporcional ocorre antes de gerar as variacoes, evitando arquivos
+temporarios desnecessariamente grandes. As imagens originais sao preservadas.
+
+```powershell
+python scripts/train_deep_candidate.py --source data/curated --backbone CAMINHO/mobilenetv2-12.onnx --output reports/treino_variacoes --augment --feature-cache reports/treino_anterior
+```
+
+`--feature-cache` e opcional e reutiliza apenas caracteristicas originais com
+hash verificado e perfil identico. Um cache de logits nao pode alimentar um
+treino de embeddings. O cache anterior permanece intacto.
+
+As variacoes sao geradas depois da divisao por grupos, exclusivamente para
+os pais no treino. `augmentation_manifest.json` registra origem, SHA-256,
+grupo, tecnica, versao e filtragem. Validacao e teste conservam suas imagens
+originais. O manifesto de originais nao inclui as variacoes como novos objetos.
+As variacoes sao recomputadas em uma retomada; nao possuem cache persistente.
+
+O script compara as tres regularizacoes com e sem variacoes pela validacao;
+se a ampliacao piorar o macro-F1, a versao original pode vencer. Nao ajustar
+parametros pelo resultado das fotos conhecidas ou do teste exploratorio.
+Variacoes sinteticas nao substituem fotos de novos objetos, fundos e angulos.
+
 Tres regularizacoes da regressao logistica sao comparadas pelo macro-F1 da
 validacao. O teste nao escolhe parametros. A politica de rejeicao busca 90%
 de acerto em pelo menos 20 respostas aceitas na validacao; quando isso nao

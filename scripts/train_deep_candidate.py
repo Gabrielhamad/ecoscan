@@ -8,6 +8,7 @@ import json
 import platform
 import shutil
 import sys
+import tempfile
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, replace
@@ -24,6 +25,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix, f1_score
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
+from PIL import Image
 
 from ecoscan.app.pipeline import default_processing_options, run_processing_pipeline
 from ecoscan.classification.deep_features import BACKBONE_SHA256, BACKBONE_URL, MobileNetFeatures
@@ -31,7 +33,9 @@ from ecoscan.classification.visual_svm import VisualSvmClassifier
 from ecoscan.config import load_config
 from ecoscan.image_processing.contracts import processing_contract, write_model_contract
 from ecoscan.image_processing.image_io import load_rgb_image
+from ecoscan.image_processing.preprocessing import prepare_working_image
 from ecoscan.training.grouped_split import grouped_split, image_groups
+from ecoscan.training.augmentation import AUGMENTATION_VERSION, capture_variants, training_indices
 
 
 def _digest(data):
@@ -74,6 +78,8 @@ def main(argv=None):
     parser.add_argument("--groups", type=Path, help="CSV path,group_id: same object/capture session together")
     parser.add_argument("--resume", action="store_true", help="Reuse verified per-image checkpoints")
     parser.add_argument("--representation", choices=("embedding", "logits"), default="embedding")
+    parser.add_argument("--augment", action="store_true", help="Compare train-only capture variations with originals")
+    parser.add_argument("--feature-cache", type=Path, help="Read verified original features from a previous run")
     args = parser.parse_args(argv)
     config = load_config()
     if config.image_size != (224, 224):
@@ -112,6 +118,10 @@ def main(argv=None):
     if profile_path.exists() and json.loads(profile_path.read_text(encoding="utf-8")) != cache_profile:
         raise ValueError("Checkpoint does not match this source, processing or baseline.")
     profile_path.write_text(json.dumps(cache_profile, indent=2), encoding="utf-8")
+    if args.feature_cache:
+        previous = args.feature_cache.resolve()
+        if json.loads((previous / "cache_profile.json").read_text(encoding="utf-8")) != cache_profile:
+            raise ValueError("Feature cache has a different preparation, backbone or source.")
 
     def extract(item):
         label, path = item
@@ -119,6 +129,12 @@ def main(argv=None):
         cache_key = _digest((label + path.relative_to(source).as_posix() + original_hash).encode())
         feature_path = output / "features" / f"{cache_key}.npy"
         record_path = output / "features" / f"{cache_key}.json"
+        if args.feature_cache and not feature_path.exists() and not record_path.exists():
+            old_feature = previous / "features" / feature_path.name
+            old_record = previous / "features" / record_path.name
+            if old_feature.exists() and old_record.exists():
+                shutil.copy2(old_feature, feature_path)
+                shutil.copy2(old_record, record_path)
         if feature_path.exists() and record_path.exists():
             cached = json.loads(record_path.read_text(encoding="utf-8"))
             feature = np.load(feature_path, allow_pickle=False)
@@ -165,15 +181,49 @@ def main(argv=None):
     train = np.array(splits) == "train"
     validation = np.array(splits) == "validation"
     test = np.array(splits) == "test"
+    training_sets = [("original", matrix[train], targets[train])]
+    augmentation_records = []
+    if args.augment:
+        indices = training_indices(splits)
+
+        def augment(index):
+            label, path = paths[index]
+            loaded = load_rgb_image(path, allowed_extensions=config.allowed_extensions, min_size=config.min_image_size)
+            # Save losslessly, then use the exact application preparation on each variation.
+            variants, evidence = [], []
+            with tempfile.TemporaryDirectory(prefix="ecoscan_capture_") as temporary:
+                working = prepare_working_image(loaded.array, config.processing.get("max_dimension", 640)).resized
+                for name, image in capture_variants(working):
+                    variant_path = Path(temporary) / f"{name}.png"
+                    Image.fromarray(image).save(variant_path)
+                    prepared = run_processing_pipeline(variant_path, config, options)
+                    variants.append(backbone.extract(prepared.recognition_image))
+                    evidence.append({"parent": records[index]["path"], "parent_sha256": records[index]["sha256"],
+                                     "group": groups[index], "split": "train", "variant": name,
+                                     "version": AUGMENTATION_VERSION, "filter": prepared.metadata["filter"]})
+            return variants, [label] * len(variants), evidence
+
+        extra_features, extra_labels = [], []
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            for i, (variants, variant_labels, evidence) in enumerate(executor.map(augment, indices)):
+                extra_features.extend(variants)
+                extra_labels.extend(variant_labels)
+                augmentation_records.extend(evidence)
+                if (i + 1) % 25 == 0:
+                    print(f"Augmented {i + 1}/{len(indices)} training originals", flush=True)
+        training_sets.append(("capture_augmented", np.vstack([matrix[train], *extra_features]),
+                              np.concatenate([targets[train], extra_labels])))
+    (output / "augmentation_manifest.json").write_text(json.dumps(augmentation_records, indent=2), encoding="utf-8")
     candidates = []
-    for c_value in (0.01, 0.1, 1.0):
-        head = make_pipeline(StandardScaler(), LogisticRegression(
-            C=c_value, class_weight="balanced", max_iter=2500, random_state=config.random_seed
-        ))
-        head.fit(matrix[train], targets[train])
-        score = f1_score(targets[validation], head.predict(matrix[validation]), average="macro")
-        candidates.append((float(score), c_value, head))
-    score, c_value, head = max(candidates, key=lambda candidate: candidate[0])
+    for strategy, train_features, train_labels in training_sets:
+        for c_value in (0.01, 0.1, 1.0):
+            head = make_pipeline(StandardScaler(), LogisticRegression(
+                C=c_value, class_weight="balanced", max_iter=2500, random_state=config.random_seed
+            ))
+            head.fit(train_features, train_labels)
+            score = f1_score(targets[validation], head.predict(matrix[validation]), average="macro")
+            candidates.append((float(score), c_value, head, strategy))
+    score, c_value, head, strategy = max(candidates, key=lambda candidate: candidate[0])
     classes = [str(c) for c in head.classes_]
     validation_probabilities = head.predict_proba(matrix[validation])
     # Select rejection policy on validation only; test never changes parameters.
@@ -205,7 +255,10 @@ def main(argv=None):
         "grouping": "decoded exact duplicates, dHash distance <=4, optional object/capture CSV",
         "capture_groups_provided": bool(args.groups), "unique_groups": len(set(groups)),
         "selection": {"C": c_value, "validation_macro_f1": score,
-                      "candidates": [{"C": c, "validation_macro_f1": f} for f, c, _ in candidates]},
+                      "strategy": strategy,
+                      "candidates": [{"C": c, "validation_macro_f1": f, "strategy": s} for f, c, _, s in candidates]},
+        "augmentation": {"enabled": args.augment, "version": AUGMENTATION_VERSION,
+                         "generated": len(augmentation_records), "split": "train_only"},
         "validation": validation_report, "test": test_report,
         "processing_options": asdict(options), "processing": contract,
         "backbone": {"source": BACKBONE_URL, "sha256": BACKBONE_SHA256,
