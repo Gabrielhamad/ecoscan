@@ -77,8 +77,10 @@ class DeepFeatureClassifier:
             raise ValueError("Candidate is not compatible with the current image preparation.")
         payload = joblib.load(path)
         representation = payload.get("representation", "logits")
+        head_type = payload.get("head_type", "logistic")
         if (representation not in {"logits", "embedding"}
-                or payload.get("model_type") != f"mobilenetv2_{representation}_logistic"
+                or head_type not in {"logistic", "svm_calibrated"}
+                or payload.get("model_type") != f"mobilenetv2_{representation}_{head_type}"
                 or payload.get("processing") != contract
                 or payload.get("backbone_sha256") != BACKBONE_SHA256
                 or sorted(payload.get("classes", [])) != sorted(config.classes)

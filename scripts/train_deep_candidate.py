@@ -21,10 +21,7 @@ import cv2
 import joblib
 import numpy as np
 import sklearn
-from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix, f1_score
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
 from PIL import Image
 
 from ecoscan.app.pipeline import default_processing_options, run_processing_pipeline
@@ -36,6 +33,7 @@ from ecoscan.image_processing.image_io import load_rgb_image
 from ecoscan.image_processing.preprocessing import prepare_working_image
 from ecoscan.training.grouped_split import grouped_split, image_groups
 from ecoscan.training.augmentation import AUGMENTATION_VERSION, capture_variants, training_indices
+from ecoscan.training.heads import build_head
 
 
 def _digest(data):
@@ -80,6 +78,8 @@ def main(argv=None):
     parser.add_argument("--representation", choices=("embedding", "logits"), default="embedding")
     parser.add_argument("--augment", action="store_true", help="Compare train-only capture variations with originals")
     parser.add_argument("--feature-cache", type=Path, help="Read verified original features from a previous run")
+    parser.add_argument("--heads", choices=("logistic", "compare"), default="logistic",
+                        help="Compare logistic regression and group-calibrated nonlinear SVM")
     args = parser.parse_args(argv)
     config = load_config()
     if config.image_size != (224, 224):
@@ -181,7 +181,7 @@ def main(argv=None):
     train = np.array(splits) == "train"
     validation = np.array(splits) == "validation"
     test = np.array(splits) == "test"
-    training_sets = [("original", matrix[train], targets[train])]
+    training_sets = [("original", matrix[train], targets[train], np.asarray(groups)[train])]
     augmentation_records = []
     if args.augment:
         indices = training_indices(splits)
@@ -212,18 +212,22 @@ def main(argv=None):
                 if (i + 1) % 25 == 0:
                     print(f"Augmented {i + 1}/{len(indices)} training originals", flush=True)
         training_sets.append(("capture_augmented", np.vstack([matrix[train], *extra_features]),
-                              np.concatenate([targets[train], extra_labels])))
+                              np.concatenate([targets[train], extra_labels]),
+                              np.concatenate([np.asarray(groups)[train],
+                                              [row["group"] for row in augmentation_records]])))
     (output / "augmentation_manifest.json").write_text(json.dumps(augmentation_records, indent=2), encoding="utf-8")
     candidates = []
-    for strategy, train_features, train_labels in training_sets:
-        for c_value in (0.01, 0.1, 1.0):
-            head = make_pipeline(StandardScaler(), LogisticRegression(
-                C=c_value, class_weight="balanced", max_iter=2500, random_state=config.random_seed
-            ))
-            head.fit(train_features, train_labels)
-            score = f1_score(targets[validation], head.predict(matrix[validation]), average="macro")
-            candidates.append((float(score), c_value, head, strategy))
-    score, c_value, head, strategy = max(candidates, key=lambda candidate: candidate[0])
+    head_types = ("logistic", "svm_calibrated") if args.heads == "compare" else ("logistic",)
+    for strategy, train_features, train_labels, train_groups in training_sets:
+        for head_type in head_types:
+            c_values = (0.01, 0.1, 1.0) if head_type == "logistic" else (0.1, 1.0, 10.0)
+            for c_value in c_values:
+                head = build_head(head_type, c_value, train_labels, train_groups, config.random_seed)
+                head.fit(train_features, train_labels)
+                score = f1_score(targets[validation], head.predict(matrix[validation]), average="macro")
+                candidates.append((float(score), c_value, head, strategy, head_type))
+                print(f"Validated {strategy}/{head_type} C={c_value}: macro-F1={score:.4f}", flush=True)
+    score, c_value, head, strategy, head_type = max(candidates, key=lambda candidate: candidate[0])
     classes = [str(c) for c in head.classes_]
     validation_probabilities = head.predict_proba(matrix[validation])
     # Select rejection policy on validation only; test never changes parameters.
@@ -242,7 +246,7 @@ def main(argv=None):
         )
         test_report["legacy_comparison_note"] = "Legacy model may have trained on these source images; comparison is diagnostic, not an independent experiment."
     model_path = output / "candidate.joblib"
-    joblib.dump({"model_type": f"mobilenetv2_{args.representation}_logistic",
+    joblib.dump({"model_type": f"mobilenetv2_{args.representation}_{head_type}", "head_type": head_type,
                  "representation": args.representation, "head": head, "classes": classes,
                  "threshold": threshold, "backbone_sha256": BACKBONE_SHA256,
                  "processing": contract}, model_path)
@@ -256,7 +260,9 @@ def main(argv=None):
         "capture_groups_provided": bool(args.groups), "unique_groups": len(set(groups)),
         "selection": {"C": c_value, "validation_macro_f1": score,
                       "strategy": strategy,
-                      "candidates": [{"C": c, "validation_macro_f1": f, "strategy": s} for f, c, _, s in candidates]},
+                      "head_type": head_type,
+                      "candidates": [{"C": c, "validation_macro_f1": f, "strategy": s, "head_type": h}
+                                     for f, c, _, s, h in candidates]},
         "augmentation": {"enabled": args.augment, "version": AUGMENTATION_VERSION,
                          "generated": len(augmentation_records), "split": "train_only"},
         "validation": validation_report, "test": test_report,

@@ -36,6 +36,10 @@ avaliacao de casos registra o preparo de cada foto e os erros aceitos.
 **Rodada de 17/10/2026:** variacoes de luz e inclinacao geradas exclusivamente
 no treino, com manifesto e comparacao automatica pela validacao. Nesta rodada,
 o treino original venceu; [resultados e decisao tecnica](docs/treino_variacoes_20261017.md).
+Tambem foram executados SVM com calibracao por grupos e fine-tuning real da
+MobileNetV2. Eles nao superaram o candidato anterior e nao foram ativados.
+Consulte [medidas por material e casos reais](docs/resultado_neural_20261017.md)
+e o [procedimento neural reproduzivel](docs/fine_tuning.md).
 
 **Acesso remoto (16/10/2026):** cadastro, reenvio e recuperacao validam os dados
 antes de consumir o intervalo entre envios. Falhas de autenticacao possuem
