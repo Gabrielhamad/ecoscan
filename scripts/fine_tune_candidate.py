@@ -24,6 +24,7 @@ from ecoscan.classification.deep_features import mobilenet_input
 from ecoscan.config import load_config
 from ecoscan.image_processing.contracts import processing_contract
 from scripts.train_deep_candidate import _report
+from ecoscan.training.review import fitting_split_mask
 
 
 def main():
@@ -89,7 +90,7 @@ def main():
     images = torch.from_numpy(np.stack(arrays))
     del arrays
     labels = torch.tensor([classes.index(row['class_id']) for row in records])
-    masks = {split: np.array([row['split'] == split for row in records]) for split in ('train', 'validation', 'test')}
+    masks = {split: np.array(fitting_split_mask(records, split)) for split in ('train', 'validation', 'test')}
     loaders = {split: DataLoader(TensorDataset(images[mask], labels[mask]), batch_size=16,
                                 shuffle=split == 'train', num_workers=0,
                                 generator=torch.Generator().manual_seed(config.random_seed))

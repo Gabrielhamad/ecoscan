@@ -1,0 +1,31 @@
+{
+  "review_index_sha256": "f5694fe25acc2041408c0bfc5a1f713f99c36b323cc6cd5e826f28517b18687f",
+  "method": "Visual inspection of ten training contact sheets; original-resolution checks on selected cases. Exclude clear non-target or non-photographic examples; preserve uncertain and difficult valid examples.",
+  "exclude": {
+    "battery_004": "Researcher and laboratory machinery; no identifiable battery object for this classifier.",
+    "battery_005": "Experimental soil apparatus and hands, not a recognizable battery object.",
+    "battery_024": "Recycling-system logo, not a photograph of batteries.",
+    "battery_026": "Collection bin in a street scene without visible batteries.",
+    "battery_032": "Hand pointing at a return slot; no visible battery object.",
+    "battery_033": "Infographic about battery markets, not an object photograph.",
+    "battery_034": "Portrait of people without visible batteries.",
+    "battery_037": "Cardboard packaging for an air compressor; no visible battery.",
+    "battery_042": "Powder and spoon in a materials laboratory; no battery object.",
+    "electronic_018": "Screenshot of source code, not electronic waste.",
+    "electronic_025": "Drinking glass with liquid in front of screens; foreground is not electronic waste.",
+    "electronic_030": "World map infographic, not an object photograph.",
+    "paper_cardboard_007": "Scene dominated by discarded monitors, not a paper/cardboard training object.",
+    "paper_cardboard_019": "Closed waste bins without a visible paper/cardboard object.",
+    "paper_cardboard_020": "Colored collection bins without a visible paper/cardboard object.",
+    "paper_cardboard_022": "Process flowchart, not a paper/cardboard object photograph.",
+    "paper_cardboard_023": "Industrial-process infographic, not an object photograph.",
+    "paper_cardboard_024": "Warehouse facade; no visible paper/cardboard target.",
+    "paper_cardboard_025": "Stone memorial plaque, not paper/cardboard.",
+    "paper_cardboard_028": "Collection truck and bins, not a visible paper/cardboard target.",
+    "paper_cardboard_029": "Collection truck and bins, not a visible paper/cardboard target.",
+    "paper_cardboard_030": "Collection-site sign and fence, not a paper/cardboard object.",
+    "metal_004": "Annotated technical can diagram; exclude from photographic training domain.",
+    "metal_009": "Stacked opaque waste bags; metal contents cannot be seen.",
+    "metal_013": "Technical pull-tab diagram rather than an object photograph."
+  }
+}

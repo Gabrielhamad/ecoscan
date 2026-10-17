@@ -40,6 +40,10 @@ beneficio das variacoes implementadas. Fotos originais permanecem intactas.
 
 ## Treinamento e selecao
 
+Ao usar manifesto com `eligible_for_fit`, o fine-tuning conserva as exclusoes
+visuais do treino. Validacao e teste permanecem completos. Consulte a
+[auditoria visual](auditoria_visual_20261017.md) para gerar a referencia curada.
+
 Primeira epoca: treina a saida com AdamW e taxa 0,001. A partir da segunda,
 descongela os blocos `features[14:]`, com taxa 0,00001, e usa 0,0001 na saida.
 As estatisticas de batch normalization permanecem fixas. A perda pondera as

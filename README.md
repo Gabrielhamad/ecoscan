@@ -45,6 +45,10 @@ preparo adaptativo e teste preservado. As misturas completa e ponderada foram
 treinadas; a referencia venceu a validacao. Consulte
 [importacao reproduzivel](docs/dataset_web.md) e
 [resultados por material](docs/resultado_dataset_web_20261017.md).
+**Revisao visual:** 25 exemplos inadequados foram excluidos apenas do ajuste,
+com razoes e hashes; validacao e teste foram preservados. O candidato curado e
+o experimento de recorte nao demonstraram ganho e nao foram ativados.
+Veja a [auditoria e o roteiro de reconhecimento](docs/auditoria_visual_20261017.md).
 
 **Acesso remoto (16/10/2026):** cadastro, reenvio e recuperacao validam os dados
 antes de consumir o intervalo entre envios. Falhas de autenticacao possuem

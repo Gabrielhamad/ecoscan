@@ -35,6 +35,7 @@ from ecoscan.training.grouped_split import grouped_split, image_groups
 from ecoscan.training.augmentation import AUGMENTATION_VERSION, capture_variants, training_indices
 from ecoscan.training.heads import build_head
 from ecoscan.training.fixed_split import extend_reference_split, source_weights
+from ecoscan.training.review import reviewed_exclusions
 
 
 def _digest(data):
@@ -83,9 +84,13 @@ def main(argv=None):
                         help="Compare logistic regression and group-calibrated nonlinear SVM")
     parser.add_argument("--fixed-split", type=Path, help="Reference manifest: keep old splits; new images train only")
     parser.add_argument("--balance-source", action="store_true", help="Compare reference-only and source-weighted logistic heads")
+    parser.add_argument("--review-index", type=Path, help="Training contact-sheet CSV index")
+    parser.add_argument("--review-decisions", type=Path, help="Hash-bound visual review exclusions JSON")
     args = parser.parse_args(argv)
     if args.balance_source and (not args.fixed_split or args.augment):
         parser.error("Source balancing requires --fixed-split and cannot combine with --augment.")
+    if bool(args.review_index) != bool(args.review_decisions) or (args.review_decisions and args.balance_source):
+        parser.error("Provide both review files; review and source balancing are separate experiments.")
     config = load_config()
     if config.image_size != (224, 224):
         raise ValueError("This backbone requires the 224x224 preparation contract.")
@@ -184,12 +189,18 @@ def main(argv=None):
               if args.fixed_split else grouped_split(labels, groups, seed=config.random_seed))
     for row, group, split in zip(records, groups, splits, strict=True):
         row.update(group=group, split=split)
+    exclusions = reviewed_exclusions(records, args.review_index, args.review_decisions) if args.review_decisions else {}
+    for row in records:
+        row['eligible_for_fit'] = row['split'] == 'train' and row['path'] not in exclusions
     (output / "dataset_manifest.json").write_text(json.dumps(records, indent=2, ensure_ascii=False), encoding="utf-8")
     matrix, targets = np.vstack(features), np.asarray(labels)
-    train = np.array(splits) == "train"
+    original_train = np.array(splits) == "train"
+    train = np.array([row['eligible_for_fit'] for row in records])
     validation = np.array(splits) == "validation"
     test = np.array(splits) == "test"
-    training_sets = [("original", matrix[train], targets[train], np.asarray(groups)[train])]
+    training_sets = [("reviewed" if exclusions else "original", matrix[train], targets[train], np.asarray(groups)[train])]
+    if exclusions:
+        training_sets.append(("unreviewed_reference", matrix[original_train], targets[original_train], np.asarray(groups)[original_train]))
     strategy_weights = {}
     if args.balance_source:
         reference_paths = {row["path"] for row in json.loads(args.fixed_split.read_text(encoding="utf-8"))}
@@ -202,7 +213,7 @@ def main(argv=None):
             strategy_weights[name] = source_weights(targets[train], external, ratio)
     augmentation_records = []
     if args.augment:
-        indices = training_indices(splits)
+        indices = [index for index in training_indices(splits) if train[index]]
 
         def augment(index):
             label, path = paths[index]
@@ -253,7 +264,8 @@ def main(argv=None):
                 score = f1_score(targets[validation], head.predict(matrix[validation]), average="macro")
                 candidates.append((float(score), c_value, head, strategy, head_type))
                 print(f"Validated {strategy}/{head_type} C={c_value}: macro-F1={score:.4f}", flush=True)
-    score, c_value, head, strategy, head_type = max(candidates, key=lambda candidate: candidate[0])
+    eligible_candidates = [candidate for candidate in candidates if candidate[3] != 'unreviewed_reference']
+    score, c_value, head, strategy, head_type = max(eligible_candidates, key=lambda candidate: candidate[0])
     classes = [str(c) for c in head.classes_]
     validation_probabilities = head.predict_proba(matrix[validation])
     # Select rejection policy on validation only; test never changes parameters.
@@ -294,6 +306,9 @@ def main(argv=None):
         "augmentation": {"enabled": args.augment, "version": AUGMENTATION_VERSION,
                          "generated": len(augmentation_records), "split": "train_only"},
         "source_balancing": {"compared": args.balance_source, "external_to_reference_ratios": [0.25, 1.0] if args.balance_source else []},
+        "visual_review": {"decisions_sha256": _digest(args.review_decisions.read_bytes()) if args.review_decisions else None,
+                          "excluded": exclusions, "original_training_count": int(original_train.sum()),
+                          "eligible_training_count": int(train.sum())},
         "validation": validation_report, "test": test_report,
         "processing_options": asdict(options), "processing": contract,
         "backbone": {"source": BACKBONE_URL, "sha256": BACKBONE_SHA256,
