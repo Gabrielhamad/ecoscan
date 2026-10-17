@@ -14,6 +14,7 @@ ITEMS = {
     "glass_bottle": ("Garrafa de vidro", "glass"),
     "glass_jar": ("Pote de vidro", "glass"),
     "battery": ("Pilha ou bateria portátil", "battery"),
+    "household_cell": ("Pilha cilíndrica AA ou AAA", "battery"),
     "small_electronic": ("Celular, mouse, carregador ou pequeno eletrônico", "electronic"),
     "mobile_phone": ("Celular", "electronic"),
     "computer_mouse": ("Mouse de computador", "electronic"),
@@ -21,6 +22,15 @@ ITEMS = {
     "out_of_scope": ("Alimento, orgânico ou outro item fora da lista", "out_of_scope"),
     "unknown": ("Não sei identificar o material", "unknown"),
 }
+
+# Preserve historic IDs for analyst review without inviting broad new labels.
+RECOGNITION_ITEMS = (
+    "drink_can", "food_can", "pet_bottle", "plastic_container",
+    "cardboard_box", "paper_sheet", "glass_bottle", "glass_jar",
+    "household_cell", "mobile_phone", "computer_mouse", "charger",
+)
+REPORT_ITEMS = RECOGNITION_ITEMS + ("out_of_scope", "unknown")
+SCOPE_VERSION = "objects-v1"
 
 ITEM_CONDITIONS = {
     "unspecified": "Não informado",

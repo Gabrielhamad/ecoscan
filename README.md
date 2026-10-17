@@ -2,6 +2,11 @@
 
 **Da imagem à orientação de descarte, com educação ambiental e revisão humana.**
 
+**Escopo inicial fechado:** 12 tipos de objeto, agrupados em seis materiais.
+Consulte a [lista de objetos, variacoes e exclusoes](docs/escopo_objetos_v1.md)
+antes de coletar imagens ou revisar reportes. Essa lista define os alvos de
+validacao; nao representa uma declaracao de acuracia ja atingida.
+
 **Avaliação por material:** implementada e testada uma política experimental
 de limites e margem entre hipóteses. Ela não melhorou o teste e não foi ativada.
 Veja [resultados medidos e próximos critérios de aceite](docs/validacao_seletiva_20261017.md).

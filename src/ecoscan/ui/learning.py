@@ -8,7 +8,7 @@ from ecoscan.services.learning_contributions import (
     contribution_image, contribution_package, list_contributions,
     review_contribution, submit_contribution, citizen_contributions,
 )
-from ecoscan.services.recognition_scope import ITEMS, ITEM_CONDITIONS
+from ecoscan.services.recognition_scope import ITEMS, ITEM_CONDITIONS, REPORT_ITEMS
 from ecoscan.services.contribution_store import persistent_enabled
 from ecoscan.services.secretariat_training import candidate_runs, train_candidate, training_dir
 
@@ -54,10 +54,10 @@ def render_citizen_protocols(st, config, profile):
 def render_scope(st):
     with st.expander("Quais itens posso testar?"):
         st.write("Piloto com seis categorias. As respostas são sugestões e precisam de confirmação.")
-        st.write("Latas de bebida/conserva; garrafas PET e potes plásticos; caixas e folhas de papel; garrafas e potes de vidro; pilhas/baterias; pequenos eletrônicos.")
+        st.write("Latas de bebida e conserva vazias; garrafas PET; frascos e potes plásticos rígidos vazios; caixas de papelão; folhas de papel e jornal; garrafas e potes de vidro inteiros; pilhas AA/AAA; celular, mouse e carregador de celular.")
         st.caption("Alimentos e resíduos orgânicos não são reconhecidos. Lâmpadas, remédios, óleo, aerossóis e embalagens químicas ficam fora da identificação automática desta etapa. Uma foto não confirma o conteúdo de uma embalagem.")
         st.write("Eletrônicos prioritários: celular, mouse e carregador de celular. Outros aparelhos precisam de orientação específica e não têm reconhecimento validado neste piloto.")
-        st.caption("Amassados, papelão dobrado e cacos são casos de avaliação, não capacidades já comprovadas. Informe o estado ao reportar uma foto. Cacos não permitem confirmar pela aparência que se trata de vidro de embalagem, e não cerâmica ou outro material.")
+        st.caption("Amassados e papelão dobrado fazem parte dos testes previstos. Informe o estado ao reportar uma foto. Cacos soltos, baterias de outros formatos e fragmentos sem identificação ficam fora do reconhecimento automático inicial. Fotografe um objeto principal por vez.")
     with st.expander("Óleo de cozinha usado: consultar descarte"):
         st.write("Esta orientação é para óleo de cozinha que você já identificou; o sistema não confirma líquidos pela foto.")
         st.write("Deixe esfriar, armazene em garrafa PET bem fechada e entregue em um ponto que aceite óleo de cozinha. Não despeje na pia, no vaso sanitário ou no solo. Não misture com óleo de motor ou outros produtos.")
@@ -83,7 +83,7 @@ def render_contribution(st, config, result, profile):
     with st.expander("O resultado está errado? Contribuir com uma correção", expanded=not result.accepted):
         st.caption("Sua correção entra na fila dos analistas da secretaria. Acompanhe a resposta em Perfil. Fotos aprovadas podem alimentar um modelo candidato, validado antes da publicação.")
         with st.form(f"contribution_form_{profile.id}_{signature}"):
-            item = st.selectbox("O que aparece na foto?", list(ITEMS), index=None,
+            item = st.selectbox("O que aparece na foto?", list(REPORT_ITEMS), index=None,
                                 placeholder="Escolha o item real", format_func=lambda key: ITEMS[key][0])
             condition = st.selectbox("Estado do objeto", list(ITEM_CONDITIONS),
                                      format_func=lambda key: ITEM_CONDITIONS[key])
