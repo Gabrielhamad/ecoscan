@@ -34,7 +34,7 @@ class PublicFlowTests(unittest.TestCase):
         self.assertTrue(action.can_search_collection)
         self.assertEqual("Coleta seletiva - metal", action.destination_title)
         self.assertEqual("Lata de alumínio", action.material_label)
-        self.assertEqual("91% de confiança", action.confidence_label)
+        self.assertEqual("Pontuação do modelo: 91/100", action.confidence_label)
 
     def test_blocks_collection_action_when_recognition_is_uncertain(self) -> None:
         result = SimpleNamespace(
@@ -50,7 +50,13 @@ class PublicFlowTests(unittest.TestCase):
         self.assertFalse(action.can_search_collection)
         self.assertEqual("Destino não confirmado", action.destination_title)
         self.assertIn("outra foto", action.destination_type)
-        self.assertEqual("39% de confiança", action.confidence_label)
+        self.assertEqual("Pontuação do modelo: 39/100", action.confidence_label)
+
+    def test_invalid_score_does_not_break_public_result(self) -> None:
+        for value in (None, float("nan"), float("inf"), "invalid", True, -0.1, 1.1):
+            with self.subTest(value=value):
+                action = build_public_next_action(SimpleNamespace(probability=value), None, _decision(allow=False))
+                self.assertEqual("pontuação indisponível", action.confidence_label)
 
 
 def _decision(*, allow: bool, tone: str = "ok", status: str = "identified") -> RecognitionSafetyDecision:

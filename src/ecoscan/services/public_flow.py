@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from typing import Any
 
 from ecoscan.disposal.targets import DisposalTarget
@@ -74,6 +75,10 @@ def build_public_next_action(
 
 
 def _confidence_label(value: float | None) -> str:
-    if value is None:
-        return "confiança indisponível"
-    return f"{value * 100:.0f}% de confiança"
+    try:
+        score = float(value) if value is not None else math.nan
+    except (ValueError, TypeError, OverflowError):
+        score = math.nan
+    if isinstance(value, bool) or not math.isfinite(score) or not 0 <= score <= 1:
+        return "pontuação indisponível"
+    return f"Pontuação do modelo: {score * 100:.0f}/100"

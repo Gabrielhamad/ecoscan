@@ -2,6 +2,14 @@
 
 **Da imagem à orientação de descarte, com educação ambiental e revisão humana.**
 
+**Proteção no resultado público:** baixa pontuação, evidência insuficiente da
+classe e pontuações inválidas bloqueiam a orientação automática de destino.
+Regras visuais não contornam o limite de pontuação. A consulta manual de
+materiais continua disponível. A pontuação apresentada pelo modelo não equivale
+a uma probabilidade comprovada de acerto. Essas proteções não aumentam, por si
+só, a acurácia: a promoção de um novo modelo depende de avaliação independente
+por material e de testes no ambiente de hospedagem.
+
 Aplicação web para celular e computador que combina processamento digital de imagens, classificação de resíduos e orientações de descarte. O piloto conecta participantes a uma área de gestão que simula o trabalho de uma secretaria ambiental.
 
 [Acessar o piloto](https://ecoscan-gabrielhamad.streamlit.app/) · [Guia do grupo](docs/guia_do_grupo.md) · [Arquitetura](docs/arquitetura_atual.md) · [Como contribuir](CONTRIBUTING.md)

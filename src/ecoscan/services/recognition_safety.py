@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from typing import Any
 
 
@@ -25,7 +26,12 @@ def build_recognition_safety_decision(
     accepted = bool(getattr(result, "accepted", False))
     has_guidance = getattr(result, "guidance", None) is not None
     reliability = getattr(result, "reliability", None)
-    material_rule = getattr(result, "material_rule", None)
+    if not math.isfinite(action_confidence_threshold) or not 0 <= action_confidence_threshold <= 1:
+        raise ValueError("action_confidence_threshold must be finite and between 0 and 1")
+    try:
+        valid_score = probability is not None and not isinstance(probability, bool) and math.isfinite(float(probability)) and 0 <= float(probability) <= 1
+    except (TypeError, ValueError, OverflowError):
+        valid_score = False
 
     if getattr(result, "outside_scope", False):
         return RecognitionSafetyDecision(
@@ -54,7 +60,7 @@ def build_recognition_safety_decision(
             encourage_feedback=False,
         )
 
-    if not accepted or not has_guidance:
+    if not accepted or not has_guidance or not valid_score:
         return RecognitionSafetyDecision(
             status="uncertain",
             tone="warn",
@@ -72,18 +78,18 @@ def build_recognition_safety_decision(
             title="Classe provável, mas precisa de confirmação",
             message=str(getattr(reliability, "message", "") or "A base desta classe ainda precisa de reforço."),
             primary_action="Confira o material antes de descartar e envie correção se estiver errado.",
-            allow_disposal_guidance=True,
+            allow_disposal_guidance=False,
             encourage_feedback=True,
         )
 
-    if probability is not None and probability < action_confidence_threshold and material_rule is None:
+    if float(probability) < action_confidence_threshold:
         return RecognitionSafetyDecision(
             status="needs_confirmation",
             tone="warn",
             title="Resultado provável",
             message="A análise encontrou uma classe provável, mas a confiança ainda não é alta.",
-            primary_action="Confira visualmente e use a correção se a classe estiver errada.",
-            allow_disposal_guidance=True,
+            primary_action="Escolha o material na aba Descarte ou envie a imagem para revisão da secretaria.",
+            allow_disposal_guidance=False,
             encourage_feedback=True,
         )
 
