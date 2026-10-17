@@ -34,6 +34,7 @@ from ecoscan.image_processing.preprocessing import prepare_working_image
 from ecoscan.training.grouped_split import grouped_split, image_groups
 from ecoscan.training.augmentation import AUGMENTATION_VERSION, capture_variants, training_indices
 from ecoscan.training.heads import build_head
+from ecoscan.training.fixed_split import extend_reference_split, source_weights
 
 
 def _digest(data):
@@ -80,7 +81,11 @@ def main(argv=None):
     parser.add_argument("--feature-cache", type=Path, help="Read verified original features from a previous run")
     parser.add_argument("--heads", choices=("logistic", "compare"), default="logistic",
                         help="Compare logistic regression and group-calibrated nonlinear SVM")
+    parser.add_argument("--fixed-split", type=Path, help="Reference manifest: keep old splits; new images train only")
+    parser.add_argument("--balance-source", action="store_true", help="Compare reference-only and source-weighted logistic heads")
     args = parser.parse_args(argv)
+    if args.balance_source and (not args.fixed_split or args.augment):
+        parser.error("Source balancing requires --fixed-split and cannot combine with --augment.")
     config = load_config()
     if config.image_size != (224, 224):
         raise ValueError("This backbone requires the 224x224 preparation contract.")
@@ -120,7 +125,9 @@ def main(argv=None):
     profile_path.write_text(json.dumps(cache_profile, indent=2), encoding="utf-8")
     if args.feature_cache:
         previous = args.feature_cache.resolve()
-        if json.loads((previous / "cache_profile.json").read_text(encoding="utf-8")) != cache_profile:
+        previous_profile = json.loads((previous / "cache_profile.json").read_text(encoding="utf-8"))
+        compared_keys = [key for key in cache_profile if key != "source" or not args.fixed_split]
+        if any(previous_profile.get(key) != cache_profile[key] for key in compared_keys):
             raise ValueError("Feature cache has a different preparation, backbone or source.")
 
     def extract(item):
@@ -173,7 +180,8 @@ def main(argv=None):
                 print(f"Prepared {i + 1}/{len(paths)} images", flush=True)
     groups = image_groups(records)
     labels = [row["class_id"] for row in records]
-    splits = grouped_split(labels, groups, seed=config.random_seed)
+    splits = (extend_reference_split(records, groups, json.loads(args.fixed_split.read_text(encoding="utf-8")))
+              if args.fixed_split else grouped_split(labels, groups, seed=config.random_seed))
     for row, group, split in zip(records, groups, splits, strict=True):
         row.update(group=group, split=split)
     (output / "dataset_manifest.json").write_text(json.dumps(records, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -182,6 +190,16 @@ def main(argv=None):
     validation = np.array(splits) == "validation"
     test = np.array(splits) == "test"
     training_sets = [("original", matrix[train], targets[train], np.asarray(groups)[train])]
+    strategy_weights = {}
+    if args.balance_source:
+        reference_paths = {row["path"] for row in json.loads(args.fixed_split.read_text(encoding="utf-8"))}
+        external = np.array([row["path"] not in reference_paths for row in records])[train]
+        training_sets.append(("reference_only", matrix[train][~external], targets[train][~external],
+                              np.asarray(groups)[train][~external]))
+        for ratio in (0.25, 1.0):
+            name = f"source_balanced_{ratio}"
+            training_sets.append((name, matrix[train], targets[train], np.asarray(groups)[train]))
+            strategy_weights[name] = source_weights(targets[train], external, ratio)
     augmentation_records = []
     if args.augment:
         indices = training_indices(splits)
@@ -220,10 +238,18 @@ def main(argv=None):
     head_types = ("logistic", "svm_calibrated") if args.heads == "compare" else ("logistic",)
     for strategy, train_features, train_labels, train_groups in training_sets:
         for head_type in head_types:
+            if strategy in strategy_weights and head_type != "logistic":
+                continue
             c_values = (0.01, 0.1, 1.0) if head_type == "logistic" else (0.1, 1.0, 10.0)
             for c_value in c_values:
                 head = build_head(head_type, c_value, train_labels, train_groups, config.random_seed)
-                head.fit(train_features, train_labels)
+                if strategy in strategy_weights:
+                    head.set_params(logisticregression__class_weight=None)
+                    weights = strategy_weights[strategy]
+                    head.fit(train_features, train_labels, standardscaler__sample_weight=weights,
+                             logisticregression__sample_weight=weights)
+                else:
+                    head.fit(train_features, train_labels)
                 score = f1_score(targets[validation], head.predict(matrix[validation]), average="macro")
                 candidates.append((float(score), c_value, head, strategy, head_type))
                 print(f"Validated {strategy}/{head_type} C={c_value}: macro-F1={score:.4f}", flush=True)
@@ -255,16 +281,19 @@ def main(argv=None):
     summary = {
         "classes": classes, "source_counts": dict(Counter(labels)),
         "split_counts": {s: dict(Counter(targets[np.array(splits) == s])) for s in ("train", "validation", "test")},
-        "split_policy": "stratified five group folds: three train, one validation, one test (~60/20/20)",
+        "split_policy": "fixed reference; additional images train only" if args.fixed_split else "stratified five group folds: three train, one validation, one test (~60/20/20)",
+        "reference_manifest_sha256": _digest(args.fixed_split.read_bytes()) if args.fixed_split else None,
         "grouping": "decoded exact duplicates, dHash distance <=4, optional object/capture CSV",
         "capture_groups_provided": bool(args.groups), "unique_groups": len(set(groups)),
         "selection": {"C": c_value, "validation_macro_f1": score,
                       "strategy": strategy,
+                      "fit_sample_count": next(len(y) for name, _, y, _ in training_sets if name == strategy),
                       "head_type": head_type,
                       "candidates": [{"C": c, "validation_macro_f1": f, "strategy": s, "head_type": h}
                                      for f, c, _, s, h in candidates]},
         "augmentation": {"enabled": args.augment, "version": AUGMENTATION_VERSION,
                          "generated": len(augmentation_records), "split": "train_only"},
+        "source_balancing": {"compared": args.balance_source, "external_to_reference_ratios": [0.25, 1.0] if args.balance_source else []},
         "validation": validation_report, "test": test_report,
         "processing_options": asdict(options), "processing": contract,
         "backbone": {"source": BACKBONE_URL, "sha256": BACKBONE_SHA256,

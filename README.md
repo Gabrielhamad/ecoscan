@@ -40,6 +40,11 @@ Tambem foram executados SVM com calibracao por grupos e fine-tuning real da
 MobileNetV2. Eles nao superaram o candidato anterior e nao foram ativados.
 Consulte [medidas por material e casos reais](docs/resultado_neural_20261017.md)
 e o [procedimento neural reproduzivel](docs/fine_tuning.md).
+**Imagens publicas:** importadas 2358 fotos TrashNet com proveniencia e licenca,
+preparo adaptativo e teste preservado. As misturas completa e ponderada foram
+treinadas; a referencia venceu a validacao. Consulte
+[importacao reproduzivel](docs/dataset_web.md) e
+[resultados por material](docs/resultado_dataset_web_20261017.md).
 
 **Acesso remoto (16/10/2026):** cadastro, reenvio e recuperacao validam os dados
 antes de consumir o intervalo entre envios. Falhas de autenticacao possuem
