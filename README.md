@@ -49,6 +49,12 @@ treinadas; a referencia venceu a validacao. Consulte
 com razoes e hashes; validacao e teste foram preservados. O candidato curado e
 o experimento de recorte nao demonstraram ganho e nao foram ativados.
 Veja a [auditoria e o roteiro de reconhecimento](docs/auditoria_visual_20261017.md).
+**Ganho medido:** o novo candidato CLIP hibrido, ajustado com 408 exemplos
+revisados, passou de 64,83% para 73,79% de acerto no teste exploratorio e
+acertou as tres fotos conhecidas de PET/latas. Pilhas regrediram e a hospedagem
+ainda precisa de validacao; o modelo publico nao foi substituido.
+Veja [resultados e reproducao](docs/reconhecimento_contrastivo_20261017.md)
+e [anotacoes de objetos](docs/anotacoes_objetos.md).
 
 **Acesso remoto (16/10/2026):** cadastro, reenvio e recuperacao validam os dados
 antes de consumir o intervalo entre envios. Falhas de autenticacao possuem

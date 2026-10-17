@@ -20,11 +20,22 @@ def main():
     parser.add_argument('--candidate', type=Path, required=True)
     parser.add_argument('--cases', type=Path, required=True, help='CSV: path,expected_class')
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--cache-dir', type=Path, default=Path(__file__).resolve().parents[1] / 'tmp/clip-weights')
     args = parser.parse_args()
     if args.output.exists():
         raise ValueError('Choose a new report path.')
     config = load_config()
-    classifier = DeepFeatureClassifier.load(args.candidate, config)
+    model_path = args.candidate / 'candidate.joblib'
+    if (args.candidate / 'contrastive_probe.joblib').exists():
+        import torch
+        import cv2
+        from ecoscan.classification.contrastive import ContrastiveProbeClassifier
+        torch.set_num_threads(4)
+        cv2.setNumThreads(2)
+        model_path = args.candidate / 'contrastive_probe.joblib'
+        classifier = ContrastiveProbeClassifier.load(args.candidate, config, args.cache_dir)
+    else:
+        classifier = DeepFeatureClassifier.load(args.candidate, config)
     with args.cases.open(encoding='utf-8-sig', newline='') as file:
         cases = list(csv.DictReader(file))
     if not cases or any(row.get('expected_class') not in config.classes or not row.get('path') for row in cases):
@@ -42,7 +53,7 @@ def main():
             'processing': processed.metadata,
         })
     report = {
-        'model_sha256': hashlib.sha256((args.candidate / 'candidate.joblib').read_bytes()).hexdigest(),
+        'model_sha256': hashlib.sha256(model_path.read_bytes()).hexdigest(),
         'cases': results, 'count': len(results),
         'correct': sum(row['correct'] for row in results),
         'accepted': sum(row['accepted'] for row in results),
