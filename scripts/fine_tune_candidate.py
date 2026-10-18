@@ -24,7 +24,8 @@ from ecoscan.classification.deep_features import mobilenet_input
 from ecoscan.config import load_config
 from ecoscan.image_processing.contracts import processing_contract
 from scripts.train_deep_candidate import _report
-from ecoscan.training.review import fitting_split_mask
+from ecoscan.training.review import fitting_split_mask, reviewed_exclusions
+from ecoscan.training.readiness import training_readiness
 
 
 def main():
@@ -39,6 +40,9 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--epochs', type=int, default=8)
     parser.add_argument('--cases', type=Path)
+    parser.add_argument('--review-index', type=Path)
+    parser.add_argument('--review-decisions', type=Path)
+    parser.add_argument('--min-training-per-class', type=int, default=20)
     args = parser.parse_args()
     config = load_config()
     source, output = args.source.resolve(), args.output.resolve()
@@ -52,7 +56,17 @@ def main():
         raise ValueError('Reference preparation differs from current preparation.')
     if hashlib.sha256((args.reference_run / 'dataset_manifest.json').read_bytes()).hexdigest() != reference['manifest_sha256']:
         raise ValueError('Reference manifest integrity failed.')
+    if bool(args.review_index) != bool(args.review_decisions):
+        raise ValueError('Provide both review index and review decisions.')
+    if args.review_index:
+        exclusions = reviewed_exclusions(records, args.review_index, args.review_decisions)
+        records = [dict(row, eligible_for_fit=row.get('eligible_for_fit', True) and row['path'] not in exclusions)
+                   if row['split'] == 'train' else row for row in records]
     classes = sorted(config.classes)
+    readiness = training_readiness(records, classes, args.min_training_per_class)
+    print(json.dumps({'training_preflight': readiness}), flush=True)
+    if not readiness['ready']:
+        raise ValueError('Insufficient reviewed training examples: ' + str(readiness['insufficient_classes']))
     assigned = {}
     for row in records:
         path = (source / row['path']).resolve()

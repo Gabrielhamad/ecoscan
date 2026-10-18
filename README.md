@@ -2,6 +2,10 @@
 
 **Da imagem à orientação de descarte, com educação ambiental e revisão humana.**
 
+**Preparação e convolução:** ensaio controlado em 23 fotos, pares antes/depois,
+kernel gaussiano verificável e bloqueio de treino com classes sem exemplos
+suficientes. Consulte [métodos, resultados e próximo ciclo CNN](docs/preparo_e_convolucao.md).
+
 **Dataset revisado por objeto:** aplicadas 98 exclusões acumuladas de treino e
 exportadas 23 novas imagens TACO revisadas. Corrigida a orientação EXIF antes
 dos recortes e bloqueadas cenas repetidas da referência. Veja

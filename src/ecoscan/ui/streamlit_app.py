@@ -3124,6 +3124,14 @@ def _render_filter_decision(st: Any, pipeline: Any) -> None:
     candidates = decision.get("candidates") or []
     if candidates:
         st.dataframe(candidates, width="stretch", hide_index=True)
+    parameters = pipeline.filter_result.parameters
+    steps = parameters.get("steps") or [{"parameters": parameters}]
+    for step in steps:
+        kernel = step.get("parameters", {}).get("kernel_2d")
+        if kernel is not None:
+            with st.expander("Convolução gaussiana aplicada"):
+                st.dataframe(kernel, width="stretch", hide_index=True)
+                st.caption("Pesos aplicados à vizinhança de cada pixel, separadamente nos canais RGB. A soma dos pesos é 1.")
     skipped = decision.get("skipped") or []
     if skipped:
         st.caption("Sequências ignoradas por indisponibilidade técnica:")

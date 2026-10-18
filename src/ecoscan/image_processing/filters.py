@@ -63,10 +63,15 @@ def apply_gaussian(image: np.ndarray, *, kernel_size: int = 5, sigma: float = 1.
     else:
         filtered = np.asarray(array_to_pil(image).filter(ImageFilter.GaussianBlur(radius=float(sigma))))
         dependency = "pillow fallback"
+    parameters = {"kernel_size": kernel, "sigma": float(sigma)}
+    if cv2 is not None:
+        weights = cv2.getGaussianKernel(kernel, float(sigma))
+        parameters.update({"kernel_2d": (weights @ weights.T).tolist(),
+                           "boundary": "reflect_101", "operation": "separable_gaussian_convolution"})
     return FilterResult(
         name="gaussian",
         image=ensure_uint8(filtered),
-        parameters={"kernel_size": kernel, "sigma": float(sigma)},
+        parameters=parameters,
         explanation="Suaviza ruído de alta frequência antes de segmentação por intensidade ou contornos.",
         dependency=dependency,
     )
