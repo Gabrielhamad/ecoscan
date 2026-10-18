@@ -1,0 +1,72 @@
+{
+  "approved_exported": 23,
+  "by_object": {
+    "pet_bottle": 9,
+    "paper_sheet": 6,
+    "cardboard_box": 1,
+    "drink_can": 7
+  },
+  "not_exported": [
+    {
+      "id": "taco_002",
+      "reason": "Large opaque container; intended contents and packaging type not established for narrow scope."
+    },
+    {
+      "id": "taco_003",
+      "reason": "Large contaminated jerrycan; not a clearly supported household packaging example."
+    },
+    {
+      "id": "taco_004",
+      "reason": "Large contaminated jerrycan; not a clearly supported household packaging example."
+    },
+    {
+      "id": "taco_017",
+      "reason": "Receipt; not an approved paper-sheet/newspaper subtype in initial scope."
+    },
+    {
+      "id": "taco_019",
+      "reason": "Only a narrow cardboard edge is visible; insufficient target context."
+    },
+    {
+      "id": "taco_020",
+      "reason": "Receipt; paper subtype and disposal cannot be established by broad paper label."
+    },
+    {
+      "id": "taco_021",
+      "reason": "Printed paper fragment; subtype ambiguous on review."
+    },
+    {
+      "id": "taco_024",
+      "reason": "Crumpled blue material; paper-sheet identity ambiguous on review."
+    },
+    {
+      "id": "taco_031",
+      "reason": "Multiple overlapping cans; not a clear single primary object."
+    },
+    {
+      "id": "taco_032",
+      "reason": "Multiple overlapping cans; not a clear single primary object."
+    },
+    {
+      "id": "taco_034",
+      "reason": "Detached unidentifiable metal fragment, outside initial object scope."
+    },
+    {
+      "id": "taco_035",
+      "reason": "Detached unidentifiable metal fragment, outside initial object scope."
+    },
+    {
+      "id": "taco_036",
+      "reason": "Severely damaged container fragment; food-can identity ambiguous visually."
+    }
+  ],
+  "reference_sha256": "9e1dd84f425bdf937fe8d5f25494034fa623dfe67aabeec9231f110edf606ac5",
+  "decisions_sha256": "37195600e42b1cde29be24fa1f34611bf58282386394a7176de0d44e2825ee05",
+  "test_changed": false,
+  "limitations": [
+    "Crops, not full camera frames.",
+    "Scene groups do not establish physical-object identity.",
+    "Perceptual deduplication is heuristic; not a guarantee against leakage.",
+    "Assistant visual review, not expert material certification."
+  ]
+}

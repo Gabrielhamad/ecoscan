@@ -1,0 +1,866 @@
+[
+  {
+    "class_id": "plastic",
+    "local_path": "data/raw/taco_new_scenes/plastic/plastic_0001_taco_227_751_clear-plastic-bottle.jpg",
+    "taco_image_id": 227,
+    "taco_annotation_id": 751,
+    "taco_category": "Clear plastic bottle",
+    "source_file_name": "batch_11/000026.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/1048/NGJChI8EE2bifY13rXYHC8OVoIZ6PpdVpZvNRYBq.jpeg",
+    "bbox_original": [
+      2459.0,
+      1427.9662,
+      997.0,
+      1056.5882
+    ],
+    "crop_box": [
+      2339,
+      1301,
+      3576,
+      2611
+    ],
+    "width": 1237,
+    "height": 1310,
+    "sha256": "da34b2fd93320d571c82a877f008a20ee3ad907a525256507ed26c11ba6d28a2"
+  },
+  {
+    "class_id": "plastic",
+    "local_path": "data/raw/taco_new_scenes/plastic/plastic_0002_taco_229_765_other-plastic-bottle.jpg",
+    "taco_image_id": 229,
+    "taco_annotation_id": 765,
+    "taco_category": "Other plastic bottle",
+    "source_file_name": "batch_11/000028.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/06/16/vXcPh4gtkCHObNszSnsFlyf1gqpHnnIk1yhRxtA3.jpeg",
+    "bbox_original": [
+      1642.0,
+      2530.0,
+      538.0,
+      641.0
+    ],
+    "crop_box": [
+      2804,
+      1380,
+      3990,
+      1827
+    ],
+    "width": 1186,
+    "height": 447,
+    "sha256": "be9180da293a6fac01d35b9553c77b3e60445d3c406756842a1354fcadd66db4"
+  },
+  {
+    "class_id": "plastic",
+    "local_path": "data/raw/taco_new_scenes/plastic/plastic_0003_taco_235_772_other-plastic-bottle.jpg",
+    "taco_image_id": 235,
+    "taco_annotation_id": 772,
+    "taco_category": "Other plastic bottle",
+    "source_file_name": "batch_11/000034.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/1043/GT9QQVorw1u1OkGEPJcZmM4ti3kp4hVYP8FMRB7e.jpeg",
+    "bbox_original": [
+      58.0,
+      371.0,
+      2304.0,
+      2511.0
+    ],
+    "crop_box": [
+      0,
+      52,
+      3264,
+      2387
+    ],
+    "width": 3264,
+    "height": 2335,
+    "sha256": "9a2e797d613519ad7d5b617ae7d65b51dd5547ebf64db99f71e16fffcb36be3e"
+  },
+  {
+    "class_id": "plastic",
+    "local_path": "data/raw/taco_new_scenes/plastic/plastic_0004_taco_237_774_other-plastic-bottle.jpg",
+    "taco_image_id": 237,
+    "taco_annotation_id": 774,
+    "taco_category": "Other plastic bottle",
+    "source_file_name": "batch_11/000036.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/1043/LrnhyQKzpgHndB5I5XVTWh1t20cmsDkjhOShFWfQ.jpeg",
+    "bbox_original": [
+      61.0,
+      503.0,
+      2214.0,
+      2390.0
+    ],
+    "crop_box": [
+      0,
+      162,
+      3264,
+      2385
+    ],
+    "width": 3264,
+    "height": 2223,
+    "sha256": "c4ff4246f194dd62b37e35d03c23e736131980dbacfe6efb3a21c0e190909959"
+  },
+  {
+    "class_id": "plastic",
+    "local_path": "data/raw/taco_new_scenes/plastic/plastic_0005_taco_271_830_clear-plastic-bottle.jpg",
+    "taco_image_id": 271,
+    "taco_annotation_id": 830,
+    "taco_category": "Clear plastic bottle",
+    "source_file_name": "batch_11/000070.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/04/18/qsVObW14EAkHdteGVorNIWcgUJT13lhYnYYLBZVC.jpeg",
+    "bbox_original": [
+      967.0,
+      1882.0,
+      1149.0,
+      353.0
+    ],
+    "crop_box": [
+      829,
+      1840,
+      2254,
+      2277
+    ],
+    "width": 1425,
+    "height": 437,
+    "sha256": "8446659191c7d2afb4bf130d0fc0c4fe4cfdfa2cf603d6129c4b4d443f24b391"
+  },
+  {
+    "class_id": "plastic",
+    "local_path": "data/raw/taco_new_scenes/plastic/plastic_0006_taco_276_852_clear-plastic-bottle.jpg",
+    "taco_image_id": 276,
+    "taco_annotation_id": 852,
+    "taco_category": "Clear plastic bottle",
+    "source_file_name": "batch_11/000075.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/04/18/XC4teyYg9zr5jq505ivm8Z9JmIZp5zLoYOe9ePtW.jpeg",
+    "bbox_original": [
+      1401.0,
+      1686.0,
+      582.0,
+      503.0
+    ],
+    "crop_box": [
+      1331,
+      1626,
+      2053,
+      2249
+    ],
+    "width": 722,
+    "height": 623,
+    "sha256": "5b4adadc2190da4ce4f6a221d1b8bc894cd6e0f75090cbd125013e30bb2e2193"
+  },
+  {
+    "class_id": "plastic",
+    "local_path": "data/raw/taco_new_scenes/plastic/plastic_0007_taco_291_885_clear-plastic-bottle.jpg",
+    "taco_image_id": 291,
+    "taco_annotation_id": 885,
+    "taco_category": "Clear plastic bottle",
+    "source_file_name": "batch_11/000090.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/04/23/B9tCqeVD5IoBNUgQeZttm8GtVOUae5ve6SUlCMjw.jpeg",
+    "bbox_original": [
+      1249.5,
+      923.1,
+      1443.3000000000002,
+      657.9
+    ],
+    "crop_box": [
+      1076,
+      844,
+      2866,
+      1660
+    ],
+    "width": 1790,
+    "height": 816,
+    "sha256": "71ef5cddb843cfc70adb9b46a5e21e5ea09b01ac25d91c07f5b2f7681157e6b1"
+  },
+  {
+    "class_id": "plastic",
+    "local_path": "data/raw/taco_new_scenes/plastic/plastic_0008_taco_296_893_clear-plastic-bottle.jpg",
+    "taco_image_id": 296,
+    "taco_annotation_id": 893,
+    "taco_category": "Clear plastic bottle",
+    "source_file_name": "batch_11/000095.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/03/31/BJDDNwumFrPp7fI43zddmdEzSHlM7rNafD00Wx2Z.jpeg",
+    "bbox_original": [
+      1660.0,
+      2342.0,
+      368.0,
+      971.0
+    ],
+    "crop_box": [
+      2873,
+      1252,
+      3684,
+      1929
+    ],
+    "width": 811,
+    "height": 677,
+    "sha256": "915471774afbcb9d9c3bae21d20d2f2dfc33d873070cdd63d521f73313bd849d"
+  },
+  {
+    "class_id": "plastic",
+    "local_path": "data/raw/taco_new_scenes/plastic/plastic_0009_taco_300_919_clear-plastic-bottle.jpg",
+    "taco_image_id": 300,
+    "taco_annotation_id": 919,
+    "taco_category": "Clear plastic bottle",
+    "source_file_name": "batch_11/000099.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/04/01/y5A3l6LUzhWEkRac2NfxIYAlhFnA8HSzDl8nyqsZ.jpeg",
+    "bbox_original": [
+      1483.0,
+      2475.0,
+      384.0,
+      434.0
+    ],
+    "crop_box": [
+      2555,
+      1363,
+      3401,
+      1666
+    ],
+    "width": 846,
+    "height": 303,
+    "sha256": "01bccc16eecb6924a7e0f2ae3e07fcef8c08d266df63a4fc3be0b189e0c25012"
+  },
+  {
+    "class_id": "plastic",
+    "local_path": "data/raw/taco_new_scenes/plastic/plastic_0010_taco_301_921_clear-plastic-bottle.jpg",
+    "taco_image_id": 301,
+    "taco_annotation_id": 921,
+    "taco_category": "Clear plastic bottle",
+    "source_file_name": "batch_12/000000.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/04/01/19xW2ANwxreden1kJRAKfMylXXwt92qz5w0yfGHJ.jpeg",
+    "bbox_original": [
+      1321.1904,
+      2930.5715,
+      280.0,
+      209.0
+    ],
+    "crop_box": [
+      2289,
+      1634,
+      2906,
+      1780
+    ],
+    "width": 617,
+    "height": 146,
+    "sha256": "705948bb6f2b86192294796fd3ccd004f3ad3738d614412b46e040df06e569d7"
+  },
+  {
+    "class_id": "plastic",
+    "local_path": "data/raw/taco_new_scenes/plastic/plastic_0011_taco_313_947_clear-plastic-bottle.jpg",
+    "taco_image_id": 313,
+    "taco_annotation_id": 947,
+    "taco_category": "Clear plastic bottle",
+    "source_file_name": "batch_12/000012.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2018/08/08/vQjykKRIF1U4SCZJsQVCDS1DqNHIUTFCfO5yXADu.jpeg",
+    "bbox_original": [
+      682.0,
+      1178.0,
+      1278.0,
+      2083.0
+    ],
+    "crop_box": [
+      940,
+      522,
+      3757,
+      1975
+    ],
+    "width": 2817,
+    "height": 1453,
+    "sha256": "5df8558273c4a91bb199c76ccbf685bf54c803c7dd0a441fe3eb446ef5bb4bf5"
+  },
+  {
+    "class_id": "plastic",
+    "local_path": "data/raw/taco_new_scenes/plastic/plastic_0012_taco_314_948_clear-plastic-bottle.jpg",
+    "taco_image_id": 314,
+    "taco_annotation_id": 948,
+    "taco_category": "Clear plastic bottle",
+    "source_file_name": "batch_12/000013.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2018/08/09/pmq4LPMp24sIDgDtHsT35ZBakjZSh7azbhePhuO6.jpeg",
+    "bbox_original": [
+      334.0,
+      739.0,
+      1741.0,
+      1576.0
+    ],
+    "crop_box": [
+      125,
+      550,
+      2284,
+      2504
+    ],
+    "width": 2159,
+    "height": 1954,
+    "sha256": "4a4539970ff85ac73cc977a4707fc5979e923ede313a361099916786fef0aeb8"
+  },
+  {
+    "class_id": "paper_cardboard",
+    "local_path": "data/raw/taco_new_scenes/paper_cardboard/paper_cardboard_0001_taco_330_1068_normal-paper.jpg",
+    "taco_image_id": 330,
+    "taco_annotation_id": 1068,
+    "taco_category": "Normal paper",
+    "source_file_name": "batch_12/000029.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/03/31/OLA65kyUBC5xdP4ziWzeJVztuBXUtEdEYMRa7aFe.jpeg",
+    "bbox_original": [
+      2301.0,
+      1771.0,
+      144.0,
+      165.0
+    ],
+    "crop_box": [
+      4060,
+      985,
+      4377,
+      1100
+    ],
+    "width": 317,
+    "height": 115,
+    "sha256": "585882a545f720a88a8fde7d05010e5ff33c9d33ed1d0d36b0cf76bae4133d42"
+  },
+  {
+    "class_id": "paper_cardboard",
+    "local_path": "data/raw/taco_new_scenes/paper_cardboard/paper_cardboard_0002_taco_330_1069_normal-paper.jpg",
+    "taco_image_id": 330,
+    "taco_annotation_id": 1069,
+    "taco_category": "Normal paper",
+    "source_file_name": "batch_12/000029.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/03/31/OLA65kyUBC5xdP4ziWzeJVztuBXUtEdEYMRa7aFe.jpeg",
+    "bbox_original": [
+      1910.0,
+      1933.0,
+      481.0,
+      243.0
+    ],
+    "crop_box": [
+      3293,
+      1071,
+      4353,
+      1240
+    ],
+    "width": 1060,
+    "height": 169,
+    "sha256": "46bfa5a30f478a9c67a6427e1977f0c30a3b5dd65e62b7628b756eb8147d26ad"
+  },
+  {
+    "class_id": "paper_cardboard",
+    "local_path": "data/raw/taco_new_scenes/paper_cardboard/paper_cardboard_0003_taco_330_1070_normal-paper.jpg",
+    "taco_image_id": 330,
+    "taco_annotation_id": 1070,
+    "taco_category": "Normal paper",
+    "source_file_name": "batch_12/000029.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/03/31/OLA65kyUBC5xdP4ziWzeJVztuBXUtEdEYMRa7aFe.jpeg",
+    "bbox_original": [
+      1606.0,
+      1945.0,
+      170.0,
+      208.0
+    ],
+    "crop_box": [
+      2819,
+      1080,
+      3194,
+      1225
+    ],
+    "width": 375,
+    "height": 145,
+    "sha256": "5f651f531299a22bae45b3e3f1525cfb438f53bd686a808a1dd112c30f796ad6"
+  },
+  {
+    "class_id": "paper_cardboard",
+    "local_path": "data/raw/taco_new_scenes/paper_cardboard/paper_cardboard_0004_taco_330_1071_normal-paper.jpg",
+    "taco_image_id": 330,
+    "taco_annotation_id": 1071,
+    "taco_category": "Normal paper",
+    "source_file_name": "batch_12/000029.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/03/31/OLA65kyUBC5xdP4ziWzeJVztuBXUtEdEYMRa7aFe.jpeg",
+    "bbox_original": [
+      2826.0,
+      2733.0,
+      161.0,
+      151.0
+    ],
+    "crop_box": [
+      4990,
+      1527,
+      5312,
+      1632
+    ],
+    "width": 322,
+    "height": 105,
+    "sha256": "055310c5dbcacc0eaee8a813e31904148093734efbcdbe533e582c4f96bedd63"
+  },
+  {
+    "class_id": "paper_cardboard",
+    "local_path": "data/raw/taco_new_scenes/paper_cardboard/paper_cardboard_0005_taco_340_1120_normal-paper.jpg",
+    "taco_image_id": 340,
+    "taco_annotation_id": 1120,
+    "taco_category": "Normal paper",
+    "source_file_name": "batch_12/000039.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2018/08/22/ZgeMqmZ6TI7wf788sxy9EQkKQz7Ae8kCLRJB4epB.jpeg",
+    "bbox_original": [
+      669.0,
+      18.0,
+      619.0,
+      457.0
+    ],
+    "crop_box": [
+      1057,
+      0,
+      2422,
+      298
+    ],
+    "width": 1365,
+    "height": 298,
+    "sha256": "e23c1ad33268c7178042d002b0004e67b190f83cf801b0c3819eca7bb7ca4375"
+  },
+  {
+    "class_id": "paper_cardboard",
+    "local_path": "data/raw/taco_new_scenes/paper_cardboard/paper_cardboard_0006_taco_348_1146_corrugated-carton.jpg",
+    "taco_image_id": 348,
+    "taco_annotation_id": 1146,
+    "taco_category": "Corrugated carton",
+    "source_file_name": "batch_12/000047.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2018/08/02/N5QwyGwuN1zGlA6CJlE7HMg38BCCinMO3LwO85Ws.jpeg",
+    "bbox_original": [
+      590.0,
+      1051.0,
+      388.0,
+      124.0
+    ],
+    "crop_box": [
+      543,
+      1036,
+      1025,
+      1190
+    ],
+    "width": 482,
+    "height": 154,
+    "sha256": "5e53a420e5686980e77b072de2bff9fd9ddc52ac187ef0de9f1d1fcb8612a182"
+  },
+  {
+    "class_id": "paper_cardboard",
+    "local_path": "data/raw/taco_new_scenes/paper_cardboard/paper_cardboard_0007_taco_348_1147_corrugated-carton.jpg",
+    "taco_image_id": 348,
+    "taco_annotation_id": 1147,
+    "taco_category": "Corrugated carton",
+    "source_file_name": "batch_12/000047.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2018/08/02/N5QwyGwuN1zGlA6CJlE7HMg38BCCinMO3LwO85Ws.jpeg",
+    "bbox_original": [
+      943.0,
+      923.0,
+      180.0,
+      959.0
+    ],
+    "crop_box": [
+      921,
+      808,
+      1145,
+      1997
+    ],
+    "width": 224,
+    "height": 1189,
+    "sha256": "15caa16c2eff298d00aa998a40139390cb75f321fe3549043087c3aa51e50f9e"
+  },
+  {
+    "class_id": "paper_cardboard",
+    "local_path": "data/raw/taco_new_scenes/paper_cardboard/paper_cardboard_0008_taco_359_1211_normal-paper.jpg",
+    "taco_image_id": 359,
+    "taco_annotation_id": 1211,
+    "taco_category": "Normal paper",
+    "source_file_name": "batch_12/000058.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/08/02/n1xzQjbu578VmNvkv6zyAV21uxKmI3vmlC6wZv9d.jpeg",
+    "bbox_original": [
+      2449.0,
+      1724.0,
+      182.0,
+      226.0
+    ],
+    "crop_box": [
+      3236,
+      1273,
+      3537,
+      1483
+    ],
+    "width": 301,
+    "height": 210,
+    "sha256": "ee274d0000d88056c5a8f75f5c0fa8fff1d209062053c3b1879bae030beadf21"
+  },
+  {
+    "class_id": "paper_cardboard",
+    "local_path": "data/raw/taco_new_scenes/paper_cardboard/paper_cardboard_0009_taco_363_1263_normal-paper.jpg",
+    "taco_image_id": 363,
+    "taco_annotation_id": 1263,
+    "taco_category": "Normal paper",
+    "source_file_name": "batch_12/000062.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/676/zCsy39yWXxtL05ZYqPYICpc0ZTYjSHON7WyqwYVc.jpeg",
+    "bbox_original": [
+      455.0,
+      1479.0,
+      375.0,
+      334.0
+    ],
+    "crop_box": [
+      410,
+      1439,
+      875,
+      1853
+    ],
+    "width": 465,
+    "height": 414,
+    "sha256": "852cf4f1a31a65b0a3dc65c4e52f8167b2c626a300c53fea19945a606bf941fe"
+  },
+  {
+    "class_id": "paper_cardboard",
+    "local_path": "data/raw/taco_new_scenes/paper_cardboard/paper_cardboard_0010_taco_381_1332_normal-paper.jpg",
+    "taco_image_id": 381,
+    "taco_annotation_id": 1332,
+    "taco_category": "Normal paper",
+    "source_file_name": "batch_12/000080.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/07/13/PL5IyeUwj7Lb58A19cO8geQkmmrCM1Or686PzgHE.jpeg",
+    "bbox_original": [
+      1582.75,
+      1241.5,
+      1982.5,
+      1085.5
+    ],
+    "crop_box": [
+      1345,
+      1111,
+      3803,
+      2457
+    ],
+    "width": 2458,
+    "height": 1346,
+    "sha256": "dd68a9c837408887994719dd4ee40bf227bae3549ffda469a0b1094b0f41a20e"
+  },
+  {
+    "class_id": "paper_cardboard",
+    "local_path": "data/raw/taco_new_scenes/paper_cardboard/paper_cardboard_0011_taco_399_1424_normal-paper.jpg",
+    "taco_image_id": 399,
+    "taco_annotation_id": 1424,
+    "taco_category": "Normal paper",
+    "source_file_name": "batch_12/000098.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/03/29/D9Y4QPI6NghHxY25QeUk04RUcBFBRlUBOpelgkvT.jpeg",
+    "bbox_original": [
+      1131.0,
+      1170.0,
+      2554.5,
+      1410.5
+    ],
+    "crop_box": [
+      824,
+      1001,
+      3992,
+      2750
+    ],
+    "width": 3168,
+    "height": 1749,
+    "sha256": "b128eff8b89e25177b052f9ef41d93a861f1693cfc40bc138824a94b0a1d0fd9"
+  },
+  {
+    "class_id": "paper_cardboard",
+    "local_path": "data/raw/taco_new_scenes/paper_cardboard/paper_cardboard_0012_taco_457_1621_normal-paper.jpg",
+    "taco_image_id": 457,
+    "taco_annotation_id": 1621,
+    "taco_category": "Normal paper",
+    "source_file_name": "batch_13/000056.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2019/04/18/iBlEBLgbyfboKcHJgujP2K054lsGXDMDdaPA3ns8.jpeg",
+    "bbox_original": [
+      799.0,
+      -1.0,
+      492.0,
+      484.0
+    ],
+    "crop_box": [
+      740,
+      0,
+      1350,
+      541
+    ],
+    "width": 610,
+    "height": 541,
+    "sha256": "d489b9b67f0715e2e73dd162ab9373e65676fbba154fc0065a9087d5c546f0fe"
+  },
+  {
+    "class_id": "metal",
+    "local_path": "data/raw/taco_new_scenes/metal/metal_0001_taco_483_1662_drink-can.jpg",
+    "taco_image_id": 483,
+    "taco_annotation_id": 1662,
+    "taco_category": "Drink can",
+    "source_file_name": "batch_13/000082.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2018/09/20/cHh1GNgWOouPPlPkGnA6WKqGruLShzjl9jnQYqRx.jpeg",
+    "bbox_original": [
+      893.0,
+      831.0,
+      1190.0,
+      2525.0
+    ],
+    "crop_box": [
+      750,
+      528,
+      2226,
+      3659
+    ],
+    "width": 1476,
+    "height": 3131,
+    "sha256": "c89a42913b7d4999947a2cbd24a1aa6c7b9f93f4aa83ebd41af05006c2173a12"
+  },
+  {
+    "class_id": "metal",
+    "local_path": "data/raw/taco_new_scenes/metal/metal_0002_taco_489_1681_drink-can.jpg",
+    "taco_image_id": 489,
+    "taco_annotation_id": 1681,
+    "taco_category": "Drink can",
+    "source_file_name": "batch_13/000088.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2018/09/04/OQbTQ4L7ov6EgcOMOruR7kdodyjV9IN96EVSPzuH.jpeg",
+    "bbox_original": [
+      807.0,
+      512.0,
+      2247.0,
+      1260.0
+    ],
+    "crop_box": [
+      537,
+      361,
+      3324,
+      1923
+    ],
+    "width": 2787,
+    "height": 1562,
+    "sha256": "872403f1ba6cc5b9e825a85de212d9f5f6698a320b5b88781dc35fa1dc3a5986"
+  },
+  {
+    "class_id": "metal",
+    "local_path": "data/raw/taco_new_scenes/metal/metal_0003_taco_495_1690_drink-can.jpg",
+    "taco_image_id": 495,
+    "taco_annotation_id": 1690,
+    "taco_category": "Drink can",
+    "source_file_name": "batch_13/000094.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2018/10/20/UWaxrCrKikB1Xzt86AwAKcCJ0bFLV7OiffX9fSQm.jpeg",
+    "bbox_original": [
+      727.0,
+      821.0,
+      3082.0,
+      1437.0
+    ],
+    "crop_box": [
+      357,
+      649,
+      4160,
+      2430
+    ],
+    "width": 3803,
+    "height": 1781,
+    "sha256": "83c78dbb978ddcefa8e0554f0a3edb3785274076626435a0d22aaa50c96e173d"
+  },
+  {
+    "class_id": "metal",
+    "local_path": "data/raw/taco_new_scenes/metal/metal_0004_taco_522_1730_drink-can.jpg",
+    "taco_image_id": 522,
+    "taco_annotation_id": 1730,
+    "taco_category": "Drink can",
+    "source_file_name": "batch_14/000021.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2018/06/30/e09VRWhlesBfA75E5wFCg2pLBaQTfPveoKzAKkO3.jpeg",
+    "bbox_original": [
+      1175.0,
+      1930.0,
+      350.0,
+      242.0
+    ],
+    "crop_box": [
+      1511,
+      1426,
+      2089,
+      1651
+    ],
+    "width": 578,
+    "height": 225,
+    "sha256": "fe8d56e8342bf5823768691e05d0cd3986b71e95d5feb7a66ce5597a681d9dbe"
+  },
+  {
+    "class_id": "metal",
+    "local_path": "data/raw/taco_new_scenes/metal/metal_0005_taco_525_1741_drink-can.jpg",
+    "taco_image_id": 525,
+    "taco_annotation_id": 1741,
+    "taco_category": "Drink can",
+    "source_file_name": "batch_14/000024.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/2018/12/02/lfkSqW2Rty5f3ClVo0gpzW3ktQdUeGhftSPjcA6a.jpeg",
+    "bbox_original": [
+      1221.0,
+      2156.0,
+      806.0,
+      1030.0
+    ],
+    "crop_box": [
+      1124,
+      2032,
+      2124,
+      3310
+    ],
+    "width": 1000,
+    "height": 1278,
+    "sha256": "693152cc924fc49e045b59a24a09c9870c1c21fba4123190048a2a385b93c97b"
+  },
+  {
+    "class_id": "metal",
+    "local_path": "data/raw/taco_new_scenes/metal/metal_0006_taco_537_1755_drink-can.jpg",
+    "taco_image_id": 537,
+    "taco_annotation_id": 1755,
+    "taco_category": "Drink can",
+    "source_file_name": "batch_14/000036.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/700/HVABDNzfuiYXJWKiZuNaAHbOVruTlSIZkgE4NypW.jpeg",
+    "bbox_original": [
+      815.0,
+      1508.0,
+      848.0,
+      675.0
+    ],
+    "crop_box": [
+      951,
+      1070,
+      2353,
+      1698
+    ],
+    "width": 1402,
+    "height": 628,
+    "sha256": "6e93047af0a54f8fe14c56a8a8aa6fa19228a63b8708a849de936dc34ff7601a"
+  },
+  {
+    "class_id": "metal",
+    "local_path": "data/raw/taco_new_scenes/metal/metal_0007_taco_548_1773_drink-can.jpg",
+    "taco_image_id": 548,
+    "taco_annotation_id": 1773,
+    "taco_category": "Drink can",
+    "source_file_name": "batch_14/000047.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/700/k45jnW0YOJHY4sLyGsR7uXcSM2DDeYdY8iKkYNIb.jpeg",
+    "bbox_original": [
+      1596.7557000000002,
+      1917.7272,
+      496.00004,
+      805.9997999999998
+    ],
+    "crop_box": [
+      2050,
+      1366,
+      2870,
+      2115
+    ],
+    "width": 820,
+    "height": 749,
+    "sha256": "327e17b3a45cf5c6bc439302d6ffcac208c561c8411be4313903550aa38e69cc"
+  },
+  {
+    "class_id": "metal",
+    "local_path": "data/raw/taco_new_scenes/metal/metal_0008_taco_548_1775_drink-can.jpg",
+    "taco_image_id": 548,
+    "taco_annotation_id": 1775,
+    "taco_category": "Drink can",
+    "source_file_name": "batch_14/000047.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/700/k45jnW0YOJHY4sLyGsR7uXcSM2DDeYdY8iKkYNIb.jpeg",
+    "bbox_original": [
+      1232.2671,
+      2069.733,
+      495.3635999999999,
+      546.0
+    ],
+    "crop_box": [
+      1564,
+      1503,
+      2383,
+      2011
+    ],
+    "width": 819,
+    "height": 508,
+    "sha256": "97b57ea3e6a33495912c92168597fae983e610ab9618eb484f5ea87ef9b927c8"
+  },
+  {
+    "class_id": "metal",
+    "local_path": "data/raw/taco_new_scenes/metal/metal_0009_taco_570_1803_drink-can.jpg",
+    "taco_image_id": 570,
+    "taco_annotation_id": 1803,
+    "taco_category": "Drink can",
+    "source_file_name": "batch_14/000069.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/700/GlZPJi0OK5hFWLsKGmsCU9T9eRp6FvvBl960Zgxy.jpeg",
+    "bbox_original": [
+      25.0,
+      1561.0,
+      2315.0,
+      1374.0
+    ],
+    "crop_box": [
+      0,
+      1047,
+      3490,
+      2325
+    ],
+    "width": 3490,
+    "height": 1278,
+    "sha256": "454ef89803e1c03249fa27f612dea6a3f1a7c4e0b8aef64a1b6fd7ba39eb22f5"
+  },
+  {
+    "class_id": "metal",
+    "local_path": "data/raw/taco_new_scenes/metal/metal_0010_taco_580_1817_drink-can.jpg",
+    "taco_image_id": 580,
+    "taco_annotation_id": 1817,
+    "taco_category": "Drink can",
+    "source_file_name": "batch_14/000079.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/764/2vvwiCyQbPf9mw08Zso64cprLCQQDvv01k7LHYt0.jpeg",
+    "bbox_original": [
+      1848.0,
+      2531.0,
+      486.0,
+      582.0
+    ],
+    "crop_box": [
+      2386,
+      1846,
+      3190,
+      2387
+    ],
+    "width": 804,
+    "height": 541,
+    "sha256": "95a0b556bc2856b7d559be030d3626e77adbf79f7e8d3282d7f0651bae9a677a"
+  },
+  {
+    "class_id": "metal",
+    "local_path": "data/raw/taco_new_scenes/metal/metal_0011_taco_580_1818_drink-can.jpg",
+    "taco_image_id": 580,
+    "taco_annotation_id": 1818,
+    "taco_category": "Drink can",
+    "source_file_name": "batch_14/000079.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/764/2vvwiCyQbPf9mw08Zso64cprLCQQDvv01k7LHYt0.jpeg",
+    "bbox_original": [
+      1074.0,
+      1449.0,
+      569.0,
+      708.0
+    ],
+    "crop_box": [
+      1341,
+      1023,
+      2282,
+      1681
+    ],
+    "width": 941,
+    "height": 658,
+    "sha256": "89248476d70ea208ae9105d3680166d46578b01bea29bf0c333bdbfa9ac9a9d9"
+  },
+  {
+    "class_id": "metal",
+    "local_path": "data/raw/taco_new_scenes/metal/metal_0012_taco_595_1847_food-can.jpg",
+    "taco_image_id": 595,
+    "taco_annotation_id": 1847,
+    "taco_category": "Food Can",
+    "source_file_name": "batch_14/000094.jpg",
+    "source_url": "https://olm-s3.s3.eu-west-1.amazonaws.com/764/yAJH9fshvmsjXl2qQrODzN80WF7E0jApGwHSwsQH.jpeg",
+    "bbox_original": [
+      1200.0,
+      2518.0,
+      167.0,
+      208.0
+    ],
+    "crop_box": [
+      1573,
+      1870,
+      1849,
+      2063
+    ],
+    "width": 276,
+    "height": 193,
+    "sha256": "982e89e46e6de9727401fb2635aaf0262beafe18b2256293d7c400e37e815f86"
+  }
+]

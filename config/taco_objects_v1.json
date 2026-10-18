@@ -1,0 +1,18 @@
+{
+  "provider": "TACO",
+  "provider_url": "https://tacodataset.org/",
+  "repository_url": "https://github.com/pedropro/TACO",
+  "annotations_url": "https://raw.githubusercontent.com/pedropro/TACO/master/data/annotations.json",
+  "license": "CC BY 4.0",
+  "license_url": "https://creativecommons.org/licenses/by/4.0/",
+  "citation": "Proenca, Pedro F.; Simoes, Pedro. TACO: Trash Annotations in Context for Litter Detection. 2020.",
+  "scope_version": "objects-v1",
+  "classes": {
+    "metal": ["Drink can", "Food Can"],
+    "plastic": ["Clear plastic bottle", "Other plastic bottle", "Spread tub", "Tupperware"],
+    "glass": ["Glass bottle", "Glass jar"],
+    "paper_cardboard": ["Corrugated carton", "Normal paper", "Magazine paper"]
+  },
+  "review_required": true,
+  "note": "Publisher categories are proposals. Confirm beverage PET, rigid containers and paper type visually; reject ambiguous material or contents. No automatic AA/AAA or electronic mapping."
+}

@@ -15,7 +15,7 @@ from io import BytesIO
 from pathlib import Path
 from typing import Any
 
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, ImageOps, UnidentifiedImageError
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -165,7 +165,7 @@ def _download_image(url: str) -> Image.Image:
         data = response.read()
     image = Image.open(BytesIO(data))
     image.load()
-    return image.convert("RGB")
+    return ImageOps.exif_transpose(image).convert("RGB")
 
 
 def _scaled_crop_box(
@@ -287,7 +287,7 @@ def write_manifest(
             "",
             "## Próxima etapa obrigatória",
             "",
-            "Rodar `scripts\\prepare_dataset_images.py` para aplicar filtragem, segmentação e validação de qualidade nos recortes antes do treino.",
+            "Revisar os recortes visualmente, confirmar o objeto e excluir cenas repetidas da referencia antes do treino. Usar o mesmo contrato RGB preservado da inferencia; mascaras de segmentacao nao devem ser aplicadas indiscriminadamente ao classificador.",
             "",
         ]
     )
@@ -304,6 +304,7 @@ def capture_taco_dataset(
     margin_ratio: float = 0.12,
     min_crop_size: int = 64,
     delay_seconds: float = 0.2,
+    exclude_reference: Path | None = None,
 ) -> list[TacoCrop]:
     source_config = _read_json(source_config_path)
     annotations_url = str(source_config["annotations_url"])
@@ -314,9 +315,19 @@ def capture_taco_dataset(
     categories = {int(row["id"]): str(row["name"]) for row in annotations_data.get("categories", [])}
     images = {int(row["id"]): row for row in annotations_data.get("images", [])}
     annotations = list(annotations_data.get("annotations", []))
+    excluded_scenes = set()
+    if exclude_reference is not None:
+        for row in _read_json(exclude_reference):
+            match = re.search(r'_taco_(\d+)_\d+_', row['path'])
+            if match:
+                excluded_scenes.add(int(match.group(1)))
 
     output_dir.mkdir(parents=True, exist_ok=True)
     report_dir.mkdir(parents=True, exist_ok=True)
+    (report_dir / "source_annotations.json").write_text(
+        json.dumps(annotations_data, ensure_ascii=False), encoding="utf-8")
+    (report_dir / "source_config.json").write_text(
+        json.dumps(source_config, ensure_ascii=False, indent=2), encoding="utf-8")
 
     existing_manifest = _load_existing_manifest(report_dir)
     seen_annotations = {row.taco_annotation_id for row in existing_manifest}
@@ -352,6 +363,8 @@ def capture_taco_dataset(
             continue
 
         image_id = int(annotation.get("image_id", -1))
+        if image_id in excluded_scenes:
+            continue
         image_row = images.get(image_id)
         if not isinstance(image_row, dict):
             continue
@@ -371,6 +384,10 @@ def capture_taco_dataset(
             continue
 
         bbox = [float(value) for value in annotation.get("bbox", [])]
+        source_ratio = int(image_row.get("width", 0) or 0) / max(1, int(image_row.get("height", 0) or 0))
+        if abs(image.width / image.height / max(source_ratio, 1e-9) - 1) > 0.02:
+            print(f"  image {image_id}: dimensions do not match oriented annotations; skipped.")
+            continue
         crop_box = _scaled_crop_box(
             bbox,
             source_width=int(image_row.get("width", 0) or 0),
@@ -432,7 +449,7 @@ def capture_taco_dataset(
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Capture object crops from the TACO waste dataset.")
-    parser.add_argument("--source-config", type=Path, default=PROJECT_ROOT / "config" / "taco_category_map.json")
+    parser.add_argument("--source-config", type=Path, default=PROJECT_ROOT / "config" / "taco_objects_v1.json")
     parser.add_argument("--output-dir", type=Path, default=None, help="Defaults to data/raw from settings.")
     parser.add_argument("--report-dir", type=Path, default=PROJECT_ROOT / "reports" / "taco_capture")
     parser.add_argument("--images-per-class", type=int, default=50)
@@ -440,6 +457,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--margin-ratio", type=float, default=0.12)
     parser.add_argument("--min-crop-size", type=int, default=64)
     parser.add_argument("--delay-seconds", type=float, default=0.2)
+    parser.add_argument("--exclude-reference", type=Path, help="Skip all known TACO scenes in this reference manifest.")
     return parser
 
 
@@ -461,6 +479,7 @@ def main(argv: list[str] | None = None) -> int:
             margin_ratio=args.margin_ratio,
             min_crop_size=args.min_crop_size,
             delay_seconds=args.delay_seconds,
+            exclude_reference=args.exclude_reference,
         )
     except Exception as exc:
         print(f"Erro ao capturar imagens do TACO: {exc}")

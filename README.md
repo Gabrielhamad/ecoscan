@@ -2,6 +2,12 @@
 
 **Da imagem à orientação de descarte, com educação ambiental e revisão humana.**
 
+**Dataset revisado por objeto:** aplicadas 98 exclusões acumuladas de treino e
+exportadas 23 novas imagens TACO revisadas. Corrigida a orientação EXIF antes
+dos recortes e bloqueadas cenas repetidas da referência. Veja
+[resultados, lacunas e reprodução](docs/dataset_corrigido_v1.md).
+Esta etapa prepara os dados; o reconhecimento público ainda não foi retreinado.
+
 **Escopo inicial fechado:** 12 tipos de objeto, agrupados em seis materiais.
 Consulte a [lista de objetos, variacoes e exclusoes](docs/escopo_objetos_v1.md)
 antes de coletar imagens ou revisar reportes. Essa lista define os alvos de
