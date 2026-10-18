@@ -33,7 +33,7 @@ jobs:
       - name: Instalar dependencias declaradas
         run: python -m pip install -e '.[dev]'
       - name: Testes automatizados
-        run: python -m pytest tests -q
+        run: python -m pytest tests -q --junitxml=reports/ci/pytest.xml
       - name: Diagnostico (nao aprova entrega final)
         run: python scripts/run_acceptance_checks.py --diagnostic --output reports/ci
       - name: Registrar ambiente resolvido
@@ -52,6 +52,7 @@ jobs:
             reports/ci/*.csv
             reports/ci/*.md
             reports/ci/*.txt
+            reports/ci/*.xml
           retention-days: 14
 
   community-database:

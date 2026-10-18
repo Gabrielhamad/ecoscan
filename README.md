@@ -453,3 +453,11 @@ Comece pelo [índice de documentação](docs/README.md). Documentos de fases ant
 Não publique senhas, chaves, exportações de usuários ou fotos pessoais em issues e commits. Dados de treinamento exigem consentimento ou licença compatível e rastreabilidade. Remover metadados não remove pessoas ou documentos visíveis.
 
 Não há licença de software declarada neste repositório. Não presuma autorização de redistribuição; o grupo deve definir uma licença e conferir separadamente os direitos dos datasets e recursos visuais. Para alterações, siga [CONTRIBUTING.md](CONTRIBUTING.md).
+## Validacao das jornadas
+
+Os testes de cadastro, confirmacao, reportes, revisao, pontos e mapa estao
+descritos em [Validacao de jornadas e dispositivos](docs/validacao_jornadas.md).
+O documento separa testes automatizados isolados, inspecao responsiva e
+homologacao pendente com contas e dispositivos reais. A CI publica resultados
+JUnit por execucao; testes locais nao comprovam entrega de e-mail em producao.
+
