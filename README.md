@@ -455,6 +455,9 @@ Não publique senhas, chaves, exportações de usuários ou fotos pessoais em is
 Não há licença de software declarada neste repositório. Não presuma autorização de redistribuição; o grupo deve definir uma licença e conferir separadamente os direitos dos datasets e recursos visuais. Para alterações, siga [CONTRIBUTING.md](CONTRIBUTING.md).
 ## Validacao das jornadas
 
+Para dividir estudos, evidencias e apresentacao entre os quatro integrantes,
+consulte o [roteiro tecnico do grupo](docs/roadmap_estudos_grupo.md).
+
 Os testes de cadastro, confirmacao, reportes, revisao, pontos e mapa estao
 descritos em [Validacao de jornadas e dispositivos](docs/validacao_jornadas.md).
 O documento separa testes automatizados isolados, inspecao responsiva e
