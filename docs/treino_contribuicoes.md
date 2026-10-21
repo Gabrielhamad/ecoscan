@@ -55,3 +55,14 @@ O aplicativo consulta `active.json` a cada 60 segundos, valida hash, escopo,
 contrato de preparo e revisoes, e carrega o artefato privado. Modelos anteriores
 permanecem em `runs/` para rollback. Revisao revogada invalida a versao remota.
 Nao executar dois workers fora do grupo de concorrencia do workflow.
+
+## Verificacao operacional em 21/10/2026
+
+GitHub Actions configurado e primeira execucao realizada:
+https://github.com/Gabrielhamad/ecoscan/actions/runs/39611659743
+
+O worker conectou ao Supabase e alterou o protocolo aprovado de `queued` para
+`waiting_dataset`, com incremento de revisao de 2 para 3. Nao treinou nem publicou
+modelo: o bucket privado ainda nao possui o corpus de treinamento e validacao.
+O manifesto local `scope_corrected_v1` possui apenas 2 exemplos de pilhas e 1 de
+eletronicos elegiveis para treino. Nao reutilizar as exclusoes para contornar isso.
