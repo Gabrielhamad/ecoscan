@@ -66,6 +66,10 @@ def _visual_svm_model_path(config: AppConfig) -> Path:
 def _model_path(config: AppConfig, model_path: str | Path | None) -> Path:
     if model_path:
         return Path(model_path)
+    from ecoscan.services.published_model import published_model
+    remote = published_model(config)
+    if remote is not None:
+        return remote
     final_model_path = config.project_root / str(config.model.get("output_path", "models/ecoscan_transfer.keras"))
     if final_model_path.exists():
         return final_model_path
@@ -155,7 +159,10 @@ def analyze_waste_image(
     try:
         pipeline = run_processing_pipeline(image_path, config, options)
         selected_model_path = _model_path(config, model_path)
-        bundle = model_bundle or _load_bundle_for_path(config, selected_model_path)
+        # Live-camera sessions may retain a bundle from before a remote release.
+        remote_release = selected_model_path.is_relative_to(config.directories["models"] / "remote")
+        bundle = (_load_bundle_for_path(config, selected_model_path) if remote_release
+                  else model_bundle or _load_bundle_for_path(config, selected_model_path))
         prediction = _predict(config, pipeline.recognition_image, bundle)
         contract = pipeline.metadata.get("recognition_preparation", {}).get("contract", {})
         compatible = model_processing_compatible(selected_model_path, contract)

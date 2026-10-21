@@ -44,8 +44,14 @@ class SupabaseContributions:
 
     def list(self):
         try:
-            rows = self.client.table("ecoscan_contributions").select("record").order("created_at", desc=True).limit(200).execute().data
-            return [row["record"] for row in rows]
+            records = []
+            offset = 0
+            while True:
+                rows = self.client.table("ecoscan_contributions").select("record").order("created_at", desc=True).order("id").range(offset, offset + 199).execute().data
+                records.extend(row["record"] for row in rows)
+                if len(rows) < 200:
+                    return records
+                offset += 200
         except Exception:
             raise OSError("Banco indisponível. Tente novamente; os relatos não serão salvos apenas nesta sessão.") from None
 

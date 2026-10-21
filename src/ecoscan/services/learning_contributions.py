@@ -207,7 +207,7 @@ def contribution_package(config, records: list[dict], *, approved_only: bool = F
     seen_hashes = set()
     with ZipFile(output, "w", ZIP_DEFLATED) as archive:
         for record in records:
-            if approved_only and (record["status"] != "approved" or record["expected_class"] not in config.classes):
+            if approved_only and (record["status"] != "approved" or record.get("consent") is not True or record["expected_class"] not in config.classes):
                 continue
             if record["image_sha256"] in seen_hashes:
                 continue

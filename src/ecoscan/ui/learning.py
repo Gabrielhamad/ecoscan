@@ -15,7 +15,11 @@ from ecoscan.services.secretariat_training import candidate_runs, train_candidat
 
 STATUS_LABELS = {"pending": "Recebido pela secretaria", "approved": "Aprovado pelo analista",
                  "rejected": "Não aproveitado", "queued": "Na fila de treino",
-                 "awaiting_validation": "Candidato treinado; aguardando validação", "excluded": "Fora do treino"}
+                 "awaiting_validation": "Candidato treinado; aguardando validação", "excluded": "Fora do treino",
+                 "waiting_dataset": "Aguardando base revisada e validação independente",
+                 "training": "Treinamento em andamento", "validating": "Validando candidato",
+                 "published": "Incorporada ao modelo publicado", "validation_failed": "Candidato não aprovado na validação",
+                 "failed": "Falha no processamento; nova tentativa pendente"}
 
 
 def render_citizen_protocols(st, config, profile):
@@ -89,7 +93,7 @@ def render_contribution(st, config, result, profile):
                                      format_func=lambda key: ITEM_CONDITIONS[key])
             note = st.text_area("Observação opcional", max_chars=600,
                                 placeholder="Ex.: lata amassada, foto com reflexo. Não informe dados pessoais.")
-            consent = st.checkbox("Autorizo o grupo EcoScan a guardar esta foto e usá-la na revisão e no treinamento. A foto é minha e não contém pessoas ou dados pessoais.")
+            consent = st.checkbox("Autorizo o grupo Recicla SP a guardar esta foto e usá-la na revisão e no treinamento. A foto é minha e não contém pessoas ou dados pessoais.")
             sent = st.form_submit_button("Enviar correção")
         if sent:
             try:
@@ -144,7 +148,7 @@ def render_review(st, config, profile):
     columns[0].metric("Aguardando análise", sum(row["status"] == "pending" for row in records))
     columns[1].metric("Aprovadas", sum(row["status"] == "approved" for row in records))
     columns[2].metric("Na fila de treino", sum(row.get("training_status") == "queued" for row in records))
-    render_training(st, config, profile)
+    render_training(st, config, profile, records=records)
     st.caption("Confira foto e rótulo. A aprovação prepara o próximo treino; não altera o modelo em uso.")
     if not records:
         st.info("Nenhuma contribuição recebida nesta instância.")
@@ -201,11 +205,16 @@ def render_review(st, config, profile):
         st.error(str(exc))
 
 
-def render_training(st, config, profile):
+def render_training(st, config, profile, *, records=None):
     if not profile.is_admin:
         return
     if persistent_enabled():
-        st.info("Banco de contribuições ativo. Exporte as aprovadas para treino local; candidatos e publicação de modelos ainda não estão integrados ao banco.")
+        st.info("As aprovações entram na fila de aprendizado. O executor externo, quando ativado, processa os lotes e só publica candidatos aprovados na validação. Aprovação da foto não significa publicação imediata.")
+        records = list_contributions(config) if records is None else records
+        if records:
+            st.dataframe([{"Protocolo": row["id"][:8],
+                           "Aprendizado": STATUS_LABELS.get(row.get("training_status"), "Pendente"),
+                           "Lote": row.get("candidate_id", "—")} for row in records], hide_index=True)
         return
     if st.session_state.get("training_notice"):
         st.warning(st.session_state.pop("training_notice"))

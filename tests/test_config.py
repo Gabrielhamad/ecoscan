@@ -12,7 +12,7 @@ class ConfigTests(unittest.TestCase):
     def test_load_default_config(self) -> None:
         config = load_config()
 
-        self.assertEqual(config.project_name, "EcoScan")
+        self.assertEqual(config.project_name, "Recicla SP")
         self.assertEqual(config.image_size, (224, 224))
         self.assertIn("battery", config.classes)
         self.assertIn(".png", config.allowed_extensions)
