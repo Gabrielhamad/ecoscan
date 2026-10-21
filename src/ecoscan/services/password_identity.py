@@ -71,13 +71,19 @@ def sign_in(email: str, password: str) -> str:
         raise _auth_failure(exc, "login") from None
 
 
-def register(email: str, password: str, confirmation: str, *, enabled: bool = False) -> None:
+def register(email: str, password: str, confirmation: str, *, enabled: bool = False, name: str = "") -> None:
     if enabled is not True:
         raise ValueError("Cadastro ainda em preparação. Você pode continuar como visitante.")
     email = validate_registration(email, password, confirmation)
+    name = name.strip()
+    if name and (len(name) > 80 or any(ord(char) < 32 for char in name)):
+        raise ValueError("Informe um nome com até 80 caracteres, sem quebras de linha.")
     try:
         # Standard signup, never admin.create_user or an email-confirmation bypass.
-        _client().auth.sign_up({"email": email, "password": password})
+        payload = {"email": email, "password": password}
+        if name:
+            payload["options"] = {"data": {"display_name": name}}
+        _client().auth.sign_up(payload)
     except Exception as exc:
         raise _auth_failure(exc, "signup") from None
 
@@ -104,8 +110,13 @@ def verified_profile(token: str, access: dict) -> UserProfile:
             allowed = []
         is_admin = user.email.strip().casefold() in {
             str(email).strip().casefold() for email in allowed}
+        metadata = getattr(user, "user_metadata", None)
+        name = metadata.get("display_name", "") if isinstance(metadata, dict) else ""
+        name = name.strip() if isinstance(name, str) else ""
+        if len(name) > 80 or any(ord(char) < 32 for char in name):
+            name = ""
         return UserProfile(
-            id="supabase_" + identifier, display_name="Analista" if is_admin else "Participante",
+            id="supabase_" + identifier, display_name=name or ("Analista" if is_admin else "Participante"),
             role="admin" if is_admin else "user",
             organization="Secretaria do Meio Ambiente" if is_admin else "Comunidade",
             notes="Conta autenticada. Os protocolos enviados com esta conta ficam vinculados a ela.",

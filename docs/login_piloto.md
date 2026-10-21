@@ -149,7 +149,7 @@ separado do cliente de persistencia que usa a chave privada do servidor.
 No Supabase Authentication, configurar SMTP, Site URL para a URL HTTPS do app e
 prazo de validade/limites de envio. Em Email Templates → Reset Password, usar:
 
-    <a href="{{ .SiteURL }}/?token_hash={{ .TokenHash }}&amp;type=recovery">Definir nova senha no EcoScan</a>
+<a href="{{ .SiteURL }}?token_hash={{ .TokenHash }}&amp;type=recovery">Definir nova senha no Recicla SP</a>
 
 Configurar Site URL sem barra final para esse template. O link deve apontar direto
 para o app. Nao usar o template padrao com fragmento #access_token: o servidor

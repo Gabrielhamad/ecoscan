@@ -56,17 +56,19 @@ from ecoscan.ui.identity import _render_registration
 _render_registration(st, {'public_signup_enabled': True})
 ''').run()
     with patch('ecoscan.services.password_identity.register') as signup:
-        app.text_input[0].set_value('person@example.com')
-        app.text_input[1].set_value('short')
+        app.text_input[0].set_value('Participante')
+        app.text_input[1].set_value('person@example.com')
         app.text_input[2].set_value('short')
+        app.text_input[3].set_value('short')
         app.checkbox[0].check()
         app.button[0].click().run()
         assert app.error
         assert 'signup_last_attempt' not in app.session_state
         signup.assert_not_called()
-        app.text_input[0].set_value('person@example.com')
-        app.text_input[1].set_value('long-password')
+        app.text_input[0].set_value('Participante')
+        app.text_input[1].set_value('person@example.com')
         app.text_input[2].set_value('long-password')
+        app.text_input[3].set_value('long-password')
         app.checkbox[0].check()
         app.button[0].click().run()
         assert not app.exception

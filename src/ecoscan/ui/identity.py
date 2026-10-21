@@ -76,7 +76,7 @@ def _render_password_identity(st, access):
             st.session_state.clear()
             st.rerun()
     else:
-        with st.expander("Entrar ou criar conta"):
+        with st.expander("Entrar ou criar conta", expanded=st.session_state.get("account_help_open", False)):
             st.caption("Visitante: análise temporária, mapa e orientações. Conta verificada: contribuições e participação vinculadas ao seu perfil.")
             login_tab, signup_tab = st.tabs(["Entrar", "Criar conta"])
             with signup_tab:
@@ -96,14 +96,19 @@ def _render_registration(st, access):
     if not enabled:
         st.info("Cadastro em preparação. O modo visitante continua disponível, sem salvar fotos, relatos ou pontos no perfil.")
         return
+    st.caption("Cadastro gratuito, sem convite e sem aprovação da secretaria. Confirme seu e-mail uma única vez para participar com sua conta.")
     with st.form("account_registration", clear_on_submit=True):
+        name = st.text_input("Nome", max_chars=80)
         email = st.text_input("E-mail", max_chars=254, key="signup_email")
         password = st.text_input("Senha (mínimo 12 caracteres)", type="password", max_chars=128)
         confirmation = st.text_input("Confirmar senha", type="password", max_chars=128)
         st.caption("E-mail e credenciais são tratados pelo Supabase Auth para acesso à conta. Fotos só são guardadas quando você autoriza uma contribuição.")
         consent = st.checkbox("Concordo com o uso do meu e-mail para criar e verificar minha conta.")
-        submit = st.form_submit_button("Solicitar cadastro")
+        submit = st.form_submit_button("Criar minha conta")
     if submit:
+        if not name.strip():
+            st.error("Informe seu nome para criar o perfil.")
+            return
         if not consent:
             st.error("Confirme o uso do e-mail antes de continuar.")
             return
@@ -118,11 +123,12 @@ def _render_registration(st, access):
             return
         st.session_state["signup_last_attempt"] = now
         try:
-            register(email, password, confirmation, enabled=enabled)
+            register(email, password, confirmation, enabled=enabled, name=name)
         except ValueError as exc:
             st.error(str(exc))
         else:
-            st.success("Solicitação recebida. Se o cadastro puder prosseguir, você receberá um e-mail de confirmação. Verifique também o spam. Depois de confirmar, volte para Entrar.")
+            st.success("Confira sua caixa de entrada e o spam. Se este e-mail puder ser cadastrado, você receberá a confirmação. Confirme e depois entre com a senha que acabou de escolher.")
+            st.info("Já possui uma conta ou recebeu um convite anteriormente? Use Entrar. Se ainda não definiu uma senha, use Esqueci minha senha. Não é necessário criar outra conta.")
 
 
 def _render_login_form(st):
@@ -169,7 +175,8 @@ def _render_resend_confirmation(st):
 
 def _render_reset_request(st):
     from ecoscan.services.password_identity import request_password_reset, validate_email
-    with st.expander("Esqueci minha senha"):
+    with st.expander("Esqueci minha senha", expanded=st.session_state.get("account_help_open", False)):
+        st.caption("Esta etapa é apenas para quem já tem conta. Para começar, escolha Criar conta. Use somente o último e-mail de recuperação solicitado.")
         with st.form("password_reset_request", clear_on_submit=True):
             email = st.text_input("E-mail da conta", max_chars=254)
             sent = st.form_submit_button("Enviar link de recuperação")
@@ -225,5 +232,6 @@ def _render_password_recovery(st):
             st.rerun()
     if st.button("Voltar para entrar ou solicitar outro link", key="cancel_password_recovery"):
         st.session_state.clear()
+        st.session_state["account_help_open"] = True
         st.rerun()
     return True
