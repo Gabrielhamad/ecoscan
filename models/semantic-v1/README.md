@@ -20,3 +20,9 @@ FP16 validation on the same historical 145 images: 97 first-choice matches,
 47 correct out of 50 accepted at the model threshold; 95 rejected. All three
 known user cases have the correct top material; two exceed the threshold.
 The application intentionally treats even those two as unconfirmed hypotheses.
+
+The automatic learning seed now contains 397 training examples and the unchanged
+145-example validation set. The web expansion added 39 reviewed TACO training
+crops and reserved 16 new crops for testing. This does not change the bundled
+head: the expanded candidate improved the small new-scene test but failed the
+general validation gate. See `docs/datasets/taco_expansion_20261022/README.md`.

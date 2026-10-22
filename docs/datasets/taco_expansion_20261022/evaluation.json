@@ -1,0 +1,653 @@
+{
+  "new_train": {
+    "plastic": 25,
+    "metal": 14
+  },
+  "new_test": {
+    "plastic": 9,
+    "metal": 7
+  },
+  "models": {
+    "baseline": {
+      "validation": {
+        "accuracy": 0.696551724137931,
+        "macro_precision": 0.7374749133369823,
+        "macro_recall": 0.6410098522167488,
+        "macro_f1": 0.6510344159582698,
+        "uncertain_count": 0,
+        "total": 145,
+        "by_class": {
+          "plastic": {
+            "support": 28,
+            "precision": 0.6571428571428571,
+            "recall": 0.8214285714285714,
+            "f1": 0.73015873015873
+          },
+          "paper_cardboard": {
+            "support": 29,
+            "precision": 0.55,
+            "recall": 0.7586206896551724,
+            "f1": 0.6376811594202898
+          },
+          "metal": {
+            "support": 29,
+            "precision": 0.7857142857142857,
+            "recall": 0.7586206896551724,
+            "f1": 0.7719298245614034
+          },
+          "glass": {
+            "support": 29,
+            "precision": 0.7931034482758621,
+            "recall": 0.7931034482758621,
+            "f1": 0.7931034482758621
+          },
+          "battery": {
+            "support": 14,
+            "precision": 0.75,
+            "recall": 0.21428571428571427,
+            "f1": 0.3333333333333333
+          },
+          "electronic": {
+            "support": 16,
+            "precision": 0.8888888888888888,
+            "recall": 0.5,
+            "f1": 0.64
+          }
+        },
+        "confusion_matrix": [
+          [
+            23,
+            4,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            5,
+            22,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            2,
+            22,
+            3,
+            0,
+            0
+          ],
+          [
+            3,
+            2,
+            1,
+            23,
+            0,
+            0
+          ],
+          [
+            0,
+            7,
+            2,
+            1,
+            3,
+            1
+          ],
+          [
+            2,
+            3,
+            1,
+            1,
+            1,
+            8
+          ]
+        ],
+        "classes": [
+          "plastic",
+          "paper_cardboard",
+          "metal",
+          "glass",
+          "battery",
+          "electronic"
+        ],
+        "wrong_confident": 4
+      },
+      "new_scene_test": {
+        "accuracy": 0.8125,
+        "macro_precision": 0.3333333333333333,
+        "macro_recall": 0.2671957671957672,
+        "macro_f1": 0.2957516339869281,
+        "uncertain_count": 0,
+        "total": 16,
+        "by_class": {
+          "plastic": {
+            "support": 9,
+            "precision": 1.0,
+            "recall": 0.8888888888888888,
+            "f1": 0.9411764705882353
+          },
+          "paper_cardboard": {
+            "support": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "metal": {
+            "support": 7,
+            "precision": 1.0,
+            "recall": 0.7142857142857143,
+            "f1": 0.8333333333333333
+          },
+          "glass": {
+            "support": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "battery": {
+            "support": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "electronic": {
+            "support": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            8,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            5,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "classes": [
+          "plastic",
+          "paper_cardboard",
+          "metal",
+          "glass",
+          "battery",
+          "electronic"
+        ],
+        "wrong_confident": 0
+      },
+      "historical_test": {
+        "accuracy": 0.6689655172413793,
+        "macro_precision": 0.6861382643640708,
+        "macro_recall": 0.6154214559386973,
+        "macro_f1": 0.6179839679063148,
+        "uncertain_count": 0,
+        "total": 145,
+        "by_class": {
+          "plastic": {
+            "support": 28,
+            "precision": 0.6363636363636364,
+            "recall": 0.75,
+            "f1": 0.6885245901639345
+          },
+          "paper_cardboard": {
+            "support": 29,
+            "precision": 0.6111111111111112,
+            "recall": 0.7586206896551724,
+            "f1": 0.676923076923077
+          },
+          "metal": {
+            "support": 29,
+            "precision": 0.7419354838709677,
+            "recall": 0.7931034482758621,
+            "f1": 0.7666666666666667
+          },
+          "glass": {
+            "support": 29,
+            "precision": 0.6774193548387096,
+            "recall": 0.7241379310344828,
+            "f1": 0.7
+          },
+          "battery": {
+            "support": 15,
+            "precision": 0.7,
+            "recall": 0.4666666666666667,
+            "f1": 0.56
+          },
+          "electronic": {
+            "support": 15,
+            "precision": 0.75,
+            "recall": 0.2,
+            "f1": 0.31578947368421056
+          }
+        },
+        "confusion_matrix": [
+          [
+            21,
+            2,
+            1,
+            4,
+            0,
+            0
+          ],
+          [
+            1,
+            22,
+            2,
+            3,
+            1,
+            0
+          ],
+          [
+            4,
+            0,
+            23,
+            1,
+            0,
+            1
+          ],
+          [
+            5,
+            0,
+            3,
+            21,
+            0,
+            0
+          ],
+          [
+            1,
+            5,
+            1,
+            1,
+            7,
+            0
+          ],
+          [
+            1,
+            7,
+            1,
+            1,
+            2,
+            3
+          ]
+        ],
+        "classes": [
+          "plastic",
+          "paper_cardboard",
+          "metal",
+          "glass",
+          "battery",
+          "electronic"
+        ],
+        "wrong_confident": 3
+      }
+    },
+    "candidate": {
+      "validation": {
+        "accuracy": 0.6620689655172414,
+        "macro_precision": 0.6956295806800433,
+        "macro_recall": 0.6027298850574713,
+        "macro_f1": 0.6092967092059651,
+        "uncertain_count": 0,
+        "total": 145,
+        "by_class": {
+          "plastic": {
+            "support": 28,
+            "precision": 0.6285714285714286,
+            "recall": 0.7857142857142857,
+            "f1": 0.6984126984126985
+          },
+          "paper_cardboard": {
+            "support": 29,
+            "precision": 0.5365853658536586,
+            "recall": 0.7586206896551724,
+            "f1": 0.6285714285714286
+          },
+          "metal": {
+            "support": 29,
+            "precision": 0.7586206896551724,
+            "recall": 0.7586206896551724,
+            "f1": 0.7586206896551724
+          },
+          "glass": {
+            "support": 29,
+            "precision": 0.75,
+            "recall": 0.7241379310344828,
+            "f1": 0.736842105263158
+          },
+          "battery": {
+            "support": 14,
+            "precision": 0.75,
+            "recall": 0.21428571428571427,
+            "f1": 0.3333333333333333
+          },
+          "electronic": {
+            "support": 16,
+            "precision": 0.75,
+            "recall": 0.375,
+            "f1": 0.5
+          }
+        },
+        "confusion_matrix": [
+          [
+            22,
+            4,
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            5,
+            22,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            2,
+            1,
+            22,
+            4,
+            0,
+            0
+          ],
+          [
+            4,
+            2,
+            2,
+            21,
+            0,
+            0
+          ],
+          [
+            0,
+            7,
+            2,
+            1,
+            3,
+            1
+          ],
+          [
+            2,
+            5,
+            1,
+            1,
+            1,
+            6
+          ]
+        ],
+        "classes": [
+          "plastic",
+          "paper_cardboard",
+          "metal",
+          "glass",
+          "battery",
+          "electronic"
+        ],
+        "wrong_confident": 4
+      },
+      "new_scene_test": {
+        "accuracy": 0.9375,
+        "macro_precision": 0.3333333333333333,
+        "macro_recall": 0.30952380952380953,
+        "macro_f1": 0.3205128205128205,
+        "uncertain_count": 0,
+        "total": 16,
+        "by_class": {
+          "plastic": {
+            "support": 9,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "paper_cardboard": {
+            "support": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "metal": {
+            "support": 7,
+            "precision": 1.0,
+            "recall": 0.8571428571428571,
+            "f1": 0.923076923076923
+          },
+          "glass": {
+            "support": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "battery": {
+            "support": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          },
+          "electronic": {
+            "support": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        },
+        "confusion_matrix": [
+          [
+            9,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            6,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        "classes": [
+          "plastic",
+          "paper_cardboard",
+          "metal",
+          "glass",
+          "battery",
+          "electronic"
+        ],
+        "wrong_confident": 0
+      },
+      "historical_test": {
+        "accuracy": 0.6620689655172414,
+        "macro_precision": 0.6776161241887048,
+        "macro_recall": 0.6043103448275863,
+        "macro_f1": 0.6062745661969131,
+        "uncertain_count": 0,
+        "total": 145,
+        "by_class": {
+          "plastic": {
+            "support": 28,
+            "precision": 0.65625,
+            "recall": 0.75,
+            "f1": 0.7
+          },
+          "paper_cardboard": {
+            "support": 29,
+            "precision": 0.5945945945945946,
+            "recall": 0.7586206896551724,
+            "f1": 0.6666666666666667
+          },
+          "metal": {
+            "support": 29,
+            "precision": 0.7419354838709677,
+            "recall": 0.7931034482758621,
+            "f1": 0.7666666666666667
+          },
+          "glass": {
+            "support": 29,
+            "precision": 0.65625,
+            "recall": 0.7241379310344828,
+            "f1": 0.6885245901639345
+          },
+          "battery": {
+            "support": 15,
+            "precision": 0.6666666666666666,
+            "recall": 0.4,
+            "f1": 0.5
+          },
+          "electronic": {
+            "support": 15,
+            "precision": 0.75,
+            "recall": 0.2,
+            "f1": 0.31578947368421056
+          }
+        },
+        "confusion_matrix": [
+          [
+            21,
+            2,
+            1,
+            4,
+            0,
+            0
+          ],
+          [
+            1,
+            22,
+            2,
+            3,
+            1,
+            0
+          ],
+          [
+            4,
+            0,
+            23,
+            1,
+            0,
+            1
+          ],
+          [
+            5,
+            0,
+            3,
+            21,
+            0,
+            0
+          ],
+          [
+            0,
+            6,
+            1,
+            2,
+            6,
+            0
+          ],
+          [
+            1,
+            7,
+            1,
+            1,
+            2,
+            3
+          ]
+        ],
+        "classes": [
+          "plastic",
+          "paper_cardboard",
+          "metal",
+          "glass",
+          "battery",
+          "electronic"
+        ],
+        "wrong_confident": 4
+      }
+    }
+  },
+  "validation_gate_passed": false,
+  "production_changed": false,
+  "limitations": [
+    "Historical validation/test reused; new test consists of crops, not phone scenes.",
+    "No new battery or electronic photos in this round.",
+    "Scene separation does not prove distinct physical object identity."
+  ]
+}

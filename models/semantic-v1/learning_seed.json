@@ -1,5 +1,5 @@
 {
-  "sha256": "39d1d8f33aac1db6464fe38615865ca8e3220af3e1b6f8b8c442fcc05be74386",
+  "sha256": "31d5312a474050207f2ccdc666fb184dbaf10878610b5e08f7f6e6b767179e3a",
   "processing": {
     "profile": {
       "version": "rgb-preserved-v2",
@@ -214,7 +214,14 @@
   "source": "Reviewed public reference and TACO features; no citizen reports",
   "evaluation": "Historical reused validation; assisted predictions only",
   "counts": {
-    "train": 358,
+    "train": 397,
     "validation": 145
+  },
+  "held_out_hashes": ["52149123eddf4a5f22006b09c7eed38515417c95335adc9d974476e04ad886ea","650bd612b8dee8f09491ec671c459f9ddd6e065cdb277e756d191488e216d4b5","4f2ecece02f47eb13ce17f1e298af12a8874c61da65ce9fe8a2f8a855987dcf2","c664ef9c44e13368aee235ee5214c55259a167f23bc1cd7734f9fa7c2a138c97","1092a72d1777e98dcab2b85ef87403f6ed928a5dec217f46598bb72e056e3dbe","9cabc6a1d20fb5b297e08490ec817f5a266d411cf13c66ee50fa5c63be042f36","a66e618f7f6da00aece9bbb394d87dbd610a45e3e1c1123a6328737bfd3ff57b","00fb4ea134645abde4d0139189117a3088c45f94008bf6d87d81e1c1f9118148","b674f7fd535cb865a8c3086a6014d306f8e5ff593a4f2762de5ce689def9ee86","ba7851e96d4db87dd3f6b2fa20506ebac33e176f7cbfaaa4cc21c446747ed669","4cb631f75c9d245168c3d9034553bff02128ee3c960f654f53b2f2aced29bc88","bf26dde252d93eb7f522d63309e3419763d74c9956832ef7e6de4101d6c27fd6","95677d16661030e020525b32121c89f6e0ea279e492f93d642370da055f895a9","66e773915c13efa9436e5654b67bd9970396a391e7aec43533594478e925deeb","27680785123a2dba8890eb7df03a272aa9bb4bbe264ac073f497c275eed3660c","bc11afc5e84d000742945a828b72ad240cf13fb199b1bb1880c179b9e3d1aeb9"],
+  "expansion": {
+    "source": "https://github.com/pedropro/TACO",
+    "review_manifest_sha256": "82c25fce50c5e65de6981d6137ef0a78c81ff30ceb8e73e8795c4f3c877622ee",
+    "new_training_images": 39,
+    "held_out_images": 16
   }
 }

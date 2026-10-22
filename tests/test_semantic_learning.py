@@ -32,7 +32,8 @@ def test_idle_does_not_read_model_or_write_data():
 
 
 @pytest.mark.parametrize('passed', [True, False])
-def test_approved_report_trains_and_only_publishes_improvement(tmp_path, passed):
+@pytest.mark.parametrize('previous_state', ['queued', 'validation_failed'])
+def test_approved_report_trains_and_only_publishes_improvement(tmp_path, passed, previous_state):
     folder = tmp_path / 'semantic-v1'
     folder.mkdir()
     buffer = io.BytesIO()
@@ -44,7 +45,7 @@ def test_approved_report_trains_and_only_publishes_improvement(tmp_path, passed)
         'sha256': hashlib.sha256(data).hexdigest(), 'processing': {},
         'encoder_sha256': 'encoder', 'validation_hashes': []}))
     row = {'id': 'report', 'status': 'approved', 'consent': True, 'expected_class': 'metal',
-           'revision': 1, 'training_status': 'queued', 'reviewed_at': 5}
+           'revision': 1, 'training_status': previous_state, 'reviewed_at': 5}
     store = MagicMock()
     store.list.side_effect = lambda: [dict(row)]
     def save(record, **kwargs):
@@ -70,6 +71,19 @@ def test_approved_report_trains_and_only_publishes_improvement(tmp_path, passed)
     uploads = [call.args[0] for call in bucket.upload.call_args_list]
     assert ('semantic_active.json' in uploads) == passed
     assert not any('photo' in key for key in uploads)
+    assert row['training_result']['seed_sha256'] == hashlib.sha256(data).hexdigest()
+
+
+def test_unchanged_seed_does_not_retrain_a_completed_batch(tmp_path):
+    folder = tmp_path / 'semantic-v1'
+    folder.mkdir()
+    (folder / 'learning_seed.json').write_text(json.dumps({'sha256': 'same-seed'}))
+    store = MagicMock()
+    store.list.return_value = [{'status': 'approved', 'consent': True, 'expected_class': 'metal',
+        'training_status': 'validation_failed', 'training_result': {'seed_sha256': 'same-seed'}}]
+    config = SimpleNamespace(classes=['metal'], directories={'models': tmp_path})
+    assert run(config, store) == 'idle'
+    store.save.assert_not_called()
 
 
 def test_neural_release_verifies_hashes(tmp_path):

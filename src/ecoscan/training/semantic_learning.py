@@ -47,7 +47,7 @@ def evaluate(model, features, labels, classes):
 
 def run(config, store):
     rows = eligible(store.list(), config.classes)
-    if not any(r.get('training_status') in ('queued', 'failed', 'training', 'validating', 'waiting_dataset') for r in rows):
+    if not rows:
         return 'idle'
     run_id = uuid4().hex
     bucket = store.client.storage.from_(BUCKET)
@@ -55,6 +55,9 @@ def run(config, store):
     stage = 'seed'
     try:
         seed_meta = json.loads((base_dir / 'learning_seed.json').read_text())
+        if not any(r.get('training_status') in ('queued', 'failed', 'training', 'validating', 'waiting_dataset')
+                   or r.get('training_result', {}).get('seed_sha256') != seed_meta['sha256'] for r in rows):
+            return 'idle'
         seed_bytes = (base_dir / 'learning_seed.npz').read_bytes()
         if hashlib.sha256(seed_bytes).hexdigest() != seed_meta['sha256']:
             raise ValueError('Seed integrity mismatch')
@@ -91,7 +94,7 @@ def run(config, store):
             for index, row in enumerate(rows):
                 data = store.image(row)
                 digest = hashlib.sha256(data).hexdigest()
-                if digest in seed_meta['validation_hashes']:
+                if digest in seed_meta['validation_hashes'] + seed_meta.get('held_out_hashes', []):
                     raise ValueError('Approved image overlaps validation')
                 if digest in seen:
                     if seen[digest] != row['expected_class']:
@@ -144,6 +147,7 @@ def run(config, store):
                               file_options={'upsert': 'true', 'content-type': 'application/json'})
             state = 'published' if passed else 'validation_failed'
             outcome = {'candidate_macro_f1': candidate_metrics['macro_f1'],
+                       'seed_sha256': seed_meta['sha256'],
                        'reference_macro_f1': reference_metrics['macro_f1'],
                        'published': passed,
                        'reason': 'improved' if passed else 'improvement_gate_not_met'}
