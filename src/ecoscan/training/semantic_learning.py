@@ -1,5 +1,6 @@
 """Private reviewed learning for the deployed frozen neural encoder."""
 from copy import deepcopy
+from dataclasses import replace
 import hashlib
 import io
 import json
@@ -11,7 +12,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 
-from ecoscan.app.pipeline import run_processing_pipeline
+from ecoscan.app.pipeline import default_processing_options, run_processing_pipeline
 from ecoscan.classification.semantic_onnx import SemanticOnnxClassifier
 from ecoscan.image_processing.contracts import processing_contract
 from ecoscan.metrics.classification_metrics import classification_report
@@ -65,6 +66,7 @@ def run(config, store):
             train_x, train_y = data['train_x'], data['train_y'].tolist()
             val_x, val_y = data['validation_x'], data['validation_y'].tolist()
         update_rows(store, rows, 'training', run_id)
+        print(f'Neural batch {run_id}: {len(rows)} approved contributions', flush=True)
         with TemporaryDirectory(prefix='recicla-neural-') as temporary:
             stage = 'reference'
             folder = Path(temporary)
@@ -84,7 +86,9 @@ def run(config, store):
                     reference = SemanticOnnxClassifier(path, base_dir)
             new_features, seen = [], {}
             stage = 'photos'
-            for row in rows:
+            # Segmentation is explanatory, not applied to this encoder's RGB input.
+            options = replace(default_processing_options(config), segmentation_name='none', morphology_name='none')
+            for index, row in enumerate(rows):
                 data = store.image(row)
                 digest = hashlib.sha256(data).hexdigest()
                 if digest in seed_meta['validation_hashes']:
@@ -96,11 +100,13 @@ def run(config, store):
                 seen[digest] = row['expected_class']
                 path = folder / 'photo.jpg'
                 path.write_bytes(data)
-                image = run_processing_pipeline(path, config).recognition_image
+                image = run_processing_pipeline(path, config, options).recognition_image
                 new_features.append(base.image_features(image))
                 train_y.append(row['expected_class'])
+                print(f'Prepared contribution {index + 1}/{len(rows)}', flush=True)
             train_x = np.vstack([train_x, *[f[None] for f in new_features]])
             stage = 'fit'
+            print('Fitting neural classification head', flush=True)
             arrays, head_classes = fit_head(base, train_x, train_y)
             base.arrays = arrays
             base.metadata = {**base.metadata, 'head_classes': head_classes}
@@ -109,6 +115,7 @@ def run(config, store):
                 reference = SemanticOnnxClassifier(base_dir / 'semantic.json')
             update_rows(store, rows, 'validating', run_id)
             stage = 'validation'
+            print('Comparing candidate with active model', flush=True)
             candidate_metrics = evaluate(base, val_x, val_y, config.classes)
             reference_metrics = evaluate(reference, val_x, val_y, config.classes)
             passed = (improvement(candidate_metrics, reference_metrics, config.classes)
@@ -136,6 +143,13 @@ def run(config, store):
                 bucket.upload('semantic_active.json', json.dumps(release).encode(),
                               file_options={'upsert': 'true', 'content-type': 'application/json'})
             state = 'published' if passed else 'validation_failed'
+            outcome = {'candidate_macro_f1': candidate_metrics['macro_f1'],
+                       'reference_macro_f1': reference_metrics['macro_f1'],
+                       'published': passed,
+                       'reason': 'improved' if passed else 'improvement_gate_not_met'}
+            print('Neural evaluation: ' + json.dumps(outcome), flush=True)
+            for row in rows:
+                row['training_result'] = outcome
             update_rows(store, rows, state, run_id)
             return state
     except Exception:

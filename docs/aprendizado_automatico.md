@@ -63,3 +63,12 @@ repositorio; monitorar as execucoes e o consumo da conta.
 Testes automatizados cobrem fila vazia, inclusao de foto aprovada, bloqueio de
 regressao, publicacao condicional e integridade dos artefatos. Confirmar a primeira
 execucao no ambiente publicado antes de considerar a ativacao operacional validada.
+
+## Primeira execucao verificada
+
+Em 22/10/2026, a execucao GitHub Actions `39827932901` concluiu com sucesso
+o processamento real das contribuicoes aprovadas. A rotina retornou
+`validation_failed`: treinou e avaliou o candidato, mas manteve o modelo
+anterior por nao satisfazer os criterios de melhoria. Isso confirma a execucao
+do ciclo ate a avaliacao, nao um aumento de precisao nem a primeira promocao
+de um candidato em producao. A promocao e a revogacao possuem testes automatizados.

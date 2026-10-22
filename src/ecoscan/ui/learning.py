@@ -18,7 +18,7 @@ STATUS_LABELS = {"pending": "Recebido pela secretaria", "approved": "Aprovado pe
                  "awaiting_validation": "Candidato treinado; aguardando validação", "excluded": "Fora do treino",
                  "waiting_dataset": "Aguardando base revisada e validação independente",
                  "training": "Treinamento em andamento", "validating": "Validando candidato",
-                 "published": "Incorporada ao modelo publicado", "validation_failed": "Candidato não aprovado na validação",
+                 "published": "Incorporada ao modelo publicado", "validation_failed": "Treinado; modelo anterior mantido após validação",
                  "failed": "Falha no processamento; nova tentativa pendente"}
 
 
@@ -214,6 +214,9 @@ def render_training(st, config, profile, *, records=None):
         if records:
             st.dataframe([{"Protocolo": row["id"][:8],
                            "Aprendizado": STATUS_LABELS.get(row.get("training_status"), "Pendente"),
+                           "Resultado": ("Melhoria aprovada" if row.get("training_result", {}).get("published")
+                                          else "Critérios de melhoria não atendidos" if row.get("training_status") == "validation_failed"
+                                          else "—"),
                            "Lote": row.get("candidate_id", "—")} for row in records], hide_index=True)
         return
     if st.session_state.get("training_notice"):

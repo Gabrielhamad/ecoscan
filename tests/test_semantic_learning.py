@@ -8,6 +8,7 @@ import numpy as np
 import pytest
 
 from ecoscan.training.semantic_learning import run, improvement
+from ecoscan.app.pipeline import ProcessingPipelineOptions
 
 
 def metrics(score=.7):
@@ -58,6 +59,7 @@ def test_approved_report_trains_and_only_publishes_improvement(tmp_path, passed)
     model.image_features.return_value = np.ones(2)
     config = SimpleNamespace(classes=['metal', 'plastic'], directories={'models': tmp_path})
     with patch('ecoscan.training.semantic_learning.SemanticOnnxClassifier', return_value=model), \
+         patch('ecoscan.training.semantic_learning.default_processing_options', return_value=ProcessingPipelineOptions()), \
          patch('ecoscan.training.semantic_learning.processing_contract', return_value={}), \
          patch('ecoscan.training.semantic_learning.run_processing_pipeline', return_value=SimpleNamespace(recognition_image=None)), \
          patch('ecoscan.training.semantic_learning.fit_head', return_value=({'coef': np.ones((2, 2))}, ['metal', 'plastic'])) as fit, \
