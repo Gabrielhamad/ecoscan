@@ -1,0 +1,103 @@
+{
+  "format": "clip-probe-fp16-v1",
+  "experimental": true,
+  "classes": [
+    "battery",
+    "electronic",
+    "glass",
+    "metal",
+    "paper_cardboard",
+    "plastic",
+    "unknown"
+  ],
+  "head_classes": [
+    "battery",
+    "electronic",
+    "glass",
+    "metal",
+    "paper_cardboard",
+    "plastic"
+  ],
+  "threshold": 0.8,
+  "prior_weight": 0.5,
+  "processing": {
+    "profile": {
+      "version": "rgb-preserved-v2",
+      "working_max_dimension": 640,
+      "image_size": [
+        224,
+        224
+      ],
+      "padding_rgb": 127,
+      "filter": "auto",
+      "parameters": {},
+      "filters_config": {
+        "default": "auto",
+        "auto": {
+          "candidate_sequences": [
+            [
+              "none"
+            ],
+            [
+              "gaussian"
+            ],
+            [
+              "median"
+            ],
+            [
+              "bilateral"
+            ],
+            [
+              "clahe"
+            ]
+          ],
+          "min_noise_sigma": 4.0,
+          "min_impulse_ratio": 0.0005
+        },
+        "gaussian": {
+          "kernel_size": 5,
+          "sigma": 1
+        },
+        "median": {
+          "kernel_size": 3
+        },
+        "bilateral": {
+          "diameter": 9,
+          "sigma_color": 75,
+          "sigma_space": 75
+        },
+        "clahe": {
+          "clip_limit": 2,
+          "tile_grid_size": [
+            8,
+            8
+          ]
+        },
+        "canny": {
+          "threshold1": 80,
+          "threshold2": 160
+        }
+      },
+      "mask_applied_to_classifier": false
+    },
+    "sha256": "2a1a47bad72255684a7a33a3f038d6b622f120ff5ee10c6597734e27fa46a61d"
+  },
+  "encoder_sha256": "dfad0c5b643cc67908fbfc88b7ba5ecad10aa6567cc72bfced3a759baaf509bd",
+  "head_sha256": "5cc1aa6b5ee4d0e0ed74bca37a8510802f739b61c5e179165beae15c68e8386a",
+  "source_sha256": "a52b01c73f79937d0835438df40dde32b44380796bfc240ad9f2e64e6e4dbb53",
+  "encoder_file": "encoder.onnx",
+  "parts": [
+    {
+      "name": "encoder_00.part",
+      "sha256": "0184d0e80a6ae1d1d14d680b4ec26479377092ddb6457e5dca2c9fe0189e91b1"
+    },
+    {
+      "name": "encoder_01.part",
+      "sha256": "17ffb3c604c23694c23f14d01432245f98281e967236b54bd66aaa876e302c1d"
+    },
+    {
+      "name": "encoder_02.part",
+      "sha256": "78cd9e777cbd85c15128157a3983e23d3b04eeedfcf414284427691673728c76"
+    }
+  ]
+}

@@ -105,3 +105,26 @@ python scripts/compare_recognition_candidate.py --candidate reports/recognition_
 Use novos diretorios para repetir o experimento. O manifesto local de casos
 contem caminhos de fotos e classes esperadas, nao dados de acesso ao sistema.
 O script de comparacao rejeita casos com hash ja presente na referencia.
+
+## Disponibilizacao assistida no Streamlit
+
+A exportacao ONNX INT8 foi reprovada: reduziu o acerto para 20% no teste fixo.
+Nao usar os arquivos desse experimento no aplicativo. A exportacao FP16,
+apos correcao de tipos dos nos Cast, preservou 97/145 hipoteses corretas e
+47/50 respostas corretas acima do limiar, com as mesmas tres hipoteses corretas
+nas fotos conhecidas. A versao FP16 dispensa PyTorch no servidor.
+
+O pacote `models/semantic-v1` contem partes do encoder, cabeca numerica NPZ,
+metadados e licenca. O carregador verifica hashes, reconstrui o encoder e
+compartilha uma sessao CPU com dois threads. Nao ha download externo de pesos
+na primeira analise nem desserializacao pickle dessa cabeca na aplicacao.
+
+`model.semantic_preview_enabled` ativa a sugestao assistida. Um modelo remoto
+aprovado continua tendo prioridade. Na ausencia dele, a tela apresenta a
+hipotese sem confirmar material, destino ou pontos de missao automaticamente.
+Regras heuristicas de cor/formato nao sobrescrevem as hipoteses desse modelo.
+Desativar essa opcao restaura a selecao anterior sem remover arquivos.
+
+A publicacao dessa previa nao equivale a aprovar o candidato para reconhecimento
+automatico global. O treinamento automatico de contribuicoes ainda utiliza
+o executor SVM e seus criterios; ele nao retreina essa rede semantica.

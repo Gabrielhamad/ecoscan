@@ -57,6 +57,7 @@
     "k_neighbors": 9
   },
   "model": {
+    "semantic_preview_enabled": true,
     "remote_models_enabled": true,
     "type": "transfer_learning",
     "framework": "tensorflow",

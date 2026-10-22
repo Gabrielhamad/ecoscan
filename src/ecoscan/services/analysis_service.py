@@ -34,6 +34,13 @@ LOGGER = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
+class SemanticPreviewBundle:
+    classifier: object
+    class_names: list[str]
+    model_type: str = "semantic_onnx_preview"
+
+
+@dataclass(frozen=True)
 class WasteAnalysisResult:
     pipeline: ProcessingPipelineResult
     predicted_class: str | None
@@ -70,6 +77,10 @@ def _model_path(config: AppConfig, model_path: str | Path | None) -> Path:
     remote = published_model(config)
     if remote is not None:
         return remote
+    if config.model.get("semantic_preview_enabled", False):
+        preview = config.directories["models"] / "semantic-v1" / "semantic.json"
+        if preview.exists():
+            return preview
     final_model_path = config.project_root / str(config.model.get("output_path", "models/ecoscan_transfer.keras"))
     if final_model_path.exists():
         return final_model_path
@@ -86,7 +97,13 @@ def _load_bundle_for_path(
     config: AppConfig,
     model_path: Path,
 ) -> BaselineModelBundle | KerasModelBundle | VisualKnnModelBundle | VisualSvmModelBundle:
-    if model_path.suffix.lower() == ".keras":
+    if model_path.name == "semantic.json":
+        from ecoscan.classification.semantic_onnx import load_semantic_model
+        classifier = load_semantic_model(str(model_path.resolve()))
+        if set(classifier.classes) != set(config.classes) | {"unknown"}:
+            raise ModelLoadError("Semantic model classes do not match configured scope")
+        bundle = SemanticPreviewBundle(classifier, list(config.classes))
+    elif model_path.suffix.lower() == ".keras":
         class_names_path = config.project_root / str(config.model.get("class_names_path", "models/class_names.json"))
         bundle = load_keras_model(
             model_path,
@@ -137,6 +154,8 @@ def _predict(
     image,
     bundle: BaselineModelBundle | KerasModelBundle | VisualKnnModelBundle | VisualSvmModelBundle,
 ):
+    if isinstance(bundle, SemanticPreviewBundle):
+        return bundle.classifier.predict_image(image)
     if isinstance(bundle, KerasModelBundle):
         return predict_with_keras(image, bundle, config.image_size)
     if isinstance(bundle, VisualSvmModelBundle):
@@ -165,14 +184,21 @@ def analyze_waste_image(
                   else model_bundle or _load_bundle_for_path(config, selected_model_path))
         prediction = _predict(config, pipeline.recognition_image, bundle)
         contract = pipeline.metadata.get("recognition_preparation", {}).get("contract", {})
-        compatible = model_processing_compatible(selected_model_path, contract)
+        semantic_preview = isinstance(bundle, SemanticPreviewBundle)
+        compatible = (bundle.classifier.metadata["processing"] == contract if semantic_preview
+                      else model_processing_compatible(selected_model_path, contract))
         outside_scope = prediction.top_class_id not in config.classes
-        prediction, material_rule = apply_material_rules(
-            prediction,
-            image=pipeline.preprocessing.resized,
-            mask=pipeline.segmentation_result.mask,
-            element_analysis=pipeline.element_analysis,
-        )
+        material_rule = None
+        if not semantic_preview:
+            prediction, material_rule = apply_material_rules(
+                prediction,
+                image=pipeline.preprocessing.resized,
+                mask=pipeline.segmentation_result.mask,
+                element_analysis=pipeline.element_analysis,
+            )
+        else:
+            # Experimental hypotheses cannot validate disposal or award mission points.
+            prediction = replace(prediction, class_id=None, accepted=False)
         if outside_scope:
             prediction = replace(prediction, class_id=None, top_class_id="", accepted=False)
             material_rule = None
@@ -183,6 +209,8 @@ def analyze_waste_image(
 
         guidance = None
         message = "Não foi possível identificar o resíduo com segurança."
+        if semantic_preview:
+            message = "Análise assistida: confira a hipótese e confirme o material em Descarte. Este modelo ainda está em avaliação."
         if not compatible:
             message = "A foto foi preparada. A hipótese ainda exige confirmação: o modelo aguarda treinamento com esta preparação."
         if outside_scope:

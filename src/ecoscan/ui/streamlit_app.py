@@ -4664,7 +4664,13 @@ def main() -> None:
                 with right:
                     st.markdown('<div class="ecoscan-result">', unsafe_allow_html=True)
                     _render_recognition_decision(st, safety_decision)
-                    if result.accepted and result.guidance and safety_decision.allow_disposal_guidance:
+                    if result.model_type == "semantic_onnx_preview":
+                        suggested = guidance_by_class.get(result.top_class)
+                        st.subheader("Hipótese: " + (suggested.display_name if suggested else "material não identificado"))
+                        st.metric("Pontuação relativa", _format_percent(result.probability))
+                        st.write("Confira o material em Descarte antes de seguir uma orientação. Se a hipótese estiver errada, envie uma correção à secretaria.")
+                        st.caption("Reconhecimento assistido em avaliação. A pontuação não é uma garantia de acerto.")
+                    elif result.accepted and result.guidance and safety_decision.allow_disposal_guidance:
                         st.subheader("Sugestão: " + result.guidance.display_name)
                         st.metric("Pontuação do modelo", _format_percent(result.probability))
                         st.caption("A pontuação não é uma garantia de acerto. Confirme o material e o conteúdo antes de descartar.")

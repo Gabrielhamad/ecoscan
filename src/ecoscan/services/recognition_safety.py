@@ -60,6 +60,14 @@ def build_recognition_safety_decision(
             encourage_feedback=False,
         )
 
+    if getattr(result, "model_type", "") == "semantic_onnx_preview":
+        return RecognitionSafetyDecision(
+            status="needs_confirmation", tone="warn", title="Confirme o material sugerido",
+            message="O novo reconhecedor está em avaliação. A hipótese não confirma o material do objeto.",
+            primary_action="Confira a hipótese, escolha o material em Descarte ou envie uma correção à secretaria.",
+            allow_disposal_guidance=False, encourage_feedback=True,
+        )
+
     if not accepted or not has_guidance or not valid_score:
         return RecognitionSafetyDecision(
             status="uncertain",
