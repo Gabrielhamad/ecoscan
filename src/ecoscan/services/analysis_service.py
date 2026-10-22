@@ -99,7 +99,8 @@ def _load_bundle_for_path(
 ) -> BaselineModelBundle | KerasModelBundle | VisualKnnModelBundle | VisualSvmModelBundle:
     if model_path.name == "semantic.json":
         from ecoscan.classification.semantic_onnx import load_semantic_model
-        classifier = load_semantic_model(str(model_path.resolve()))
+        classifier = load_semantic_model(str(model_path.resolve()),
+                                        str(config.directories["models"] / "semantic-v1"))
         if set(classifier.classes) != set(config.classes) | {"unknown"}:
             raise ModelLoadError("Semantic model classes do not match configured scope")
         bundle = SemanticPreviewBundle(classifier, list(config.classes))

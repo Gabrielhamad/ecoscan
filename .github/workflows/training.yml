@@ -1,8 +1,14 @@
 name: Treinamento revisado
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/training.yml'
+      - 'src/ecoscan/training/semantic_learning.py'
+      - 'models/semantic-v1/learning_seed.*'
   workflow_dispatch:
   schedule:
-    - cron: '17 */6 * * *'
+    - cron: '7,22,37,52 * * * *'
 permissions:
   contents: read
 concurrency:
@@ -20,6 +26,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
+          cache: pip
       - run: python -m pip install -e .
       - name: Processar aprovadas e validar candidato
         env:

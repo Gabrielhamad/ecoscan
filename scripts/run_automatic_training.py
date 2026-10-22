@@ -11,4 +11,7 @@ if __name__ == "__main__":
     store = remote_store()
     if store is None:
         raise SystemExit("Private database connection is required.")
-    print("Training queue:", run(load_config(), store))
+    config = load_config()
+    if config.model.get("semantic_preview_enabled", False):
+        from ecoscan.training.semantic_learning import run
+    print("Training queue:", run(config, store))

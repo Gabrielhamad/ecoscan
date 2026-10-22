@@ -31,7 +31,8 @@ def published_model(config):
             if store is None:
                 return None
             bucket = store.client.storage.from_("ecoscan-training")
-            release = json.loads(bucket.download("active.json"))
+            neural = config.model.get("semantic_preview_enabled", False)
+            release = json.loads(bucket.download("semantic_active.json" if neural else "active.json"))
             current = {row["id"]: row for row in store.list()}
             for identifier, review in release["reviews"].items():
                 row = current.get(identifier, {})
@@ -42,6 +43,12 @@ def published_model(config):
             identifier = release["id"]
             if not re.fullmatch(r"[a-f0-9]{32}", identifier):
                 raise ValueError("Invalid release")
+            if neural:
+                from ecoscan.services.semantic_release import materialize
+                folder = config.directories["models"] / "remote" / identifier
+                path = materialize(bucket, release, folder, config)
+                _CACHE[key] = (path, time.monotonic())
+                return path
             if (release["model_key"] != f"runs/{identifier}/model.joblib"
                     or release["contract_key"] != f"runs/{identifier}/contract.json"
                     or release["processing_sha256"] != key[1]

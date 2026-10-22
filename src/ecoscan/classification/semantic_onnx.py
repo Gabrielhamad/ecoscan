@@ -49,13 +49,13 @@ def resolve_encoder(folder, metadata):
 
 
 class SemanticOnnxClassifier:
-    def __init__(self, path):
+    def __init__(self, path, encoder_folder=None):
         import onnxruntime as ort
         path = Path(path)
         self.metadata = json.loads(path.read_text(encoding="utf-8"))
         if self.metadata["format"] not in {"clip-probe-int8-v1", "clip-probe-fp16-v1"}:
             raise ValueError("Unsupported semantic model")
-        encoder = resolve_encoder(path.parent, self.metadata)
+        encoder = resolve_encoder(Path(encoder_folder) if encoder_folder else path.parent, self.metadata)
         if file_digest(path.parent / "head.npz") != self.metadata["head_sha256"]:
             raise ValueError("Semantic artifact integrity mismatch")
         with np.load(path.parent / "head.npz", allow_pickle=False) as data:
@@ -69,7 +69,7 @@ class SemanticOnnxClassifier:
                                            sess_options=options, providers=["CPUExecutionProvider"])
         self.lock = Lock()
 
-    def predict_image(self, rgb):
+    def image_features(self, rgb):
         if rgb.shape != (224, 224, 3) or rgb.dtype != np.uint8:
             raise ValueError("Expected prepared RGB image")
         image = rgb.astype(np.float32) / 255.0
@@ -77,6 +77,12 @@ class SemanticOnnxClassifier:
             [.26862954, .26130258, .27577711], dtype=np.float32)
         with self.lock:
             feature = self.session.run(None, {"image": image.transpose(2, 0, 1)[None]})[0][0]
+        return feature
+
+    def predict_image(self, rgb):
+        return self.predict_features(self.image_features(rgb))
+
+    def predict_features(self, feature):
         a = self.arrays
         prior = softmax(a["logit_scale"] * feature @ a["prototypes"].T)
         probe = softmax(((feature - a["mean"]) / a["scale"]) @ a["coef"].T + a["intercept"])
@@ -98,10 +104,10 @@ _LOAD_LOCK = Lock()
 
 
 @lru_cache(maxsize=1)
-def _cached_model(path):
-    return SemanticOnnxClassifier(path)
+def _cached_model(path, encoder_folder=None):
+    return SemanticOnnxClassifier(path, encoder_folder)
 
 
-def load_semantic_model(path):
+def load_semantic_model(path, encoder_folder=None):
     with _LOAD_LOCK:
-        return _cached_model(path)
+        return _cached_model(path, encoder_folder)

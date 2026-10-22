@@ -13,6 +13,7 @@ from ecoscan.services.published_model import _CACHE, published_model
 def setup_release(tmp_path):
     config = load_config()
     config = replace(config, project_root=tmp_path,
+                     model={**config.model, "semantic_preview_enabled": False},
                      directories={**config.directories, "models": tmp_path / "models"})
     data = b"trusted-model-bytes"
     identifier = "a" * 32
@@ -73,3 +74,20 @@ def test_incomplete_local_release_recovers(tmp_path, damage):
         assert published_model(config) == path
         assert path.read_bytes() == objects[release["model_key"]]
         assert contract_path(path).exists()
+
+
+def test_neural_release_is_selected_and_revocation_blocks_it(tmp_path):
+    config, store, objects, release = setup_release(tmp_path)
+    config = replace(config, model={**config.model, 'semantic_preview_enabled': True})
+    objects['semantic_active.json'] = objects['active.json']
+    expected = tmp_path / 'remote' / 'semantic.json'
+    _CACHE.clear()
+    with patch.dict('os.environ', {'ECOSCAN_REMOTE_MODELS': 'true'}), \
+         patch('ecoscan.services.published_model.remote_store', return_value=store), \
+         patch('ecoscan.services.semantic_release.materialize', return_value=expected) as materialize:
+        assert published_model(config) == expected
+        materialize.assert_called_once()
+        store.list.return_value[0]['consent'] = False
+        _CACHE.clear()
+        assert published_model(config) is None
+        materialize.assert_called_once()
