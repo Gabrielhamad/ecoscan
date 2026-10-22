@@ -50,14 +50,18 @@ def published_model(config):
             folder = config.directories["models"] / "remote" / identifier
             folder.mkdir(parents=True, exist_ok=True)
             path = folder / "model.joblib"
-            if not path.exists():
+            if (not path.exists() or not contract_path(path).exists()
+                    or hashlib.sha256(path.read_bytes()).hexdigest() != release["sha256"]):
                 data = bucket.download(release["model_key"])
                 if hashlib.sha256(data).hexdigest() != release["sha256"]:
                     raise ValueError("Invalid checksum")
+                contract_data = bucket.download(release["contract_key"])
                 temporary = folder / "download.tmp"
                 temporary.write_bytes(data)
+                temporary_contract = folder / "contract.tmp"
+                temporary_contract.write_bytes(contract_data)
+                temporary_contract.replace(contract_path(path))
                 temporary.replace(path)
-                contract_path(path).write_bytes(bucket.download(release["contract_key"]))
             if not model_processing_compatible(path, processing_contract(config)):
                 raise ValueError("Incompatible processing")
             _CACHE[key] = (path, time.monotonic())

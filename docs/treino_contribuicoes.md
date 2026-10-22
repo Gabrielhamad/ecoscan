@@ -66,3 +66,45 @@ O worker conectou ao Supabase e alterou o protocolo aprovado de `queued` para
 modelo: o bucket privado ainda nao possui o corpus de treinamento e validacao.
 O manifesto local `scope_corrected_v1` possui apenas 2 exemplos de pilhas e 1 de
 eletronicos elegiveis para treino. Nao reutilizar as exclusoes para contornar isso.
+# Preparacao verificavel do corpus privado
+
+O comando abaixo prepara os arquivos para o executor sem enviar fotos ao GitHub
+ou alterar o modelo em producao:
+
+```powershell
+python scripts/build_training_corpus.py --manifest data/curated/objects_v1_taco_reviewed/manifest.json --source data/curated/objects_v1_taco_reviewed --output reports/private_corpus_20261021
+```
+
+O diretorio de saida deve ser novo. A preparacao exige revisao por objeto,
+confere SHA-256, rejeita duplicatas de arquivo e pixels decodificados, bloqueia
+grupos de captura presentes em treino e validacao e preserva o conjunto de teste.
+Ela nao realiza nova revisao visual nem identifica automaticamente fotos
+parecidas do mesmo objeto. Essa verificacao continua necessaria na curadoria.
+
+`corpus.json` descreve os arquivos privados; `readiness.json` informa contagens
+e lacunas por classe. Um pacote pode ser preparado com `ready: false`: isso nao
+autoriza publicar um modelo. O executor mantem suas verificacoes independentes.
+
+Na execucao local de 21/10/2026, o lote TACO revisado forneceu 9 imagens de
+plastico, 7 de papel/papelao e 7 de metal, todas destinadas a treino. Esse lote
+nao contem validacao, vidro, pilhas ou eletronicos. Esses numeros descrevem
+somente o lote exportado, nao todo o acervo historico. Nenhum novo modelo foi
+treinado ou publicado com esse pacote. As fotos permanecem locais.
+
+Validacao executada: 17 testes de corpus, executor automatico e modelo publicado
+aprovados. Proxima dependencia: revisar e incorporar exemplos dos objetos
+faltantes e uma validacao independente antes do envio ao armazenamento privado.
+
+## Protecoes operacionais
+
+Falhas de acesso ao armazenamento e JSON invalido encerram o lote como `failed`;
+somente resposta explicita de objeto ausente permite `waiting_dataset`.
+Os logs nao incluem os detalhes privados do erro do provedor. A publicacao
+rejeita metricas ausentes, nao finitas ou fora do intervalo esperado, alem dos
+limiares de qualidade. O modelo em uso nao e substituido por um candidato
+reprovado. Downloads locais incompletos ou com checksum incorreto sao obtidos
+novamente na proxima verificacao do cache, sem carregar o arquivo corrompido.
+
+Testes automatizados exercitam publicacao e reprovacao com armazenamento e
+treinamento simulados. Eles verificam a logica; nao representam medicao de
+acuracia, treinamento real nem teste de conectividade da producao.

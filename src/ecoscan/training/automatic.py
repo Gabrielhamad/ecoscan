@@ -3,6 +3,7 @@ from collections import Counter
 import hashlib
 import io
 import json
+import math
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from uuid import uuid4
@@ -27,6 +28,22 @@ def eligible(rows, classes):
 
 def gate(candidate, reference, classes):
     """Use accepted predictions: rejection counts as a miss, not a correct answer."""
+    def valid(report):
+        try:
+            values = [report["macro_f1"]]
+            for label in classes:
+                score = report["by_class"][label]
+                support = score["support"]
+                if isinstance(support, bool) or not isinstance(support, int) or support < 20:
+                    return False
+                values.extend((score["precision"], score["recall"]))
+            return all(not isinstance(value, bool) and math.isfinite(value)
+                       and 0 <= value <= 1 for value in values)
+        except (KeyError, TypeError, ValueError):
+            return False
+
+    if not valid(candidate) or (reference is not None and not valid(reference)):
+        return False
     if candidate["macro_f1"] < 0.85:
         return False
     for label in classes:
@@ -70,13 +87,18 @@ def run(config, store):
         return "idle"
     run_id = uuid4().hex
     bucket = store.client.storage.from_(BUCKET)
-    # A reviewed fixed corpus is an operational prerequisite, not an inferred split.
     try:
-        corpus = json.loads(bucket.download("corpus.json"))
-    except Exception:
-        update_rows(store, rows, "waiting_dataset", run_id)
-        return "waiting_dataset"
-    try:
+        # Only an explicit missing object means missing data; provider failures fail the run.
+        try:
+            corpus_data = bucket.download("corpus.json")
+        except Exception as error:
+            status = getattr(error, "status", None) or getattr(error, "status_code", None)
+            code = getattr(error, "code", None)
+            if str(status) == "404" or code in ("NoSuchKey", "not_found"):
+                update_rows(store, rows, "waiting_dataset", run_id)
+                return "waiting_dataset"
+            raise
+        corpus = json.loads(corpus_data)
         samples = {"train": [], "validation": []}
         hashes, groups = {}, {}
         for item in corpus["images"]:
@@ -84,6 +106,8 @@ def run(config, store):
             if split not in samples or label not in config.classes or not key.startswith("corpus/") or ".." in key:
                 raise ValueError("Invalid corpus manifest")
             group = item["group"]
+            if not isinstance(group, str) or not group.strip():
+                raise ValueError("Missing capture group")
             if group in groups and groups[group] != split:
                 raise ValueError("Object group crosses train/validation")
             groups[group] = split

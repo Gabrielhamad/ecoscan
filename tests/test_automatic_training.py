@@ -5,6 +5,7 @@ from unittest.mock import patch
 import hashlib
 import json
 import numpy as np
+import pytest
 
 from ecoscan.training.automatic import eligible, gate, run
 
@@ -39,7 +40,9 @@ def test_missing_corpus_records_wait_without_training():
     row = {"id": "test", "status": "approved", "consent": True,
            "expected_class": "plastic", "revision": 2, "training_status": "queued"}
     store.list.return_value = [row]
-    store.client.storage.from_.return_value.download.side_effect = OSError()
+    missing = OSError()
+    missing.status = 404
+    store.client.storage.from_.return_value.download.side_effect = missing
     store.save.side_effect = lambda record, **kwargs: record
     assert run(SimpleNamespace(classes=["plastic"]), store) == "waiting_dataset"
     assert row["training_status"] == "waiting_dataset"
@@ -53,7 +56,8 @@ def test_idle_worker_has_no_external_writes():
     store.save.assert_not_called()
 
 
-def test_full_worker_trains_validates_and_publishes(tmp_path):
+@pytest.mark.parametrize("accepted", [True, False])
+def test_full_worker_trains_validates_and_publishes(tmp_path, accepted):
     classes = ["plastic", "metal"]
     store = MagicMock()
     row = {"id": "review", "status": "approved", "consent": True,
@@ -81,14 +85,41 @@ def test_full_worker_trains_validates_and_publishes(tmp_path):
     model = MagicMock()
     model.save.side_effect = lambda path: path.write_bytes(b"model")
     config = SimpleNamespace(classes=classes, confidence_threshold=.7)
+    candidate_metrics = metrics()
+    if not accepted:
+        candidate_metrics["macro_f1"] = .40
     def features(config, samples, root, options):
         return np.zeros((len(samples), 2)), [label for _, label in samples]
     with patch("ecoscan.training.automatic.prepare_samples", side_effect=features), \
          patch("ecoscan.training.automatic.VisualSvmClassifier.fit", return_value=model), \
          patch("ecoscan.training.automatic.processing_contract", return_value={"sha256": "contract"}), \
-         patch("ecoscan.training.automatic.evaluate", return_value=metrics()):
-        assert run(config, store) == "published"
-    assert row["training_status"] == "published"
+         patch("ecoscan.training.automatic.evaluate", return_value=candidate_metrics):
+        expected = "published" if accepted else "validation_failed"
+        assert run(config, store) == expected
+    assert row["training_status"] == expected
     keys = [call.args[0] for call in bucket.upload.call_args_list]
-    assert keys[-1] == "active.json"
-    assert len(keys) == 4
+    assert ("active.json" in keys) is accepted
+    assert len(keys) == (4 if accepted else 3)
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), -1, 2, None, True])
+def test_gate_rejects_invalid_metrics(value):
+    bad = metrics()
+    bad["by_class"]["plastic"]["precision"] = value
+    assert not gate(bad, None, ["plastic", "metal"])
+    assert not gate(metrics(), bad, ["plastic", "metal"])
+
+
+@pytest.mark.parametrize("failure", [OSError("private provider details"), ValueError("invalid json")])
+def test_provider_errors_are_failed_not_missing_data(failure):
+    store = MagicMock()
+    row = {"id": "test", "status": "approved", "consent": True,
+           "expected_class": "plastic", "revision": 2, "training_status": "queued"}
+    store.list.return_value = [row]
+    store.save.side_effect = lambda record, **kwargs: record
+    store.client.storage.from_.return_value.download.side_effect = failure
+    with pytest.raises(RuntimeError, match="Training batch failed") as error:
+        run(SimpleNamespace(classes=["plastic"]), store)
+    assert "private provider details" not in str(error.value)
+    assert row["training_status"] == "failed"
+    store.client.storage.from_.return_value.upload.assert_not_called()

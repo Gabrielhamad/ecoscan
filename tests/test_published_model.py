@@ -5,6 +5,8 @@ from unittest.mock import MagicMock, patch
 
 from ecoscan.config import load_config
 from ecoscan.image_processing.contracts import processing_contract
+from ecoscan.image_processing.contracts import contract_path
+import pytest
 from ecoscan.services.published_model import _CACHE, published_model
 
 
@@ -54,3 +56,20 @@ def test_revoked_review_blocks_release(tmp_path):
     with patch.dict("os.environ", {"ECOSCAN_REMOTE_MODELS": "true"}), \
          patch("ecoscan.services.published_model.remote_store", return_value=store):
         assert published_model(config) is None
+
+
+@pytest.mark.parametrize("damage", ["missing_contract", "corrupt_model"])
+def test_incomplete_local_release_recovers(tmp_path, damage):
+    config, store, objects, release = setup_release(tmp_path)
+    _CACHE.clear()
+    with patch.dict("os.environ", {"ECOSCAN_REMOTE_MODELS": "true"}), \
+         patch("ecoscan.services.published_model.remote_store", return_value=store):
+        path = published_model(config)
+        if damage == "missing_contract":
+            contract_path(path).unlink()
+        else:
+            path.write_bytes(b"corrupted")
+        _CACHE.clear()
+        assert published_model(config) == path
+        assert path.read_bytes() == objects[release["model_key"]]
+        assert contract_path(path).exists()
