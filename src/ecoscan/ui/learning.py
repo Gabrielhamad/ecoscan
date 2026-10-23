@@ -22,6 +22,47 @@ STATUS_LABELS = {"pending": "Recebido pela secretaria", "approved": "Aprovado pe
                  "failed": "Falha no processamento; nova tentativa pendente"}
 
 
+def render_evaluation(st, records):
+    runs = {}
+    for row in records:
+        outcome = row.get('training_result') or {}
+        identifier = row.get('candidate_id')
+        if identifier and outcome and row.get('training_status') in ('published', 'validation_failed'):
+            runs.setdefault(identifier, outcome)
+    if not runs:
+        return
+    with st.expander('Resultados dos lotes avaliados'):
+        selected = st.selectbox('Lote avaliado', sorted(runs, key=lambda key: runs[key].get('evaluated_at', ''), reverse=True),
+                                key='evaluated_training_batch')
+        result = runs[selected]
+        st.write('Candidato aprovado na avaliação' if result.get('published') else 'Modelo anterior mantido')
+        columns = st.columns(2)
+        for column, label, field in [(columns[0], 'Macro-F1 anterior', 'reference_macro_f1'),
+                                     (columns[1], 'Macro-F1 candidato', 'candidate_macro_f1')]:
+            value = result.get(field)
+            column.metric(label, f'{value:.3f}' if isinstance(value, (int, float)) else 'Não registrado')
+        details = result.get('by_class', {})
+        if details:
+            names = {'metal': 'Metal', 'plastic': 'Plástico', 'glass': 'Vidro',
+                     'paper_cardboard': 'Papel e papelão', 'battery': 'Pilhas e baterias', 'electronic': 'Eletrônicos'}
+            st.dataframe([{'Material': names.get(label, label),
+                           'Imagens de treino': result.get('training_counts', {}).get(label),
+                           'Imagens de validação': metrics['support'],
+                           'Acerto anterior (%)': round(metrics['reference_recall'] * 100, 1),
+                           'Acerto candidato (%)': round(metrics['candidate_recall'] * 100, 1)}
+                          for label, metrics in details.items()], hide_index=True)
+            reason_labels = {'macro_f1_gain_below_minimum': 'Ganho de Macro-F1 insuficiente',
+                             'insufficient_validation': 'Poucos exemplos de validação',
+                             'recall_regression': 'Queda de acerto no material',
+                             'more_confident_errors': 'Aumento de erros com confiança alta'}
+            for reason in result.get('gate_reasons', []):
+                label = names.get(reason.get('class_id'), reason.get('class_id', ''))
+                st.write(reason_labels.get(reason['code'], reason['code']) + (f': {label}' if label else ''))
+            st.caption('Validação histórica reutilizada. Estes resultados não medem a precisão em novas fotos de celular. Imagens de treino não equivalem a objetos distintos.')
+        else:
+            st.caption('Lote antigo: detalhamento por material não registrado.')
+
+
 def render_citizen_protocols(st, config, profile):
     st.subheader("Minhas contribuições à secretaria")
     if profile.id.startswith("visitor_"):
@@ -211,6 +252,7 @@ def render_training(st, config, profile, *, records=None):
     if persistent_enabled():
         st.info("As aprovações entram na fila de aprendizado. O executor externo, quando ativado, processa os lotes e só publica candidatos aprovados na validação. Aprovação da foto não significa publicação imediata.")
         records = list_contributions(config) if records is None else records
+        render_evaluation(st, records)
         if records:
             st.dataframe([{"Protocolo": row["id"][:8],
                            "Aprendizado": STATUS_LABELS.get(row.get("training_status"), "Pendente"),

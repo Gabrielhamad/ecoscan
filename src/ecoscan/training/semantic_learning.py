@@ -17,6 +17,7 @@ from ecoscan.classification.semantic_onnx import SemanticOnnxClassifier
 from ecoscan.image_processing.contracts import processing_contract
 from ecoscan.metrics.classification_metrics import classification_report
 from ecoscan.training.automatic import BUCKET, eligible, update_rows
+from ecoscan.training.diagnostics import evaluation_details
 
 
 def improvement(candidate, reference, classes):
@@ -146,7 +147,8 @@ def run(config, store):
                 bucket.upload('semantic_active.json', json.dumps(release).encode(),
                               file_options={'upsert': 'true', 'content-type': 'application/json'})
             state = 'published' if passed else 'validation_failed'
-            outcome = {'candidate_macro_f1': candidate_metrics['macro_f1'],
+            outcome = {**evaluation_details(candidate_metrics, reference_metrics, config.classes, train_y),
+                       'candidate_macro_f1': candidate_metrics['macro_f1'],
                        'seed_sha256': seed_meta['sha256'],
                        'reference_macro_f1': reference_metrics['macro_f1'],
                        'published': passed,

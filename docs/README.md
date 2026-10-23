@@ -45,6 +45,8 @@
 
 ### Experimentos recentes de reconhecimento
 
+- [Diagnostico controlado e acompanhamento dos lotes](diagnostico_reconhecimento_20261023.md)
+
 - [Ampliacao revisada de vidro, papel e papelao: resultados e limites](datasets/balance_20261023/README.md)
 - [Primeiro lote revisado do TACO](datasets/taco_expansion_20261022/README.md)
 

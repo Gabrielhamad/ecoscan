@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/training.yml'
       - 'src/ecoscan/training/semantic_learning.py'
+      - 'src/ecoscan/training/diagnostics.py'
       - 'models/semantic-v1/learning_seed.*'
   workflow_dispatch:
   schedule:
