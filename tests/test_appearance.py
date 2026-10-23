@@ -3,7 +3,7 @@ import re
 import pytest
 from streamlit.testing.v1 import AppTest
 
-from ecoscan.ui.appearance import DARK, LIGHT
+from ecoscan.ui.appearance import DARK, LIGHT, theme_css
 
 
 def luminance(hex_color):
@@ -20,6 +20,7 @@ def test_text_and_action_colors_meet_normal_text_contrast(palette):
         ("primary", "primary-soft"), ("on-primary", "primary"),
         ("blue", "surface"), ("accent", "bg"), ("danger", "surface"),
         ("muted", "surface-soft"), ("ink", "surface-soft"), ("blue", "bg"),
+        ("water", "surface"), ("accent", "surface-soft"), ("danger", "surface-soft"),
     ]:
         a, b = sorted([luminance(colors["--eco-" + foreground]),
                        luminance(colors["--eco-" + background])])
@@ -33,6 +34,14 @@ def test_control_boundaries_have_visible_contrast(palette):
         high, low = sorted([luminance(colors['--eco-control-line']),
                             luminance(colors['--eco-' + surface])], reverse=True)
         assert (high + .05) / (low + .05) >= 3
+
+
+def test_manual_theme_overrides_automatic_and_palette_has_single_source():
+    assert theme_css('Claro').endswith(':root {' + LIGHT + '}')
+    assert theme_css('Escuro').endswith(':root {' + DARK + '}')
+    assert theme_css().count('--eco-bg:') == 2
+    with pytest.raises(ValueError):
+        theme_css('invalid')
 
 
 def test_appearance_switch_preserves_page_and_selection():

@@ -6,13 +6,19 @@ def render_theme(st):
     with st.popover("Aparência", icon=":material/contrast:"):
         preference = st.radio("Tema", ["Automático", "Claro", "Escuro"],
                               horizontal=True, key="recicla_sp_appearance")
+    st.markdown("<style>" + theme_css(preference) + "</style>", unsafe_allow_html=True)
+
+
+def theme_css(preference="Automático"):
+    if preference not in {"Automático", "Claro", "Escuro"}:
+        raise ValueError('Unsupported appearance preference')
     css = Path(__file__).with_name("appearance.css").read_text(encoding="utf-8")
     css += '\n:root {' + LIGHT + '}\n@media(prefers-color-scheme:dark) {:root {' + DARK + '}}'
     # Explicit choice overrides the OS preference without modifying account data.
     if preference != "Automático":
         palette = DARK if preference == "Escuro" else LIGHT
         css += "\n:root {" + palette + "}"
-    st.markdown("<style>" + css + "</style>", unsafe_allow_html=True)
+    return css
 
 
 LIGHT = """
