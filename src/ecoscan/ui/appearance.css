@@ -1,0 +1,219 @@
+:root {
+  --eco-bg:#f5f8f7; --eco-surface:#ffffff; --eco-surface-soft:#eaf1ee;
+  --eco-ink:#182b27; --eco-ink-strong:#102c24; --eco-muted:#50665e;
+  --eco-line:#c6d5ce; --eco-primary:#086647; --eco-primary-soft:#def2e7;
+  --eco-water:#08717c; --eco-blue:#175f9d; --eco-blue-soft:#e4eff9;
+  --eco-accent:#865c04; --eco-danger:#aa302f; --eco-on-primary:#ffffff;
+  --eco-font:"Segoe UI",Inter,system-ui,-apple-system,sans-serif;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark) {
+  :root {
+    --eco-bg:#101715; --eco-surface:#19231f; --eco-surface-soft:#23332c;
+    --eco-ink:#eaf3ed; --eco-ink-strong:#ffffff; --eco-muted:#b4c8bc;
+    --eco-line:#455d50; --eco-primary:#87edb8; --eco-primary-soft:#203f30;
+    --eco-water:#7adce4; --eco-blue:#a2cfff; --eco-blue-soft:#243a49;
+    --eco-accent:#f0ce76; --eco-danger:#ffb4ae; --eco-on-primary:#09291b;
+    color-scheme:dark;
+  }
+}
+html, body, .stApp, button, input, textarea, select {
+  font-family:var(--eco-font) !important; letter-spacing:0 !important;
+}
+.stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+  background:var(--eco-bg) !important; color:var(--eco-ink) !important;
+}
+[data-testid="stHeader"] {background:transparent !important; height:48px; pointer-events:none;}
+[data-testid="stHeader"] button {pointer-events:auto;}
+[data-testid="stToolbar"], [data-testid="stDecoration"], [data-testid="stDeployButton"] {display:none !important;}
+[data-testid="stMainBlockContainer"] {
+  max-width:1160px; padding:3.5rem 2rem 4rem;
+}
+[data-testid="stSidebar"], [data-baseweb="popover"], [data-baseweb="menu"],
+[data-testid="stPopoverBody"], [data-testid="stDialog"] [role="dialog"] {
+  background:var(--eco-surface) !important; color:var(--eco-ink) !important;
+}
+[data-testid="stPopoverBody"] > div {
+  background:var(--eco-surface) !important; color:var(--eco-ink) !important;
+}
+[data-baseweb="radio"] > div:first-child {
+  background:var(--eco-control-line) !important;
+}
+[data-baseweb="radio"] > div:first-child > div {
+  background:var(--eco-surface) !important;
+}
+[data-baseweb="radio"]:has(input:checked) > div:first-child {
+  background:var(--eco-primary) !important;
+}
+[data-baseweb="radio"]:has(input:checked) > div:first-child > div {
+  background:var(--eco-on-primary) !important;
+}
+[data-baseweb="radio"]:has(input:focus-visible),
+[data-baseweb="checkbox"]:has(input:focus-visible) {
+  outline:3px solid var(--eco-water); outline-offset:3px; border-radius:4px;
+}
+.stApp p, .stApp label, .stApp li, .stApp summary, .stApp h1, .stApp h2,
+.stApp h3, .stApp h4, [data-testid="stWidgetLabel"], [data-testid="stCaptionContainer"],
+[data-baseweb="popover"] *, [data-testid="stPopoverBody"] * {color:var(--eco-ink);}
+.stApp h1 {font-size:2rem; line-height:1.15; font-weight:750;}
+.stApp h2 {font-size:1.65rem;} .stApp h3 {font-size:1.25rem;}
+.stApp p {line-height:1.6;}
+.stApp a {color:var(--eco-blue); text-underline-offset:3px;}
+[data-testid="stCaptionContainer"], [data-testid="stCaptionContainer"] p {
+  color:var(--eco-muted) !important; opacity:1 !important; font-size:.85rem;
+}
+.stApp button, [data-testid="stPopoverBody"] button {
+  color:var(--eco-ink) !important; background:var(--eco-surface) !important;
+  border-color:var(--eco-line) !important; border-radius:8px !important;
+  min-height:44px; box-shadow:none !important;
+}
+.stApp button p, [data-testid="stPopoverBody"] button p,
+[data-testid="stLinkButton"] a p {color:inherit !important;}
+.stApp button:hover {border-color:var(--eco-primary) !important;}
+.stApp button[data-testid="stBaseButton-segmented_controlActive"],
+.stApp button[aria-pressed="true"] {
+  background:var(--eco-primary-soft) !important; color:var(--eco-primary) !important;
+  border-color:var(--eco-primary) !important; font-weight:700;
+}
+.stApp button[kind="primary"], .stApp button[data-testid="stBaseButton-primary"] {
+  background:var(--eco-primary) !important; color:var(--eco-on-primary) !important;
+  border-color:var(--eco-primary) !important; font-weight:650;
+}
+.stApp button:disabled, [data-testid="stPopoverBody"] button:disabled {
+  opacity:1; cursor:not-allowed; color:var(--eco-muted) !important;
+  background:var(--eco-surface-soft) !important; border-style:dashed !important;
+}
+[data-testid="stLinkButton"] a {
+  display:flex; align-items:center; justify-content:center; min-height:44px;
+  background:var(--eco-surface) !important; color:var(--eco-blue) !important;
+  border:1px solid var(--eco-control-line) !important; border-radius:8px;
+  white-space:normal; overflow-wrap:anywhere;
+}
+[data-testid="stLinkButton"] a[kind="primary"] {
+  background:var(--eco-primary) !important; color:var(--eco-on-primary) !important;
+}
+button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible {
+  outline:3px solid var(--eco-water) !important; outline-offset:3px;
+}
+.stApp input, .stApp textarea, [data-baseweb="input"], [data-baseweb="base-input"],
+[data-baseweb="select"] > div, [data-testid="stNumberInputContainer"] {
+  background:var(--eco-surface) !important; color:var(--eco-ink) !important;
+  -webkit-text-fill-color:var(--eco-ink); border-color:var(--eco-line) !important;
+}
+.stApp input::placeholder, .stApp textarea::placeholder {
+  color:var(--eco-muted) !important; -webkit-text-fill-color:var(--eco-muted); opacity:1;
+}
+.stApp input:autofill {
+  -webkit-box-shadow:0 0 0 1000px var(--eco-surface) inset !important;
+  -webkit-text-fill-color:var(--eco-ink) !important;
+}
+[data-baseweb="select"] > div, [data-baseweb="input"], .stApp textarea,
+.stApp button {border-color:var(--eco-control-line) !important;}
+[data-baseweb="select"] span, [data-baseweb="select"] input,
+[role="listbox"], [role="option"] {
+  color:var(--eco-ink) !important; background-color:var(--eco-surface) !important;
+}
+[role="option"][aria-selected="true"], [role="option"]:hover {
+  background:var(--eco-primary-soft) !important; color:var(--eco-primary) !important;
+}
+[data-baseweb="tag"] {background:var(--eco-primary-soft) !important; color:var(--eco-primary) !important;}
+[data-baseweb="tag"] span {background:transparent !important; color:inherit !important;}
+.stApp [data-testid="stFileUploaderDropzoneInstructions"] small,
+.stApp [data-testid="stFileUploaderDropzoneInstructions"] span {color:var(--eco-muted) !important;}
+.stApp [data-testid="stFileUploaderDropzone"] {background:var(--eco-surface-soft) !important;}
+.stApp [data-testid="stMarkdownContainer"] a:not([role="button"]) {text-decoration:underline;}
+.stApp [data-baseweb="radio"] div, .stApp [data-baseweb="checkbox"] div {color:var(--eco-ink);}
+[data-testid="stExpander"], [data-testid="stForm"], [data-testid="stFileUploader"] section {
+  background:var(--eco-surface) !important; color:var(--eco-ink);
+  border:1px solid var(--eco-line) !important; border-radius:8px;
+}
+[data-testid="stExpander"] summary:hover {background:var(--eco-surface-soft) !important;}
+[data-testid="stAlert"] {background:var(--eco-surface-soft) !important; color:var(--eco-ink) !important;}
+[data-testid="stAlert"] svg {fill:var(--eco-water);}
+[data-testid="stMetric"] {padding:16px 0; border-bottom:1px solid var(--eco-line);}
+[data-testid="stMetricValue"] {color:var(--eco-ink-strong); font-size:2rem;}
+[data-testid="stMetricLabel"] {color:var(--eco-muted);}
+[data-baseweb="tab-list"] {
+  gap:4px !important; overflow-x:auto !important; scrollbar-width:thin;
+  background:var(--eco-bg) !important; border-bottom:1px solid var(--eco-line);
+  padding:8px 0; flex-wrap:nowrap !important;
+}
+.stApp button[role="tab"] {
+  flex-shrink:0; padding:10px 16px; min-height:46px;
+  white-space:nowrap; background:transparent !important; border:0 !important;
+}
+.stApp button[role="tab"][aria-selected="true"] {
+  color:var(--eco-primary) !important; background:var(--eco-primary-soft) !important;
+  font-weight:700;
+}
+[data-baseweb="tab-highlight"] {background:var(--eco-primary) !important;}
+[data-testid="stMarkdownContainer"] pre, .stApp code {
+  background:var(--eco-surface-soft) !important; color:var(--eco-ink) !important;
+}
+.stApp table {color:var(--eco-ink); border-color:var(--eco-line);}
+.stApp th, .stApp td {border-color:var(--eco-line) !important; overflow-wrap:anywhere;}
+.recicla-header {display:flex; align-items:center; gap:18px; padding:22px 0 26px;
+  border-bottom:1px solid var(--eco-line); margin-bottom:6px;}
+.recicla-header img {width:72px; height:72px; object-fit:contain; flex-shrink:0;}
+.recicla-mark {display:grid; place-items:center; width:64px; height:64px; flex-shrink:0;
+  border:1px solid var(--eco-primary); border-radius:8px; font-size:42px;
+  background:var(--eco-primary-soft); color:var(--eco-primary); line-height:1;}
+.recicla-header h1 {margin:3px 0 8px; padding:0; color:var(--eco-ink-strong); font-size:34px;}
+.recicla-header h1 span {color:var(--eco-primary);}
+.recicla-header p {margin:0; color:var(--eco-muted); font-size:15px;}
+.recicla-eyebrow {font-size:11px; font-weight:700; text-transform:uppercase; color:var(--eco-water);}
+.ecoscan-section-title {font-size:1.2rem; font-weight:700; margin:22px 0 12px; color:var(--eco-ink-strong);}
+.ecoscan-section-title:before {content:""; display:inline-block; width:4px; height:16px;
+  background:var(--eco-water); border-radius:2px; margin-right:10px;}
+.ecoscan-muted, .ecoscan-note, .ecoscan-card-meta, .ecoscan-photo-plan-meta {color:var(--eco-muted);}
+.ecoscan-status-strip, .ecoscan-card-grid, .ecoscan-ops-grid, .ecoscan-completion-grid,
+.ecoscan-destination-grid, .ecoscan-public-action-grid, .ecoscan-method-strip, .ecoscan-user-flow {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr)); gap:16px; margin:16px 0;
+}
+.ecoscan-status-item, .ecoscan-user-flow > div {padding:12px 0; border-bottom:1px solid var(--eco-line);}
+.ecoscan-status-item strong, .ecoscan-status-item span, .ecoscan-user-flow span,
+.ecoscan-user-flow strong {display:block;}
+.ecoscan-point-card, .ecoscan-mission-card, .ecoscan-reward-card, .ecoscan-completion-card,
+.ecoscan-public-action-tile, .ecoscan-priority-card, .ecoscan-destination-tile {
+  padding:18px; border:1px solid var(--eco-line); border-radius:8px; background:var(--eco-surface);
+}
+.ecoscan-admin-panel, .ecoscan-profile-card, .ecoscan-result, .ecoscan-evidence-panel,
+.ecoscan-disposal-panel, .ecoscan-impact-panel, .ecoscan-confidence-panel,
+.ecoscan-public-action, .ecoscan-photo-plan, .ecoscan-tech-summary, .ecoscan-completion-banner {
+  padding:18px 0; border-bottom:1px solid var(--eco-line); color:var(--eco-ink);
+}
+.ecoscan-profile-card strong, .ecoscan-profile-card span {display:block;}
+.ecoscan-chip-row, .ecoscan-service-chip-row, .ecoscan-quality-strip, .ecoscan-point-actions,
+.ecoscan-point-materials, .ecoscan-territory-chip-row {display:flex; flex-wrap:wrap; gap:8px; margin:12px 0;}
+.ecoscan-chip, .ecoscan-badge, .ecoscan-method-chip, .ecoscan-mini-pill,
+.ecoscan-service-chip, .ecoscan-risk-tag, .ecoscan-evidence-badge, .ecoscan-territory-chip {
+  display:inline-flex; align-items:center; gap:6px; padding:5px 9px; border-radius:4px;
+  background:var(--eco-surface-soft); color:var(--eco-ink); font-size:12px;
+}
+.ecoscan-badge-warn, .ecoscan-status-warn {color:var(--eco-accent);}
+.ecoscan-badge-danger {color:var(--eco-danger);}
+.ecoscan-badge-ok, .ecoscan-status-ok {color:var(--eco-primary);}
+.ecoscan-color-dot {width:12px; height:12px; border:1px solid var(--eco-line); border-radius:50%; flex-shrink:0;}
+.ecoscan-prob-row {display:grid; grid-template-columns:minmax(80px,1fr) 2fr 48px; gap:12px; align-items:center; margin:12px 0;}
+.ecoscan-prob-track {height:8px; background:var(--eco-surface-soft); border-radius:4px; overflow:hidden;}
+.ecoscan-prob-fill {height:100%; background:var(--eco-primary);}
+.ecoscan-prob-fill-warn {background:var(--eco-accent);}
+.ecoscan-evidence-head, .ecoscan-impact-head, .ecoscan-public-action-head {display:flex; flex-wrap:wrap; gap:12px; align-items:center;}
+.ecoscan-soft-divider {border-top:1px solid var(--eco-line); margin:20px 0;}
+.ecoscan-destination-tile img {max-height:120px; max-width:100%; object-fit:contain;}
+.stApp img {max-width:100%;}
+@media(max-width:640px) {
+  [data-testid="stMainBlockContainer"] {padding:3.5rem 16px 3rem;}
+  .recicla-header {gap:12px; padding:16px 0 20px;}
+  .recicla-header img {width:56px; height:56px;}
+  .recicla-mark {width:50px; height:50px; font-size:34px;}
+  .recicla-header h1 {font-size:28px;}
+  .recicla-header p {font-size:14px;}
+  .stApp button[role="tab"] {padding:10px 12px;}
+  .ecoscan-status-strip, .ecoscan-method-strip {grid-template-columns:repeat(2,minmax(0,1fr));}
+  [data-testid="stHorizontalBlock"] {flex-wrap:wrap;}
+  [data-testid="stColumn"] {min-width:min(100%,240px);}
+  .stApp h1 {overflow-wrap:anywhere;} .stApp button {white-space:normal;}
+  .stApp input, .stApp textarea, [data-baseweb="select"] {font-size:16px !important;}
+}
+@media(prefers-reduced-motion:reduce) {*, *:before, *:after {scroll-behavior:auto !important; transition:none !important;}}
