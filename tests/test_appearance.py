@@ -3,7 +3,7 @@ import re
 import pytest
 from streamlit.testing.v1 import AppTest
 
-from ecoscan.ui.appearance import DARK, LIGHT, theme_css
+from ecoscan.ui.appearance import DARK, LIGHT, theme_css, embedded_theme_css
 
 
 def luminance(hex_color):
@@ -42,6 +42,30 @@ def test_manual_theme_overrides_automatic_and_palette_has_single_source():
     assert theme_css().count('--eco-bg:') == 2
     with pytest.raises(ValueError):
         theme_css('invalid')
+
+
+@pytest.mark.parametrize('theme,palette', [('Claro', LIGHT), ('Escuro', DARK)])
+def test_embedded_components_use_manual_palette_after_os_rule(theme, palette):
+    css = embedded_theme_css(theme)
+    assert css.rfind(':root {' + palette + '}') > css.index('@media')
+    assert 'font-size:14px !important' in css
+    assert 'aria-disabled' in css
+
+
+def test_location_and_camera_components_receive_current_theme():
+    from types import SimpleNamespace
+    from unittest.mock import MagicMock, patch
+    from ecoscan.ui.streamlit_app import _render_browser_location_search, _render_live_camera_link
+    st = MagicMock()
+    st.session_state = {'recicla_sp_appearance': 'Escuro'}
+    with patch('streamlit.components.v1.html') as render:
+        _render_browser_location_search(st, SimpleNamespace(class_id='plastic', search_query='reciclagem'))
+        _render_live_camera_link(st)
+    assert render.call_count == 2
+    for call in render.call_args_list:
+        assert embedded_theme_css('Escuro') in call.args[0]
+        assert call.kwargs['scrolling'] is True
+    assert 'role="status"' in render.call_args_list[0].args[0]
 
 
 def test_appearance_switch_preserves_page_and_selection():

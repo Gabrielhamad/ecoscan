@@ -554,18 +554,19 @@ def _render_probability_bars(st: Any, result: Any, guidance_by_class: dict[str, 
 
 def _render_browser_location_search(st: Any, target: DisposalTarget) -> None:
     import streamlit.components.v1 as components
+    from ecoscan.ui.appearance import embedded_theme_css
 
     component_id = f"ecoscan_geo_{target.class_id}"
     query_json = json.dumps(target.search_query, ensure_ascii=False)
     components.html(
-        f"""
-        <div style="font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;">
+        embedded_theme_css(st.session_state.get("recicla_sp_appearance", "Automático")) + f"""
+        <div class="eco-embedded" style="font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;">
           <button id="{component_id}_button" style="
             width:100%; min-height:42px; border:1px solid #24745d; border-radius:8px;
             background:#24745d; color:#fff; font-weight:800; cursor:pointer;">
             Usar minha localização atual
           </button>
-          <div id="{component_id}_status" style="margin-top:8px; color:#5f7268; font-size:13px;"></div>
+          <div id="{component_id}_status" role="status" aria-live="polite" style="margin-top:8px;"></div>
         </div>
         <script>
         (() => {{
@@ -595,17 +596,19 @@ def _render_browser_location_search(st: Any, target: DisposalTarget) -> None:
         }})();
         </script>
         """,
-        height=84,
+        height=160,
+        scrolling=True,
     )
 
 
 def _render_live_camera_link(st: Any) -> None:
     import streamlit.components.v1 as components
+    from ecoscan.ui.appearance import embedded_theme_css
 
     configured_live_url = os.environ.get("ECOSCAN_LIVE_URL", "").strip()
     html_code = (
         """
-        <div style="
+        <div class="eco-embedded" style="
           font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
           border:1px solid #c7ead8; border-radius:8px; padding:10px;
           background:linear-gradient(180deg,#ffffff 0%,#f1fbf6 100%);
@@ -649,6 +652,7 @@ def _render_live_camera_link(st: Any) -> None:
           const externalHttpsWithoutLive = protocol === "https:" && !secureHost && !configuredLiveUrl;
           if (externalHttpsWithoutLive) {
             link.href = "#";
+            link.setAttribute("aria-disabled", "true");
             link.addEventListener("click", (event) => event.preventDefault());
             hint.textContent = "No app hospedado grátis, use a câmera/foto abaixo. O modo ao vivo exige backend HTTPS dedicado.";
             return;
@@ -668,8 +672,9 @@ def _render_live_camera_link(st: Any) -> None:
         """
     ).replace("__ECOSCAN_LIVE_URL__", json.dumps(configured_live_url))
     components.html(
-        html_code,
-        height=104,
+        embedded_theme_css(st.session_state.get("recicla_sp_appearance", "Automático")) + html_code,
+        height=180,
+        scrolling=True,
     )
 
 

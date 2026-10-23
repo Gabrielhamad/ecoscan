@@ -21,6 +21,36 @@ def theme_css(preference="Automático"):
     return css
 
 
+def embedded_theme_css(preference="Automático"):
+    """Components have their own document; explicitly carry the chosen palette."""
+    if preference not in {"Automático", "Claro", "Escuro"}:
+        raise ValueError('Unsupported appearance preference')
+    palette = ':root {' + LIGHT + '} @media(prefers-color-scheme:dark) {:root {' + DARK + '}}'
+    if preference != 'Automático':
+        palette += ':root {' + (DARK if preference == 'Escuro' else LIGHT) + '}'
+    return '<style>' + palette + '''
+body {margin:0; background:transparent; color:var(--eco-ink); font:16px/1.5 system-ui,sans-serif;}
+.eco-embedded {background:var(--eco-surface) !important; color:var(--eco-ink) !important;
+  border-color:var(--eco-control-line) !important; box-shadow:none !important; padding:8px;}
+.eco-embedded button, .eco-embedded a {
+  box-sizing:border-box; background:var(--eco-primary) !important; color:var(--eco-on-primary) !important;
+  border-color:var(--eco-primary) !important; min-height:48px !important; font-size:16px;
+  padding:10px; box-shadow:none !important; overflow-wrap:anywhere;
+}
+.eco-embedded a small {color:inherit !important; font-size:14px !important; line-height:1.5;}
+.eco-embedded [role="status"], #ecoscan_live_hint {
+  color:var(--eco-muted) !important; font-size:14px !important; line-height:1.5; overflow-wrap:anywhere;
+}
+.eco-embedded a[aria-disabled="true"] {
+  background:var(--eco-surface-soft) !important; color:var(--eco-muted) !important;
+  border:1px dashed var(--eco-control-line) !important; cursor:not-allowed;
+}
+.eco-embedded a:focus-visible, .eco-embedded button:focus-visible {
+  outline:3px solid var(--eco-water); outline-offset:2px;
+}
+</style>'''
+
+
 LIGHT = """
 --eco-bg:#f5f8f7; --eco-surface:#ffffff; --eco-surface-soft:#eaf1ee;
 --eco-ink:#182b27; --eco-ink-strong:#102c24; --eco-muted:#50665e;
