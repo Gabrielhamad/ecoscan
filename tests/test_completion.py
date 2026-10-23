@@ -12,7 +12,7 @@ class CompletionPlanTests(unittest.TestCase):
 
         self.assertGreaterEqual(plan.readiness_score, 0)
         self.assertGreater(len(plan.actions), 4)
-        self.assertIn(plan.selected_model_kind, {"baseline", "visual_svm", "visual_knn", "transfer_learning", "none"})
+        self.assertIn(plan.selected_model_kind, {"baseline", "visual_svm", "visual_knn", "transfer_learning", "semantic_onnx_preview", "none"})
         self.assertTrue(any(action.title == "Modelo final por transfer learning" for action in plan.actions))
 
     def test_completion_markdown_contains_final_reading(self) -> None:

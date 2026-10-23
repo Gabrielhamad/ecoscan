@@ -36,7 +36,7 @@ class DiagnosticsTests(unittest.TestCase):
             self.assertTrue(output.exists())
             self.assertTrue(dependency_status())
             self.assertIn("raw_counts", dataset_status(config).__dict__)
-            self.assertIn(model_status(config).selected_kind, {"baseline", "visual_svm", "visual_knn", "transfer_learning", "none"})
+            self.assertIn(model_status(config).selected_kind, {"baseline", "visual_svm", "visual_knn", "transfer_learning", "semantic_onnx_preview", "none"})
 
 
 if __name__ == "__main__":

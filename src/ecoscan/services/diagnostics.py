@@ -50,6 +50,7 @@ def dependency_status() -> list[DependencyStatus]:
         DependencyStatus("scikit-image", _is_installed("skimage"), "experimentos avançados de segmentação"),
         DependencyStatus("TensorFlow", _is_installed("tensorflow"), "transfer learning e modelo final .keras"),
         DependencyStatus("Streamlit", _is_installed("streamlit"), "interface local de apresentação"),
+        DependencyStatus("ONNX Runtime", _is_installed("onnxruntime"), "inferencia da rede visual semantica"),
     ]
 
 
@@ -81,7 +82,11 @@ def model_status(config: AppConfig) -> ModelStatus:
     visual_svm_model_path = config.directories["models"] / "vision_svm_classifier.joblib"
     visual_model_path = config.directories["models"] / "vision_classifier.npz"
     baseline_model_path = config.directories["models"] / "baseline_classifier.json"
-    if final_model_path.exists():
+    semantic_path = config.directories['models'] / 'semantic-v1/semantic.json'
+    if config.model.get('semantic_preview_enabled', False) and semantic_path.exists():
+        selected_kind = 'semantic_onnx_preview'
+        selected_path = str(semantic_path)
+    elif final_model_path.exists():
         selected_kind = "transfer_learning"
         selected_path = str(final_model_path)
     elif visual_svm_model_path.exists():

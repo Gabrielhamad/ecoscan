@@ -6,11 +6,21 @@ import re
 from ecoscan.image_processing.contracts import processing_contract
 
 
+def _verified_local(path, expected):
+    try:
+        data = path.read_bytes()
+    except FileNotFoundError:
+        return None
+    return data if hashlib.sha256(data).hexdigest() == expected else None
+
+
 def materialize(bucket, release, folder, config):
     identifier = release['id']
     if not re.fullmatch('[a-f0-9]{32}', identifier):
         raise ValueError('Invalid neural release ID')
-    metadata_bytes = bucket.download(f'runs/{identifier}/semantic.json')
+    metadata_bytes = _verified_local(folder / 'semantic.json', release['metadata_sha256'])
+    if metadata_bytes is None:
+        metadata_bytes = bucket.download(f'runs/{identifier}/semantic.json')
     if hashlib.sha256(metadata_bytes).hexdigest() != release['metadata_sha256']:
         raise ValueError('Neural metadata checksum mismatch')
     metadata = json.loads(metadata_bytes)
@@ -20,7 +30,13 @@ def materialize(bucket, release, folder, config):
             or metadata['classes'] != original['classes']
             or set(metadata['head_classes']) != set(config.classes)):
         raise ValueError('Incompatible neural release')
-    head = bucket.download(f'runs/{identifier}/head.npz')
+    # The caller revalidates consent before reaching this cache. Local files
+    # remain untrusted until both hashes and the processing contract match.
+    head = _verified_local(folder / 'head.npz', metadata['head_sha256'])
+    if head is not None and _verified_local(folder / 'semantic.json', release['metadata_sha256']) is not None:
+        return folder / 'semantic.json'
+    if head is None:
+        head = bucket.download(f'runs/{identifier}/head.npz')
     if hashlib.sha256(head).hexdigest() != metadata['head_sha256']:
         raise ValueError('Neural head checksum mismatch')
     folder.mkdir(parents=True, exist_ok=True)

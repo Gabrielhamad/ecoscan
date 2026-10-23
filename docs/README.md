@@ -43,6 +43,8 @@
 
 ## Como interpretar os documentos
 
+- [Revisao de qualidade, gargalos e prontidao para publicacao](prontidao_publicacao_20261023.md)
+
 ### Experimentos recentes de reconhecimento
 
 - [Diagnostico controlado e acompanhamento dos lotes](diagnostico_reconhecimento_20261023.md)

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from pathlib import Path
+from time import perf_counter
 from typing import Any
 
 import numpy as np
@@ -101,15 +102,18 @@ def run_processing_pipeline(
     config: AppConfig,
     options: ProcessingPipelineOptions | None = None,
 ) -> ProcessingPipelineResult:
+    started = perf_counter()
     selected_options = options or default_processing_options(config)
     loaded = load_rgb_image(
         image_path,
         allowed_extensions=config.allowed_extensions,
         min_size=config.min_image_size,
     )
+    decoded = perf_counter()
 
     preprocessing = prepare_working_image(loaded.array, config.processing.get("max_dimension", 640))
     quality_original = analyze_image_quality(preprocessing.resized)
+    prepared = perf_counter()
 
     requested_filter = selected_options.filter_name.lower().strip()
     selected_filter = requested_filter
@@ -139,6 +143,7 @@ def run_processing_pipeline(
             filter_parameters,
         )
     quality_filtered = analyze_image_quality(filter_result.image)
+    filtered = perf_counter()
 
     requested_segmentation = selected_options.segmentation_name.lower().strip()
     segmentation_decision = {
@@ -166,6 +171,7 @@ def run_processing_pipeline(
             requested_segmentation,
             segmentation_parameters,
         )
+    segmented = perf_counter()
     raw_segmentation_result = segmentation_result
     morphology_result = apply_morphology(
         raw_segmentation_result.mask,
@@ -217,6 +223,14 @@ def run_processing_pipeline(
         capture_quality=capture_quality,
         model_input_preview=preview,
         metadata={
+            "timings_ms": {
+                "decode": round((decoded - started) * 1000, 2),
+                "prepare": round((prepared - decoded) * 1000, 2),
+                "filter": round((filtered - prepared) * 1000, 2),
+                "segmentation": round((segmented - filtered) * 1000, 2),
+                "evidence_and_model_input": round((perf_counter() - segmented) * 1000, 2),
+                "total": round((perf_counter() - started) * 1000, 2),
+            },
             "image_path": str(Path(image_path)),
             "original_size": [loaded.info.width, loaded.info.height],
             "oriented_size": [loaded.array.shape[1], loaded.array.shape[0]],
