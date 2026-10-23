@@ -22,6 +22,28 @@ def scene_split(group):
     return 'test' if int(hashlib.sha256(group.encode()).hexdigest()[:8], 16) % 5 == 0 else 'train'
 
 
+def validate_batch_hashes(rows, metadata):
+    previous = set(metadata.get('training_hashes', []))
+    held_out = set(metadata.get('validation_hashes', []) + metadata.get('held_out_hashes', []))
+    hashes = [row['sha256'] for row in rows]
+    if len(set(hashes)) != len(hashes):
+        raise ValueError('Duplicate image hashes in reviewed batch')
+    if set(hashes) & (previous | held_out):
+        raise ValueError('Reviewed image already belongs to training or evaluation')
+
+
+def batch_sources(rows):
+    sources = set()
+    for row in rows:
+        if 'taco_image_id' in row:
+            sources.add('https://github.com/pedropro/TACO')
+        elif row.get('source_archive_sha256') and row.get('archive_entry'):
+            sources.add(row['source_url'])
+        else:
+            raise ValueError('Missing supported dataset provenance')
+    return sorted(sources)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--reviewed', type=Path, required=True)
@@ -40,6 +62,9 @@ def main():
     with np.load(base_dir / 'learning_seed.npz', allow_pickle=False) as data:
         seed = {k: data[k] for k in data.files}
     rows = json.loads((args.reviewed / 'manifest.json').read_text())
+    previous_hashes = set(seed_metadata.get('training_hashes', []))
+    validate_batch_hashes(rows, seed_metadata)
+    sources = batch_sources(rows)
     options = replace(default_processing_options(config), segmentation_name='none', morphology_name='none')
     features = []
     for index, row in enumerate(rows):
@@ -99,11 +124,14 @@ def main():
     expanded_seed = {**seed_metadata,
         'sha256': hashlib.sha256((args.output / 'learning_seed.npz').read_bytes()).hexdigest(),
         'counts': {'train': len(all_y), 'validation': len(seed['validation_y'])},
+        'training_hashes': sorted(previous_hashes | {r['sha256'] for r in rows if r['split'] == 'train'}),
         'held_out_hashes': seed_metadata.get('held_out_hashes', []) + [r['sha256'] for r in rows if r['split'] == 'test'],
-        'expansion': {'source': 'https://github.com/pedropro/TACO',
+        'expansion': {'sources': sources,
                       'review_manifest_sha256': hashlib.sha256((args.reviewed / 'manifest.json').read_bytes()).hexdigest(),
                       'new_training_images': int(train.sum()),
                       'held_out_images': int((~train).sum())}}
+    expanded_seed['expansions'] = seed_metadata.get('expansions',
+        [seed_metadata['expansion']] if seed_metadata.get('expansion') else []) + [expanded_seed['expansion']]
     (args.output / 'learning_seed.json').write_text(json.dumps(expanded_seed, indent=2))
     (args.output / 'manifest.json').write_text(json.dumps(rows, indent=2))
     report = {'new_train': dict(Counter(y[train])), 'new_test': dict(Counter(y[~train])),

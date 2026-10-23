@@ -43,6 +43,11 @@
 
 ## Como interpretar os documentos
 
+### Experimentos recentes de reconhecimento
+
+- [Ampliacao revisada de vidro, papel e papelao: resultados e limites](datasets/balance_20261023/README.md)
+- [Primeiro lote revisado do TACO](datasets/taco_expansion_20261022/README.md)
+
 README, arquitetura e guias de processamento/treinamento foram revisados em
 29/09/2026 contra o código. Os documentos de fases, roadmaps e resultados de captura preservam o
 histórico acadêmico: números, classes e pendências neles não devem ser assumidos
