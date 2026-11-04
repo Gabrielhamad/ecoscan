@@ -72,3 +72,18 @@ instalações limpas. A correção foi reproduzida em ambiente novo com 450 test
 
 O primeiro marco só pode ser encerrado depois que a matriz mínima for executada
 em aparelhos reais e o hash testado tiver CI verde.
+
+## Resultado do smoke test público
+
+Execução de 04/11/2026 sobre o código funcional `16344df`:
+
+| Ambiente | Resultado | Evidência informada |
+| --- | --- | --- |
+| Computador, janela anônima | Aprovado | Aplicação abriu e concluiu a análise de uma foto |
+| Android | Aprovado | Abertura, câmera e análise confirmadas em aparelho real |
+| iPhone | Aprovado | Abertura, câmera e análise confirmadas em aparelho real |
+| GitHub Actions | Aprovado | [Execução 46](https://github.com/Gabrielhamad/ecoscan/actions/runs/41891056500) concluída com sucesso |
+
+Este resultado aprova a jornada pública de visitante nos três tipos de dispositivo.
+Cadastro, isolamento entre contas, gestão e persistência continuam pendentes do
+aceite integrado com o Supabase.

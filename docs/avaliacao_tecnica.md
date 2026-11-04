@@ -10,7 +10,7 @@ O estado atual é adequado para **piloto controlado**. Ainda não é adequado pa
 
 | Prioridade | Ponto | Evidência | Ajuste necessário |
 | --- | --- | --- | --- |
-| P0 | Aceite no ambiente publicado | A automação local não mede cold start, navegador ou rede real | Executar smoke test externo em celular e computador após cada deploy |
+| P0 | Aceite no ambiente publicado | Jornada de visitante aprovada em computador, Android e iPhone no código `16344df` | Repetir após mudanças de runtime e concluir contas, gestão e Supabase |
 | P0 | Banco e autorização reais | A CI valida migrações em PostgreSQL local, sem Secrets de produção | Validar cadastro, confirmação, login, perfil de gestão, Storage privado e RLS no Supabase usado pelo app |
 | P0 | Reconhecimento independente | A release tem resultado histórico, com confirmação obrigatória | Coletar e congelar teste novo para metal, plástico e vidro; publicar métricas e erros por classe |
 | P0 | Rollback operacional | Código tem histórico, mas não há release Git versionada | Criar tag de entrega, changelog e procedimento testado de retorno do app e do modelo |

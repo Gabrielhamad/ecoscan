@@ -2,10 +2,10 @@
 
 ## 1. Candidato de release
 
-- manter `main` verde com testes, lint crítico, `pip check` e diagnóstico;
+- manter `main` verde com testes, lint, `pip check` e diagnóstico;
 - revisar Secrets e executar as migrações no projeto Supabase correto;
-- testar o URL público em Android, iOS e computador;
-- registrar hash, data, responsável e resultado do smoke test;
+- testar o URL público em Android, iOS e computador — concluído em 04/11/2026 para a jornada de visitante;
+- registrar hash, data, responsável e resultado do smoke test — código funcional `16344df`, CI verde e evidência no [roteiro de aceite](roteiro_testes_manuais.md);
 - corrigir qualquer falha de abertura, sessão ou upload.
 
 **Aceite:** visitante abre o app, envia foto e consulta orientação; participante entra e acompanha protocolo; gestão acessa apenas com autorização.
