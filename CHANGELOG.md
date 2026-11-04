@@ -8,6 +8,7 @@
 - Inicialização pública com carregamento sob demanda.
 - Navegação, recursos e controles da interface separados em módulos.
 - Documentação e automação do GitHub reorganizadas para entrega.
+- Dependência `PyWavelets` declarada para instalações limpas do processamento adaptativo.
 
 ### Removido
 

@@ -1,73 +1,74 @@
-# Roteiro de testes manuais
+# Aceite do ambiente publicado
 
-## Câmera
+Este roteiro valida a aplicação implantada. Testes locais e simulação de `User-Agent`
+não substituem a execução em um aparelho real.
 
-1. Abrir a aplicação com `python scripts\run_streamlit_app.py`.
-2. Acessar a aba `Análise`.
-3. Selecionar `Câmera`.
-4. Permitir acesso à câmera no navegador.
-5. Capturar uma foto com um resíduo principal centralizado.
-6. Verificar se o sistema mostra classe, score, categoria ambiental e orientação.
-7. Abrir `Processamento` e conferir filtro, máscara, elementos visuais e metadata.
+## Registro obrigatório
 
-Teste alternativo com OpenCV instalado:
+Antes de testar, registre:
 
-```powershell
-python scripts\capture_webcam.py --camera-index 0
-```
+- URL e hash do `main` implantado;
+- data, horário e responsável;
+- dispositivo, sistema, navegador e tipo de conexão;
+- perfil usado: visitante, participante ou gestão;
+- resultado, tempo percebido, mensagem de erro e captura sem dados pessoais.
 
-O script deve salvar captura e evidências em `reports/camera_detection`.
+Use os estados `aprovado`, `reprovado` ou `bloqueado`. Um item bloqueado não conta
+como aprovado.
 
-Teste ao vivo no celular:
+## Matriz mínima
 
-```powershell
-python scripts\run_live_camera_app.py --host 0.0.0.0 --port 8765
-```
+| Ambiente | Jornada | Critério |
+| --- | --- | --- |
+| Computador, janela anônima | Abrir como visitante | Primeira tela aparece sem recarregar manualmente |
+| Android, Chrome | Abrir e capturar foto | Permissão, prévia e análise funcionam |
+| iPhone, Safari | Abrir e capturar foto | Permissão, prévia e análise funcionam |
+| Participante | Cadastro, confirmação e login | Sessão sobrevive a uma atualização de página |
+| Duas contas | Protocolos e contribuições | Uma conta não acessa registros da outra |
+| Gestão autorizada | Revisão e resposta | Visitante e participante não acessam a área |
 
-1. Abrir a URL indicada pelo terminal no celular.
-2. Tocar em `Iniciar`.
-3. Confirmar se a câmera traseira foi priorizada.
-4. Apontar para um resíduo centralizado.
-5. Conferir se aparecem classe, score, latência, filtro, segmentação e caixas com IDs.
-6. Usar `Alternar` se o navegador escolher a câmera frontal.
+## Jornada pública
 
-Se o celular bloquear a câmera, repetir o teste por HTTPS ou túnel seguro, pois navegadores móveis normalmente exigem contexto seguro para `getUserMedia`.
+1. Abrir `https://ecoscan-gabrielhamad.streamlit.app` em janela anônima.
+2. Medir até a primeira tela utilizável e registrar se apareceu tela branca.
+3. Navegar por educação, descarte e pontos de coleta.
+4. Enviar uma foto de garrafa PET, lata ou embalagem de vidro.
+5. Confirmar que a hipótese aparece como assistida e exige confirmação humana.
+6. Repetir com arquivo vazio, corrompido, formato inválido e foto fora do escopo.
+7. Confirmar que nenhuma falha expõe caminho local, token ou detalhe interno.
 
-Use este roteiro nas próximas fases da APS.
+## Jornada de conta e gestão
 
-## Imagens válidas
+1. Criar duas contas de teste com endereços controlados.
+2. Confirmar e-mail, entrar, sair e recuperar acesso.
+3. Criar um protocolo em cada conta e atualizar a página.
+4. Verificar isolamento entre as contas e persistência após novo login.
+5. Entrar com uma conta de gestão autorizada, revisar e responder um registro.
+6. Confirmar que a resposta aparece somente para a conta responsável.
 
-- imagem clara com fundo simples;
-- imagem escura;
-- fundo complexo;
-- objeto pequeno na imagem;
-- objeto parcialmente cortado;
-- objeto centralizado;
-- objeto fora do centro.
+## Desempenho e estabilidade
 
-## Classes
+Em cada dispositivo, executar três aberturas: primeira visita, atualização e retorno
+após cinco minutos. Registrar tempo até uso, falhas, recarregamentos e estado da
+sessão. Como meta inicial de piloto:
 
-- plástico;
-- papel/papelão;
-- metal;
-- vidro;
-- orgânico;
-- pilha/bateria;
-- eletrônico.
+- primeira tela utilizável em até 5 segundos em conexão estável;
+- atualização em até 3 segundos;
+- nenhuma tela branca permanente;
+- nenhum loop de login;
+- análise inválida não derruba a sessão.
 
-## Entradas problemáticas
+## Evidência técnica desta revisão
 
-- arquivo vazio;
-- arquivo corrompido;
-- formato não suportado;
-- imagem muito pequena;
-- imagem sem resíduo;
-- imagem fora do domínio.
+Em 04/11/2026, o ambiente de engenharia confirmou o servidor local e o endpoint
+`/_stcore/health`. A renderização local ficou abaixo de 0,6 segundo na primeira
+execução e próxima de 0,01 segundo nas atualizações.
 
-## Critérios esperados
+O proxy de auditoria bloqueou `*.streamlit.app` com HTTP 403 antes da negociação
+TLS. Esse resultado não veio do EcoScan e não aprova nem reprova o deploy público.
+O teste externo encontrou, pela CI, uma dependência de processamento ausente em
+instalações limpas. A correção foi reproduzida em ambiente novo com 450 testes e
+96 subtestes aprovados.
 
-- o sistema não deve quebrar com entrada inválida;
-- mensagens de erro devem ser claras;
-- baixa confiança não deve forçar classificação;
-- a tela técnica deve mostrar as etapas do processamento;
-- a orientação deve vir da base configurável, não do modelo.
+O primeiro marco só pode ser encerrado depois que a matriz mínima for executada
+em aparelhos reais e o hash testado tiver CI verde.
