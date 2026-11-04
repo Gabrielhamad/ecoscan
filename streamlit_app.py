@@ -9,7 +9,7 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from ecoscan.ui.streamlit_app import main
+from ecoscan.ui.bootstrap import main
 
 
 if __name__ == "__main__":

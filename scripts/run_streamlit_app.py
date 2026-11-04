@@ -20,7 +20,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    app_path = PROJECT_ROOT / "src" / "ecoscan" / "ui" / "streamlit_app.py"
+    app_path = PROJECT_ROOT / "streamlit_app.py"
     command = [
         sys.executable,
         "-m",

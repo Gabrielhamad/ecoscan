@@ -7,9 +7,14 @@ import re
 
 from ecoscan.services.accounts import UserProfile
 from ecoscan.services.contribution_store import settings
+from ecoscan.services.supabase_client import create_bounded_client, isolated_auth_client
 
 
 logger = logging.getLogger(__name__)
+
+
+class AuthenticationUnavailableError(OSError):
+    """Temporary Auth failure; does not establish that the token is invalid."""
 
 
 def _auth_failure(exc: Exception, operation: str) -> ValueError:
@@ -52,18 +57,18 @@ def validate_registration(email: str, password: str, confirmation: str) -> str:
 
 
 def _client():
-    from supabase import create_client
     url, key = settings()
     if not url or not key:
         raise ValueError("Login indisponível.")
-    return create_client(url, key)
+    return create_bounded_client(url, key)
 
 
 def sign_in(email: str, password: str) -> str:
     if not email.strip() or not password:
         raise ValueError("Preencha e-mail e senha.")
     try:
-        result = _client().auth.sign_in_with_password({"email": email.strip(), "password": password})
+        with isolated_auth_client(_client) as client:
+            result = client.auth.sign_in_with_password({"email": email.strip(), "password": password})
         if not result.session or not result.session.access_token:
             raise ValueError()
         return result.session.access_token
@@ -83,7 +88,8 @@ def register(email: str, password: str, confirmation: str, *, enabled: bool = Fa
         payload = {"email": email, "password": password}
         if name:
             payload["options"] = {"data": {"display_name": name}}
-        _client().auth.sign_up(payload)
+        with isolated_auth_client(_client) as client:
+            client.auth.sign_up(payload)
     except Exception as exc:
         raise _auth_failure(exc, "signup") from None
 
@@ -93,15 +99,20 @@ def resend_confirmation(email: str, *, enabled: bool = False) -> None:
         raise ValueError("Confirmação por e-mail ainda em preparação.")
     email = validate_email(email)
     try:
-        _client().auth.resend({"type": "signup", "email": email})
+        with isolated_auth_client(_client) as client:
+            client.auth.resend({"type": "signup", "email": email})
     except Exception as exc:
         raise _auth_failure(exc, "resend") from None
 
 
 def verified_profile(token: str, access: dict) -> UserProfile:
+    import httpx
+    from supabase_auth.errors import AuthRetryableError
+
     try:
         # Always verify with Auth, not untrusted JWT decoding or user metadata.
-        user = _client().auth.get_user(token).user
+        with isolated_auth_client(_client) as client:
+            user = client.auth.get_user(token).user
         identifier = str(UUID(str(user.id)))
         if not user.email or not user.email_confirmed_at:
             raise ValueError()
@@ -121,7 +132,11 @@ def verified_profile(token: str, access: dict) -> UserProfile:
             organization="Secretaria do Meio Ambiente" if is_admin else "Comunidade",
             notes="Conta autenticada. Os protocolos enviados com esta conta ficam vinculados a ela.",
         )
-    except Exception:
+    except (httpx.TransportError, AuthRetryableError):
+        raise AuthenticationUnavailableError("O serviço de acesso está demorando ou indisponível. Tente validar sua sessão novamente.") from None
+    except Exception as exc:
+        if getattr(exc, "status", None) in (429, "429", 500, "500", 502, "502", 503, "503", 504, "504"):
+            raise AuthenticationUnavailableError("O serviço de acesso está temporariamente indisponível. Tente novamente em instantes.") from None
         raise ValueError("Sua sessão não pôde ser validada. Entre novamente.") from None
 
 
@@ -130,7 +145,8 @@ def request_password_reset(email: str) -> None:
     email = validate_email(email)
     try:
         # The recovery template uses SiteURL and TokenHash; no caller-controlled redirect.
-        _client().auth.reset_password_for_email(email)
+        with isolated_auth_client(_client) as client:
+            client.auth.reset_password_for_email(email)
     except Exception as exc:
         raise _auth_failure(exc, "recovery_request") from None
 
@@ -169,4 +185,9 @@ def reset_password(token_hash: str, password: str, confirmation: str) -> None:
                 client.auth.sign_out({"scope": "local"})
             except Exception:
                 # A logout outage must not turn a confirmed password update into failure.
+                pass
+        if client is not None:
+            try:
+                client.auth.close()
+            except Exception:
                 pass

@@ -32,8 +32,8 @@ def remote_store():
     if not url:
         return None
     try:
-        from supabase import create_client
-        return SupabaseContributions(create_client(url, key))
+        from ecoscan.services.supabase_client import create_bounded_client
+        return SupabaseContributions(create_bounded_client(url, key))
     except Exception:
         raise OSError("Não foi possível conectar ao banco. Nenhum fallback temporário foi ativado.") from None
 

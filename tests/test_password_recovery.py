@@ -37,7 +37,7 @@ class RecoveryTests(unittest.TestCase):
         client.auth.admin.update_user_by_id.assert_not_called()
         client.auth.sign_out.assert_called_once_with({"scope": "local"})
         self.assertEqual([c[0] for c in client.auth.method_calls],
-                         ["verify_otp", "update_user", "sign_out"])
+                         ["verify_otp", "update_user", "sign_out", "close"])
 
     def test_validation_does_not_consume_link(self):
         with patch("ecoscan.services.password_identity._client") as factory:

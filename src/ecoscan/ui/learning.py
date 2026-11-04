@@ -10,7 +10,6 @@ from ecoscan.services.learning_contributions import (
 )
 from ecoscan.services.recognition_scope import ITEMS, ITEM_CONDITIONS, REPORT_ITEMS
 from ecoscan.services.contribution_store import persistent_enabled
-from ecoscan.services.secretariat_training import candidate_runs, train_candidate, training_dir
 
 
 STATUS_LABELS = {"pending": "Recebido pela secretaria", "approved": "Aprovado pelo analista",
@@ -179,6 +178,7 @@ def render_contribution(st, config, result, profile):
 def render_review(st, config, profile):
     if not profile.is_admin:
         return
+    from ecoscan.services.secretariat_training import train_candidate
     st.subheader("Central de análise da secretaria")
     try:
         records = list_contributions(config)
@@ -263,6 +263,7 @@ def render_training(st, config, profile, *, records=None):
         return
     if st.session_state.get("training_notice"):
         st.warning(st.session_state.pop("training_notice"))
+    from ecoscan.services.secretariat_training import candidate_runs, train_candidate, training_dir
     with st.expander("Treinos supervisionados"):
         st.caption("Cada candidato reúne a base publicada e as fotos aprovadas. O modelo público só deve mudar após avaliação independente.")
         if st.button("Treinar candidato com aprovadas"):

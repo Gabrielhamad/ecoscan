@@ -50,7 +50,7 @@ def render_identity(st: Any) -> UserProfile:
 
 
 def _render_password_identity(st, access):
-    from ecoscan.services.password_identity import sign_in, verified_profile
+    from ecoscan.services.password_identity import AuthenticationUnavailableError, verified_profile
 
     if _render_password_recovery(st):
         st.stop()
@@ -60,6 +60,17 @@ def _render_password_identity(st, access):
     if token:
         try:
             profile = verified_profile(token, access)
+        except AuthenticationUnavailableError as exc:
+            # Keep the token for retry, but render no authenticated content while
+            # verification is unavailable. A timeout must not erase the account.
+            st.warning(str(exc))
+            # Clicking already reruns this function; do not issue a second
+            # immediate Auth request after a failed retry.
+            st.button("Tentar validar sessão novamente", key="retry_identity")
+            if st.button("Continuar como visitante", key="identity_continue_visitor"):
+                st.session_state.clear()
+                st.rerun()
+            st.stop()
         except ValueError as exc:
             st.session_state.pop("auth_access_token", None)
             st.warning(str(exc))
@@ -139,7 +150,8 @@ def _render_login_form(st):
         submit = st.form_submit_button("Entrar")
     if submit:
         try:
-            st.session_state["auth_access_token"] = sign_in(email, password)
+            with st.spinner("Entrando na sua conta..."):
+                st.session_state["auth_access_token"] = sign_in(email, password)
         except ValueError as exc:
             st.error(str(exc))
         else:

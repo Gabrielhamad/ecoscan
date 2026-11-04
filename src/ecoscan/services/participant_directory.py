@@ -6,6 +6,7 @@ def registered_users(token, access):
     if not token or not verified_profile(token, access).is_admin:
         raise PermissionError("Somente analistas autenticados podem consultar cadastros.")
     rows = []
+    client = None
     try:
         client = _client()
         for page in range(1, 11):
@@ -23,3 +24,9 @@ def registered_users(token, access):
         return rows
     except Exception:
         raise OSError("Não foi possível consultar os cadastros. Tente novamente.") from None
+    finally:
+        if client is not None:
+            try:
+                client.auth.close()
+            except Exception:
+                pass

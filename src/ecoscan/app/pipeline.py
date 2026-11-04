@@ -8,6 +8,7 @@ from typing import Any
 import numpy as np
 
 from ecoscan.config import AppConfig
+from ecoscan.app.processing_options import ProcessingPipelineOptions, default_processing_options
 from ecoscan.image_processing.adaptive_filters import apply_adaptive_filter_pipeline
 from ecoscan.image_processing.capture_quality import CaptureQualityAssessment, assess_capture_quality
 from ecoscan.image_processing.filters import FilterResult, apply_filter
@@ -31,16 +32,6 @@ from ecoscan.segmentation.elements import (
 from ecoscan.segmentation.adaptive import segment_image_adaptive
 from ecoscan.segmentation.methods import SegmentationResult, segment_image, apply_mask
 from ecoscan.segmentation.morphology import MorphologyResult, apply_morphology
-
-
-@dataclass(frozen=True)
-class ProcessingPipelineOptions:
-    filter_name: str = "auto"
-    filter_parameters: dict[str, Any] | None = None
-    segmentation_name: str = "auto"
-    segmentation_parameters: dict[str, Any] | None = None
-    morphology_name: str = "open_close"
-    morphology_parameters: dict[str, Any] | None = None
 
 
 @dataclass(frozen=True)
@@ -84,17 +75,6 @@ def _adaptive_segmentation_parameters(config: AppConfig) -> dict[str, Any]:
         method_parameters.setdefault(method_name, _configured_segmentation_parameters(config, method_name))
     parameters["method_parameters"] = method_parameters
     return parameters
-
-
-def default_processing_options(config: AppConfig) -> ProcessingPipelineOptions:
-    morphology = dict(config.segmentation.get("morphology", {}))
-    operation = str(morphology.pop("default", "open_close"))
-    return ProcessingPipelineOptions(
-        filter_name=str(config.filters.get("default", "auto")),
-        segmentation_name=str(config.segmentation.get("default", "auto")),
-        morphology_name=operation,
-        morphology_parameters=morphology,
-    )
 
 
 def run_processing_pipeline(

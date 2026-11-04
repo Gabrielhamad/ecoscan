@@ -11,7 +11,7 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from ecoscan.app.pipeline import ProcessingPipelineOptions
+from ecoscan.app.processing_options import ProcessingPipelineOptions
 from ecoscan.config import load_config
 from ecoscan.ui.identity import render_identity
 from ecoscan.ui.processing_lab import select_morphology_parameters, render_processing_lab
@@ -37,10 +37,7 @@ from ecoscan.disposal.targets import (
     get_disposal_target,
     load_disposal_targets,
 )
-from ecoscan.errors import describe_exception, error_catalog
 from ecoscan.services.academic_report import write_academic_report
-from ecoscan.services.acceptance_checks import run_acceptance_checks
-from ecoscan.services.analysis_service import analyze_waste_image
 from ecoscan.services.aps_audit import build_aps_audit, summarize_audit
 from ecoscan.services.accounts import (
     UserProfile,
@@ -129,7 +126,6 @@ from ecoscan.services.usage_quality import (
     class_quality_rows,
     correction_rows,
 )
-from ecoscan.services.visual_report import save_pipeline_artifacts
 from ecoscan.utils.logging_config import configure_logging
 
 
@@ -255,6 +251,7 @@ def _impact_for_guidance(
 
 
 def _render_user_error(st: Any, exc: BaseException, *, context: str) -> None:
+    from ecoscan.errors import describe_exception
     error = describe_exception(exc)
     log_message = (
         "ui_handled_error context=%s code=%s category=%s detail=%s"
@@ -1489,6 +1486,7 @@ def _render_access_testing_panel(st: Any) -> None:
 
 
 def _render_error_catalog(st: Any) -> None:
+    from ecoscan.errors import error_catalog
     rows = [
         {
             "código": item.code,
@@ -1742,6 +1740,7 @@ def _render_delivery_pack(st: Any, config: Any) -> None:
 def _render_acceptance_checks(st: Any, config: Any) -> None:
     if st.button("Rodar validação do sistema"):
         try:
+            from ecoscan.services.acceptance_checks import run_acceptance_checks
             report = run_acceptance_checks(config)
             st.session_state["acceptance_checks_report"] = report
             summary = report.summary
@@ -2018,6 +2017,7 @@ def _render_campaign_tab(
             evidence_sha256 = hashlib.sha256(proof_file.getvalue()).hexdigest()
             try:
                 with st.spinner("Validando missão com processamento de imagem..."):
+                    from ecoscan.services.analysis_service import analyze_waste_image
                     mission_result = analyze_waste_image(temp_path, config, options=pipeline_options)
                 evaluation = evaluate_mission_submission(selected_mission, mission_result)
                 st.session_state["last_mission_result"] = mission_result
@@ -2154,6 +2154,7 @@ def _render_civic_reports_tab(
             temp_path = _temporary_upload(report_file, prefix="report")
             try:
                 with st.spinner("Processando evidência da denúncia..."):
+                    from ecoscan.services.analysis_service import analyze_waste_image
                     report_result = analyze_waste_image(temp_path, config, options=pipeline_options)
                 record = build_civic_report_record(
                     report_result,
@@ -2572,16 +2573,18 @@ def _render_admin_tab(
     cols[1].metric("Missões", len(campaign.missions) if campaign else 0)
     cols[2].metric("Pontos de coleta", len(collection_points))
 
-    with st.expander("Cadastros reais e confirmação de e-mail"):
-        st.button("Atualizar cadastros", key="refresh_real_users")
-        try:
-            from ecoscan.services.participant_directory import registered_users
-            real_users = registered_users(st.session_state.get("auth_access_token"),
-                                          dict(st.secrets.get("access", {})))
-            st.caption(f"{len(real_users)} conta(s) consultada(s), limite de 1.000. Cadastro não significa contribuição enviada.")
-            st.dataframe(real_users, hide_index=True, width="stretch")
-        except (ValueError, PermissionError, OSError) as exc:
-            st.warning(str(exc))
+    with st.expander("Cadastros reais e confirmação de e-mail",
+                     key="real_users_panel", on_change="rerun") as directory_panel:
+        if directory_panel.open:
+            st.button("Atualizar cadastros", key="refresh_real_users")
+            try:
+                from ecoscan.services.participant_directory import registered_users
+                real_users = registered_users(st.session_state.get("auth_access_token"),
+                                              dict(st.secrets.get("access", {})))
+                st.caption(f"{len(real_users)} conta(s) consultada(s), limite de 1.000. Cadastro não significa contribuição enviada.")
+                st.dataframe(real_users, hide_index=True, width="stretch")
+            except (ValueError, PermissionError, OSError) as exc:
+                st.warning(str(exc))
 
     _render_admin_campaign_operations(
         st,
@@ -2637,7 +2640,7 @@ def _temporary_upload(uploaded_file: Any, prefix: str = "upload") -> Path:
         return Path(temp_file.name)
 
 
-def main() -> None:
+def main(*, page_configured=False) -> None:
     import streamlit as st
 
     config = load_config()
@@ -2648,11 +2651,12 @@ def main() -> None:
     requirements_by_class = _load_photo_requirement_map(config)
     collection_points = _load_collection_point_list(config)
     profiles = _load_user_profile_list(config)
-    st.set_page_config(page_title="Recicla SP", layout="wide", initial_sidebar_state="collapsed")
+    if not page_configured:
+        st.set_page_config(page_title="Recicla SP", layout="wide", initial_sidebar_state="collapsed")
     _render_theme(st)
-    campaign = _load_campaign_config(config)
+    campaign = None  # Public entry must not wait for the campaign database.
 
-    from ecoscan.app.pipeline import default_processing_options
+    from ecoscan.app.processing_options import default_processing_options
     defaults = default_processing_options(config)
     filter_name = defaults.filter_name
     filter_parameters: dict[str, Any] = {}
@@ -2702,7 +2706,6 @@ def main() -> None:
     st.caption("Recicla SP · piloto independente de educação ambiental. Não é um canal oficial de atendimento municipal.")
     if active_profile.is_admin:
         render_scope(st)
-        _render_overview_strip(st, config)
     else:
         with st.expander("Laboratório de processamento de imagens"):
             st.caption("Compare técnicas da disciplina. Alterar parâmetros reprocessa a foto carregada.")
@@ -2771,13 +2774,17 @@ def main() -> None:
             report_tab,
             account_tab,
         ]
-    tabs = dict(zip(tab_names, st.tabs(tab_names)))
+    tabs = dict(zip(tab_names, st.tabs(
+        tab_names, key="main_navigation_" + active_profile.role, on_change="rerun")))
+    if any(tabs[name].open for name in (campaign_tab, account_tab, "Gestão") if name in tabs):
+        campaign = _load_campaign_config(config)
     result = st.session_state.get("last_analysis_result")
 
-    with tabs["Aprender"]:
-        render_education(st, config.project_root, active_profile, points_ledger_path_from_config(config))
+    if tabs["Aprender"].open:
+        with tabs["Aprender"]:
+            render_education(st, config.project_root, active_profile, points_ledger_path_from_config(config))
 
-    if "Descarte" in tabs:
+    if "Descarte" in tabs and tabs["Descarte"].open:
         with tabs["Descarte"]:
             st.subheader("Descarte responsável")
             render_scope(st)
@@ -2823,6 +2830,7 @@ def main() -> None:
                 try:
                     temp_path = _temporary_upload(uploaded_file, prefix=source_kind)
                     with st.spinner("Detectando resíduo na captura..." if source_kind == "camera" else "Detectando resíduo na imagem..."):
+                        from ecoscan.services.analysis_service import analyze_waste_image
                         result = analyze_waste_image(
                             temp_path,
                             config,
@@ -2923,6 +2931,7 @@ def main() -> None:
                         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                         output_dir = config.directories["reports"] / "ui_exports" / timestamp
                         try:
+                            from ecoscan.services.visual_report import save_pipeline_artifacts
                             save_pipeline_artifacts(result.pipeline, output_dir)
                             st.success(f"Evidência salva em {output_dir}")
                         except Exception as exc:
@@ -2960,25 +2969,28 @@ def main() -> None:
                                 collection_points,
                             )
 
-    with tabs[campaign_tab]:
-        _render_campaign_tab(
-            st,
-            config,
-            campaign,
-            active_profile,
-            guidance_by_class,
-            impacts_by_class,
-            targets_by_class,
-            pipeline_options,
-        )
+    if tabs[campaign_tab].open:
+        with tabs[campaign_tab]:
+            _render_campaign_tab(
+                st,
+                config,
+                campaign,
+                active_profile,
+                guidance_by_class,
+                impacts_by_class,
+                targets_by_class,
+                pipeline_options,
+            )
 
-    with tabs[report_tab]:
-        _render_civic_reports_tab(st, config, active_profile, pipeline_options)
+    if tabs[report_tab].open:
+        with tabs[report_tab]:
+            _render_civic_reports_tab(st, config, active_profile, pipeline_options)
 
-    with tabs[collection_tab]:
-        _render_collection_points_tab(st, config, guidance_by_class, collection_points)
+    if tabs[collection_tab].open:
+        with tabs[collection_tab]:
+            _render_collection_points_tab(st, config, guidance_by_class, collection_points)
 
-    if "Processamento" in tabs:
+    if "Processamento" in tabs and tabs["Processamento"].open:
         with tabs["Processamento"]:
             if result is None:
                 st.info("Aguardando análise.")
@@ -3008,7 +3020,7 @@ def main() -> None:
                 st.markdown('<div class="ecoscan-section-title">Metadados técnicos</div>', unsafe_allow_html=True)
                 st.json(result.pipeline.metadata)
 
-    if "Base de imagens" in tabs:
+    if "Base de imagens" in tabs and tabs["Base de imagens"].open:
         with tabs["Base de imagens"]:
             st.markdown('<div class="ecoscan-section-title">Adicionar fotos à base</div>', unsafe_allow_html=True)
             st.markdown(
@@ -3065,14 +3077,15 @@ def main() -> None:
             st.markdown('<div class="ecoscan-section-title">Resumo da base de imagens</div>', unsafe_allow_html=True)
             _render_dataset_status(st, config, guidance_by_class)
 
-    if "Histórico" in tabs:
+    if "Histórico" in tabs and tabs["Histórico"].open:
         with tabs["Histórico"]:
             _render_history(st, config)
 
-    with tabs[account_tab]:
-        _render_account_tab(st, config, active_profile, campaign, guidance_by_class)
+    if tabs[account_tab].open:
+        with tabs[account_tab]:
+            _render_account_tab(st, config, active_profile, campaign, guidance_by_class)
 
-    if active_profile.is_admin:
+    if active_profile.is_admin and tabs["Gestão"].open:
         with tabs["Gestão"]:
             _render_admin_tab(
                 st,
@@ -3084,14 +3097,15 @@ def main() -> None:
                 guidance_by_class,
             )
 
-    if "Conclusão" in tabs:
+    if "Conclusão" in tabs and tabs["Conclusão"].open:
         with tabs["Conclusão"]:
             st.markdown('<div class="ecoscan-section-title">Conclusão e prontidão final</div>', unsafe_allow_html=True)
             _render_completion_panel(st, config)
             _render_model_governance(st, config, guidance_by_class)
 
-    if "Sistema" in tabs:
+    if "Sistema" in tabs and tabs["Sistema"].open:
         with tabs["Sistema"]:
+            _render_overview_strip(st, config)
             st.markdown('<div class="ecoscan-section-title">Acesso e rodada de testes</div>', unsafe_allow_html=True)
             _render_access_testing_panel(st)
             st.markdown('<div class="ecoscan-section-title">Hospedagem gratuita HTTPS</div>', unsafe_allow_html=True)
