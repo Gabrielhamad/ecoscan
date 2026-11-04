@@ -86,9 +86,13 @@ jobs:
           persist-credentials: false
       - name: Preparar banco isolado da CI
         run: psql -v ON_ERROR_STOP=1 -f tests/community_database_fixture.sql
-      - name: Aplicar e reaplicar migracao aditiva
+      - name: Aplicar esquema completo e testar migracoes aditivas novamente
         run: |
+          psql -v ON_ERROR_STOP=1 -f migrations/001_contributions.sql
+          psql -v ON_ERROR_STOP=1 -f migrations/002_operational_records.sql
           psql -v ON_ERROR_STOP=1 -f migrations/003_community.sql
           psql -v ON_ERROR_STOP=1 -f migrations/003_community.sql
+          psql -v ON_ERROR_STOP=1 -f migrations/004_verified_identity_constraints.sql
+          psql -v ON_ERROR_STOP=1 -f migrations/004_verified_identity_constraints.sql
       - name: Verificar permissoes, revisoes e auditoria sem manter fixtures
         run: psql -v ON_ERROR_STOP=1 -c BEGIN -f tests/community_database_checks.sql

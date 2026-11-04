@@ -2,11 +2,15 @@
 from __future__ import annotations
 
 import os
+import re
 
 from ecoscan.services.contribution_store import remote_store
 
 
 TABLES = {"points": "ecoscan_points", "field_tests": "ecoscan_field_tests"}
+VERIFIED_ID = re.compile(
+    r"^supabase_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+)
 
 
 def operations_enabled():
@@ -36,9 +40,10 @@ class OperationalStore:
 
     def append(self, kind, payload):
         table = TABLES[kind]
+        owner = payload["user_id"] if kind == "points" else payload["tester_id"]
+        if not VERIFIED_ID.fullmatch(owner):
+            raise ValueError("Entre novamente em uma conta verificada para salvar este registro.")
         if kind == "points":
-            if payload["user_id"].startswith("visitor_"):
-                raise ValueError("Entre em uma conta para acumular pontos permanentes.")
             row = {"id": payload["id"], "user_id": payload["user_id"],
                    "mission_id": payload["mission_id"], "evidence_sha256": payload["evidence_sha256"],
                    "record": payload}
@@ -54,6 +59,8 @@ class OperationalStore:
     def read(self, kind, *, owner=None, limit=None):
         table = TABLES[kind]
         owner_field = "user_id" if kind == "points" else "tester_id"
+        if owner is not None and not VERIFIED_ID.fullmatch(owner):
+            raise ValueError("A identidade informada não pertence a uma conta verificada.")
         if limit is not None and limit <= 0:
             return []
         rows, offset = [], 0

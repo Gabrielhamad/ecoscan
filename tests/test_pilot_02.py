@@ -35,11 +35,11 @@ class Pilot02Tests(unittest.TestCase):
         store = MemoryRemote()
         with patch("ecoscan.services.learning_contributions.remote_store", return_value=store):
             records = [submit_contribution(fixture.config, fixture.result, item_id="drink_can",
-                       reporter_id=p.id, consent=True) for p in (author, other)]
+                       reporter_id=p.id, consent=True, actor=p) for p in (author, other)]
             self.assertNotEqual(records[0]["id"], records[1]["id"])
             # Same pixels are deduplicated per author, never across accounts.
             repeated = submit_contribution(fixture.config, fixture.result, item_id="drink_can",
-                                           reporter_id=author.id, consent=True)
+                                           reporter_id=author.id, consent=True, actor=author)
             self.assertEqual(repeated["id"], records[0]["id"])
             self.assertEqual(len(store.rows), 2)
             before = copy.deepcopy(store.rows)
@@ -55,8 +55,11 @@ class Pilot02Tests(unittest.TestCase):
         restarted = replace(fixture.config, directories={**fixture.config.directories,
                             "reports": fixture.config.project_root / "after_restart"})
         with patch("ecoscan.services.learning_contributions.remote_store", return_value=restarted_store):
-            own = citizen_contributions(restarted, self.profile(1).id)
-            others = citizen_contributions(restarted, self.profile(2).id)
+            author = self.profile(1)
+            other = self.profile(2)
+            analyst = self.profile(3, analyst=True)
+            own = citizen_contributions(restarted, author.id, actor=author)
+            others = citizen_contributions(restarted, other.id, actor=other)
             self.assertEqual([r["id"] for r in own], [records[0]["id"]])
             self.assertEqual([r["id"] for r in others], [records[1]["id"]])
             self.assertEqual(own[0]["response"], "Confirmamos uma lata.")
@@ -66,11 +69,34 @@ class Pilot02Tests(unittest.TestCase):
             # Storage download failure never deletes the confirmed protocol.
             with patch.object(restarted_store, "image", side_effect=OSError("offline")):
                 with self.assertRaises(OSError):
-                    contribution_package(restarted, [restarted_store.rows[records[0]["id"]]])
-            self.assertEqual(len(list_contributions(restarted)), 2)
+                    contribution_package(restarted, [restarted_store.rows[records[0]["id"]]],
+                                         actor=author)
+            self.assertEqual(len(list_contributions(restarted, actor=analyst)), 2)
             with self.assertRaises(ValueError):
                 review_contribution(restarted, records[0]["id"], decision="rejected",
                                     reviewer=analyst, expected_revision=0)
+
+    def test_remote_service_rejects_unverified_or_cross_account_actor(self):
+        fixture = LearningTests()
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        author, other, analyst = self.profile(1), self.profile(2), self.profile(3, analyst=True)
+        store = MemoryRemote()
+        with patch("ecoscan.services.learning_contributions.remote_store", return_value=store):
+            with self.assertRaises(PermissionError):
+                submit_contribution(fixture.config, fixture.result, item_id="drink_can",
+                                    reporter_id=author.id, consent=True)
+            with self.assertRaises(PermissionError):
+                submit_contribution(fixture.config, fixture.result, item_id="drink_can",
+                                    reporter_id=author.id, consent=True, actor=other)
+            record = submit_contribution(fixture.config, fixture.result, item_id="drink_can",
+                                         reporter_id=author.id, consent=True, actor=author)
+            with self.assertRaises(PermissionError):
+                citizen_contributions(fixture.config, author.id, actor=other)
+            with self.assertRaises(PermissionError):
+                list_contributions(fixture.config, actor=author)
+            self.assertEqual([record["id"]], [row["id"] for row in
+                             list_contributions(fixture.config, actor=analyst)])
 
     def identity_app(self):
         return AppTest.from_string('''

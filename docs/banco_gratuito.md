@@ -13,7 +13,8 @@ Campanhas e relatos possuem persistencia compartilhada pela migration 003,
 com ativacao separada; veja [campanhas e relatos](campanhas_e_relatos.md).
 Artefatos de modelos nao sao armazenados por essa integracao. Login Supabase foi
 implementado, mas provisionamento das contas e autorizacao de analistas exigem
-configuracao e aceite (ver login_piloto.md).
+configuracao e aceite (ver [autenticacao](autenticacao.md) e
+[aceite do piloto](aceite_banco_piloto.md)).
 Treino na hospedagem fica desativado quando o banco esta ativo: exportar aprovadas
 e treinar localmente ate implementar persistencia dos candidatos.
 
@@ -25,7 +26,9 @@ contribuicoes aprovadas nao constitui backup do sistema.
 
 1. Criar conta em https://supabase.com/dashboard e um projeto numa organizacao Free.
    Nao contratar Pro nem habilitar recursos pagos para este piloto.
-2. No SQL Editor do projeto, executar migrations/001_contributions.sql.
+2. No SQL Editor do projeto, executar `migrations/001_contributions.sql` e,
+   depois das migrations 002 e 003, aplicar também
+   `migrations/004_verified_identity_constraints.sql`.
 3. Conferir tabela ecoscan_contributions com RLS ativo e bucket
    ecoscan-contributions PRIVADO. Nao criar politicas de leitura publica.
 4. Configurar apenas em Streamlit Cloud > App settings > Secrets:
@@ -52,7 +55,8 @@ Testes locais com doubles verificam a integracao, nao substituem esse aceite.
 ## Pontos e testes: implantacao em duas fases
 
 1. Publicar o codigo com `operations_enabled` ausente ou `false`.
-2. Executar `migrations/002_operational_records.sql` no SQL Editor.
+2. Executar `migrations/002_operational_records.sql` e
+   `migrations/004_verified_identity_constraints.sql` no SQL Editor.
 3. Verificar RLS nas duas tabelas, ausencia de leitura para anon/authenticated
    e permissoes select/insert somente para service_role.
 4. Adicionar `operations_enabled = true` dentro de `[persistence]` nos Secrets

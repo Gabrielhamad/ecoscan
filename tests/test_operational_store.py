@@ -37,7 +37,8 @@ class OperationalStoreTests(unittest.TestCase):
         store.read.return_value = [asdict(transaction)]
         with patch("ecoscan.services.accounts.operational_store", return_value=store):
             append_point_transaction("nonexistent/ledger.csv", transaction)
-            self.assertEqual([transaction], read_point_transactions("another/ledger.csv", user_id="supabase_test"))
+            self.assertEqual([transaction], read_point_transactions(
+                "another/ledger.csv", user_id=transaction.user_id))
         store.append.assert_called_once_with("points", asdict(transaction))
         store.read.assert_called_once_with("points", owner="supabase_test", limit=None)
 
@@ -51,6 +52,7 @@ class OperationalStoreTests(unittest.TestCase):
             self.assertEqual([record], read_field_test_records("different.csv", tester_id="u", limit=8))
 
     def test_pagination_and_chronological_order(self):
+        owner = "supabase_00000000-0000-4000-8000-000000000001"
         client = MagicMock()
         query = client.table.return_value.select.return_value
         query.order.return_value = query
@@ -58,11 +60,11 @@ class OperationalStoreTests(unittest.TestCase):
         query.range.return_value = query
         query.execute.side_effect = [SimpleNamespace(data=[{"record": {"id": str(i)}} for i in range(500)]),
                                      SimpleNamespace(data=[{"record": {"id": "oldest"}}])]
-        rows = OperationalStore(client).read("points", owner="user")
+        rows = OperationalStore(client).read("points", owner=owner)
         self.assertEqual(len(rows), 501)
         self.assertEqual(rows[0]["id"], "oldest")
         self.assertEqual(query.range.call_count, 2)
-        query.eq.assert_called_with("user_id", "user")
+        query.eq.assert_called_with("user_id", owner)
 
     def test_outage_is_not_an_empty_history(self):
         client = MagicMock()
@@ -81,5 +83,8 @@ class OperationalStoreTests(unittest.TestCase):
             code = "23505"
         client.table.return_value.insert.return_value.execute.side_effect = Conflict()
         with self.assertRaises(ValueError):
-            OperationalStore(client).append("field_tests", {"id": "id", "tester_id": "user"})
+            OperationalStore(client).append("field_tests", {
+                "id": "id",
+                "tester_id": "supabase_00000000-0000-4000-8000-000000000001",
+            })
         self.assertEqual(client.table.return_value.insert.call_count, 1)

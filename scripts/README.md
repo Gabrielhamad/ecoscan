@@ -10,6 +10,7 @@ da inicialização pública do Streamlit.
 | --- | --- |
 | `run_acceptance_checks.py` | Executa os gates locais e gera evidências |
 | `check_deployment_ready.py` | Verifica configuração e prontidão do deploy |
+| `check_supabase_setup.py` | Confere tabelas e buckets privados sem alterar dados |
 | `benchmark_startup.py` | Mede importação e primeira renderização do app |
 | `diagnose_project.py` | Inspeciona dependências, modelo e diretórios |
 | `prepare_delivery_pack.py` | Gera o pacote técnico para avaliação |

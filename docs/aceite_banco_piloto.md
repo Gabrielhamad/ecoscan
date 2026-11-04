@@ -1,44 +1,92 @@
-# Aceite de banco do piloto
+# Aceite do Supabase e das contas
 
-Verificacao realizada em 20/09/2026. Este documento nao declara aceite de producao.
+Estado revisado em 04/11/2026. A implementação e a CI estão preparadas; o aceite
+no projeto Supabase ligado ao aplicativo publicado ainda precisa ser executado
+com duas contas controladas e um analista. Nenhuma evidência automatizada é
+apresentada como substituta desse percurso real.
 
-## Evidencias confirmadas
+## O que o código garante
 
-- Migration 002 executada com sucesso no projeto Supabase do EcoScan.
-- Tabelas `ecoscan_points` e `ecoscan_field_tests` com RLS ativo.
-- `anon` e `authenticated` sem privilegio SELECT direto nas duas tabelas.
-- `service_role` com INSERT nas duas tabelas; chave restrita ao servidor.
-- Teste SQL sob `service_role`: INSERT e SELECT retornaram um registro em cada
-  tabela; transacao revertida, sem manter dados sinteticos no banco.
-- `operations_enabled = true` salvo na secao persistence dos Secrets do Streamlit.
-- Suite local da versao 6875b77: 177 testes aprovados.
+- A chave `service_role` fica no servidor e nunca é enviada ao navegador.
+- As tabelas usam RLS e revogam acesso direto de `anon` e `authenticated`.
+- Fotos ficam em buckets privados, com JPEG de até 1 MB e remoção de EXIF.
+- Cadastro, login e recuperação revalidam a conta no Supabase Auth.
+- O papel de analista vem somente de `access.supabase_admin_emails`; metadados,
+  query string e perfis locais não concedem acesso.
+- Campanhas, relatos e a fila de correções validam o ator antes de usar a chave
+  privilegiada. Um cidadão recebe somente os próprios protocolos.
+- Revisões usam versão esperada; originais e histórico de relatos não podem ser
+  sobrescritos silenciosamente.
+- A CI aplica as quatro migrações em PostgreSQL 16, reaplica as migrações
+  aditivas e testa RLS, privilégios, identidades, concorrência e auditoria.
 
-## Pendencias de aceite ponta a ponta
+## Preparação do projeto
 
-- Confirmar carregamento da versao 6875b77 ou superior no processo Streamlit.
-- Supabase Authentication nao possui usuarios no momento desta verificacao.
-  Provisionar conta com email verificado e validar entrada/saida antes de liberar
-  pontuacao permanente. Nao marcar email como confirmado sem verificar.
-- Autorizar explicitamente o email do analista nos Secrets; a lista de emails
-  nao cria conta, nao confirma email e nao define senha.
-- Com duas contas reais, testar registro, reinicio, consulta de historico,
-  isolamento e revisao por analista. SQL e testes com mocks nao substituem isso.
-- Enviar uma foto consentida pelo app, receber protocolo, revisar na secretaria,
-  consultar resposta como autor e exportar apenas aprovadas para treino candidato.
+1. Confirmar que o projeto é o mesmo configurado nos Secrets do Streamlit.
+2. Executar, nesta ordem, `migrations/001_contributions.sql`,
+   `002_operational_records.sql`, `003_community.sql` e
+   `004_verified_identity_constraints.sql`.
+3. Manter os buckets `ecoscan-contributions` e `ecoscan-civic-evidence` privados.
+4. Configurar `persistence.url` e `persistence.service_key` apenas nos Secrets.
+5. Manter `public_signup_enabled`, `operations_enabled` e `community.enabled`
+   desativados até o recurso correspondente estar migrado e conferido.
+6. Executar `python scripts/check_supabase_setup.py` em um ambiente seguro com
+   as mesmas credenciais. O comando é somente leitura e oculta os valores.
 
-## Limites que permanecem
+A migração 004 usa constraints `NOT VALID`: elas bloqueiam imediatamente novos
+IDs que não sejam de contas Supabase, sem falhar por dados antigos. Antes de
+validá-las, consultar e tratar os legados:
 
-- Denuncias e suas evidencias ainda usam arquivos locais temporarios.
-- Campanhas permanecem configuradas em arquivo, sem publicacao dinamica no banco.
-- Cadastro/recuperacao de senha e provisionamento devem seguir login_piloto.md;
-  nao disparar convites antes de validar o callback de definicao de senha.
-- Treino de candidatos ocorre fora da hospedagem. Aprovacao de uma foto nao
-  publica modelo nem comprova aumento de acuracia.
-- O classificador atual continua em avaliacao; esta migracao nao o retreina.
+```sql
+select 'contributions' as origem, reporter_id as identidade
+from public.ecoscan_contributions
+where reporter_id !~ '^supabase_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+union all
+select 'points', user_id from public.ecoscan_points
+where user_id !~ '^supabase_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+union all
+select 'field_tests', tester_id from public.ecoscan_field_tests
+where tester_id !~ '^supabase_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$';
+```
 
-## Operacao
+Com resultado vazio, validar as três constraints pelo SQL Editor. Não apagar ou
+atribuir dados antigos a uma pessoa sem uma decisão documentada de migração.
 
-Nao reverter para CSV para esconder indisponibilidade do banco. Investigar a
-falha e preservar historico. Nao salvar chaves no repositorio. Antes de ampliar
-o grupo, fechar os itens de aceite e definir responsavel por revisao, retencao
-de fotos, backup e publicacao de modelos.
+```sql
+alter table public.ecoscan_contributions
+  validate constraint ecoscan_contributions_verified_reporter;
+alter table public.ecoscan_points
+  validate constraint ecoscan_points_verified_user;
+alter table public.ecoscan_field_tests
+  validate constraint ecoscan_field_tests_verified_tester;
+```
+
+## Matriz de aceite publicada
+
+Use dois e-mails controlados, A e B, e um e-mail de analista. Não registre senha,
+token, link de recuperação, e-mail completo ou foto nos relatórios.
+
+| Teste | Resultado esperado |
+| --- | --- |
+| Cadastro A e B | Cada pessoa recebe confirmação e entra com sua senha |
+| E-mail não confirmado | Entrada e recursos persistentes permanecem bloqueados |
+| Contribuição de A | Protocolo persiste após recarregar e abrir outro dispositivo |
+| Perfil de B | O protocolo, a resposta e a foto de A não aparecem |
+| Usuário comum no endereço de gestão | Painel e fila não aparecem |
+| Analista autorizado | Fila, foto privada e revisão ficam disponíveis |
+| Remoção do analista da allowlist | Privilégio desaparece no próximo rerun |
+| Resposta do analista | Aparece para A e permanece invisível para B |
+| Relato cívico | Autor, isolamento, revisão e histórico sobrevivem ao reinício |
+| Pontos e testes de campo | Persistem por conta e não duplicam a mesma evidência |
+| Indisponibilidade simulada | O app informa falha e não cria histórico local divergente |
+
+Depois do percurso, registrar data, hash do `main`, navegadores/dispositivos,
+resultado por linha e apenas os oito primeiros caracteres dos protocolos. Repetir
+o smoke de visitante, pois a evidência pública anterior corresponde a `e0cb494`.
+
+## Critério de aprovação
+
+O banco fica aprovado para piloto quando a matriz estiver completa no mesmo hash
+verde da CI, as constraints estiverem validadas, os dois buckets continuarem
+privados e existir responsável por backup, retenção, exclusão e revisão. Até lá,
+o estado é “implementado, aguardando aceite integrado”.

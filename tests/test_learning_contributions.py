@@ -38,7 +38,8 @@ class LearningTests(unittest.TestCase):
 
     def submit(self, **kwargs):
         return submit_contribution(self.config, self.result, item_id=kwargs.pop("item_id", "drink_can"),
-                                   reporter_id="visitor", consent=kwargs.pop("consent", True), **kwargs)
+                                   reporter_id=kwargs.pop("reporter_id", "visitor"),
+                                   consent=kwargs.pop("consent", True), **kwargs)
 
     def test_consent_required_and_no_side_effect(self):
         with self.assertRaises(ValueError):

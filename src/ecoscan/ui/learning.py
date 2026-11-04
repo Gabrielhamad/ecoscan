@@ -70,8 +70,8 @@ def render_citizen_protocols(st, config, profile):
         return
     st.button("Atualizar protocolos", key="refresh_contributions")
     try:
-        records = citizen_contributions(config, profile.id)
-    except (OSError, ValueError) as exc:
+        records = citizen_contributions(config, profile.id, actor=profile)
+    except (OSError, ValueError, PermissionError) as exc:
         st.error(str(exc))
         return
     if persistent_enabled():
@@ -117,12 +117,13 @@ def render_contribution(st, config, result, profile):
         if sent:
             try:
                 record = submit_contribution(config, result, item_id=item, reporter_id=profile.id,
-                                             consent=consent, note=note, condition=condition)
+                                             consent=consent, note=note, condition=condition,
+                                             actor=profile)
                 st.session_state[receipt_key] = {
                     "record": record, "persistent": bool(record.get("storage_key")),
                     "received_at": datetime.now(timezone.utc).isoformat(), "package": None,
                 }
-            except (ValueError, OSError) as exc:
+            except (ValueError, OSError, PermissionError) as exc:
                 st.error(str(exc) if isinstance(exc, ValueError) else
                          "Não foi possível confirmar o envio. Consulte Perfil → Atualizar protocolos antes de reenviar.")
         receipt = st.session_state.get(receipt_key)
@@ -145,8 +146,9 @@ def render_contribution(st, config, result, profile):
                 mime="application/json", key=f"receipt_download_{signature}")
             if st.button("Preparar cópia com foto", key=f"prepare_receipt_{signature}"):
                 try:
-                    receipt["package"] = contribution_package(config, [receipt["record"]])
-                except (ValueError, OSError):
+                    receipt["package"] = contribution_package(
+                        config, [receipt["record"]], actor=profile)
+                except (ValueError, OSError, PermissionError):
                     st.warning("Seu envio já foi confirmado. Não foi possível preparar a cópia agora; tente novamente sem reenviar a contribuição.")
             if receipt["package"] is not None:
                 st.download_button("Baixar minha contribuição", receipt["package"],
@@ -159,8 +161,8 @@ def render_review(st, config, profile):
         return
     st.subheader("Central de análise da secretaria")
     try:
-        records = list_contributions(config)
-    except (OSError, ValueError) as exc:
+        records = list_contributions(config, actor=profile)
+    except (OSError, ValueError, PermissionError) as exc:
         st.error(str(exc))
         return
     columns = st.columns(3)
@@ -175,7 +177,7 @@ def render_review(st, config, profile):
     selected = st.selectbox("Contribuição", records,
                             format_func=lambda row: f"{row['status']} · {ITEMS.get(row['item_id'], (row['item_id'],))[0]} · {row['id'][:8]}")
     try:
-        st.image(str(contribution_image(config, selected)), width=300)
+        st.image(str(contribution_image(config, selected, actor=profile)), width=300)
         st.write(f"Modelo sugeriu: {selected['feedback']['predicted_class'] or selected['feedback']['top_class'] or 'inconclusivo'}")
         st.write(selected["feedback"]["note"])
         st.write("Estado informado: " + ITEM_CONDITIONS.get(selected.get("condition", "unspecified"), "Não informado"))
@@ -205,15 +207,15 @@ def render_review(st, config, profile):
                 st.rerun()
         if st.button("Preparar pacotes de contribuições"):
             st.session_state["review_packages"] = (
-                contribution_package(config, records),
-                contribution_package(config, records, approved_only=True),
+                contribution_package(config, records, actor=profile),
+                contribution_package(config, records, approved_only=True, actor=profile),
             )
         packages = st.session_state.get("review_packages")
         if packages:
             st.download_button("Baixar fila para revisão offline", packages[0], "ecoscan-fila.zip", "application/zip")
             st.download_button("Baixar somente aprovadas", packages[1], "ecoscan-aprovadas.zip", "application/zip")
         st.caption("Fotos aprovadas ainda precisam de divisão entre treino, validação e teste. Mantenha cópias de segurança dos pacotes.")
-    except (ValueError, OSError) as exc:
+    except (ValueError, OSError, PermissionError) as exc:
         st.error(str(exc))
 
 
@@ -222,7 +224,7 @@ def render_training(st, config, profile, *, records=None):
         return
     if persistent_enabled():
         st.info("As aprovações entram na fila de aprendizado. O executor externo, quando ativado, processa os lotes e só publica candidatos aprovados na validação. Aprovação da foto não significa publicação imediata.")
-        records = list_contributions(config) if records is None else records
+        records = list_contributions(config, actor=profile) if records is None else records
         render_evaluation(st, records)
         if records:
             st.dataframe([{"Protocolo": row["id"][:8],

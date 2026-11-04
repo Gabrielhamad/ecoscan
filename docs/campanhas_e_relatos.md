@@ -39,6 +39,8 @@ novos enviados de outro aparelho. A interface mostra os ultimos 100 protocolos.
 - `ui/community.py`: editor de campanha e protocolos do cidadao/secretaria.
 - `migrations/003_community.sql`: campanha ativa, relatos e auditoria imutavel
   pela aplicacao, com revisao inteira e indices por autor/data.
+- `migrations/004_verified_identity_constraints.sql`: bloqueia novas gravacoes
+  legadas nas tabelas anteriores e alinha a identidade persistente ao Auth.
 - `ecoscan-civic-evidence`: bucket privado; download somente depois de validar
   autor ou analista e conferir o hash da foto.
 
@@ -62,8 +64,9 @@ anteriores e identificadores das missoes sao preservados.
    pelo conteudo de `tests/community_database_checks.sql`, que termina em
    `rollback`. O teste de primeira publicacao exige ausencia de campanha; depois
    de a campanha existir, executar em banco isolado, nao remover a campanha real.
-3. Aplicar `migrations/003_community.sql` integralmente. Ela nao importa CSVs nem
-   altera tabelas anteriores. Conferir RLS, bucket privado e tabelas novas vazias.
+3. Aplicar `migrations/003_community.sql` e
+   `migrations/004_verified_identity_constraints.sql` integralmente. Elas não
+   importam CSVs. Conferir RLS, buckets privados e tabelas novas vazias.
 4. Publicar codigo aprovado e adicionar `[community]` com `enabled = true`
    no Streamlit Secrets, sem reescrever credenciais existentes. Alternativa local:
    `ECOSCAN_COMMUNITY_ENABLED=true`. Nao colocar segredos no Git.

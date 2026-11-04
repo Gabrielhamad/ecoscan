@@ -6,6 +6,7 @@ from unittest.mock import MagicMock, patch
 
 from tests.test_learning_contributions import LearningTests
 from ecoscan.services.contribution_store import SupabaseContributions, settings
+from ecoscan.services.accounts import UserProfile
 from ecoscan.services.learning_contributions import (
     contribution_image, list_contributions, review_contribution,
 )
@@ -45,21 +46,25 @@ class PersistenceTests(unittest.TestCase):
                 "profile": {"version": "rgb-preserved-v2"}, "sha256": "preparation-version"}}}
         fixture.result.processing_compatible = False
         store = MemoryRemote()
+        user = UserProfile(id="supabase_00000000-0000-4000-8000-000000000001",
+                           display_name="User", role="user")
+        admin = UserProfile(id="supabase_00000000-0000-4000-8000-000000000002",
+                            display_name="Admin", role="admin")
         with patch("ecoscan.services.learning_contributions.remote_store", return_value=store):
-            record = fixture.submit(condition="crushed")
+            record = fixture.submit(condition="crushed", reporter_id=user.id, actor=user)
             self.assertNotIn("image_path", record["feedback"])
             other = replace(fixture.config, directories={**fixture.config.directories,
                             "reports": fixture.config.project_root / "new_instance"})
-            self.assertEqual(record["id"], list_contributions(other)[0]["id"])
-            self.assertTrue(contribution_image(other, record).is_file())
+            self.assertEqual(record["id"], list_contributions(other, actor=admin)[0]["id"])
+            self.assertTrue(contribution_image(other, record, actor=admin).is_file())
             reviewed = review_contribution(other, record["id"], decision="approved",
-                                           reviewer=fixture.admin, response="Confirmado", expected_revision=0)
+                                           reviewer=admin, response="Confirmado", expected_revision=0)
             self.assertEqual("Confirmado", reviewed["response"])
             self.assertEqual(record["analysis_context"], reviewed["analysis_context"])
             self.assertEqual("rgb-preserved-v2", reviewed["analysis_context"]["processing_version"])
             with self.assertRaises(ValueError):
                 review_contribution(other, record["id"], decision="rejected",
-                                    reviewer=fixture.admin, expected_revision=0)
+                                    reviewer=admin, expected_revision=0)
 
     def test_error_does_not_expose_credentials(self):
         client = MagicMock()

@@ -36,9 +36,28 @@ def _write(path: Path, record: dict) -> None:
     temporary.replace(path)
 
 
-def list_contributions(config) -> list[dict]:
+def _authorize_remote_actor(store, actor, *, owner_id: str | None = None,
+                            admin: bool = False):
+    """Authorize use of the server credential at the application boundary.
+
+    ``actor`` is created by the identity layer after Supabase Auth has verified
+    the access token on the current Streamlit rerun.  Remote persistence must
+    never accept a raw identifier or a locally configured demo profile.
+    """
+    if store is None:
+        return
+    if actor is None or not actor.id.startswith("supabase_"):
+        raise PermissionError("Entre novamente em uma conta verificada para acessar o banco.")
+    if owner_id is not None and actor.id != owner_id:
+        raise PermissionError("A conta atual não pode acessar dados de outra pessoa.")
+    if admin and not actor.is_admin:
+        raise PermissionError("Esta operação exige uma conta administrativa verificada.")
+
+
+def list_contributions(config, *, actor=None) -> list[dict]:
     store = remote_store()
     if store is not None:
+        _authorize_remote_actor(store, actor, admin=True)
         return store.list()
     records = []
     with _LOCK:
@@ -69,7 +88,8 @@ def _analysis_context(result) -> dict:
 
 
 def submit_contribution(config, result, *, item_id: str, reporter_id: str,
-                        consent: bool, note: str = "", condition: str = "unspecified") -> dict:
+                        consent: bool, note: str = "", condition: str = "unspecified",
+                        actor=None) -> dict:
     if not reporter_id or reporter_id.startswith("visitor_"):
         raise ValueError("Entre em uma conta verificada para enviar contribuições.")
     if not consent:
@@ -86,7 +106,9 @@ def submit_contribution(config, result, *, item_id: str, reporter_id: str,
     pixels = np.ascontiguousarray(result.pipeline.loaded.array)
     digest = hashlib.sha256(str(pixels.shape).encode() + pixels.tobytes()).hexdigest()
     with _LOCK:
-        records = list_contributions(config)
+        store = remote_store()
+        _authorize_remote_actor(store, actor, owner_id=reporter_id)
+        records = store.list() if store is not None else list_contributions(config)
         for record in records:
             if record["reporter_id"] == reporter_id and record["image_sha256"] == digest:
                 return record
@@ -115,7 +137,6 @@ def submit_contribution(config, result, *, item_id: str, reporter_id: str,
             "analysis_context": _analysis_context(result),
             "feedback": asdict(feedback),
         }
-        store = remote_store()
         if store is not None:
             buffer = io.BytesIO()
             image.convert("RGB").save(buffer, format="JPEG", quality=85)
@@ -138,6 +159,7 @@ def review_contribution(config, contribution_id: str, *, decision: str, reviewer
         path = contribution_dir(config) / f"{identifier}.json"
         store = remote_store()
         if store is not None:
+            _authorize_remote_actor(store, reviewer, admin=True)
             record = next((row for row in store.list() if row["id"] == identifier), None)
             if record is None:
                 raise ValueError("Protocolo não encontrado.")
@@ -176,12 +198,14 @@ def review_contribution(config, contribution_id: str, *, decision: str, reviewer
         return record
 
 
-def contribution_image(config, record: dict) -> Path:
+def contribution_image(config, record: dict, *, actor=None) -> Path:
     root = (feedback_dir_from_config(config) / "images").resolve()
     if record.get("storage_key"):
         store = remote_store()
         if store is None:
             raise ValueError("Configure o banco para acessar esta foto.")
+        owner_id = None if actor is not None and actor.is_admin else record.get("reporter_id")
+        _authorize_remote_actor(store, actor, owner_id=owner_id)
         root.mkdir(parents=True, exist_ok=True)
         path = root / f"{UUID(record['id'])}.jpg"
         if not path.exists():
@@ -194,14 +218,18 @@ def contribution_image(config, record: dict) -> Path:
     return path
 
 
-def citizen_contributions(config, reporter_id: str) -> list[dict]:
+def citizen_contributions(config, reporter_id: str, *, actor=None) -> list[dict]:
     """Only expose the caller's protocols, without internal paths or analyst IDs."""
+    store = remote_store()
+    _authorize_remote_actor(store, actor, owner_id=reporter_id)
+    records = store.list() if store is not None else list_contributions(config)
     return [{key: row.get(key) for key in (
         "id", "created_at", "status", "item_id", "response", "training_status", "candidate_id")}
-        for row in list_contributions(config) if row["reporter_id"] == reporter_id]
+        for row in records if row["reporter_id"] == reporter_id]
 
 
-def contribution_package(config, records: list[dict], *, approved_only: bool = False) -> bytes:
+def contribution_package(config, records: list[dict], *, approved_only: bool = False,
+                         actor=None) -> bytes:
     output = io.BytesIO()
     manifest = []
     seen_hashes = set()
@@ -217,7 +245,7 @@ def contribution_package(config, records: list[dict], *, approved_only: bool = F
             if category not in (*config.classes, "unknown", "out_of_scope"):
                 continue
             filename = f"images/{category}/{identifier}.jpg"
-            archive.write(contribution_image(config, record), filename)
+            archive.write(contribution_image(config, record, actor=actor), filename)
             metadata = {key: value for key, value in record.items() if key not in ("reporter_id", "reviewed_by", "review_history", "feedback")}
             metadata["feedback"] = {key: value for key, value in record["feedback"].items()
                                     if key not in ("image_path", "reporter_id", "reporter_name")}

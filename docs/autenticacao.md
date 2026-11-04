@@ -1,5 +1,17 @@
 # Acesso do cidadao e da secretaria
 
+O aplicativo publicado usa preferencialmente Supabase Auth quando
+`[persistence]` está configurado e o bloco OIDC abaixo não está completo. Nesse
+modo, cadastro, confirmação, login e recuperação usam e-mail e senha; o UUID é
+revalidado no servidor em cada rerun e origina IDs `supabase_<uuid>`. Configure
+`access.public_signup_enabled = true` somente depois de validar e-mail e executar
+o [aceite do banco](aceite_banco_piloto.md). Analistas são definidos apenas por
+`access.supabase_admin_emails`.
+
+OIDC do Streamlit continua disponível para instalações que não usam os fluxos
+persistentes do Supabase. Não configure os dois mecanismos na mesma implantação:
+um bloco `[auth]` completo tem precedência na resolução da identidade.
+
 O parametro `?profile=admin_secretaria` nao concede permissao. O servidor
 resolve a identidade em cada execucao a partir das informacoes verificadas pelo
 login OIDC do Streamlit. Nao ha senha padrao ou administrador automatico.

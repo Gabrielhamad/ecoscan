@@ -4,11 +4,15 @@
 
 - manter `main` verde com testes, lint, `pip check` e diagnóstico;
 - revisar Secrets e executar as migrações no projeto Supabase correto;
+- aplicar a migration 004, auditar identidades antigas e validar as constraints;
 - testar o URL público em Android, iOS e computador — concluído em 04/11/2026 para a jornada de visitante;
 - registrar hash, data, responsável e resultado do smoke test — código funcional `16344df`, CI verde e evidência no [roteiro de aceite](roteiro_testes_manuais.md);
 - corrigir qualquer falha de abertura, sessão ou upload.
 
 **Aceite:** visitante abre o app, envia foto e consulta orientação; participante entra e acompanha protocolo; gestão acessa apenas com autorização.
+
+**Estado:** smoke público de visitante concluído; fronteira de autorização e CI
+do banco reforçadas; percurso real com duas contas e analista ainda pendente.
 
 ## 2. Validação do reconhecimento
 

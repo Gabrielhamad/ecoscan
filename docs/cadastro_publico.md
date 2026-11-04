@@ -20,7 +20,7 @@ nem conceder papel de analista por metadados fornecidos no cadastro.
 
 - Manter `access.public_signup_enabled = true` no aplicativo e cadastro habilitado
   no Supabase; manter a verificacao de e-mail.
-- Configurar o template Reset password conforme `login_piloto.md`. Usar
+- Configurar o template Reset password conforme [autenticacao](autenticacao.md). Usar
   `SiteURL` com a URL raiz publicada e `?token_hash=...&type=recovery`.
   O link padrao ConfirmationURL nao abre o formulario de recuperacao do Streamlit.
 - A aplicacao consome o token somente ao salvar a senha, nao ao abrir o link.

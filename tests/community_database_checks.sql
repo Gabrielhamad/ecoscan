@@ -7,7 +7,8 @@ declare
   actor text := 'supabase_' || gen_random_uuid()::text;
   affected integer;
 begin
-  foreach target in array array['ecoscan_campaigns','ecoscan_civic_reports','ecoscan_community_audit'] loop
+  foreach target in array array['ecoscan_contributions','ecoscan_points','ecoscan_field_tests',
+    'ecoscan_campaigns','ecoscan_civic_reports','ecoscan_community_audit'] loop
     if not (select relrowsecurity from pg_class where oid = ('public.' || target)::regclass) then
       raise exception 'Missing RLS: %', target;
     end if;
@@ -16,6 +17,12 @@ begin
       or has_table_privilege('authenticated', 'public.' || target, 'INSERT')
       or has_table_privilege('authenticated', 'public.' || target, 'UPDATE') then
       raise exception 'Unwanted browser privilege: %', target;
+    end if;
+  end loop;
+  foreach target in array array['ecoscan_contributions_verified_reporter',
+    'ecoscan_points_verified_user','ecoscan_field_tests_verified_tester'] loop
+    if not exists(select 1 from pg_constraint where conname = target) then
+      raise exception 'Missing verified identity constraint: %', target;
     end if;
   end loop;
   if exists(select 1 from storage.buckets where id = 'ecoscan-civic-evidence' and public) then
@@ -32,6 +39,15 @@ begin
     null;
   end;
   set local role service_role;
+  begin
+    insert into public.ecoscan_points(id, user_id, mission_id, evidence_sha256, record)
+      values(identifier, 'usuario_demo', 'invalid', repeat('c',64),
+        jsonb_build_object('id',identifier::text,'user_id','usuario_demo',
+          'mission_id','invalid','evidence_sha256',repeat('c',64),'points',0));
+    raise exception 'IDENTITY_CONSTRAINT_TEST_FAILED';
+  exception when check_violation then
+    null;
+  end;
   insert into public.ecoscan_campaigns(id, revision, updated_by, record)
     values('active', 0, actor, '{"title":"Synthetic validation","missions":[]}'::jsonb);
   update public.ecoscan_campaigns set revision=1 where id='active' and revision=0;
