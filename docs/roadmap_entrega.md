@@ -12,7 +12,10 @@
 **Aceite:** visitante abre o app, envia foto e consulta orientação; participante entra e acompanha protocolo; gestão acessa apenas com autorização.
 
 **Estado:** smoke público de visitante concluído; fronteira de autorização e CI
-do banco reforçadas; percurso real com duas contas e analista ainda pendente.
+do banco reforçadas; cadastro, duas contas, isolamento, revisão por analista e
+resposta ao autor concluídos em 04/11/2026 no código funcional `0ad6ed7`. Ainda
+faltam migration 004 no projeto publicado, revogação de analista e fluxos
+operacionais complementares.
 
 ## 2. Validação do reconhecimento
 

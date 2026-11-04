@@ -1,9 +1,26 @@
 # Aceite do Supabase e das contas
 
-Estado revisado em 04/11/2026. A implementação e a CI estão preparadas; o aceite
-no projeto Supabase ligado ao aplicativo publicado ainda precisa ser executado
-com duas contas controladas e um analista. Nenhuma evidência automatizada é
-apresentada como substituta desse percurso real.
+Estado revisado em 04/11/2026. O núcleo do aceite foi executado no projeto ligado
+ao aplicativo publicado com duas contas controladas e um analista. A operação
+completa ainda possui os itens pendentes descritos abaixo.
+
+## Evidência integrada de 04/11/2026
+
+No aplicativo público, com o código funcional `0ad6ed7`, o responsável confirmou:
+
+- cadastro, confirmação de e-mail, entrada e saída de duas contas controladas;
+- envio consentido de uma contribuição pela conta A e protocolo persistente;
+- ausência do protocolo no perfil B e recuperação pelo perfil A após novo login;
+- abertura da Central de análise por uma conta presente na allowlist;
+- revisão com resposta salva, visível para A após recarregar e invisível para B.
+
+A CI pública [run 48](https://github.com/Gabrielhamad/ecoscan/actions/runs/41894070190)
+passou no mesmo hash, incluindo a suíte Python e o PostgreSQL 16 com as migrations
+001–004. Não foram registrados e-mails, senhas, tokens, fotos ou protocolos.
+
+Continuam pendentes no ambiente publicado: aplicar e validar a migration 004,
+testar retirada do analista da allowlist, campanhas/relatos, pontos/testes de
+campo, indisponibilidade controlada e restauração de backup.
 
 ## O que o código garante
 
@@ -86,7 +103,8 @@ o smoke de visitante, pois a evidência pública anterior corresponde a `e0cb494
 
 ## Critério de aprovação
 
-O banco fica aprovado para piloto quando a matriz estiver completa no mesmo hash
+O núcleo de contas, contribuição, revisão e isolamento está aprovado para piloto
+controlado no hash acima. O banco completo fica aprovado quando a matriz estiver completa no mesmo hash
 verde da CI, as constraints estiverem validadas, os dois buckets continuarem
 privados e existir responsável por backup, retenção, exclusão e revisão. Até lá,
-o estado é “implementado, aguardando aceite integrado”.
+o estado é “núcleo validado, operação completa pendente”.

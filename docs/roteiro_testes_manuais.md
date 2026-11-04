@@ -3,6 +3,18 @@
 Este roteiro valida a aplicação implantada. Testes locais e simulação de `User-Agent`
 não substituem a execução em um aparelho real.
 
+## Aceite de contas e contribuições — 04/11/2026
+
+No código funcional `0ad6ed7`, o app público passou em cadastro e confirmação de
+duas contas, login/logout, protocolo persistente da conta A, isolamento para B,
+revisão por analista autorizado e resposta persistente visível somente para A.
+A CI correspondente é o [run 48](https://github.com/Gabrielhamad/ecoscan/actions/runs/41894070190).
+Nenhum dado de conta, foto, token ou protocolo foi anexado à evidência.
+
+Pendências deste roteiro: retirar temporariamente um analista da allowlist e
+confirmar perda imediata do painel; aplicar/validar a migration 004 no Supabase;
+validar campanhas, relatos, pontos, testes de campo e recuperação de backup.
+
 ## Registro obrigatório
 
 Antes de testar, registre:
