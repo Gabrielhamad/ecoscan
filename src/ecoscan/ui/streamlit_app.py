@@ -14,6 +14,8 @@ from typing import Any
 from ecoscan.app.processing_options import ProcessingPipelineOptions
 from ecoscan.config import load_config
 from ecoscan.ui.identity import render_identity
+from ecoscan.ui.app_resources import load_app_resources
+from ecoscan.ui.navigation import navigation_for
 from ecoscan.ui.processing_lab import select_morphology_parameters, render_processing_lab
 from ecoscan.ui.education import render_education
 from ecoscan.ui.learning import render_contribution, render_review, render_scope, render_citizen_protocols
@@ -22,29 +24,23 @@ from ecoscan.disposal.collection_points import (
     build_collection_point_directions_url,
     build_collection_point_map_url,
     filter_collection_points,
-    load_collection_points,
     rank_collection_points,
 )
-from ecoscan.disposal.guidance import DisposalGuidance, load_guidance
+from ecoscan.disposal.guidance import DisposalGuidance
 from ecoscan.disposal.impact import (
     EnvironmentalImpact,
     get_environmental_impact,
-    load_environmental_impacts,
 )
 from ecoscan.disposal.targets import (
     DisposalTarget,
     build_map_search_url,
     get_disposal_target,
-    load_disposal_targets,
 )
 from ecoscan.services.academic_report import write_academic_report
 from ecoscan.services.aps_audit import build_aps_audit, summarize_audit
 from ecoscan.services.accounts import (
     UserProfile,
-    fallback_profiles,
-    load_user_profiles,
     points_ledger_path_from_config,
-    profiles_path_from_config,
     read_point_transactions,
     summarize_points_by_user,
     total_points_for_user,
@@ -103,7 +99,7 @@ from ecoscan.services.operations import (
     mission_activity_rows,
     published_mission_rows,
 )
-from ecoscan.services.photo_requirements import PhotoRequirement, load_photo_requirements
+from ecoscan.services.photo_requirements import PhotoRequirement
 from ecoscan.services.public_flow import PublicNextAction, build_public_next_action
 from ecoscan.services.recognition_feedback import (
     append_recognition_feedback,
@@ -154,55 +150,6 @@ def _render_public_app_chrome(st: Any) -> None:
 
 def _badge(label: str, tone: str = "ok") -> str:
     return f'<span class="ecoscan-badge ecoscan-badge-{tone}">{html.escape(label)}</span>'
-
-
-def _load_guidance_map(config: Any) -> dict[str, DisposalGuidance]:
-    try:
-        return load_guidance(config.project_root / "config" / "disposal_guidance.json")
-    except Exception as exc:
-        LOGGER.warning("guidance_map_load_failed detail=%s", exc)
-        return {}
-
-
-def _load_disposal_target_map(config: Any) -> dict[str, DisposalTarget]:
-    try:
-        return load_disposal_targets(config.project_root / "config" / "disposal_targets.json")
-    except Exception as exc:
-        LOGGER.warning("disposal_target_map_load_failed detail=%s", exc)
-        return {}
-
-
-def _load_environmental_impact_map(config: Any) -> dict[str, EnvironmentalImpact]:
-    try:
-        return load_environmental_impacts(config.project_root / "config" / "environmental_impacts.json")
-    except Exception as exc:
-        LOGGER.warning("environmental_impact_map_load_failed detail=%s", exc)
-        return {}
-
-
-def _load_photo_requirement_map(config: Any) -> dict[str, PhotoRequirement]:
-    try:
-        return load_photo_requirements(config.project_root / "config" / "photo_requirements.json")
-    except Exception as exc:
-        LOGGER.warning("photo_requirement_map_load_failed detail=%s", exc)
-        return {}
-
-
-def _load_collection_point_list(config: Any) -> list[CollectionPoint]:
-    try:
-        return [point for point in load_collection_points(config.project_root / "config" / "collection_points.json")
-                if point.city == "São Paulo" and point.state == "SP"]
-    except Exception as exc:
-        LOGGER.warning("collection_points_load_failed detail=%s", exc)
-        return []
-
-
-def _load_user_profile_list(config: Any) -> tuple[UserProfile, ...]:
-    try:
-        return load_user_profiles(profiles_path_from_config(config))
-    except Exception as exc:
-        LOGGER.warning("user_profiles_load_failed detail=%s", exc)
-        return fallback_profiles()
 
 
 def _load_campaign_config(config: Any) -> Campaign | None:
@@ -2645,12 +2592,13 @@ def main(*, page_configured=False) -> None:
 
     config = load_config()
     configure_logging(config.directories["logs"])
-    guidance_by_class = _load_guidance_map(config)
-    targets_by_class = _load_disposal_target_map(config)
-    impacts_by_class = _load_environmental_impact_map(config)
-    requirements_by_class = _load_photo_requirement_map(config)
-    collection_points = _load_collection_point_list(config)
-    profiles = _load_user_profile_list(config)
+    resources = load_app_resources(config)
+    guidance_by_class = resources.guidance_by_class
+    targets_by_class = resources.targets_by_class
+    impacts_by_class = resources.impacts_by_class
+    requirements_by_class = resources.requirements_by_class
+    collection_points = resources.collection_points
+    profiles = resources.profiles
     if not page_configured:
         st.set_page_config(page_title="Recicla SP", layout="wide", initial_sidebar_state="collapsed")
     _render_theme(st)
@@ -2739,44 +2687,10 @@ def main(*, page_configured=False) -> None:
         morphology_parameters=morphology_parameters,
     )
 
-    if active_profile.is_admin:
-        analysis_tab = "Análise"
-        campaign_tab = "Campanha"
-        report_tab = "Denúncia"
-        collection_tab = "Pontos de coleta"
-        account_tab = "Conta"
-        tab_names = [
-            analysis_tab,
-            "Gestão",
-            "Conclusão",
-            campaign_tab,
-            report_tab,
-            collection_tab,
-            account_tab,
-            "Processamento",
-            "Base de imagens",
-            "Histórico",
-            "Sistema",
-            "Aprender",
-        ]
-    else:
-        analysis_tab = "Escanear"
-        campaign_tab = "Missões"
-        report_tab = "Denunciar"
-        collection_tab = "Mapa"
-        account_tab = "Perfil"
-        tab_names = [
-            analysis_tab,
-            collection_tab,
-            "Descarte",
-            "Aprender",
-            campaign_tab,
-            report_tab,
-            account_tab,
-        ]
-    tabs = dict(zip(tab_names, st.tabs(
-        tab_names, key="main_navigation_" + active_profile.role, on_change="rerun")))
-    if any(tabs[name].open for name in (campaign_tab, account_tab, "Gestão") if name in tabs):
+    navigation = navigation_for(admin=active_profile.is_admin)
+    tabs = dict(zip(navigation.tabs, st.tabs(
+        navigation.tabs, key="main_navigation_" + active_profile.role, on_change="rerun")))
+    if any(tabs[name].open for name in (navigation.campaign, navigation.account, "Gestão") if name in tabs):
         campaign = _load_campaign_config(config)
     result = st.session_state.get("last_analysis_result")
 
@@ -2789,7 +2703,7 @@ def main(*, page_configured=False) -> None:
             st.subheader("Descarte responsável")
             render_scope(st)
 
-    with tabs[analysis_tab]:
+    with tabs[navigation.analysis]:
         section_title = "Escanear resíduo" if not active_profile.is_admin else "Analisar resíduo"
         st.markdown(f'<div class="ecoscan-section-title">{section_title}</div>', unsafe_allow_html=True)
         if not active_profile.is_admin:
@@ -2969,8 +2883,8 @@ def main(*, page_configured=False) -> None:
                                 collection_points,
                             )
 
-    if tabs[campaign_tab].open:
-        with tabs[campaign_tab]:
+    if tabs[navigation.campaign].open:
+        with tabs[navigation.campaign]:
             _render_campaign_tab(
                 st,
                 config,
@@ -2982,12 +2896,12 @@ def main(*, page_configured=False) -> None:
                 pipeline_options,
             )
 
-    if tabs[report_tab].open:
-        with tabs[report_tab]:
+    if tabs[navigation.report].open:
+        with tabs[navigation.report]:
             _render_civic_reports_tab(st, config, active_profile, pipeline_options)
 
-    if tabs[collection_tab].open:
-        with tabs[collection_tab]:
+    if tabs[navigation.collection].open:
+        with tabs[navigation.collection]:
             _render_collection_points_tab(st, config, guidance_by_class, collection_points)
 
     if "Processamento" in tabs and tabs["Processamento"].open:
@@ -3081,8 +2995,8 @@ def main(*, page_configured=False) -> None:
         with tabs["Histórico"]:
             _render_history(st, config)
 
-    if tabs[account_tab].open:
-        with tabs[account_tab]:
+    if tabs[navigation.account].open:
+        with tabs[navigation.account]:
             _render_account_tab(st, config, active_profile, campaign, guidance_by_class)
 
     if active_profile.is_admin and tabs["Gestão"].open:
