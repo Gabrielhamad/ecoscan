@@ -6,24 +6,13 @@ import html
 import json
 import logging
 import os
-from datetime import datetime
 import tempfile
+from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from ecoscan.app.processing_options import ProcessingPipelineOptions
 from ecoscan.config import load_config
-from ecoscan.ui.identity import render_identity
-from ecoscan.ui.app_resources import load_app_resources
-from ecoscan.ui.navigation import navigation_for
-from ecoscan.ui.processing_controls import (
-    FILTERS,
-    SEGMENTATIONS,
-    select_filter_parameters,
-    select_segmentation_parameters,
-)
-from ecoscan.ui.education import render_education
-from ecoscan.ui.scope import render_scope
 from ecoscan.disposal.collection_points import (
     CollectionPoint,
     build_collection_point_directions_url,
@@ -41,20 +30,12 @@ from ecoscan.disposal.targets import (
     build_map_search_url,
     get_disposal_target,
 )
-from ecoscan.services.academic_report import write_academic_report
-from ecoscan.services.aps_audit import build_aps_audit, summarize_audit
 from ecoscan.services.accounts import (
     UserProfile,
     points_ledger_path_from_config,
     read_point_transactions,
     summarize_points_by_user,
     total_points_for_user,
-)
-from ecoscan.services.access_plan import (
-    access_link_rows,
-    build_access_plan,
-    probe_access_services,
-    shareable_access_text,
 )
 from ecoscan.services.campaigns import (
     Campaign,
@@ -63,71 +44,28 @@ from ecoscan.services.campaigns import (
     evaluate_mission_submission,
     load_campaign,
 )
-from ecoscan.services.civic_reports import (
-    build_civic_report_record,
-)
-from ecoscan.services.completion import build_completion_plan
-from ecoscan.services.dataset_governance import build_dataset_readiness
-from ecoscan.services.dataset_ingestion import (
-    IncomingImage,
-    ingestion_manifest_path_from_config,
-    ingest_uploaded_images,
-)
-from ecoscan.services.delivery_pack import build_delivery_pack, write_delivery_pack
-from ecoscan.services.deployment_readiness import build_free_hosting_plan, deployment_check_rows
-from ecoscan.services.diagnostics import dataset_status, dependency_status, model_status
-from ecoscan.services.history import (
-    append_history_entry,
-    build_history_entry,
-    history_path_from_config,
-    read_history,
-)
-from ecoscan.services.final_readiness import build_final_readiness_items, summarize_final_readiness
-from ecoscan.services.field_testing import (
-    append_field_test_record,
-    build_field_test_record,
-    field_test_class_rows,
-    field_test_manifest_path_from_config,
-    field_test_rows,
-    read_field_test_records,
-    summarize_field_tests,
-)
-from ecoscan.services.model_governance import (
-    build_model_governance_plan,
-    hard_case_table_rows,
-    metric_snapshot_rows,
-    model_gate_table_rows,
-)
-from ecoscan.services.operations import (
-    build_campaign_operations_summary,
-    format_class_labels,
-    mission_activity_rows,
-    published_mission_rows,
-)
 from ecoscan.services.photo_requirements import PhotoRequirement
-from ecoscan.services.public_flow import PublicNextAction, build_public_next_action
-from ecoscan.services.recognition_feedback import (
-    append_recognition_feedback,
-    feedback_manifest_path_from_config,
-    read_recognition_feedback,
-)
-from ecoscan.services.recognition_improvement import (
-    RecognitionImprovementPlan,
-    build_recognition_improvement_plan,
-    confusion_table_rows,
-    priority_table_rows,
-)
 from ecoscan.services.recognition_safety import (
     RecognitionSafetyDecision,
     build_recognition_safety_decision,
     capture_photo_tips,
 )
-from ecoscan.services.usage_quality import (
-    build_recognition_quality_summary,
-    class_quality_rows,
-    correction_rows,
+from ecoscan.ui.app_resources import load_app_resources
+from ecoscan.ui.education import render_education
+from ecoscan.ui.identity import render_identity
+from ecoscan.ui.navigation import navigation_for
+from ecoscan.ui.processing_controls import (
+    FILTERS,
+    SEGMENTATIONS,
+    select_filter_parameters,
+    select_segmentation_parameters,
 )
+from ecoscan.ui.scope import render_scope
 from ecoscan.utils.logging_config import configure_logging
+
+if TYPE_CHECKING:
+    from ecoscan.services.public_flow import PublicNextAction
+    from ecoscan.services.recognition_improvement import RecognitionImprovementPlan
 
 
 LOGGER = logging.getLogger(__name__)
@@ -158,8 +96,9 @@ def _badge(label: str, tone: str = "ok") -> str:
 
 
 def _load_campaign_config(config: Any) -> Campaign | None:
-    from ecoscan.services.community_store import community_enabled, community_store
     from ecoscan.services.campaigns import campaign_from_payload
+    from ecoscan.services.community_store import community_enabled, community_store
+
     try:
         if community_enabled():
             snapshot = community_store().campaign()
@@ -397,6 +336,10 @@ def _public_ui_text(value: str) -> str:
 
 
 def _render_overview_strip(st: Any, config: Any) -> None:
+    from ecoscan.services.aps_audit import build_aps_audit, summarize_audit
+    from ecoscan.services.dataset_governance import build_dataset_readiness
+    from ecoscan.services.diagnostics import dataset_status, model_status
+
     selected_model = model_status(config)
     dataset = dataset_status(config)
     audit_summary = summarize_audit(build_aps_audit(config))
@@ -503,6 +446,7 @@ def _render_probability_bars(st: Any, result: Any, guidance_by_class: dict[str, 
 
 def _render_browser_location_search(st: Any, target: DisposalTarget) -> None:
     import streamlit.components.v1 as components
+
     from ecoscan.ui.appearance import embedded_theme_css
 
     component_id = f"ecoscan_geo_{target.class_id}"
@@ -552,6 +496,7 @@ def _render_browser_location_search(st: Any, target: DisposalTarget) -> None:
 
 def _render_live_camera_link(st: Any) -> None:
     import streamlit.components.v1 as components
+
     from ecoscan.ui.appearance import embedded_theme_css
 
     configured_live_url = os.environ.get("ECOSCAN_LIVE_URL", "").strip()
@@ -1101,6 +1046,7 @@ def _render_recognition_feedback_form(
 
 def _render_model_status(st: Any, config: Any) -> None:
     from ecoscan.image_processing.contracts import model_processing_compatible, processing_contract
+    from ecoscan.services.diagnostics import model_status
 
     status = model_status(config)
     if status.selected_path and not model_processing_compatible(Path(status.selected_path), processing_contract(config)):
@@ -1121,6 +1067,8 @@ def _render_model_status(st: Any, config: Any) -> None:
 
 
 def _dataset_rows(st: Any, config: Any, guidance_by_class: dict[str, DisposalGuidance]) -> tuple[list[dict], Any]:
+    from ecoscan.services.diagnostics import dataset_status
+
     status = dataset_status(config)
     rows = []
     for class_id in config.classes:
@@ -1161,6 +1109,8 @@ def _render_dataset_status(st: Any, config: Any, guidance_by_class: dict[str, Di
 
 
 def _render_dataset_readiness(st: Any, config: Any) -> None:
+    from ecoscan.services.dataset_governance import build_dataset_readiness
+
     summary, rows = build_dataset_readiness(config, target_per_class=50)
     ready_label = "sim" if summary.ready_for_final_training else "não"
     metric_cols = st.columns(4)
@@ -1325,6 +1275,8 @@ def _render_ingestion_results(st: Any, results: list[dict[str, Any]]) -> None:
 
 
 def _render_dependencies(st: Any) -> None:
+    from ecoscan.services.diagnostics import dependency_status
+
     rows = [
         {
             "dependência": item.name,
@@ -1337,6 +1289,13 @@ def _render_dependencies(st: Any) -> None:
 
 
 def _render_access_testing_panel(st: Any) -> None:
+    from ecoscan.services.access_plan import (
+        access_link_rows,
+        build_access_plan,
+        probe_access_services,
+        shareable_access_text,
+    )
+
     plan = build_access_plan()
     services = probe_access_services(timeout_seconds=1.2)
     status_html = "".join(
@@ -1398,6 +1357,8 @@ def _render_error_catalog(st: Any) -> None:
 
 
 def _render_free_hosting_panel(st: Any, config: Any) -> None:
+    from ecoscan.services.deployment_readiness import build_free_hosting_plan, deployment_check_rows
+
     plan = build_free_hosting_plan(config)
     st.markdown(
         f"""
@@ -1441,6 +1402,8 @@ def _completion_label(status: str) -> str:
 
 
 def _render_completion_panel(st: Any, config: Any) -> None:
+    from ecoscan.services.completion import build_completion_plan
+
     plan = build_completion_plan(config)
     status_title = (
         "Pronto para demonstração controlada"
@@ -1511,6 +1474,11 @@ def _render_completion_panel(st: Any, config: Any) -> None:
 
 
 def _render_final_readiness(st: Any, config: Any) -> None:
+    from ecoscan.services.final_readiness import (
+        build_final_readiness_items,
+        summarize_final_readiness,
+    )
+
     items = build_final_readiness_items(config)
     summary = summarize_final_readiness(items)
     st.markdown('<div class="ecoscan-section-title">Estrutura preparada para a fase final</div>', unsafe_allow_html=True)
@@ -1551,6 +1519,21 @@ def _render_model_governance(
     config: Any,
     guidance_by_class: dict[str, DisposalGuidance],
 ) -> None:
+    from ecoscan.services.field_testing import (
+        field_test_manifest_path_from_config,
+        read_field_test_records,
+    )
+    from ecoscan.services.model_governance import (
+        build_model_governance_plan,
+        hard_case_table_rows,
+        metric_snapshot_rows,
+        model_gate_table_rows,
+    )
+    from ecoscan.services.recognition_feedback import (
+        feedback_manifest_path_from_config,
+        read_recognition_feedback,
+    )
+
     labels = _guidance_class_labels(guidance_by_class)
     feedback_entries = read_recognition_feedback(feedback_manifest_path_from_config(config), limit=500)
     field_test_entries = read_field_test_records(field_test_manifest_path_from_config(config), limit=500)
@@ -1606,6 +1589,8 @@ def _render_model_governance(
 
 
 def _render_delivery_pack(st: Any, config: Any) -> None:
+    from ecoscan.services.delivery_pack import build_delivery_pack, write_delivery_pack
+
     pack = build_delivery_pack(config)
     selected_model = _public_ui_text(pack.selected_model)
     metric_cols = st.columns(4)
@@ -1668,6 +1653,8 @@ def _render_acceptance_checks(st: Any, config: Any) -> None:
 
 
 def _render_aps_audit(st: Any, config: Any) -> None:
+    from ecoscan.services.aps_audit import build_aps_audit, summarize_audit
+
     items = build_aps_audit(config)
     summary = summarize_audit(items)
     counts = summary["counts"]
@@ -1710,6 +1697,8 @@ def _render_aps_audit(st: Any, config: Any) -> None:
 
 
 def _render_history(st: Any, config: Any) -> None:
+    from ecoscan.services.history import history_path_from_config, read_history
+
     entries = read_history(history_path_from_config(config), limit=30)
     if not entries:
         st.write("Nenhum registro salvo.")
@@ -1781,6 +1770,8 @@ def _campaign_class_labels(
     *,
     limit: int = 5,
 ) -> str:
+    from ecoscan.services.operations import format_class_labels
+
     return format_class_labels(class_ids, _guidance_class_labels(guidance_by_class), limit=limit)
 
 
@@ -2009,9 +2000,11 @@ def _render_civic_reports_tab(
     if active_profile.id.startswith("visitor_"):
         st.info("Entre em uma conta verificada para enviar um relato à secretaria. Visitantes podem consultar o mapa e as orientações de descarte.")
         return
+    from uuid import uuid4
+
     from ecoscan.services.community_store import community_enabled, community_store
     from ecoscan.ui.community import credentials, render_reports
-    from uuid import uuid4
+
     if not community_enabled():
         st.info("O recebimento compartilhado está em preparação. Nenhum relato novo será salvo em arquivos temporários.")
         return
@@ -2053,6 +2046,7 @@ def _render_civic_reports_tab(
                 with st.spinner("Processando evidência da denúncia..."):
                     from ecoscan.services.analysis_service import analyze_waste_image
                     report_result = analyze_waste_image(temp_path, config, options=pipeline_options)
+                from ecoscan.services.civic_reports import build_civic_report_record
                 record = build_civic_report_record(
                     report_result,
                     evidence_path=temp_path,
@@ -2107,6 +2101,14 @@ def _render_field_test_form(
     active_profile: UserProfile,
     guidance_by_class: dict[str, DisposalGuidance],
 ) -> None:
+    from ecoscan.services.field_testing import (
+        append_field_test_record,
+        build_field_test_record,
+        field_test_manifest_path_from_config,
+        field_test_rows,
+        read_field_test_records,
+    )
+
     st.markdown('<div class="ecoscan-section-title">Registrar teste da rodada</div>', unsafe_allow_html=True)
     if active_profile.id.startswith("visitor_"):
         st.info("Entre em uma conta verificada para registrar testes. O reconhecimento continua disponível sem cadastro.")
@@ -2246,6 +2248,12 @@ def _render_admin_campaign_operations(
     point_transactions: list[Any],
     guidance_by_class: dict[str, DisposalGuidance],
 ) -> None:
+    from ecoscan.services.operations import (
+        build_campaign_operations_summary,
+        mission_activity_rows,
+        published_mission_rows,
+    )
+
     st.markdown('<div class="ecoscan-section-title">Operação da campanha</div>', unsafe_allow_html=True)
     if campaign is None:
         st.info("Campanha ainda não configurada.")
@@ -2310,6 +2318,8 @@ def _render_admin_recognition_improvement_plan(
     st: Any,
     plan: RecognitionImprovementPlan,
 ) -> None:
+    from ecoscan.services.recognition_improvement import confusion_table_rows, priority_table_rows
+
     st.markdown('<div class="ecoscan-section-title">Plano de reforço do reconhecimento</div>', unsafe_allow_html=True)
     recommendation_items = "".join(f"<li>{html.escape(item)}</li>" for item in plan.recommendations)
     st.markdown(
@@ -2360,6 +2370,14 @@ def _render_admin_field_tests(
     config: Any,
     guidance_by_class: dict[str, DisposalGuidance],
 ) -> None:
+    from ecoscan.services.field_testing import (
+        field_test_class_rows,
+        field_test_manifest_path_from_config,
+        field_test_rows,
+        read_field_test_records,
+        summarize_field_tests,
+    )
+
     st.markdown('<div class="ecoscan-section-title">Rodada de testes do grupo</div>', unsafe_allow_html=True)
     records = read_field_test_records(field_test_manifest_path_from_config(config), limit=500)
     labels = _guidance_class_labels(guidance_by_class)
@@ -2397,6 +2415,23 @@ def _render_admin_recognition_quality(
     config: Any,
     guidance_by_class: dict[str, DisposalGuidance],
 ) -> None:
+    from ecoscan.services.diagnostics import dataset_status
+    from ecoscan.services.field_testing import (
+        field_test_manifest_path_from_config,
+        read_field_test_records,
+    )
+    from ecoscan.services.history import history_path_from_config, read_history
+    from ecoscan.services.recognition_feedback import (
+        feedback_manifest_path_from_config,
+        read_recognition_feedback,
+    )
+    from ecoscan.services.recognition_improvement import build_recognition_improvement_plan
+    from ecoscan.services.usage_quality import (
+        build_recognition_quality_summary,
+        class_quality_rows,
+        correction_rows,
+    )
+
     st.markdown('<div class="ecoscan-section-title">Qualidade do reconhecimento</div>', unsafe_allow_html=True)
     history_entries = read_history(history_path_from_config(config), limit=500)
     feedback_entries = read_recognition_feedback(feedback_manifest_path_from_config(config), limit=500)
@@ -2541,6 +2576,7 @@ def _temporary_upload(uploaded_file: Any, prefix: str = "upload") -> Path:
 
 def main(*, page_configured=False) -> None:
     import streamlit as st
+
     from ecoscan.ui.processing_lab import select_morphology_parameters
 
     config = load_config()
@@ -2723,6 +2759,12 @@ def main(*, page_configured=False) -> None:
                     bool(config.history.get("enabled", True)) or save_history)
                 if should_save_history and st.session_state.get("last_history_saved_signature") != signature:
                     try:
+                        from ecoscan.services.history import (
+                            append_history_entry,
+                            build_history_entry,
+                            history_path_from_config,
+                        )
+
                         append_history_entry(
                             history_path_from_config(config),
                             build_history_entry(result, source_path=st.session_state.get("last_analysis_source")),
@@ -2739,6 +2781,8 @@ def main(*, page_configured=False) -> None:
                 target = _target_for_guidance(result.guidance, targets_by_class)
                 impact = _impact_for_guidance(result.guidance, impacts_by_class)
                 if not active_profile.is_admin:
+                    from ecoscan.services.public_flow import build_public_next_action
+
                     public_action = build_public_next_action(result, target, safety_decision)
                     _render_public_next_action(st, public_action)
 
@@ -2890,6 +2934,12 @@ def main(*, page_configured=False) -> None:
 
     if "Base de imagens" in tabs and tabs["Base de imagens"].open:
         with tabs["Base de imagens"]:
+            from ecoscan.services.dataset_ingestion import (
+                IncomingImage,
+                ingest_uploaded_images,
+                ingestion_manifest_path_from_config,
+            )
+
             st.markdown('<div class="ecoscan-section-title">Adicionar fotos à base</div>', unsafe_allow_html=True)
             st.markdown(
                 '<div class="ecoscan-note">As fotos entram primeiro na base bruta por classe. '
@@ -2983,6 +3033,8 @@ def main(*, page_configured=False) -> None:
             st.markdown('<div class="ecoscan-section-title">Relatório técnico</div>', unsafe_allow_html=True)
             if st.button("Gerar relatório consolidado"):
                 try:
+                    from ecoscan.services.academic_report import write_academic_report
+
                     report_path = write_academic_report(config)
                     st.success(f"Relatório gerado em {report_path}")
                 except Exception as exc:
