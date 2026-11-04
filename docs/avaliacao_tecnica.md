@@ -12,7 +12,7 @@ O estado atual é adequado para **piloto controlado**. Ainda não é adequado pa
 | --- | --- | --- | --- |
 | P0 | Aceite no ambiente publicado | Visitante aprovado em computador, Android e iPhone; contas e gestão aprovadas no código `0ad6ed7` | Repetir o smoke após mudanças de runtime |
 | P0 | Continuidade do banco | Migration 004, constraints, buckets privados, revogação, contribuições, relatos, pontos e testes passaram no Supabase publicado | Ensaiar exportação/restauração e indisponibilidade em janela controlada |
-| P0 | Reconhecimento independente | A release tem resultado histórico, com confirmação obrigatória | Coletar e congelar teste novo para metal, plástico e vidro; publicar métricas e erros por classe |
+| P0 | Reconhecimento independente | A avaliação histórica agora é reproduzível por hash: 101/145 top-1 e 47/51 aceitos corretos, mas reutiliza vetores de desenvolvimento | Coletar e congelar teste novo por objeto/sessão para metal, plástico e vidro; publicar métricas, rejeição e erros por classe |
 | P0 | Rollback operacional | Código tem histórico, mas não há release Git versionada | Criar tag de entrega, changelog e procedimento testado de retorno do app e do modelo |
 
 ## Riscos altos

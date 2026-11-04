@@ -22,6 +22,7 @@ da inicialização pública do Streamlit.
 | --- | --- |
 | `run_inference.py` | Analisa uma imagem com a release ativa |
 | `validate_semantic_onnx.py` | Confere integridade e inferência da release ONNX |
+| `evaluate_bundled_model.py` | Reproduz a avaliação histórica da release sem chamá-la de teste independente |
 | `run_reviewed_training.py` | Processa a fila privada de contribuições aprovadas |
 | `build_training_corpus.py` | Monta um corpus a partir de fontes revisadas |
 | `build_semantic_learning_seed.py` | Gera a semente versionada do aprendizado revisado |

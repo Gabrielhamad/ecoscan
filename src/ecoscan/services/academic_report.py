@@ -46,8 +46,8 @@ def _dependency_summary(config: AppConfig) -> str:
 
 def _recognition_summary() -> list[str]:
     return [
-        "- Avaliação histórica: 97 correspondências de primeira escolha em 145 imagens.",
-        "- Acima do limiar: 47 resultados corretos em 50 aceitos pelo artefato.",
+        "- Avaliação histórica reproduzida: 101 primeiras escolhas corretas em 145 vetores.",
+        "- Acima do limiar: 47 resultados corretos em 51 aceitos pelo artefato.",
         "- Limite: a validação independente com fotos novas ainda está pendente.",
         "- Política do produto: toda hipótese exige confirmação humana.",
     ]

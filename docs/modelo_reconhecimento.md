@@ -27,9 +27,29 @@ Essa política fica em `services/analysis_service.py` e `services/recognition_sa
 
 ## Evidência disponível
 
-Na avaliação histórica registrada junto à release, houve 97 correspondências de primeira escolha em 145 imagens. Entre 50 resultados acima do limiar, 47 estavam corretos. Essa medição reutiliza um conjunto histórico e não comprova desempenho em fotos novas de produção.
+Na reprodução da avaliação histórica registrada junto à release, houve 101
+correspondências de primeira escolha em 145 exemplos (69,7%). O limiar aceitou
+51 resultados: 47 corretos, 4 incorretos e 94 rejeitados. O comando
+`python scripts/evaluate_bundled_model.py` verifica os hashes e recalcula o
+[relatório versionado](model_evaluation/semantic_v1_historical.json).
+
+| Classe prioritária | Top-1: precisão / recall | Acima do limiar: precisão / recall |
+| --- | --- | --- |
+| Metal | 78,6% / 75,9% | 100,0% / 48,3% |
+| Plástico | 65,7% / 82,1% | 93,8% / 53,6% |
+| Vidro | 79,3% / 79,3% | 90,0% / 31,0% |
+
+O limiar reduz erros, mas rejeita muitas imagens, principalmente de vidro. Essa
+medição reutiliza vetores históricos usados durante o desenvolvimento. As fotos,
+objetos e sessões originais não acompanham o clone, portanto não é possível
+reauditar vazamento por cena. Os 16 hashes reservados também não possuem vetores
+e rótulos versionados. Estes números não comprovam desempenho em fotos novas.
 
 Metal, plástico e vidro são prioridades de validação. A próxima avaliação precisa separar cenas, objetos e pessoas de captura, registrar precisão, recall, F1, rejeição e confusões por classe.
+
+O recorte TACO preservado no repositório contém 23 crops, todos de treino:
+9 plásticos, 7 metais e 7 papéis, em 20 grupos. Ele não contém vidro e não pode
+ser promovido a teste independente da release atual.
 
 ## Atualização
 
