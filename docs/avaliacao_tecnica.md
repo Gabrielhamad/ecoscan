@@ -10,8 +10,8 @@ O estado atual é adequado para **piloto controlado**. Ainda não é adequado pa
 
 | Prioridade | Ponto | Evidência | Ajuste necessário |
 | --- | --- | --- | --- |
-| P0 | Aceite no ambiente publicado | Jornada de visitante aprovada em computador, Android e iPhone no código `16344df` | Repetir após mudanças de runtime e concluir contas, gestão e Supabase |
-| P0 | Banco e autorização reais | Cadastro, duas contas, contribuição, isolamento, revisão e resposta passaram no app público em `0ad6ed7`; a CI valida as quatro migrações em PostgreSQL local | Aplicar e validar a migration 004 no projeto publicado; testar revogação do analista, fluxos operacionais e restauração |
+| P0 | Aceite no ambiente publicado | Visitante aprovado em computador, Android e iPhone; contas e gestão aprovadas no código `0ad6ed7` | Repetir o smoke após mudanças de runtime |
+| P0 | Continuidade do banco | Migration 004, constraints, buckets privados, revogação, contribuições, relatos, pontos e testes passaram no Supabase publicado | Ensaiar exportação/restauração e indisponibilidade em janela controlada |
 | P0 | Reconhecimento independente | A release tem resultado histórico, com confirmação obrigatória | Coletar e congelar teste novo para metal, plástico e vidro; publicar métricas e erros por classe |
 | P0 | Rollback operacional | Código tem histórico, mas não há release Git versionada | Criar tag de entrega, changelog e procedimento testado de retorno do app e do modelo |
 

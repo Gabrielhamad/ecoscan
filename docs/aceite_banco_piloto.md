@@ -13,14 +13,21 @@ No aplicativo público, com o código funcional `0ad6ed7`, o responsável confir
 - ausência do protocolo no perfil B e recuperação pelo perfil A após novo login;
 - abertura da Central de análise por uma conta presente na allowlist;
 - revisão com resposta salva, visível para A após recarregar e invisível para B.
+- migration 004 aplicada após auditoria sem identidades legadas, com as três
+  constraints validadas no projeto publicado;
+- os dois buckets conferidos como privados;
+- retirada temporária do analista da allowlist removeu o painel no novo rerun;
+- relato cívico persistente, isolado de B, revisado pela gestão e respondido a A;
+- pontos persistentes por conta, sem duplicar a mesma missão/evidência;
+- teste de campo persistente para A, isolado de B e visível no resumo da gestão.
 
 A CI pública [run 48](https://github.com/Gabrielhamad/ecoscan/actions/runs/41894070190)
 passou no mesmo hash, incluindo a suíte Python e o PostgreSQL 16 com as migrations
 001–004. Não foram registrados e-mails, senhas, tokens, fotos ou protocolos.
 
-Continuam pendentes no ambiente publicado: aplicar e validar a migration 004,
-testar retirada do analista da allowlist, campanhas/relatos, pontos/testes de
-campo, indisponibilidade controlada e restauração de backup.
+Continuam pendentes no ambiente publicado: indisponibilidade controlada,
+exportação/ensaio de restauração do banco e Storage e definição formal dos
+responsáveis por retenção, exclusão e resposta a incidente.
 
 ## O que o código garante
 
@@ -85,16 +92,16 @@ token, link de recuperação, e-mail completo ou foto nos relatórios.
 
 | Teste | Resultado esperado |
 | --- | --- |
-| Cadastro A e B | Cada pessoa recebe confirmação e entra com sua senha |
+| Cadastro A e B | Aprovado: cada pessoa confirmou e entrou com sua senha |
 | E-mail não confirmado | Entrada e recursos persistentes permanecem bloqueados |
-| Contribuição de A | Protocolo persiste após recarregar e abrir outro dispositivo |
-| Perfil de B | O protocolo, a resposta e a foto de A não aparecem |
-| Usuário comum no endereço de gestão | Painel e fila não aparecem |
-| Analista autorizado | Fila, foto privada e revisão ficam disponíveis |
-| Remoção do analista da allowlist | Privilégio desaparece no próximo rerun |
-| Resposta do analista | Aparece para A e permanece invisível para B |
-| Relato cívico | Autor, isolamento, revisão e histórico sobrevivem ao reinício |
-| Pontos e testes de campo | Persistem por conta e não duplicam a mesma evidência |
+| Contribuição de A | Aprovado: protocolo persistiu após novo login |
+| Perfil de B | Aprovado: protocolo e resposta de A não apareceram |
+| Usuário comum no endereço de gestão | Aprovado após retirada da allowlist |
+| Analista autorizado | Aprovado: fila, foto privada e revisão disponíveis |
+| Remoção do analista da allowlist | Aprovado: privilégio desapareceu no rerun |
+| Resposta do analista | Aprovado: apareceu para A e permaneceu invisível para B |
+| Relato cívico | Aprovado: envio, isolamento, revisão e resposta persistiram |
+| Pontos e testes de campo | Aprovado: persistência, deduplicação e isolamento |
 | Indisponibilidade simulada | O app informa falha e não cria histórico local divergente |
 
 Depois do percurso, registrar data, hash do `main`, navegadores/dispositivos,
@@ -103,8 +110,8 @@ o smoke de visitante, pois a evidência pública anterior corresponde a `e0cb494
 
 ## Critério de aprovação
 
-O núcleo de contas, contribuição, revisão e isolamento está aprovado para piloto
-controlado no hash acima. O banco completo fica aprovado quando a matriz estiver completa no mesmo hash
-verde da CI, as constraints estiverem validadas, os dois buckets continuarem
-privados e existir responsável por backup, retenção, exclusão e revisão. Até lá,
-o estado é “núcleo validado, operação completa pendente”.
+Os fluxos funcionais de banco e autorização estão aprovados para piloto
+controlado no hash acima. A operação completa depende agora do ensaio de backup
+e restauração, simulação de indisponibilidade e definição dos responsáveis por
+retenção, exclusão e incidente. O estado é “fluxos validados, continuidade
+operacional pendente”.

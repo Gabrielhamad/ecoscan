@@ -11,9 +11,10 @@ revisão por analista autorizado e resposta persistente visível somente para A.
 A CI correspondente é o [run 48](https://github.com/Gabrielhamad/ecoscan/actions/runs/41894070190).
 Nenhum dado de conta, foto, token ou protocolo foi anexado à evidência.
 
-Pendências deste roteiro: retirar temporariamente um analista da allowlist e
-confirmar perda imediata do painel; aplicar/validar a migration 004 no Supabase;
-validar campanhas, relatos, pontos, testes de campo e recuperação de backup.
+Também passaram: retirada temporária do analista da allowlist, migration 004 e
+constraints validadas, buckets privados, relato cívico, pontos sem duplicação e
+teste de campo com isolamento. Permanecem o ensaio de indisponibilidade e a
+recuperação de backup em janela controlada.
 
 ## Registro obrigatório
 

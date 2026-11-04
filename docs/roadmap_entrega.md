@@ -14,8 +14,9 @@
 **Estado:** smoke público de visitante concluído; fronteira de autorização e CI
 do banco reforçadas; cadastro, duas contas, isolamento, revisão por analista e
 resposta ao autor concluídos em 04/11/2026 no código funcional `0ad6ed7`. Ainda
-faltam migration 004 no projeto publicado, revogação de analista e fluxos
-operacionais complementares.
+no mesmo dia, a migration 004 e suas constraints foram validadas, os buckets
+foram confirmados privados e passaram revogação de analista, relatos, pontos e
+testes de campo. Falta o ensaio de continuidade operacional.
 
 ## 2. Validação do reconhecimento
 
