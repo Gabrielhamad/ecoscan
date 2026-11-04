@@ -252,7 +252,7 @@ def write_manifest(
         f"Fonte: [{provider}]({provider_url}).",
         f"Repositório/anotações: {repository_url}.",
         "",
-        "O importador usa as anotações COCO do TACO para recortar objetos individuais, evitando treinar a baseline com o cenário inteiro quando a imagem possui múltiplos resíduos.",
+        "O importador usa as anotações COCO do TACO para recortar objetos individuais, evitando treinar o reconhecedor com o cenário inteiro quando a imagem possui múltiplos resíduos.",
         "",
         "## Licença e citação",
         "",

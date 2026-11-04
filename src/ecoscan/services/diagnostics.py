@@ -29,13 +29,7 @@ class ModelStatus:
     selected_kind: str
     selected_path: str
     final_model_exists: bool
-    visual_svm_model_exists: bool
-    visual_model_exists: bool
-    baseline_model_exists: bool
     final_model_path: str
-    visual_svm_model_path: str
-    visual_model_path: str
-    baseline_model_path: str
 
 
 def _is_installed(module_name: str) -> bool:
@@ -44,13 +38,12 @@ def _is_installed(module_name: str) -> bool:
 
 def dependency_status() -> list[DependencyStatus]:
     return [
-        DependencyStatus("Pillow", _is_installed("PIL"), "leitura, validação e fallback de filtros"),
-        DependencyStatus("NumPy", _is_installed("numpy"), "arrays, features e cálculos de processamento"),
+        DependencyStatus("Pillow", _is_installed("PIL"), "leitura e validação de imagens"),
+        DependencyStatus("NumPy", _is_installed("numpy"), "arrays e cálculos de processamento"),
         DependencyStatus("OpenCV", _is_installed("cv2"), "bilateral, CLAHE real, Canny real, HSV, GrabCut e webcam direta por script"),
-        DependencyStatus("scikit-image", _is_installed("skimage"), "experimentos avançados de segmentação"),
-        DependencyStatus("TensorFlow", _is_installed("tensorflow"), "transfer learning e modelo final .keras"),
+        DependencyStatus("scikit-image", _is_installed("skimage"), "métricas de imagem"),
         DependencyStatus("Streamlit", _is_installed("streamlit"), "interface local de apresentação"),
-        DependencyStatus("ONNX Runtime", _is_installed("onnxruntime"), "inferencia da rede visual semantica"),
+        DependencyStatus("ONNX Runtime", _is_installed("onnxruntime"), "inferência do reconhecedor atual"),
     ]
 
 
@@ -78,40 +71,15 @@ def dataset_status(config: AppConfig) -> DatasetStatus:
 
 
 def model_status(config: AppConfig) -> ModelStatus:
-    final_model_path = config.project_root / str(config.model.get("output_path", "models/ecoscan_transfer.keras"))
-    visual_svm_model_path = config.directories["models"] / "vision_svm_classifier.joblib"
-    visual_model_path = config.directories["models"] / "vision_classifier.npz"
-    baseline_model_path = config.directories["models"] / "baseline_classifier.json"
-    semantic_path = config.directories['models'] / 'semantic-v1/semantic.json'
-    if config.model.get('semantic_preview_enabled', False) and semantic_path.exists():
-        selected_kind = 'semantic_onnx_preview'
-        selected_path = str(semantic_path)
-    elif final_model_path.exists():
-        selected_kind = "transfer_learning"
-        selected_path = str(final_model_path)
-    elif visual_svm_model_path.exists():
-        selected_kind = "visual_svm"
-        selected_path = str(visual_svm_model_path)
-    elif visual_model_path.exists():
-        selected_kind = "visual_knn"
-        selected_path = str(visual_model_path)
-    elif baseline_model_path.exists():
-        selected_kind = "baseline"
-        selected_path = str(baseline_model_path)
-    else:
-        selected_kind = "none"
-        selected_path = ""
+    from ecoscan.classification.runtime import ENGINE, configured_model_path
+
+    final_model_path = configured_model_path(config)
+    exists = final_model_path.is_file()
     return ModelStatus(
-        selected_kind=selected_kind,
-        selected_path=selected_path,
-        final_model_exists=final_model_path.exists(),
-        visual_svm_model_exists=visual_svm_model_path.exists(),
-        visual_model_exists=visual_model_path.exists(),
-        baseline_model_exists=baseline_model_path.exists(),
+        selected_kind=ENGINE if exists else "none",
+        selected_path=str(final_model_path) if exists else "",
+        final_model_exists=exists,
         final_model_path=str(final_model_path),
-        visual_svm_model_path=str(visual_svm_model_path),
-        visual_model_path=str(visual_model_path),
-        baseline_model_path=str(baseline_model_path),
     )
 
 

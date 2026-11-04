@@ -120,20 +120,20 @@ def build_completion_plan(config: AppConfig) -> CompletionPlan:
                 f"{dataset_summary.curated_total} imagens curadas; "
                 f"faltam {dataset_summary.missing_curated_total} imagens curadas para o alvo final."
             ),
-            next_step="Revisar imagens, remover ruído/duplicatas e preencher data/curated antes do transfer learning.",
+            next_step="Revisar imagens, remover ruído/duplicatas e preencher data/curated antes do próximo ajuste.",
         ),
         CompletionAction(
             area="Modelo",
-            title="Modelo final por transfer learning",
+            title="Reconhecedor semântico atual",
             status="ok" if selected_model.final_model_exists else "pending",
             priority="alta",
             evidence=selected_model.final_model_path,
             detail=(
-                "Artefato encontrado; existência não comprova carregamento, compatibilidade ou aceite."
+                "Release ONNX encontrada; hipóteses continuam assistidas e exigem confirmação."
                 if selected_model.final_model_exists
-                else "A aplicação usa o modelo inicial até existir dataset curado e treino final."
+                else "O artefato ONNX configurado não está disponível."
             ),
-            next_step="Após curadoria, rodar treino, avaliar contra a baseline e promover apenas se superar as métricas.",
+            next_step="Validar fotos reais independentes e promover somente uma release que passe os gates por classe.",
         ),
         CompletionAction(
             area="Qualidade",

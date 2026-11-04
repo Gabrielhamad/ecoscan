@@ -1,63 +1,43 @@
-# Documentação do EcoScan
+# Documentação atual
 
-[Página principal](../README.md)
+[Voltar ao README](../README.md)
 
-## Leitura inicial
+Esta pasta descreve o produto presente no `main`. Resultados e métodos substituídos permanecem acessíveis pelo histórico do Git.
 
-| Público | Comece por |
+## Produto e engenharia
+
+| Documento | Finalidade |
 | --- | --- |
-| Integrantes que vão testar | [Guia do grupo](guia_do_grupo.md) |
-| Desenvolvedores | [Contribuição](../CONTRIBUTING.md) e [arquitetura atual](arquitetura_atual.md) |
-| Responsável pela secretaria | [Operação e revisão](operacao_secretaria.md) |
-| Responsável pela infraestrutura | [Banco](banco_gratuito.md), [login](login_piloto.md) e [aceite](aceite_banco_piloto.md) |
-| Responsável pelo reconhecimento | [Escopo](escopo_e_variacoes.md) e [gestão do dataset](gestao_dataset_e_classes.md) |
-| Documentação acadêmica | [Checklist APS](checklist_aps.md) e [estrutura do PDF](estrutura_pdf_aps.md) |
+| [Arquitetura atual](arquitetura_atual.md) | Componentes, fronteiras e fluxo de execução |
+| [Modelo de reconhecimento](modelo_reconhecimento.md) | Release ONNX, segurança, métricas e atualização |
+| [Avaliação técnica](avaliacao_tecnica.md) | Riscos, bloqueios e qualidade observada |
+| [Roadmap de entrega](roadmap_entrega.md) | Ordem de trabalho e critérios de aceite |
+| [Escopo e variações](escopo_e_variacoes.md) | Materiais, objetos e casos fora do escopo |
+| [Processamento preservado](processamento_preservado_v2.md) | Contrato RGB usado no treino e na inferência |
+| [Prática de processamento](pratica_processamento_imagens.md) | Filtros, segmentação e morfologia |
 
-## Entrega e avaliação
+## Operação
 
-- [Programa cidadão SP: mapa, CEP, educação, missões e recompensas](programa_cidadao_sp.md)
+| Documento | Finalidade |
+| --- | --- |
+| [Guia do grupo](guia_do_grupo.md) | Teste por participantes |
+| [Operação da secretaria](operacao_secretaria.md) | Revisão, campanhas e protocolos |
+| [Autenticação](autenticacao.md) | Contas, perfis e autorização |
+| [Banco](banco_gratuito.md) | Supabase, migrações e armazenamento |
+| [Campanhas e relatos](campanhas_e_relatos.md) | Persistência compartilhada e retorno |
+| [Recuperação operacional](recuperacao_operacional.md) | Backup, rollback e incidentes |
+| [Hospedagem](hospedagem_gratuita.md) | Publicação no Streamlit Cloud |
 
-- [Backup, recuperação e retorno de versão](recuperacao_operacional.md)
+## Dados e reconhecimento
 
-- [Controle atual de entrega: marcos, validação, riscos e responsabilidades](controle_entrega.md)
-- [Campanhas e relatos compartilhados: operação, ativação e retorno](campanhas_e_relatos.md)
+| Documento | Finalidade |
+| --- | --- |
+| [Gestão do dataset](gestao_dataset_e_classes.md) | Entrada, curadoria, split e proveniência |
+| [Captura de imagens públicas](captura_web_dataset.md) | Fontes, direitos e deduplicação |
+| [Anotações de objetos](anotacoes_objetos.md) | Caixas revisadas e exportação COCO |
+| [Treino com contribuições](treino_contribuicoes.md) | Fila privada, gates e publicação |
+| [Roteiro de testes](roteiro_testes_manuais.md) | Aceite manual em celular e computador |
 
-- [Avaliação de conformidade e evidências — 27/09/2026](avaliacao_e_entrega.md)
-- [Plano de entrega, responsáveis e critérios de aceite](plano_entrega.md)
+## Critério de leitura
 
-## Referências técnicas
-
-- [Preparação RGB preservado v2: técnicas, critérios e auditoria](processamento_preservado_v2.md)
-
-- [Prática acadêmica: preparação, segmentação e morfologia](pratica_processamento_imagens.md)
-
-- [Filtragem adaptativa](filtragem_adaptativa.md)
-- [Segmentação adaptativa](segmentacao_adaptativa.md)
-- [Pipeline de processamento e reconhecimento](pipeline_profissional_filtragem_reconhecimento.md)
-- [Treinamento e preparação do reconhecimento](treinamento_reconhecimento.md)
-- [Cartão do modelo do piloto](model_card_piloto.md)
-- [Câmera ao vivo](live_camera_mobile.md)
-- [Tratamento de erros](tratamento_erros.md)
-- [Hospedagem](hospedagem_gratuita.md)
-- [Auditoria de coleta e conteúdo educativo](education_and_collection_audit.md)
-
-## Como interpretar os documentos
-
-- [Revisao de qualidade, gargalos e prontidao para publicacao](prontidao_publicacao_20261023.md)
-
-### Experimentos recentes de reconhecimento
-
-- [Diagnostico controlado e acompanhamento dos lotes](diagnostico_reconhecimento_20261023.md)
-
-- [Ampliacao revisada de vidro, papel e papelao: resultados e limites](datasets/balance_20261023/README.md)
-- [Primeiro lote revisado do TACO](datasets/taco_expansion_20261022/README.md)
-
-README, arquitetura e guias de processamento/treinamento foram revisados em
-29/09/2026 contra o código. Os documentos de fases, roadmaps e resultados de captura preservam o
-histórico acadêmico: números, classes e pendências neles não devem ser assumidos
-como o estado atual da implantação.
-
-Os guias de banco e login descrevem configuração e aceite; a presença de uma
-instrução não comprova que ela foi executada em um ambiente. Verifique o serviço
-antes de anunciar uma funcionalidade como validada. Em divergências, confira
-o código, a configuração ativa e a evidência do teste e atualize a documentação.
+Código, configuração ativa e teste automatizado têm precedência sobre texto antigo. Uma funcionalidade implementada ainda precisa de aceite no ambiente publicado para ser declarada operacional.

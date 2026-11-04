@@ -25,7 +25,7 @@ class HistoryTests(unittest.TestCase):
                 top_class="metal",
                 probability=0.91,
                 accepted=True,
-                model_type="knn_baseline",
+                model_type="semantic_onnx_assisted",
             )
 
             entry = build_history_entry(result, source_path="sample.jpg")
@@ -46,7 +46,7 @@ class HistoryTests(unittest.TestCase):
                 (
                     '{"id":"1","timestamp_utc":"2026-01-01T00:00:00Z","source_path":"a.jpg",'
                     '"predicted_class":"metal","top_class":"metal","probability":0.9,"accepted":true,'
-                    '"model_type":"baseline","filter_name":"gaussian","segmentation_name":"otsu",'
+                    '"model_type":"semantic_onnx_assisted","filter_name":"gaussian","segmentation_name":"otsu",'
                     '"environmental_category":"Reciclável","guidance_summary":"Coleta seletiva",'
                     '"future_field":"ok"}\n'
                 ),

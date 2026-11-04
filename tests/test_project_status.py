@@ -11,7 +11,7 @@ class ProjectStatusTests(unittest.TestCase):
         items = build_project_status(load_config())
         markdown = format_status_markdown(items)
 
-        self.assertIn("modelo final transfer learning", markdown)
+        self.assertIn("release atual do reconhecimento", markdown)
         self.assertIn("detecção múltipla", markdown)
 
 

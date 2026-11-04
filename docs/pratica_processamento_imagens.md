@@ -139,7 +139,7 @@ Os testes verificam essa identidade e o conteúdo exportado pixel a pixel.
 
 Uma foto do conjunto local, escolhida pela primeira entrada ordenada de metal,
 foi processada com os padrões ativos. Exemplo e relatório:
-[antes_depois.png](../reports/processing_applied_2026-09-27/foto_real/antes_depois.png).
+O relatório local gera `reports/processing_applied/foto_real/antes_depois.png`.
 Não foi escolhida por acerto do classificador; a prancha demonstra operações, não qualidade.
 
 Para reproduzir (na raiz do projeto):

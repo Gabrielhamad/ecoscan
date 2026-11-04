@@ -18,12 +18,6 @@ def _load_json(path: Path) -> dict[str, Any]:
         return {}
 
 
-def _percent(value: Any) -> str:
-    if not isinstance(value, int | float):
-        return "indisponível"
-    return f"{value * 100:.1f}%"
-
-
 def _dataset_table(config: AppConfig) -> list[str]:
     status = dataset_status(config)
     lines = [
@@ -50,16 +44,12 @@ def _dependency_summary(config: AppConfig) -> str:
     return "Dependências opcionais ausentes no ambiente atual: " + ", ".join(missing) + "."
 
 
-def _baseline_summary(config: AppConfig) -> list[str]:
-    metrics = _load_json(config.directories["reports"] / "evaluation" / "baseline_test" / "metrics.json")
-    if not metrics:
-        return ["Métricas da baseline ainda não foram geradas."]
+def _recognition_summary() -> list[str]:
     return [
-        f"- Accuracy com rejeição: {_percent(metrics.get('accuracy'))}.",
-        f"- Macro precision: {_percent(metrics.get('macro_precision'))}.",
-        f"- Macro recall: {_percent(metrics.get('macro_recall'))}.",
-        f"- Macro F1-score: {_percent(metrics.get('macro_f1'))}.",
-        f"- Predições incertas: {metrics.get('uncertain_count', 'indisponível')}/{metrics.get('total', 'indisponível')}.",
+        "- Avaliação histórica: 97 correspondências de primeira escolha em 145 imagens.",
+        "- Acima do limiar: 47 resultados corretos em 50 aceitos pelo artefato.",
+        "- Limite: a validação independente com fotos novas ainda está pendente.",
+        "- Política do produto: toda hipótese exige confirmação humana.",
     ]
 
 
@@ -164,15 +154,15 @@ def build_academic_report(config: AppConfig) -> str:
         f"Modelo selecionado atualmente: `{selected_model.selected_kind}`.",
         f"Caminho selecionado: `{selected_model.selected_path}`.",
         "",
-        "A baseline atual usa características simples e KNN. O modelo final planejado é transfer learning com MobileNetV2, "
-        "dependente de dataset curado e TensorFlow disponível.",
+        "O runtime usa uma única release semântica ONNX com encoder congelado e cabeça supervisionada. "
+        "As hipóteses exigem confirmação até uma validação independente aprovar automação por classe.",
         "",
         "## 10. Avaliação",
         "",
-        *_baseline_summary(config),
+        *_recognition_summary(),
         "",
-        "A baseline deve ser apresentada como referência acadêmica, não como desempenho final. "
-        "A baixa métrica atual reforça a necessidade de dataset próprio, curadoria e transfer learning.",
+        "Esses números descrevem a release atual, mas não autorizam reconhecimento automático. "
+        "O próximo gate usa um conjunto novo e congelado, com métricas por classe.",
         "",
         "## 11. Tratamento de incerteza",
         "",
@@ -201,7 +191,7 @@ def build_academic_report(config: AppConfig) -> str:
         "",
         "## 15. Testes e reprodutibilidade",
         "",
-        "O projeto contém testes automatizados com `unittest`, scripts de diagnóstico, análise de dataset, split, baseline, avaliação, "
+        "O projeto contém testes automatizados com `pytest`, scripts de diagnóstico, análise de dataset e split, "
         "validação executável de aceite, auditoria, prontidão do dataset e pacote de entrega APS com evidências e critérios de aceite.",
         "",
         "## 16. Limitações atuais",
@@ -214,9 +204,9 @@ def build_academic_report(config: AppConfig) -> str:
         "",
         "## 18. Conclusão",
         "",
-        "O EcoScan já possui estrutura técnica sólida para a APS: aquisição, validação, processamento, segmentação, baseline, "
+        "O EcoScan já possui estrutura técnica sólida para a APS: aquisição, validação, processamento, segmentação, reconhecimento ONNX, "
         "câmera ao vivo, tracking visual, tratamento de erros, orientação de descarte, perfis, campanha, missões, denúncia, gestão, histórico, interface e relatórios. A evolução crítica agora é de dados: coletar imagens próprias, "
-        "curar o dataset e treinar o modelo final.",
+        "curar o dataset, validar fotos novas e promover somente releases que passem pelos gates.",
         "",
     ]
     return "\n".join(lines)

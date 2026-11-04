@@ -142,16 +142,19 @@ class PreservedProcessingTests(unittest.TestCase):
 
     def test_stale_model_predictions_remain_unconfirmed(self):
         from types import SimpleNamespace
-        from ecoscan.classification.baseline import BaselinePrediction
+        from ecoscan.classification.prediction import ClassificationPrediction
         from ecoscan.services.analysis_service import analyze_waste_image
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "can.png"
             Image.fromarray(reference_scene()).save(path)
-            predicted = BaselinePrediction("metal", "metal", .99, {"metal": .99}, True, .6)
-            with patch("ecoscan.services.analysis_service._predict", return_value=predicted), \
-                 patch("ecoscan.services.analysis_service.apply_material_rules", return_value=(predicted, None)):
+            predicted = ClassificationPrediction("metal", "metal", .99, {"metal": .99}, True, .6)
+            bundle = SimpleNamespace(
+                model_type="semantic_onnx_assisted",
+                classifier=SimpleNamespace(metadata={"processing": {}}),
+            )
+            with patch("ecoscan.services.analysis_service._predict", return_value=predicted):
                 result = analyze_waste_image(path, load_config(),
-                                             model_bundle=SimpleNamespace(model_type="test"))
+                                             model_bundle=bundle)
             self.assertFalse(result.processing_compatible)
             self.assertFalse(result.accepted)
             self.assertEqual(result.top_class, "metal")

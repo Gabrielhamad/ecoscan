@@ -32,6 +32,10 @@ jobs:
           cache: pip
       - name: Instalar dependencias declaradas
         run: python -m pip install -e '.[dev]'
+      - name: Verificar codigo e dependencias
+        run: |
+          python -m ruff check src scripts tests
+          python -m pip check
       - name: Testes automatizados
         run: python -m pytest tests -q --junitxml=reports/ci/pytest.xml
       - name: Diagnostico (nao aprova entrega final)

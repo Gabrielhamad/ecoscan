@@ -1,12 +1,10 @@
 """Resolve a trusted private model release; never load user-uploaded model files."""
-import hashlib
 import json
 import os
-import re
 import threading
 import time
 
-from ecoscan.image_processing.contracts import contract_path, model_processing_compatible, processing_contract
+from ecoscan.image_processing.contracts import processing_contract
 from ecoscan.services.contribution_store import remote_store
 
 _LOCK = threading.Lock()
@@ -31,8 +29,7 @@ def published_model(config):
             if store is None:
                 return None
             bucket = store.client.storage.from_("ecoscan-training")
-            neural = config.model.get("semantic_preview_enabled", False)
-            release = json.loads(bucket.download("semantic_active.json" if neural else "active.json"))
+            release = json.loads(bucket.download("semantic_active.json"))
             current = {row["id"]: row for row in store.list()}
             for identifier, review in release["reviews"].items():
                 row = current.get(identifier, {})
@@ -41,36 +38,10 @@ def published_model(config):
                         or row.get("expected_class") != review["expected_class"]):
                     raise ValueError("A source review was revoked or changed")
             identifier = release["id"]
-            if not re.fullmatch(r"[a-f0-9]{32}", identifier):
-                raise ValueError("Invalid release")
-            if neural:
-                from ecoscan.services.semantic_release import materialize
-                folder = config.directories["models"] / "remote" / identifier
-                path = materialize(bucket, release, folder, config)
-                _CACHE[key] = (path, time.monotonic())
-                return path
-            if (release["model_key"] != f"runs/{identifier}/model.joblib"
-                    or release["contract_key"] != f"runs/{identifier}/contract.json"
-                    or release["processing_sha256"] != key[1]
-                    or set(release["classes"]) != set(config.classes)):
-                raise ValueError("Incompatible release")
+            from ecoscan.services.semantic_release import materialize
+
             folder = config.directories["models"] / "remote" / identifier
-            folder.mkdir(parents=True, exist_ok=True)
-            path = folder / "model.joblib"
-            if (not path.exists() or not contract_path(path).exists()
-                    or hashlib.sha256(path.read_bytes()).hexdigest() != release["sha256"]):
-                data = bucket.download(release["model_key"])
-                if hashlib.sha256(data).hexdigest() != release["sha256"]:
-                    raise ValueError("Invalid checksum")
-                contract_data = bucket.download(release["contract_key"])
-                temporary = folder / "download.tmp"
-                temporary.write_bytes(data)
-                temporary_contract = folder / "contract.tmp"
-                temporary_contract.write_bytes(contract_data)
-                temporary_contract.replace(contract_path(path))
-                temporary.replace(path)
-            if not model_processing_compatible(path, processing_contract(config)):
-                raise ValueError("Incompatible processing")
+            path = materialize(bucket, release, folder, config)
             _CACHE[key] = (path, time.monotonic())
             return path
         except Exception:

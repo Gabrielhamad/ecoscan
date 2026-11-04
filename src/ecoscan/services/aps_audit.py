@@ -96,70 +96,28 @@ def _dataset_curation_item(config: AppConfig) -> AuditItem:
     )
 
 
-def _baseline_quality_item(config: AppConfig) -> AuditItem:
-    metrics_path = config.directories["reports"] / "evaluation" / "baseline_test" / "metrics.json"
-    metrics = _load_json(metrics_path)
-    macro_f1 = metrics.get("macro_f1")
-    accuracy = metrics.get("accuracy")
-    uncertain_count = metrics.get("uncertain_count")
-    total = metrics.get("total")
-
-    if not metrics:
-        return AuditItem(
-            code="APS-MODEL-02",
-            area="Modelo",
-            requirement="Baseline avaliada com métricas além de accuracy.",
-            status="pending",
-            priority="alta",
-            evidence="reports/evaluation/baseline_test/metrics.json",
-            rationale="Métricas da baseline ainda não foram geradas.",
-            next_action="Rodar evaluate_model.py para gerar métricas e matriz de confusão.",
-        )
-
-    if isinstance(macro_f1, int | float) and macro_f1 >= 0.5:
-        gate_status = "ok"
-        next_action = "Usar como referência comparativa para o modelo final."
-    else:
-        gate_status = "attention"
-        next_action = "Tratar a baseline como evidência acadêmica, não como desempenho final."
-
-    return AuditItem(
-        code="APS-MODEL-02",
-        area="Modelo",
-        requirement="Baseline avaliada com accuracy, precision, recall, F1 e matriz de confusão.",
-        status=gate_status,
-        priority="alta",
-        evidence="reports/evaluation/baseline_test/metrics.json",
-        rationale=(
-            f"accuracy={accuracy}, macro_f1={macro_f1}, "
-            f"incertas={uncertain_count}/{total}."
-        ),
-        next_action=next_action,
-    )
-
-
 def _final_model_item(config: AppConfig) -> AuditItem:
     selected = model_status(config)
     if selected.final_model_exists:
         return AuditItem(
             code="APS-MODEL-03",
             area="Modelo",
-            requirement="Modelo final por transfer learning salvo e carregável.",
+            requirement="Release semântica ONNX salva, íntegra e carregável.",
             status="ok",
             priority="alta",
             evidence=selected.final_model_path,
-            rationale="Modelo final encontrado.",
-            next_action="Avaliar no split de teste e comparar com a baseline.",
+            rationale="Release atual encontrada; o produto mantém confirmação humana.",
+            next_action="Executar teste independente por classe e revisar os erros de metal, plástico e vidro.",
         )
     return AuditItem(
         code="APS-MODEL-03",
         area="Modelo",
-        requirement="Modelo final por transfer learning salvo e carregável.",
+        requirement="Release semântica ONNX salva, íntegra e carregável.",
         status="pending",
         priority="alta",
         evidence=selected.final_model_path,
-        rationale="Projeto está preparado, mas o arquivo .keras ainda não existe.",
-        next_action="Treinar MobileNetV2 após dataset curado e ambiente TensorFlow disponível.",
+        rationale="O artefato configurado não foi encontrado.",
+        next_action="Restaurar models/semantic-v1 e validar os hashes antes de publicar.",
     )
 
 
@@ -167,7 +125,7 @@ def _dependencies_item() -> AuditItem:
     dependencies = _dependency_map()
     missing = [
         name
-        for name in ("opencv", "scikit-image", "tensorflow")
+        for name in ("opencv", "scikit-image", "onnx runtime")
         if not dependencies.get(name, False)
     ]
     if not missing:
@@ -177,7 +135,7 @@ def _dependencies_item() -> AuditItem:
     else:
         gate_status = "attention"
         rationale = f"Dependências ausentes: {', '.join(missing)}."
-        next_action = "Instalar dependências opcionais antes de demonstrar webcam direta, GrabCut/HSV e treino final."
+        next_action = "Instalar as dependências declaradas antes de publicar ou demonstrar."
     return AuditItem(
         code="APS-OPS-01",
         area="Ambiente",
@@ -204,7 +162,7 @@ def build_aps_audit(config: AppConfig) -> list[AuditItem]:
                     "src/ecoscan/image_processing/quality.py",
                     "src/ecoscan/segmentation/methods.py",
                     "src/ecoscan/segmentation/elements.py",
-                    "src/ecoscan/classification/inference.py",
+                    "src/ecoscan/classification/runtime.py",
                     "src/ecoscan/disposal/guidance.py",
                 ],
             ),
@@ -304,17 +262,6 @@ def build_aps_audit(config: AppConfig) -> list[AuditItem]:
         ),
         _dataset_volume_item(config),
         _dataset_curation_item(config),
-        AuditItem(
-            "APS-MODEL-01",
-            "Modelo",
-            "Baseline funcional antes do modelo final.",
-            _status_for_evidence(config, ["models/baseline_classifier.json"]),
-            "alta",
-            "models/baseline_classifier.json",
-            "Baseline KNN existe e permite demonstrar evolução futura.",
-            "Não vender a baseline como modelo final; usar como comparação acadêmica.",
-        ),
-        _baseline_quality_item(config),
         _final_model_item(config),
         AuditItem(
             "APS-UX-01",
@@ -424,7 +371,7 @@ def build_aps_audit(config: AppConfig) -> list[AuditItem]:
                 [
                     "README.md",
                     "docs/checklist_aps.md",
-                    "docs/roadmap_profissional.md",
+                    "docs/roadmap_entrega.md",
                     "docs/tratamento_erros.md",
                     "docs/relatorio_academico_base.md",
                     "docs/gestao_dataset_e_classes.md",

@@ -45,33 +45,11 @@
     "validation": 0.15,
     "test": 0.15
   },
-  "baseline": {
-    "algorithm": "knn",
-    "image_size": [
-      96,
-      96
-    ],
-    "histogram_bins": 8,
-    "confidence_threshold": 0.15,
-    "softmax_temperature": 0.2,
-    "k_neighbors": 9
-  },
   "model": {
-    "semantic_preview_enabled": true,
+    "engine": "semantic_onnx_assisted",
+    "artifact_path": "models/semantic-v1/semantic.json",
     "remote_models_enabled": true,
-    "type": "transfer_learning",
-    "framework": "tensorflow",
-    "architecture": "MobileNetV2",
-    "weights": "imagenet",
-    "fine_tune": false,
-    "batch_size": 16,
-    "epochs": 12,
-    "fine_tune_epochs": 8,
-    "learning_rate": 0.0001,
-    "dropout": 0.2,
-    "early_stopping_patience": 4,
-    "output_path": "models/ecoscan_transfer.keras",
-    "class_names_path": "models/class_names.json"
+    "confirmation_required": true
   },
   "history": {
     "enabled": true,

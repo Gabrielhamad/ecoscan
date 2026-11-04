@@ -303,26 +303,26 @@ def _build_gates(
 ) -> list[ModelGate]:
     return [
         ModelGate(
-            title="Dataset curado para treino final",
+            title="Dataset curado para a próxima release",
             status="ok" if ready_for_final_training else "attention",
             evidence="data/curated; reports/dataset_readiness",
             detail=(
-                "Base curada alcança o alvo mínimo para treino final."
+                "Base curada alcança o alvo mínimo para ajuste."
                 if ready_for_final_training
                 else "A curadoria ainda precisa de mais imagens reais, revisadas e balanceadas por classe."
             ),
-            next_step="Completar data/curated antes do treino final por transfer learning.",
+            next_step="Completar data/curated antes de ajustar a próxima release.",
         ),
         ModelGate(
-            title="Modelo final treinado",
+            title="Release semântica disponível",
             status="ok" if final_model_exists else "pending",
             evidence=final_model_path,
             detail=(
-                "Arquivo do modelo final encontrado."
+                "Artefato da release atual encontrado."
                 if final_model_exists
-                else "O sistema continua usando o modelo visual atual enquanto o modelo final não existe."
+                else "A release semântica configurada ainda não está disponível."
             ),
-            next_step="Treinar o modelo final somente após fechar a curadoria do dataset.",
+            next_step="Gerar uma release somente após fechar curadoria e validação.",
         ),
         ModelGate(
             title="Avaliação comparativa registrada",

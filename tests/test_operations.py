@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import unittest
 
-from ecoscan.config import PROJECT_ROOT, load_config
+from ecoscan.config import PROJECT_ROOT
 from ecoscan.disposal.collection_points import load_collection_points
 from ecoscan.disposal.guidance import load_guidance
 from ecoscan.services.accounts import build_point_transaction
@@ -16,7 +16,6 @@ from ecoscan.services.operations import (
 
 class OperationsTests(unittest.TestCase):
     def test_campaign_operations_summary_aggregates_secretariat_metrics(self) -> None:
-        config = load_config()
         campaign = load_campaign(PROJECT_ROOT / "config" / "campaigns.json")
         collection_points = load_collection_points(PROJECT_ROOT / "config" / "collection_points.json")
         guidance = load_guidance(PROJECT_ROOT / "config" / "disposal_guidance.json")

@@ -51,8 +51,7 @@ def build_free_hosting_plan(config: AppConfig) -> FreeHostingPlan:
             "Define execução headless e configurações base do servidor.",
             "Manter configuração simples para Community Cloud.",
         ),
-        _model_check(root / "models" / "vision_classifier.npz", "Modelo visual leve"),
-        _model_check(root / "models" / "baseline_classifier.json", "Modelo baseline reserva"),
+        _model_check(root / "models" / "semantic-v1" / "semantic.json", "Release semântica atual"),
         _gitignore_model_check(root / ".gitignore"),
         DeploymentCheck(
             item="Login e autorização da secretaria",
@@ -93,7 +92,7 @@ def build_free_hosting_plan(config: AppConfig) -> FreeHostingPlan:
         steps=(
             "Criar ou usar uma conta no GitHub.",
             "Subir a pasta do projeto para um repositório GitHub.",
-            "Confirmar que requirements.txt, runtime.txt, .streamlit/config.toml, streamlit_app.py e os modelos leves foram enviados.",
+            "Confirmar que requirements.txt, runtime.txt, .streamlit/config.toml, streamlit_app.py e a release semântica foram enviados.",
             "Entrar em https://share.streamlit.io e criar um novo app.",
             "Selecionar repositório, branch principal e arquivo streamlit_app.py.",
             "Configurar login OIDC e lista de administradores em Secrets, conforme docs/autenticacao.md.",
@@ -101,7 +100,7 @@ def build_free_hosting_plan(config: AppConfig) -> FreeHostingPlan:
             "No celular, testar primeiro upload/câmera do app; registrar erros na aba Perfil para reforçar o reconhecimento.",
         ),
         limitations=(
-            "Não subir data/raw completo para o GitHub; usar apenas modelos leves e configurações.",
+            "Não subir data/raw completo para o GitHub; manter somente a release ativa e suas licenças.",
             "O reconhecimento ainda é orientativo até o dataset final ser curado e o modelo definitivo passar pela governança.",
             "O EcoScan Live em tempo real usa outro servidor local; em hospedagem gratuita, priorize foto/câmera do Streamlit.",
             "Arquivos gerados em reports/logs na nuvem podem ser temporários; registros oficiais devem ser exportados periodicamente.",
@@ -203,15 +202,15 @@ def _gitignore_model_check(path: Path) -> DeploymentCheck:
             status="attention",
             evidence=str(path),
             detail=".gitignore não encontrado.",
-            next_step="Permitir os modelos leves e continuar ignorando datasets brutos.",
+            next_step="Permitir somente a release ativa e continuar ignorando datasets brutos.",
         )
     text = path.read_text(encoding="utf-8")
-    required = {"!models/vision_classifier.npz", "!models/baseline_classifier.json"}
+    required = {"!models/semantic-v1/", "!models/semantic-v1/**"}
     missing = sorted(required - set(line.strip() for line in text.splitlines()))
     return DeploymentCheck(
         item="Modelos liberados no Git",
         status="ok" if not missing else "attention",
         evidence=str(path),
-        detail="Modelos leves estão liberados para commit." if not missing else "Faltam exceções: " + ", ".join(missing),
-        next_step="Nenhuma ação necessária." if not missing else "Adicionar exceções para os modelos leves.",
+        detail="Somente a release atual está liberada para commit." if not missing else "Faltam exceções: " + ", ".join(missing),
+        next_step="Nenhuma ação necessária." if not missing else "Adicionar exceções para a release atual.",
     )

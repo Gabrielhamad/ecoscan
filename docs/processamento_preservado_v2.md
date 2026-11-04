@@ -1,6 +1,6 @@
 # Preparacao de imagens: RGB preservado v2
 
-[Projeto](../README.md) | [Treinamento](treinamento_reconhecimento.md)
+[Projeto](../README.md) | [Modelo atual](modelo_reconhecimento.md)
 
 Revisao: 29/09/2026. Contrato: `rgb-preserved-v2`.
 
@@ -122,7 +122,7 @@ evidencia de compatibilidade de preparacao, nao certificacao de precisao.
 Nao crie um contrato artificial para liberar o modelo antigo.
 
 O proximo treino deve partir dos originais curados, nunca das antigas imagens
-mascaradas. Use o [ciclo controlado](treinamento_reconhecimento.md), avalie fotos
+mascaradas. Use o [ciclo controlado](modelo_reconhecimento.md), avalie fotos
 independentes e promova o modelo e seu contrato juntos apenas apos revisao.
 Scripts isolados de treinamento experimental nao certificam esse contrato.
 Nenhum novo modelo foi treinado nem promovido nesta revisao.

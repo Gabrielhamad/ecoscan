@@ -2,10 +2,9 @@ from __future__ import annotations
 
 import unittest
 
-from ecoscan.classification.inference import ModelLoadError
+from ecoscan.classification.runtime import ModelLoadError
 from ecoscan.errors import describe_exception, error_catalog, format_console_error, public_error_payload
 from ecoscan.image_processing.validation import ImageValidationError
-from ecoscan.training.transfer_learning import TrainingEnvironmentError
 
 
 class ErrorHandlingTests(unittest.TestCase):
@@ -18,7 +17,7 @@ class ErrorHandlingTests(unittest.TestCase):
         self.assertIn("Image file is empty", error.technical_detail)
 
     def test_public_payload_hides_technical_detail_by_default(self) -> None:
-        payload = public_error_payload(ModelLoadError("Modelo baseline não encontrado."))
+        payload = public_error_payload(ModelLoadError("Modelo atual não encontrado."))
 
         self.assertFalse(payload["ok"])
         self.assertEqual(payload["code"], "MODEL-001")
@@ -43,13 +42,6 @@ class ErrorHandlingTests(unittest.TestCase):
 
         self.assertIn("IMG-001", text)
         self.assertIn("Ação recomendada:", text)
-
-    def test_training_environment_error_has_specific_code(self) -> None:
-        error = describe_exception(TrainingEnvironmentError("TensorFlow não está instalado neste ambiente."))
-
-        self.assertEqual(error.code, "TRAIN-001")
-        self.assertEqual(error.category, "training")
-
 
 if __name__ == "__main__":
     unittest.main()

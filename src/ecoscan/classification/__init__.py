@@ -1,2 +1,2 @@
-"""Classification baselines, transfer learning models, and inference code."""
+"""Current recognition runtime, prediction contract, and ONNX implementation."""
 

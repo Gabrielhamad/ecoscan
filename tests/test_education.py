@@ -1,5 +1,4 @@
 import unittest
-from pathlib import Path
 from streamlit.testing.v1 import AppTest
 from ecoscan.config import PROJECT_ROOT
 from ecoscan.ui.education import LESSONS

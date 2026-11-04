@@ -61,10 +61,10 @@ def _evidence(config: AppConfig) -> tuple[EvidenceItem, ...]:
     items = [
         EvidenceItem("execução", "README.md", "ok", "Instruções de instalação, execução e fluxo final."),
         EvidenceItem("manual APS", "docs/checklist_aps.md", "ok", "Checklist dos requisitos atendidos e pendentes."),
-        EvidenceItem("arquitetura", "docs/arquitetura_final.md", "ok", "Separação das camadas do sistema."),
-        EvidenceItem("roadmap", "docs/roadmap_profissional.md", "ok", "Marcos concluídos, riscos e evolução futura."),
-        EvidenceItem("pipeline", "docs/pipeline_profissional_filtragem_reconhecimento.md", "ok", "Justificativa de filtro, segmentação e reconhecimento."),
-        EvidenceItem("segmentação adaptativa", "docs/segmentacao_adaptativa.md", "ok", "Critérios de escolha automática da segmentação."),
+        EvidenceItem("arquitetura", "docs/arquitetura_atual.md", "ok", "Separação das camadas do sistema."),
+        EvidenceItem("roadmap", "docs/roadmap_entrega.md", "ok", "Marcos, riscos e critérios de aceite."),
+        EvidenceItem("pipeline", "docs/processamento_preservado_v2.md", "ok", "Contrato da preparação usada pelo reconhecimento."),
+        EvidenceItem("processamento de imagens", "docs/pratica_processamento_imagens.md", "ok", "Filtros, segmentação e morfologia disponíveis."),
         EvidenceItem("câmera ao vivo", "docs/live_camera_mobile.md", "ok", "Uso mobile com câmera traseira e tracking visual."),
         EvidenceItem("tratamento de erros", "docs/tratamento_erros.md", "ok", "Catálogo e contrato de erros do EcoScan."),
         EvidenceItem("UX dispositivo", "src/ecoscan/ui/streamlit_app.py", "ok", "Resumo executivo, barras de confiança e controles tocáveis."),
@@ -99,8 +99,8 @@ def _evidence(config: AppConfig) -> tuple[EvidenceItem, ...]:
         EvidenceItem("relatório", "reports/aps_report/relatorio_aps.md", _status_for_path(config, "reports/aps_report/relatorio_aps.md"), "Relatório acadêmico consolidado."),
         EvidenceItem("filtros comparados", "reports/filter_experiments/metal_can/filter_comparison.jpg", _status_for_path(config, "reports/filter_experiments/metal_can/filter_comparison.jpg"), "Evidência visual de filtros."),
         EvidenceItem("segmentação comparada", "reports/segmentation_experiments/metal_can/segmentation_comparison.jpg", _status_for_path(config, "reports/segmentation_experiments/metal_can/segmentation_comparison.jpg"), "Evidência visual de segmentação."),
-        EvidenceItem("matriz de confusão", "reports/evaluation/baseline_test/confusion_matrix.png", _status_for_path(config, "reports/evaluation/baseline_test/confusion_matrix.png"), "Avaliação da baseline."),
-        EvidenceItem("modelo final", "models/ecoscan_transfer.keras", _status_for_path(config, "models/ecoscan_transfer.keras"), "Modelo final planejado por transfer learning."),
+        EvidenceItem("avaliação semântica", "docs/modelo_reconhecimento.md", "ok", "Métricas, limitações e proveniência da release atual."),
+        EvidenceItem("modelo atual", "models/semantic-v1/semantic.json", _status_for_path(config, "models/semantic-v1/semantic.json"), "Metadados e hashes do reconhecedor ONNX atual."),
     ]
     return tuple(items)
 
@@ -141,8 +141,8 @@ def _acceptance(config: AppConfig) -> tuple[AcceptanceCriterion, ...]:
             "AC-05",
             "Imagem ruim ou fora do domínio não deve forçar resposta.",
             "ok",
-            "models/baseline_classifier.json; tests/test_inference_service.py",
-            "Há limiar de aceitação e mensagem de baixa segurança.",
+            "models/semantic-v1/semantic.json; tests/test_current_recognition.py",
+            "Há classe desconhecida, limiar e confirmação humana obrigatória.",
         ),
         AcceptanceCriterion(
             "AC-06",
@@ -174,10 +174,10 @@ def _acceptance(config: AppConfig) -> tuple[AcceptanceCriterion, ...]:
         ),
         AcceptanceCriterion(
             "AC-10",
-            "Modelo final por transfer learning supera baseline.",
+            "Release atual passa pelos gates por classe.",
             "pending" if not final_model else "ok",
-            "models/ecoscan_transfer.keras; reports/evaluation/transfer_test",
-            "Fica para depois do dataset real e curado.",
+            "models/semantic-v1/semantic.json; docs/modelo_reconhecimento.md",
+            "A release existe, mas ainda precisa de validação independente de campo para automatizar orientação.",
         ),
         AcceptanceCriterion(
             "AC-11",
@@ -312,10 +312,10 @@ def _decisions() -> tuple[TechnicalDecision, ...]:
         ),
         TechnicalDecision(
             "DEC-06",
-            "Usar MobileNetV2 como primeiro modelo final planejado.",
-            "Boa relação entre explicabilidade, desempenho e execução local em projeto acadêmico.",
-            "pendente de treino",
-            "Só será promovido a modelo final após dataset curado e avaliação.",
+            "Manter um único reconhecedor semântico ONNX no runtime.",
+            "Evita seleção implícita de artefatos antigos e mantém a preparação vinculada por hash.",
+            "confirmada",
+            "Toda nova release deve preservar contrato, proveniência, métricas e rollback.",
         ),
     )
 
@@ -382,7 +382,7 @@ def _format_index(pack: DeliveryPack) -> str:
         "## Leitura correta para apresentação",
         "",
         "O EcoScan já demonstra aquisição, validação, filtragem, segmentação, classificação, orientação, histórico, câmera, tratamento de erros e evidências. "
-        "O reconhecimento definitivo fica condicionado ao dataset real do grupo e ao treino final por transfer learning.",
+        "O reconhecimento permanece assistido até a release passar por validação independente em fotos reais.",
         "",
         "## Arquivos gerados",
         "",
@@ -432,7 +432,7 @@ def _format_presentation_script(pack: DeliveryPack) -> str:
             "",
             "## 7. Avaliação",
             "",
-            "Mostrar que há baseline, matriz de confusão, métricas além de accuracy e rejeição de predições incertas.",
+            "Mostrar as métricas históricas, os casos rejeitados e a confirmação humana obrigatória.",
             "",
             "## 8. Tratamento de erros",
             "",
@@ -440,7 +440,7 @@ def _format_presentation_script(pack: DeliveryPack) -> str:
             "",
             "## 8. Limitações honestas",
             "",
-            "Deixar claro que o dataset final e o modelo por transfer learning entram depois das imagens do grupo.",
+            "Deixar claro que a automação depende de um teste independente com fotos novas do grupo.",
             "",
             "## 9. Fechamento",
             "",

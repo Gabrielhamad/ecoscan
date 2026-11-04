@@ -10,6 +10,7 @@ from PIL import Image
 
 from ecoscan.app.pipeline import ProcessingPipelineOptions, run_processing_pipeline
 from ecoscan.config import load_config
+from ecoscan.image_processing.contracts import processing_contract
 from ecoscan.segmentation.morphology import apply_morphology, structuring_element
 from ecoscan.segmentation.methods import apply_mask
 from ecoscan.services.visual_report import save_pipeline_artifacts
@@ -139,19 +140,22 @@ class MorphologyPipelineTests(unittest.TestCase):
     def test_classifier_receives_rgb_and_mask_remains_diagnostic(self):
         from types import SimpleNamespace
         from ecoscan.services.analysis_service import analyze_waste_image
-        from ecoscan.classification.baseline import BaselinePrediction
+        from ecoscan.classification.prediction import ClassificationPrediction
         with tempfile.TemporaryDirectory() as folder:
             path, _, config = self.fixture(folder)
             options = ProcessingPipelineOptions(
                 filter_name="none", segmentation_name="otsu",
                 segmentation_parameters={"invert": True}, morphology_name="open_close")
-            prediction = BaselinePrediction(None, "metal", .1, {"metal": .1}, False, .6)
-            with patch("ecoscan.services.analysis_service._predict", return_value=prediction) as predict, \
-                 patch("ecoscan.services.analysis_service.apply_material_rules", return_value=(prediction, None)):
+            prediction = ClassificationPrediction("metal", None, .1, {"metal": .1}, False, .6)
+            bundle = SimpleNamespace(
+                model_type="semantic_onnx_assisted",
+                classifier=SimpleNamespace(metadata={"processing": processing_contract(config)}),
+            )
+            with patch("ecoscan.services.analysis_service._predict", return_value=prediction) as predict:
                 result = analyze_waste_image(path, config, options=options,
-                                             model_bundle=SimpleNamespace(model_type="test"))
-            np.testing.assert_array_equal(predict.call_args.args[1], result.pipeline.recognition_image)
-            self.assertFalse(np.all(predict.call_args.args[1][5, 5] == 255))
+                                             model_bundle=bundle)
+            np.testing.assert_array_equal(predict.call_args.args[0], result.pipeline.recognition_image)
+            self.assertFalse(np.all(predict.call_args.args[0][5, 5] == 255))
             self.assertEqual(result.pipeline.segmentation_result.mask[5, 5], 0)
 
     def test_lossless_exports_and_metadata_include_intermediate_stages(self):

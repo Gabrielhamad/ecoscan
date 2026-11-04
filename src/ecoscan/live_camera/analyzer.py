@@ -9,12 +9,7 @@ from threading import Lock
 from typing import Any
 
 from ecoscan.app.pipeline import ProcessingPipelineOptions
-from ecoscan.classification.inference import (
-    BaselineModelBundle,
-    KerasModelBundle,
-    VisualKnnModelBundle,
-    VisualSvmModelBundle,
-)
+from ecoscan.classification.runtime import RecognitionModel
 from ecoscan.config import AppConfig
 from ecoscan.disposal.guidance import DisposalGuidance
 from ecoscan.disposal.impact import (
@@ -55,7 +50,7 @@ class LiveCameraAnalyzer:
         *,
         settings: LiveCameraSettings | None = None,
         model_path: str | Path | None = None,
-        model_bundle: BaselineModelBundle | KerasModelBundle | VisualKnnModelBundle | VisualSvmModelBundle | None = None,
+        model_bundle: RecognitionModel | None = None,
         tracker: CentroidTracker | None = None,
     ) -> None:
         self.config = config

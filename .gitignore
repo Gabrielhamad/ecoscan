@@ -27,9 +27,8 @@ logs/*
 !data/validation/.gitkeep
 !data/test/.gitkeep
 !models/.gitkeep
-!models/baseline_classifier.json
-!models/vision_classifier.npz
-!models/common_recyclables_classifier.npz
+!models/semantic-v1/
+!models/semantic-v1/**
 !logs/.gitkeep
 !reports/.gitkeep
 !notebooks/.gitkeep

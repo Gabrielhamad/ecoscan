@@ -1,6 +1,5 @@
 from dataclasses import replace
 import json
-from pathlib import Path
 
 from ecoscan.config import load_config
 from ecoscan.ui.app_resources import load_app_resources

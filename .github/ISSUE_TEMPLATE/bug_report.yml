@@ -1,0 +1,43 @@
+name: Relatar problema
+description: Registre um comportamento reproduzível sem incluir dados pessoais ou Secrets.
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Comportamento observado
+      description: Informe o que aconteceu e a mensagem pública exibida.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Passos para reproduzir
+      placeholder: |
+        1. Abrir...
+        2. Selecionar...
+        3. Observar...
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Ambiente
+      description: URL, navegador, sistema e dispositivo, sem tokens ou e-mails.
+    validations:
+      required: true
+  - type: dropdown
+    id: profile
+    attributes:
+      label: Perfil
+      options: [Visitante, Participante, Gestão, Não se aplica]
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacidade
+      options:
+        - label: Removi senhas, tokens, e-mails, protocolos e fotos privadas.
+          required: true

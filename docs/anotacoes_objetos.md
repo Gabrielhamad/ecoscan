@@ -25,25 +25,13 @@ mestre com todos os splits: registros separados nao substituem um catalogo
 global. Copias exatas duplicadas tambem sao rejeitadas para nao inflar contagens.
 Fotos de outro angulo do mesmo objeto exigem o mesmo group_id, informado pela equipe.
 
-## Experimento inicial
-
-As tres fotos conhecidas receberam caixas propostas manualmente. O conjunto
-de PET foi anotado como grupo, sem fingir seis deteccoes individuais. Todas
-ficaram em `regression`, sem entrar no treino. Origem do material: relato do
-usuario, apoiado pela inspecao visual; nao constituem um lote cego de aceite.
-
-A comparacao com o classificador MobileNet teve um acerto na foto completa e
-nenhum no recorte. O recorte nao foi ativado. Arquivos locais:
-`tmp/regression_objects.json` e `reports/annotated_regions_20261017/`.
-Incluem imagens com caixas, entradas RGB das regioes e relatorio pareado.
-
 ## Exportar caixas COCO
 
 O comando abaixo exige anotacoes verificadas e individuais, de material conhecido.
 Regressoes e grupos nao podem ser exportados como objetos de treino. Imagens
 sem objetos, quando revisadas, podem representar negativos.
 
-```powershell
+```bash
 python scripts/evaluate_object_annotations.py --annotations CAMINHO/manifesto.json --source-root CAMINHO/imagens --output reports/objetos_exportados --export-coco train
 ```
 
@@ -53,17 +41,6 @@ evita caixas calculadas na foto em pe ficarem desalinhadas com o JPEG deitado.
 E uma exportacao de bounding boxes, nao de mascaras de segmentacao.
 O campo reviewed_by e rastreabilidade local, nao uma autenticacao de analista
 nem integracao ja disponivel na interface da secretaria.
-
-## Comparar foto e regiao
-
-```powershell
-python scripts/evaluate_object_annotations.py --annotations CAMINHO/manifesto.json --source-root CAMINHO/imagens --candidate reports/training_embedding_20261016 --output reports/avaliacao_regioes
-```
-
-Cada regiao e recortada do original orientado e passa pelo preparo adaptativo
-antes da classificacao. O relatorio distingue acerto, rejeicao, erro aceito e
-grupo. A regiao manual mostra um diagnostico com localizacao conhecida; nao
-mede a capacidade de encontrar automaticamente o objeto.
 
 ## Proximo lote
 

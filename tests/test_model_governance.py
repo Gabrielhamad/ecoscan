@@ -103,7 +103,7 @@ def _feedback(expected: str, predicted: str, probability: float) -> RecognitionF
         top_class=predicted,
         probability=probability,
         accepted=True,
-        model_type="visual_knn",
+        model_type="semantic_onnx_assisted",
         filter_name="auto",
         segmentation_name="auto",
         source_kind="upload",
@@ -118,7 +118,7 @@ def _config_with_reference_snapshot(root: Path):
     (evaluation_dir / "metrics.json").write_text(
         json.dumps(
             {
-                "model_kind": "visual_knn",
+                "model_kind": "semantic_onnx_assisted",
                 "split": "test",
                 "accuracy": 0.32,
                 "macro_precision": 0.30,

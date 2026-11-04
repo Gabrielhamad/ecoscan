@@ -33,4 +33,4 @@ jobs:
         env:
           ECOSCAN_SUPABASE_URL: ${{ secrets.ECOSCAN_SUPABASE_URL }}
           ECOSCAN_SUPABASE_SERVICE_KEY: ${{ secrets.ECOSCAN_SUPABASE_SERVICE_KEY }}
-        run: python scripts/run_automatic_training.py
+        run: python scripts/run_reviewed_training.py

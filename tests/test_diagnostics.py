@@ -2,31 +2,34 @@ from __future__ import annotations
 
 import tempfile
 import unittest
-from pathlib import Path
 from dataclasses import replace
+from pathlib import Path
 
 from ecoscan.config import load_config
-from ecoscan.services.diagnostics import dataset_status, dependency_status, model_status, write_diagnostics_report
+from ecoscan.services.diagnostics import (
+    dataset_status,
+    dependency_status,
+    model_status,
+    write_diagnostics_report,
+)
 from ecoscan.services.analysis_service import _model_path
 
 
 class DiagnosticsTests(unittest.TestCase):
-    def test_model_priority_matches_real_analysis_for_each_available_artifact(self):
+    def test_model_status_matches_the_configured_current_artifact(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            config = replace(load_config(), project_root=root,
-                             directories={"models": root}, model={"output_path": "final.keras"})
+            model_path = root / "models" / "semantic-v1" / "semantic.json"
+            config = replace(
+                load_config(),
+                project_root=root,
+                directories={"models": root / "models"},
+            )
             self.assertEqual("none", model_status(config).selected_kind)
-            for name, kind in (
-                ("baseline_classifier.json", "baseline"),
-                ("vision_classifier.npz", "visual_knn"),
-                ("vision_svm_classifier.joblib", "visual_svm"),
-                ("final.keras", "transfer_learning"),
-            ):
-                (root / name).touch()
-                with self.subTest(kind=kind):
-                    self.assertEqual(kind, model_status(config).selected_kind)
-                    self.assertEqual(_model_path(config, None), Path(model_status(config).selected_path))
+            model_path.parent.mkdir(parents=True)
+            model_path.touch()
+            self.assertEqual("semantic_onnx_assisted", model_status(config).selected_kind)
+            self.assertEqual(_model_path(config, None), Path(model_status(config).selected_path))
 
     def test_diagnostics_report_is_written(self) -> None:
         config = load_config()
@@ -36,7 +39,7 @@ class DiagnosticsTests(unittest.TestCase):
             self.assertTrue(output.exists())
             self.assertTrue(dependency_status())
             self.assertIn("raw_counts", dataset_status(config).__dict__)
-            self.assertIn(model_status(config).selected_kind, {"baseline", "visual_svm", "visual_knn", "transfer_learning", "semantic_onnx_preview", "none"})
+            self.assertIn(model_status(config).selected_kind, {"semantic_onnx_assisted", "none"})
 
 
 if __name__ == "__main__":

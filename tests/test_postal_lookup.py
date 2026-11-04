@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from ecoscan.disposal.postal_lookup import lookup_capital_cep, normalize_cep
+from ecoscan.disposal.postal_lookup import lookup_capital_cep
 from ecoscan.disposal.collection_points import filter_collection_points, load_collection_points, rank_collection_points
 from ecoscan.config import PROJECT_ROOT
 

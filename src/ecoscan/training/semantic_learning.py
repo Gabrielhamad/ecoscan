@@ -16,8 +16,8 @@ from ecoscan.app.pipeline import default_processing_options, run_processing_pipe
 from ecoscan.classification.semantic_onnx import SemanticOnnxClassifier
 from ecoscan.image_processing.contracts import processing_contract
 from ecoscan.metrics.classification_metrics import classification_report
-from ecoscan.training.automatic import BUCKET, eligible, update_rows
 from ecoscan.training.diagnostics import evaluation_details
+from ecoscan.training.review_queue import BUCKET, eligible, update_rows
 
 
 def improvement(candidate, reference, classes):
@@ -114,7 +114,7 @@ def run(config, store):
             arrays, head_classes = fit_head(base, train_x, train_y)
             base.arrays = arrays
             base.metadata = {**base.metadata, 'head_classes': head_classes}
-            # Keep the reference separate when it is the bundled baseline.
+            # Keep the bundled release separate as the immutable reference.
             if reference is base:
                 reference = SemanticOnnxClassifier(base_dir / 'semantic.json')
             update_rows(store, rows, 'validating', run_id)

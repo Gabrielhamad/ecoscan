@@ -13,13 +13,13 @@ from PIL import Image
 from streamlit.testing.v1 import AppTest
 
 from ecoscan.app.pipeline import ProcessingPipelineOptions, default_processing_options, run_processing_pipeline
+from ecoscan.classification.prediction import ClassificationPrediction
 from ecoscan.config import load_config
-from ecoscan.classification.baseline import BaselinePrediction
+from ecoscan.image_processing.contracts import processing_contract
 from ecoscan.services.analysis_service import analyze_waste_image
 from ecoscan.services.processing_evidence import (
     ProcessingEvidence, array_digest, evidence_manifest, processing_evidence, processing_evidence_zip,
 )
-from ecoscan.segmentation.methods import apply_mask
 
 
 class AppliedProcessingTests(unittest.TestCase):
@@ -52,11 +52,14 @@ class AppliedProcessingTests(unittest.TestCase):
         self.assertTrue(all(stage.applied for stage in stages[3:7]))
 
     def test_actual_arrays_form_morphology_chain_and_classifier_input(self):
-        prediction = BaselinePrediction(None, "metal", .1, {"metal": .1}, False, .6)
-        with patch("ecoscan.services.analysis_service._predict", return_value=prediction) as predict, \
-             patch("ecoscan.services.analysis_service.apply_material_rules", return_value=(prediction, None)):
+        prediction = ClassificationPrediction("metal", None, .1, {"metal": .1}, False, .6)
+        bundle = SimpleNamespace(
+            model_type="semantic_onnx_assisted",
+            classifier=SimpleNamespace(metadata={"processing": processing_contract(self.config)}),
+        )
+        with patch("ecoscan.services.analysis_service._predict", return_value=prediction) as predict:
             result = analyze_waste_image(self.path, self.config,
-                                         model_bundle=SimpleNamespace(model_type="test"))
+                                         model_bundle=bundle)
         pipeline = result.pipeline
         stages = processing_evidence(pipeline)
         self.assertIs(stages[1].before, pipeline.preprocessing.resized)
@@ -64,11 +67,11 @@ class AppliedProcessingTests(unittest.TestCase):
         self.assertIs(stages[2].after, pipeline.raw_segmentation_result.mask)
         for previous, current in zip(stages[2:6], stages[3:7]):
             self.assertIs(current.before, previous.after)
-        self.assertIs(stages[-1].after, predict.call_args.args[1])
+        self.assertIs(stages[-1].after, predict.call_args.args[0])
         np.testing.assert_array_equal(stages[-1].after, pipeline.filter_result.image)
         self.assertFalse(stages[-1].parameters["mask_applied"])
         manifest = evidence_manifest(pipeline)
-        self.assertEqual(manifest["classifier_input_sha256"], array_digest(predict.call_args.args[1]))
+        self.assertEqual(manifest["classifier_input_sha256"], array_digest(predict.call_args.args[0]))
         self.assertEqual(stages[-2].parameters["mask_sha256"], array_digest(pipeline.segmentation_result.mask))
 
     def test_controls_and_unchanged_execution_are_distinct(self):

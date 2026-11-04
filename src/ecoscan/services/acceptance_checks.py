@@ -66,22 +66,22 @@ def _external_acceptance_checks() -> list[AcceptanceCheckResult]:
     # Local inspection cannot attest to production or another person's account.
     return [
         AcceptanceCheckResult(
-            "QA-18", "Identidade real", "pending", "docs/plano_entrega.md: P01-P10",
+            "QA-18", "Identidade real", "pending", "docs/roadmap_entrega.md: etapa 1",
             "Executar cadastro, confirmação, isolamento entre duas contas, revisão e recuperação na nuvem.",
             "manual_required",
         ),
         AcceptanceCheckResult(
-            "QA-19", "Persistência integrada", "pending", "docs/plano_entrega.md: P07/P11",
+            "QA-19", "Persistência integrada", "pending", "docs/roadmap_entrega.md: etapa 1",
             "Validar ativação da migração 003, campanhas e relatos entre contas, reinício e falha do banco. Testes locais não comprovam operação publicada.",
             "manual_required",
         ),
         AcceptanceCheckResult(
-            "QA-20", "Dispositivos", "pending", "docs/plano_entrega.md: P12",
+            "QA-20", "Dispositivos", "pending", "docs/roadmap_entrega.md: etapa 1",
             "Validar celular e computador reais; câmera Live possui implantação separada.",
             "manual_required",
         ),
         AcceptanceCheckResult(
-            "QA-21", "Operação e recuperação", "pending", "docs/plano_entrega.md: Etapa 5",
+            "QA-21", "Operação e recuperação", "pending", "docs/roadmap_entrega.md: etapa 3",
             "Ensaiar restauração de backup e retorno de versão; definir retenção e responsável pelo suporte.",
             "manual_required",
         ),
@@ -139,7 +139,7 @@ def _check_static_structure(config: AppConfig) -> AcceptanceCheckResult:
         "src/ecoscan/image_processing/filters.py",
         "src/ecoscan/segmentation/adaptive.py",
         "src/ecoscan/segmentation/methods.py",
-        "src/ecoscan/classification/inference.py",
+        "src/ecoscan/classification/runtime.py",
         "src/ecoscan/live_camera/server.py",
         "src/ecoscan/disposal/collection_points.py",
         "src/ecoscan/disposal/impact.py",
@@ -161,7 +161,7 @@ def _check_static_structure(config: AppConfig) -> AcceptanceCheckResult:
         "scripts/generate_final_readiness.py",
         "scripts/check_deployment_ready.py",
         "docs/hospedagem_gratuita.md",
-        "docs/roteiro_etapas_profissionalizacao.md",
+        "docs/roadmap_entrega.md",
         "config/user_profiles.json",
         "config/campaigns.json",
         "tests",
@@ -512,8 +512,8 @@ def _check_model_and_pipeline(
                 "QA-04",
                 "Modelo",
                 "pending",
-                "models/baseline_classifier.json, models/vision_classifier.npz ou models/ecoscan_transfer.keras",
-                "Nenhum modelo disponível para inferência.",
+                "models/semantic-v1/semantic.json",
+                "A release semântica configurada não está disponível.",
             )
         ]
 

@@ -7,7 +7,8 @@ import shutil
 from threading import Lock
 
 import numpy as np
-from ecoscan.classification.baseline import BaselinePrediction
+
+from ecoscan.classification.prediction import ClassificationPrediction
 
 
 def softmax(values):
@@ -96,8 +97,14 @@ class SemanticOnnxClassifier:
         label = self.classes[int(scores.argmax())]
         score, threshold = float(scores.max()), float(self.metadata["threshold"])
         accepted = label != "unknown" and score >= threshold
-        return BaselinePrediction(label, label if accepted else None, score,
-                                  dict(zip(self.classes, map(float, scores))), accepted, threshold)
+        return ClassificationPrediction(
+            label,
+            label if accepted else None,
+            score,
+            dict(zip(self.classes, map(float, scores))),
+            accepted,
+            threshold,
+        )
 
 
 _LOAD_LOCK = Lock()

@@ -1,7 +1,7 @@
 """Supported objects for the pilot; material labels are not object detectors."""
 from dataclasses import replace
 
-from ecoscan.classification.baseline import BaselinePrediction
+from ecoscan.classification.prediction import ClassificationPrediction
 
 
 ITEMS = {
@@ -43,7 +43,10 @@ ITEM_CONDITIONS = {
 }
 
 
-def restrict_prediction(prediction: BaselinePrediction, classes: tuple[str, ...]) -> BaselinePrediction:
+def restrict_prediction(
+    prediction: ClassificationPrediction,
+    classes: tuple[str, ...],
+) -> ClassificationPrediction:
     if prediction.top_class_id in classes and (
         prediction.class_id is None or prediction.class_id in classes
     ):

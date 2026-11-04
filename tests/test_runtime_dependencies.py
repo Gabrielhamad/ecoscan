@@ -16,6 +16,6 @@ def test_requirements_and_project_keep_core_runtime_packages_aligned():
     requirements = (ROOT / "requirements.txt").read_text().casefold()
     project = (ROOT / "pyproject.toml").read_text().casefold()
     for package in ("pillow", "numpy", "opencv-python-headless", "scikit-image",
-                    "scikit-learn", "joblib", "streamlit", "authlib", "supabase", "onnxruntime"):
+                    "scikit-learn", "streamlit", "authlib", "supabase", "onnxruntime"):
         assert package in requirements
         assert package in project

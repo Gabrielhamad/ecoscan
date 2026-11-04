@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+from ecoscan.classification.runtime import configured_model_path
 from ecoscan.config import AppConfig
 
 
@@ -19,8 +20,7 @@ def _exists(path: Path) -> str:
 
 def build_project_status(config: AppConfig) -> list[StatusItem]:
     reports = config.directories["reports"]
-    models = config.directories["models"]
-    final_model = config.project_root / str(config.model.get("output_path", "models/ecoscan_transfer.keras"))
+    current_model = configured_model_path(config)
     return [
         StatusItem("aquisição por upload", "ok", "src/ecoscan/ui/streamlit_app.py"),
         StatusItem("aquisição por câmera", "ok", "Streamlit camera_input e scripts/capture_webcam.py"),
@@ -66,22 +66,19 @@ def build_project_status(config: AppConfig) -> list[StatusItem]:
         StatusItem("curadoria de dataset", _exists(reports / "dataset_review" / "review_sheet.csv"), "reports/dataset_review/review_sheet.csv"),
         StatusItem("preparação automática de imagens", _exists(reports / "dataset_preparation" / "preparation_manifest.csv"), "reports/dataset_preparation"),
         StatusItem("split treino/validação/teste", _exists(reports / "dataset_split" / "split_manifest.json"), "reports/dataset_split"),
-        StatusItem("baseline", _exists(models / "baseline_classifier.json"), "models/baseline_classifier.json"),
-        StatusItem("modelo visual supervisionado", _exists(models / "vision_svm_classifier.joblib"), "models/vision_svm_classifier.joblib"),
-        StatusItem("modelo visual clássico", _exists(models / "vision_classifier.npz"), "models/vision_classifier.npz"),
-        StatusItem("avaliação exportável", _exists(reports / "evaluation" / "baseline_test" / "metrics.json"), "reports/evaluation/baseline_test"),
+        StatusItem("reconhecedor semântico ONNX", _exists(current_model), str(current_model)),
+        StatusItem("avaliação exportável", _exists(reports / "recognition_semantic_20261022" / "summary.json"), "reports/recognition_semantic_20261022"),
         StatusItem("diagnóstico técnico", _exists(reports / "diagnostics.json"), "reports/diagnostics.json"),
         StatusItem("validação de aceite", _exists(reports / "acceptance_checks" / "acceptance_checks.md"), "reports/acceptance_checks"),
         StatusItem("auditoria técnica", _exists(reports / "project_audit" / "aps_audit.md"), "reports/project_audit/aps_audit.md"),
         StatusItem("relatório técnico consolidado", _exists(reports / "aps_report" / "relatorio_aps.md"), "reports/aps_report/relatorio_aps.md"),
         StatusItem("pacote técnico", _exists(reports / "delivery_pack" / "indice_entrega.md"), "reports/delivery_pack"),
         StatusItem("prontidão final escalável", "ok", "src/ecoscan/services/final_readiness.py; scripts/generate_final_readiness.py; aba Conclusão"),
-        StatusItem("roadmap profissional", "ok", "docs/roadmap_profissional.md"),
-        StatusItem("roteiro por etapas", "ok", "docs/roteiro_etapas_profissionalizacao.md"),
+        StatusItem("roadmap de entrega", "ok", "docs/roadmap_entrega.md"),
         StatusItem("exportação de evidência pela UI", "ok", "src/ecoscan/ui/streamlit_app.py"),
         StatusItem("design da interface", "ok", "src/ecoscan/ui/streamlit_app.py"),
         StatusItem("interface para dispositivo", "ok", "src/ecoscan/ui/streamlit_app.py e src/ecoscan/live_camera/server.py"),
-        StatusItem("modelo final transfer learning", _exists(final_model), str(final_model)),
+        StatusItem("release atual do reconhecimento", _exists(current_model), str(current_model)),
         StatusItem("detecção múltipla treinada", "future", "src/ecoscan/detection/contracts.py"),
     ]
 

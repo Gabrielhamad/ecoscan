@@ -29,7 +29,6 @@ class AppConfig:
     classes: tuple[str, ...]
     directories: dict[str, Path]
     dataset_split: dict[str, float]
-    baseline: dict[str, Any]
     model: dict[str, Any]
     history: dict[str, Any]
     filters: dict[str, Any]
@@ -102,7 +101,6 @@ def load_config(config_path: str | Path | None = None) -> AppConfig:
         classes=classes,
         directories=directories,
         dataset_split=dict(raw.get("dataset_split", {"train": 0.7, "validation": 0.15, "test": 0.15})),
-        baseline=dict(raw.get("baseline", {})),
         model=dict(raw.get("model", {})),
         history=dict(raw.get("history", {})),
         filters=dict(raw.get("filters", {})),

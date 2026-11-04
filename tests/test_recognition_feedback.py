@@ -33,7 +33,6 @@ class RecognitionFeedbackTests(unittest.TestCase):
                 classes=("plastic", "metal", "glass"),
                 directories={"reports": root / "reports"},
                 dataset_split={"train": 0.7, "validation": 0.15, "test": 0.15},
-                baseline={},
                 model={},
                 history={},
                 filters={},
@@ -44,7 +43,7 @@ class RecognitionFeedbackTests(unittest.TestCase):
                 top_class="glass",
                 probability=0.31,
                 accepted=True,
-                model_type="visual_knn",
+                model_type="semantic_onnx_assisted",
                 pipeline=SimpleNamespace(
                     loaded=SimpleNamespace(array=np.full((32, 32, 3), 128, dtype=np.uint8)),
                     filter_result=SimpleNamespace(name="bilateral"),

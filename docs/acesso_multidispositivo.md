@@ -93,7 +93,8 @@ Assim o botao de camera ao vivo dentro do app aponta para a URL publica correta.
 
 ## 7. Teste remoto com o grupo
 
-Para organizar testes com colegas em lugares diferentes, use o roteiro em `docs/teste_remoto_grupo.md`.
+Para organizar testes com colegas em lugares diferentes, use o
+[roteiro de testes manuais](roteiro_testes_manuais.md).
 
 O app também possui um formulário de correção após a análise. Quando o reconhecimento errar, o colega pode informar a classe correta; a imagem e os metadados ficam salvos em:
 

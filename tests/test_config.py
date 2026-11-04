@@ -17,7 +17,9 @@ class ConfigTests(unittest.TestCase):
         self.assertIn("battery", config.classes)
         self.assertIn(".png", config.allowed_extensions)
         self.assertTrue(config.directories["raw_data"].is_absolute())
-        self.assertEqual(config.model["architecture"], "MobileNetV2")
+        self.assertEqual(config.model["engine"], "semantic_onnx_assisted")
+        self.assertEqual(config.model["artifact_path"], "models/semantic-v1/semantic.json")
+        self.assertTrue(config.model["confirmation_required"])
         self.assertTrue(config.history["enabled"])
 
     def test_reject_duplicate_classes(self) -> None:

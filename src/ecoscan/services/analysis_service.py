@@ -7,37 +7,19 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 
 from ecoscan.app.pipeline import ProcessingPipelineOptions, ProcessingPipelineResult, run_processing_pipeline
-from ecoscan.classification.inference import (
-    BaselineModelBundle,
-    KerasModelBundle,
+from ecoscan.classification.runtime import (
     ModelLoadError,
-    VisualKnnModelBundle,
-    VisualSvmModelBundle,
-    load_baseline_model,
-    load_keras_model,
-    load_visual_knn_model,
-    load_visual_svm_model,
-    predict_with_baseline,
-    predict_with_keras,
-    predict_with_visual_knn,
-    predict_with_visual_svm,
+    RecognitionModel,
+    load_recognition_model,
+    resolve_model_path,
 )
-from ecoscan.classification.material_rules import MaterialRuleDecision, apply_material_rules
 from ecoscan.config import AppConfig
-from ecoscan.image_processing.contracts import model_processing_compatible
 from ecoscan.disposal.guidance import DisposalGuidance, get_guidance, load_guidance
 from ecoscan.services.dataset_reliability import ClassReliability, assess_class_reliability
 from ecoscan.services.recognition_scope import restrict_prediction
 
 
 LOGGER = logging.getLogger(__name__)
-
-
-@dataclass(frozen=True)
-class SemanticPreviewBundle:
-    classifier: object
-    class_names: list[str]
-    model_type: str = "semantic_onnx_preview"
 
 
 @dataclass(frozen=True)
@@ -52,7 +34,6 @@ class WasteAnalysisResult:
     probabilities: dict[str, float]
     model_type: str
     reliability: ClassReliability | None = None
-    material_rule: MaterialRuleDecision | None = None
     outside_scope: bool = False
     model_sha256: str = ""
     processing_compatible: bool = True
@@ -62,108 +43,23 @@ def _load_guidance_for_config(config: AppConfig) -> dict[str, DisposalGuidance]:
     return load_guidance(config.project_root / "config" / "disposal_guidance.json")
 
 
-def _visual_model_path(config: AppConfig) -> Path:
-    return config.directories["models"] / "vision_classifier.npz"
-
-
-def _visual_svm_model_path(config: AppConfig) -> Path:
-    return config.directories["models"] / "vision_svm_classifier.joblib"
-
-
 def _model_path(config: AppConfig, model_path: str | Path | None) -> Path:
-    if model_path:
-        return Path(model_path)
-    from ecoscan.services.published_model import published_model
-    remote = published_model(config)
-    if remote is not None:
-        return remote
-    if config.model.get("semantic_preview_enabled", False):
-        preview = config.directories["models"] / "semantic-v1" / "semantic.json"
-        if preview.exists():
-            return preview
-    final_model_path = config.project_root / str(config.model.get("output_path", "models/ecoscan_transfer.keras"))
-    if final_model_path.exists():
-        return final_model_path
-    visual_svm_model_path = _visual_svm_model_path(config)
-    if visual_svm_model_path.exists():
-        return visual_svm_model_path
-    visual_model_path = _visual_model_path(config)
-    if visual_model_path.exists():
-        return visual_model_path
-    return config.directories["models"] / "baseline_classifier.json"
-
-
-def _load_bundle_for_path(
-    config: AppConfig,
-    model_path: Path,
-) -> BaselineModelBundle | KerasModelBundle | VisualKnnModelBundle | VisualSvmModelBundle:
-    if model_path.name == "semantic.json":
-        from ecoscan.classification.semantic_onnx import load_semantic_model
-        classifier = load_semantic_model(str(model_path.resolve()),
-                                        str(config.directories["models"] / "semantic-v1"))
-        if set(classifier.classes) != set(config.classes) | {"unknown"}:
-            raise ModelLoadError("Semantic model classes do not match configured scope")
-        bundle = SemanticPreviewBundle(classifier, list(config.classes))
-    elif model_path.suffix.lower() == ".keras":
-        class_names_path = config.project_root / str(config.model.get("class_names_path", "models/class_names.json"))
-        bundle = load_keras_model(
-            model_path,
-            class_names_path=class_names_path,
-            threshold=config.confidence_threshold,
-        )
-    elif model_path.suffix.lower() == ".npz":
-        bundle = load_visual_knn_model(model_path)
-    elif model_path.suffix.lower() in {".joblib", ".pkl"}:
-        bundle = load_visual_svm_model(model_path)
-    else:
-        bundle = load_baseline_model(model_path)
-
-    model_classes = _model_classes(bundle)
-    expected_classes = set(config.classes)
-    if model_classes != expected_classes:
-        missing = sorted(expected_classes - model_classes)
-        obsolete = sorted(model_classes - expected_classes)
-        raise ModelLoadError(
-            "Modelo incompatível com o escopo atual. "
-            f"Faltam: {missing or 'nenhuma'}; classes antigas: {obsolete or 'nenhuma'}. "
-            "Treine e valide um candidato com as classes configuradas antes de publicar."
-        )
-    return bundle
-
-
-def _model_classes(bundle: object) -> set[str]:
-    class_names = getattr(bundle, "class_names", None)
-    if isinstance(bundle, KerasModelBundle) or class_names is not None:
-        return {str(item) for item in class_names or []}
-    classifier = getattr(bundle, "classifier", None)
-    classes = getattr(classifier, "classes", None)
-    if classes is None:
-        raise ModelLoadError("Modelo sem metadados de classes; não pode ser validado para publicação.")
-    return {str(item) for item in classes}
+    return resolve_model_path(config, model_path)
 
 
 def load_model_bundle_for_analysis(
     config: AppConfig,
     model_path: str | Path | None = None,
-) -> BaselineModelBundle | KerasModelBundle | VisualKnnModelBundle | VisualSvmModelBundle:
+) -> RecognitionModel:
     selected_model_path = _model_path(config, model_path)
-    return _load_bundle_for_path(config, selected_model_path)
+    return load_recognition_model(config, selected_model_path)
 
 
 def _predict(
-    config: AppConfig,
     image,
-    bundle: BaselineModelBundle | KerasModelBundle | VisualKnnModelBundle | VisualSvmModelBundle,
+    bundle: RecognitionModel,
 ):
-    if isinstance(bundle, SemanticPreviewBundle):
-        return bundle.classifier.predict_image(image)
-    if isinstance(bundle, KerasModelBundle):
-        return predict_with_keras(image, bundle, config.image_size)
-    if isinstance(bundle, VisualSvmModelBundle):
-        return predict_with_visual_svm(image, bundle)
-    if isinstance(bundle, VisualKnnModelBundle):
-        return predict_with_visual_knn(image, bundle)
-    return predict_with_baseline(image, bundle)
+    return bundle.classifier.predict_image(image)
 
 
 def analyze_waste_image(
@@ -172,7 +68,7 @@ def analyze_waste_image(
     *,
     options: ProcessingPipelineOptions | None = None,
     model_path: str | Path | None = None,
-    model_bundle: BaselineModelBundle | KerasModelBundle | VisualKnnModelBundle | VisualSvmModelBundle | None = None,
+    model_bundle: RecognitionModel | None = None,
 ) -> WasteAnalysisResult:
     start = time.perf_counter()
     image_path = Path(image_path)
@@ -181,28 +77,20 @@ def analyze_waste_image(
         selected_model_path = _model_path(config, model_path)
         # Live-camera sessions may retain a bundle from before a remote release.
         remote_release = selected_model_path.is_relative_to(config.directories["models"] / "remote")
-        bundle = (_load_bundle_for_path(config, selected_model_path) if remote_release
-                  else model_bundle or _load_bundle_for_path(config, selected_model_path))
-        prediction = _predict(config, pipeline.recognition_image, bundle)
+        bundle = (
+            load_recognition_model(config, selected_model_path)
+            if remote_release
+            else model_bundle or load_recognition_model(config, selected_model_path)
+        )
+        prediction = _predict(pipeline.recognition_image, bundle)
         contract = pipeline.metadata.get("recognition_preparation", {}).get("contract", {})
-        semantic_preview = isinstance(bundle, SemanticPreviewBundle)
-        compatible = (bundle.classifier.metadata["processing"] == contract if semantic_preview
-                      else model_processing_compatible(selected_model_path, contract))
+        compatible = bundle.classifier.metadata["processing"] == contract
         outside_scope = prediction.top_class_id not in config.classes
-        material_rule = None
-        if not semantic_preview:
-            prediction, material_rule = apply_material_rules(
-                prediction,
-                image=pipeline.preprocessing.resized,
-                mask=pipeline.segmentation_result.mask,
-                element_analysis=pipeline.element_analysis,
-            )
-        else:
-            # Experimental hypotheses cannot validate disposal or award mission points.
+        if config.model.get("confirmation_required", True):
+            # The current assisted release suggests a class but never confirms disposal.
             prediction = replace(prediction, class_id=None, accepted=False)
         if outside_scope:
             prediction = replace(prediction, class_id=None, top_class_id="", accepted=False)
-            material_rule = None
         prediction = restrict_prediction(prediction, config.classes)
         if not compatible:
             prediction = replace(prediction, class_id=None, accepted=False)
@@ -210,8 +98,7 @@ def analyze_waste_image(
 
         guidance = None
         message = "Não foi possível identificar o resíduo com segurança."
-        if semantic_preview:
-            message = "Análise assistida: confira a hipótese e confirme o material em Descarte. Este modelo ainda está em avaliação."
+        message = "Análise assistida: confira a hipótese e confirme o material antes do descarte."
         if not compatible:
             message = "A foto foi preparada. A hipótese ainda exige confirmação: o modelo aguarda treinamento com esta preparação."
         if outside_scope:
@@ -223,8 +110,6 @@ def analyze_waste_image(
             message = f"Categoria identificada: {guidance.display_name}."
             if reliability and not reliability.is_sufficient:
                 message = f"{message} {reliability.message}"
-            if material_rule is not None:
-                message = f"{message} Validação visual aplicada: {material_rule.reason}."
 
         result = WasteAnalysisResult(
             pipeline=pipeline,
@@ -235,9 +120,8 @@ def analyze_waste_image(
             message=message,
             guidance=guidance,
             probabilities=prediction.probabilities,
-            model_type=f"{bundle.model_type}+material_rules" if material_rule else bundle.model_type,
+            model_type=bundle.model_type,
             reliability=reliability,
-            material_rule=material_rule,
             outside_scope=outside_scope,
             processing_compatible=compatible,
             model_sha256=hashlib.sha256(selected_model_path.read_bytes()).hexdigest() if selected_model_path.is_file() else "unavailable",

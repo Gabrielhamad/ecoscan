@@ -12,8 +12,8 @@ class CompletionPlanTests(unittest.TestCase):
 
         self.assertGreaterEqual(plan.readiness_score, 0)
         self.assertGreater(len(plan.actions), 4)
-        self.assertIn(plan.selected_model_kind, {"baseline", "visual_svm", "visual_knn", "transfer_learning", "semantic_onnx_preview", "none"})
-        self.assertTrue(any(action.title == "Modelo final por transfer learning" for action in plan.actions))
+        self.assertIn(plan.selected_model_kind, {"semantic_onnx_assisted", "none"})
+        self.assertTrue(any(action.title == "Reconhecedor semântico atual" for action in plan.actions))
 
     def test_completion_markdown_contains_final_reading(self) -> None:
         plan = build_completion_plan(load_config())

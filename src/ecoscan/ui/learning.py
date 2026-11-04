@@ -10,7 +10,7 @@ from ecoscan.services.learning_contributions import (
 )
 from ecoscan.services.recognition_scope import ITEMS, ITEM_CONDITIONS, REPORT_ITEMS
 from ecoscan.services.contribution_store import persistent_enabled
-from ecoscan.ui.scope import render_scope  # Backward-compatible public import.
+from ecoscan.ui.scope import render_scope as render_scope
 
 
 STATUS_LABELS = {"pending": "Recebido pela secretaria", "approved": "Aprovado pelo analista",
@@ -157,7 +157,6 @@ def render_contribution(st, config, result, profile):
 def render_review(st, config, profile):
     if not profile.is_admin:
         return
-    from ecoscan.services.secretariat_training import train_candidate
     st.subheader("Central de análise da secretaria")
     try:
         records = list_contributions(config)
@@ -198,18 +197,11 @@ def render_review(st, config, profile):
             response = st.text_area("Resposta ao cidadão", max_chars=600,
                                     value=selected.get("response", ""),
                                     placeholder="Ex.: Confirmamos uma lata metálica. Obrigado pela contribuição.")
-            train_now = st.checkbox("Gerar candidato após aprovar", value=not persistent_enabled(), disabled=persistent_enabled())
             if st.form_submit_button("Salvar revisão"):
                 review_contribution(config, selected["id"], decision=decision, reviewer=profile,
                                     item_id=item_id, response=response,
                                     expected_revision=selected.get("revision", 0))
                 st.session_state.pop("review_packages", None)
-                if decision == "approved" and train_now:
-                    try:
-                        with st.spinner("Treinando candidato com fotos aprovadas..."):
-                            train_candidate(config, reviewer=profile)
-                    except (ValueError, OSError) as exc:
-                        st.session_state["training_notice"] = "Revisão salva; treino pendente. " + str(exc)
                 st.rerun()
         if st.button("Preparar pacotes de contribuições"):
             st.session_state["review_packages"] = (
@@ -240,25 +232,8 @@ def render_training(st, config, profile, *, records=None):
                                           else "—"),
                            "Lote": row.get("candidate_id", "—")} for row in records], hide_index=True)
         return
-    if st.session_state.get("training_notice"):
-        st.warning(st.session_state.pop("training_notice"))
-    from ecoscan.services.secretariat_training import candidate_runs, train_candidate, training_dir
-    with st.expander("Treinos supervisionados"):
-        st.caption("Cada candidato reúne a base publicada e as fotos aprovadas. O modelo público só deve mudar após avaliação independente.")
-        if st.button("Treinar candidato com aprovadas"):
-            try:
-                with st.spinner("Processando fotos e treinando candidato..."):
-                    train_candidate(config, reviewer=profile)
-            except (ValueError, OSError) as exc:
-                st.error(str(exc))
-        runs = candidate_runs(config)
-        if runs:
-            st.dataframe([{"Lote": run["id"][:8], "Estado": run["status"],
-                           "Fotos novas": run["new_examples"]} for run in runs], hide_index=True)
-            latest = next((run for run in runs if run["status"] == "awaiting_validation"), None)
-            if latest:
-                from uuid import UUID
-                model = training_dir(config) / str(UUID(latest["id"])) / "candidate.npz"
-                st.download_button("Baixar candidato para avaliação", model.read_bytes(),
-                                   "ecoscan-candidate.npz", "application/octet-stream")
-                st.caption(latest["validation"])
+    st.info(
+        "O treinamento local antigo foi removido. Exporte as fotos aprovadas; "
+        "a fila revisada usa somente o reconhecedor semântico atual e publica "
+        "uma nova release após validação independente."
+    )

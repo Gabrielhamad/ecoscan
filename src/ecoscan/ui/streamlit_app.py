@@ -284,10 +284,6 @@ def _public_code(code: str) -> str:
 def _public_ui_text(value: str) -> str:
     replacements = {
         "APS": "Recicla SP",
-        "A baseline": "O modelo inicial",
-        "a baseline": "o modelo inicial",
-        "Baseline": "Modelo inicial",
-        "baseline": "modelo inicial",
         "no dataset bruto": "na base bruta de imagens",
         "No dataset bruto": "Na base bruta de imagens",
         "o dataset curado": "a base curada de imagens",
@@ -347,13 +343,8 @@ def _render_overview_strip(st: Any, config: Any) -> None:
 
     raw_total = sum(dataset.raw_counts.values())
     curated_total = sum(dataset.curated_counts.values())
-    model_tone = "ok" if selected_model.selected_kind in {"transfer_learning", "visual_svm", "visual_knn"} else "warn"
-    model_labels = {
-        "transfer_learning": "modelo final",
-        "visual_svm": "modelo visual supervisionado",
-        "visual_knn": "modelo visual",
-        "baseline": "modelo inicial",
-    }
+    model_tone = "ok" if selected_model.selected_kind == "semantic_onnx_assisted" else "warn"
+    model_labels = {"semantic_onnx_assisted": "reconhecimento assistido ONNX"}
     model_label = model_labels.get(selected_model.selected_kind, "sem modelo")
     dataset_tone = "ok" if readiness.ready_for_final_training else "warn"
     strip = "".join(
@@ -361,7 +352,7 @@ def _render_overview_strip(st: Any, config: Any) -> None:
             _status_item(
                 "Modelo ativo",
                 model_label,
-                "transfer learning carregado" if selected_model.selected_kind == "transfer_learning" else "classificador visual supervisionado carregado" if selected_model.selected_kind == "visual_svm" else "classificador visual carregado" if selected_model.selected_kind == "visual_knn" else "modelo final quando disponível",
+                "release atual carregada" if selected_model.selected_kind == "semantic_onnx_assisted" else "modelo indisponível",
                 model_tone,
             ),
             _status_item(
@@ -444,132 +435,22 @@ def _render_probability_bars(st: Any, result: Any, guidance_by_class: dict[str, 
     )
 
 
-def _render_browser_location_search(st: Any, target: DisposalTarget) -> None:
-    import streamlit.components.v1 as components
-
-    from ecoscan.ui.appearance import embedded_theme_css
-
-    component_id = f"ecoscan_geo_{target.class_id}"
-    query_json = json.dumps(target.search_query, ensure_ascii=False)
-    components.html(
-        embedded_theme_css(st.session_state.get("recicla_sp_appearance", "Automático")) + f"""
-        <div class="eco-embedded" style="font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;">
-          <button id="{component_id}_button" style="
-            width:100%; min-height:42px; border:1px solid #24745d; border-radius:8px;
-            background:#24745d; color:#fff; font-weight:800; cursor:pointer;">
-            Usar minha localização atual
-          </button>
-          <div id="{component_id}_status" role="status" aria-live="polite" style="margin-top:8px;"></div>
-        </div>
-        <script>
-        (() => {{
-          const button = document.getElementById("{component_id}_button");
-          const status = document.getElementById("{component_id}_status");
-          const query = {query_json};
-          button.addEventListener("click", () => {{
-            if (!navigator.geolocation) {{
-              status.textContent = "Este navegador não oferece geolocalização. Digite cidade, bairro ou CEP no campo acima.";
-              return;
-            }}
-            status.textContent = "Solicitando permissão de localização...";
-            navigator.geolocation.getCurrentPosition(
-              (position) => {{
-                const lat = position.coords.latitude.toFixed(6);
-                const lon = position.coords.longitude.toFixed(6);
-                const mapsQuery = encodeURIComponent(`${{query}} perto de ${{lat}},${{lon}}`);
-                window.open(`https://www.google.com/maps/search/?api=1&query=${{mapsQuery}}`, "_blank", "noopener,noreferrer");
-                status.textContent = "Busca aberta no mapa.";
-              }},
-              () => {{
-                status.textContent = "Não foi possível obter a localização. Digite cidade, bairro ou CEP no campo acima.";
-              }},
-              {{ enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }}
-            );
-          }});
-        }})();
-        </script>
-        """,
-        height=160,
-        scrolling=True,
-    )
-
-
 def _render_live_camera_link(st: Any) -> None:
-    import streamlit.components.v1 as components
-
-    from ecoscan.ui.appearance import embedded_theme_css
-
     configured_live_url = os.environ.get("ECOSCAN_LIVE_URL", "").strip()
-    html_code = (
-        """
-        <div class="eco-embedded" style="
-          font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
-          border:1px solid #c7ead8; border-radius:8px; padding:10px;
-          background:linear-gradient(180deg,#ffffff 0%,#f1fbf6 100%);
-          box-shadow:0 16px 32px rgba(36,116,93,.12);">
-          <a id="ecoscan_live_url" href="http://localhost:8765/" target="_blank" rel="noopener noreferrer" style="
-            display:flex; align-items:center; justify-content:center; width:100%;
-            min-height:58px; border:1px solid #1b8f5a; border-radius:8px;
-            background:linear-gradient(135deg,#24745d 0%,#1b8f5a 52%,#2f80ed 100%);
-            color:#fff; text-decoration:none; font-weight:820; letter-spacing:0;
-            box-shadow:0 14px 28px rgba(36,116,93,.24);">
-            <span style="
-              display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px;
-              border-radius:999px; background:rgba(255,255,255,.20); margin-right:10px;">&#128247;</span>
-            <span style="display:flex; flex-direction:column; line-height:1.1;">
-              <strong style="font-size:15px;">Escanear com câmera traseira</strong>
-              <small style="font-size:11px; font-weight:750; color:rgba(255,255,255,.82); margin-top:3px;">ao vivo, com rastreamento do resíduo</small>
-            </span>
-          </a>
-          <small id="ecoscan_live_hint" style="
-            color:#4f6d5e; display:block; font-size:12.2px; margin-top:8px; text-align:center; font-weight:700;">
-            Recomendado no celular: prioriza a câmera de trás e rastreia o resíduo em tempo real.
-          </small>
-        </div>
-        <script>
-        (() => {
-          const link = document.getElementById("ecoscan_live_url");
-          const hint = document.getElementById("ecoscan_live_hint");
-          const configuredLiveUrl = __ECOSCAN_LIVE_URL__;
-          let hostname = "localhost";
-          let protocol = "http:";
-          try {
-            hostname = window.parent?.location?.hostname || window.location.hostname || hostname;
-            protocol = window.parent?.location?.protocol || window.location.protocol || protocol;
-          } catch (error) {
-            hostname = window.location.hostname || hostname;
-            protocol = window.location.protocol || protocol;
-          }
-          const liveProtocol = protocol === "https:" ? "https:" : "http:";
-          const liveUrl = configuredLiveUrl || `${liveProtocol}//${hostname}:8765/`;
-          const secureHost = ["localhost", "127.0.0.1"].includes(hostname);
-          const externalHttpsWithoutLive = protocol === "https:" && !secureHost && !configuredLiveUrl;
-          if (externalHttpsWithoutLive) {
-            link.href = "#";
-            link.setAttribute("aria-disabled", "true");
-            link.addEventListener("click", (event) => event.preventDefault());
-            hint.textContent = "No app hospedado grátis, use a câmera/foto abaixo. O modo ao vivo exige backend HTTPS dedicado.";
-            return;
-          }
-          link.href = liveUrl;
-          if (configuredLiveUrl) {
-            hint.textContent = `Câmera traseira ao vivo: ${liveUrl}`;
-            return;
-          }
-          if (protocol !== "https:" && !secureHost) {
-            hint.textContent = `Ao vivo no celular exige HTTPS. Em rede local, use a foto rápida abaixo ou um túnel HTTPS seguro.`;
-          } else {
-            hint.textContent = `Câmera traseira ao vivo: ${liveUrl}`;
-          }
-        })();
-        </script>
-        """
-    ).replace("__ECOSCAN_LIVE_URL__", json.dumps(configured_live_url))
-    components.html(
-        embedded_theme_css(st.session_state.get("recicla_sp_appearance", "Automático")) + html_code,
-        height=180,
-        scrolling=True,
+    live_url = configured_live_url or "http://localhost:8765/"
+    st.link_button(
+        "Escanear com câmera traseira",
+        live_url,
+        icon=":material/photo_camera:",
+        width="stretch",
     )
+    if configured_live_url:
+        st.caption("Modo ao vivo em backend HTTPS dedicado.")
+    else:
+        st.caption(
+            "O endereço local funciona com o servidor de câmera iniciado neste computador. "
+            "No app público, use a captura de foto abaixo."
+        )
 
 
 def _render_environmental_impact(st: Any, impact: EnvironmentalImpact | None) -> None:
@@ -751,7 +632,6 @@ def _render_disposal_action_panel(
         maps_col, ecopoint_col = st.columns(2)
         maps_col.link_button("Ponto específico", map_url, width="stretch")
         ecopoint_col.link_button("Ecopontos próximos", generic_map_url, width="stretch")
-        _render_browser_location_search(st, target)
         st.caption("Confirme horário, regras e materiais aceitos pelo ponto de coleta antes de levar o resíduo.")
     _render_environmental_impact(st, impact)
     matching_points = filter_collection_points(collection_points, class_id=target.class_id)
@@ -952,8 +832,6 @@ def _render_processing_evidence(
     element_count = pipeline.element_analysis.significant_count
     model_name = result.model_type
     accepted_label = "classificação sugerida" if result.accepted else "reconhecimento incerto"
-    if result.material_rule is not None:
-        accepted_label = "modelo + regra visual"
 
     method_chips = "".join(
         [
@@ -1023,8 +901,6 @@ def _render_processing_evidence(
         _render_filter_decision(st, pipeline)
         _render_segmentation_decision(st, pipeline)
         _render_element_diagnostics(st, pipeline)
-        if result.material_rule is not None:
-            st.info(f"Validação visual aplicada: {result.material_rule.reason}")
 
     if render_details_expander:
         with st.expander("Ver etapas completas e decisão técnica", expanded=active_profile.is_admin):
@@ -1052,14 +928,8 @@ def _render_model_status(st: Any, config: Any) -> None:
     if status.selected_path and not model_processing_compatible(Path(status.selected_path), processing_contract(config)):
         st.markdown(_badge("Modelo aguarda novo treinamento", "warn"), unsafe_allow_html=True)
         st.caption("Preparação atualizada. Hipóteses não são confirmadas até treinar e validar um modelo compatível.")
-    elif status.selected_kind == "transfer_learning":
-        st.markdown(_badge("Modelo final ativo", "ok"), unsafe_allow_html=True)
-    elif status.selected_kind == "visual_svm":
-        st.markdown(_badge("Modelo visual supervisionado ativo", "ok"), unsafe_allow_html=True)
-    elif status.selected_kind == "visual_knn":
-        st.markdown(_badge("Modelo visual ativo", "ok"), unsafe_allow_html=True)
-    elif status.selected_kind == "baseline":
-        st.markdown(_badge("Modelo inicial ativo", "warn"), unsafe_allow_html=True)
+    elif status.selected_kind == "semantic_onnx_assisted":
+        st.markdown(_badge("Reconhecimento assistido ONNX ativo", "ok"), unsafe_allow_html=True)
     else:
         st.markdown(_badge("Nenhum modelo disponível", "danger"), unsafe_allow_html=True)
     if status.selected_path:
@@ -1886,14 +1756,12 @@ def _render_campaign_tab(
         proof_source = st.radio("Comprovação", ["Câmera", "Imagem"], horizontal=True, key="campaign_proof_source")
         if proof_source == "Câmera":
             proof_file = st.camera_input("Fotografar missão", key="campaign_camera")
-            source_kind = "mission_camera"
         else:
             proof_file = st.file_uploader(
                 "Enviar foto da missão",
                 type=["jpg", "jpeg", "png"],
                 key="campaign_upload",
             )
-            source_kind = "mission_upload"
 
         if proof_file is None:
             st.caption("Fotografe ou envie uma evidência da missão para liberar a validação.")
@@ -2797,7 +2665,7 @@ def main(*, page_configured=False) -> None:
                 with right:
                     st.markdown('<div class="ecoscan-result">', unsafe_allow_html=True)
                     _render_recognition_decision(st, safety_decision)
-                    if result.model_type == "semantic_onnx_preview":
+                    if result.model_type == "semantic_onnx_assisted":
                         suggested = guidance_by_class.get(result.top_class)
                         st.subheader("Hipótese: " + (suggested.display_name if suggested else "material não identificado"))
                         st.metric("Pontuação relativa", _format_percent(result.probability))

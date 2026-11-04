@@ -2,11 +2,9 @@ from __future__ import annotations
 
 import unittest
 
-import numpy as np
 from PIL import Image
 
-from ecoscan.app.pipeline import ProcessingPipelineOptions
-from ecoscan.classification.baseline import BaselinePrediction
+from ecoscan.classification.prediction import ClassificationPrediction
 from ecoscan.config import PROJECT_ROOT
 from ecoscan.live_camera.analyzer import LiveCameraAnalyzer
 from ecoscan.live_camera.server import LIVE_CAMERA_HTML
@@ -78,7 +76,7 @@ class LiveCameraAnalyzerTests(unittest.TestCase):
 
         def fake_analyze_waste_image(image_path, config, *, options=None, model_bundle=None):
             pipeline = _fake_pipeline()
-            prediction = BaselinePrediction(
+            prediction = ClassificationPrediction(
                 top_class_id="metal",
                 class_id="metal",
                 probability=0.91,

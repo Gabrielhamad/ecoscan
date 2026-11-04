@@ -17,7 +17,7 @@ from ecoscan.services.learning_contributions import (
     submit_contribution, list_contributions, review_contribution, contribution_package,
 )
 from ecoscan.services.recognition_scope import restrict_prediction
-from ecoscan.classification.baseline import BaselinePrediction
+from ecoscan.classification.prediction import ClassificationPrediction
 
 
 class LearningTests(unittest.TestCase):
@@ -29,7 +29,7 @@ class LearningTests(unittest.TestCase):
                               directories={"reports": root / "reports", "models": root / "models"})
         self.result = SimpleNamespace(
             predicted_class="glass", top_class="glass", probability=.6, accepted=True,
-            model_type="visual_knn", model_sha256="model-version",
+            model_type="semantic_onnx_assisted", model_sha256="model-version",
             pipeline=SimpleNamespace(loaded=SimpleNamespace(array=np.zeros((1400, 1500, 3), dtype=np.uint8)),
                                      filter_result=SimpleNamespace(name="gaussian"),
                                      segmentation_result=SimpleNamespace(name="otsu")),
@@ -109,7 +109,7 @@ class LearningTests(unittest.TestCase):
             review_contribution(self.config, record["id"], decision="approved", reviewer=self.admin)
 
     def test_legacy_organic_never_promotes_runner_up(self):
-        prediction = BaselinePrediction("organic", "organic", .9, {"organic": .9, "metal": .1}, True, .6)
+        prediction = ClassificationPrediction("organic", "organic", .9, {"organic": .9, "metal": .1}, True, .6)
         restricted = restrict_prediction(prediction, self.config.classes)
         self.assertFalse(restricted.accepted)
         self.assertIsNone(restricted.class_id)
@@ -117,24 +117,26 @@ class LearningTests(unittest.TestCase):
         self.assertEqual(prediction.probabilities, restricted.probabilities)
 
     def test_valid_class_unchanged(self):
-        prediction = BaselinePrediction("metal", "metal", .9, {"metal": .9}, True, .6)
+        prediction = ClassificationPrediction("metal", "metal", .9, {"metal": .9}, True, .6)
         self.assertEqual(prediction, restrict_prediction(prediction, self.config.classes))
 
     def test_pipeline_rejects_legacy_class_even_if_rule_changes_it(self):
         from ecoscan.services.analysis_service import analyze_waste_image
-        organic = BaselinePrediction("organic", "organic", .9, {"organic": .9}, True, .6)
-        metal = BaselinePrediction("metal", "metal", .9, {"metal": .9}, True, .6)
+        organic = ClassificationPrediction("organic", "organic", .9, {"organic": .9}, True, .6)
         pipeline = SimpleNamespace(
             recognition_image=None,
             segmentation_result=SimpleNamespace(image=None, mask=None),
             preprocessing=SimpleNamespace(resized=None), element_analysis=None,
             metadata={"filter": {"name": "gaussian"}, "segmentation": {"name": "otsu"}})
         module = "ecoscan.services.analysis_service."
+        bundle = SimpleNamespace(
+            model_type="semantic_onnx_assisted",
+            classifier=SimpleNamespace(metadata={"processing": {}}),
+        )
         with patch(module + "run_processing_pipeline", return_value=pipeline), \
-             patch(module + "_predict", return_value=organic), \
-             patch(module + "apply_material_rules", return_value=(metal, None)):
+             patch(module + "_predict", return_value=organic):
             result = analyze_waste_image("unused.jpg", self.config,
-                                         model_bundle=SimpleNamespace(model_type="test"))
+                                         model_bundle=bundle)
         self.assertFalse(result.accepted)
         self.assertTrue(result.outside_scope)
         self.assertIsNone(result.guidance)
@@ -153,7 +155,7 @@ from ecoscan.ui.learning import render_contribution
 root = Path(ROOT_LITERAL)
 config = replace(load_config(), directories={"reports": root / "reports", "models": root / "models"})
 result = SimpleNamespace(predicted_class="glass", top_class="glass", probability=.6,
-    accepted=True, model_type="visual_knn", pipeline=SimpleNamespace(
+    accepted=True, model_type="semantic_onnx_assisted", pipeline=SimpleNamespace(
     loaded=SimpleNamespace(array=np.zeros((32, 32, 3), dtype=np.uint8)),
     filter_result=SimpleNamespace(name="gaussian"), segmentation_result=SimpleNamespace(name="otsu")))
 render_contribution(st, config, result, UserProfile("visitor", "Visitante", "user"))

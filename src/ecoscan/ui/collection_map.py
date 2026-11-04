@@ -48,9 +48,8 @@ def render_collection_map(st, points, guidance):
     candidates = filter_collection_points(candidates, class_id=None if material == "all" else material, city_query=query)
     st.caption(f"{len(candidates)} unidades na seleção · lista parcial · endereços conferidos em 14/10/2026. Ordem alfabética, não por proximidade.")
     if st.toggle("Exibir mapa da Prefeitura", key="collection_show_map"):
-        import streamlit.components.v1 as components
         st.caption("Mapa externo Google My Maps, publicado pela Prefeitura; possui filtros próprios e não acompanha a lista abaixo. Ao abrir, sua conexão é compartilhada com o provedor.")
-        components.iframe(OFFICIAL_MAP, height=420, scrolling=True)
+        st.iframe(OFFICIAL_MAP, height=420, alt="Mapa oficial de pontos de coleta")
     st.link_button("Rede completa e situação das unidades", OFFICIAL_POINTS, icon=":material/map:", width="stretch")
     if not candidates:
         st.info("Nenhuma unidade compatível nesta seleção. Ecopontos não são destino universal de resíduos especiais.")

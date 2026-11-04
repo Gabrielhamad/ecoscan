@@ -23,7 +23,9 @@ regras de negócio fora da interface sempre que possível. Mudanças em permiss�
 persistência e classificação devem ter testes de regressão específicos.
 
 ```bash
-python -m unittest discover -s tests
+python -m ruff check src scripts tests
+python -m pytest -q
+python -m pip check
 python scripts/run_acceptance_checks.py --diagnostic
 git diff --check
 git status --short
@@ -37,7 +39,7 @@ já configurada pelo projeto.
 O workflow de qualidade executa testes e diagnóstico sem segredos de produção.
 Antes da entrega final, execute o mesmo comando sem `--diagnostic`: pendências
 retornam 2 e falhas retornam 1. CI verde não substitui o aceite real; consulte
-[controle de entrega](docs/controle_entrega.md) antes de declarar um marco concluído.
+[roadmap de entrega](docs/roadmap_entrega.md) antes de declarar um marco concluído.
 
 ## Checklist de revisão
 

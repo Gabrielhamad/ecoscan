@@ -2,14 +2,13 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass
 
-from ecoscan.classification.inference import ModelLoadError
+from ecoscan.classification.runtime import ModelLoadError
 from ecoscan.config import ConfigError
 from ecoscan.disposal.guidance import GuidanceError
 from ecoscan.image_processing.filters import FilterUnavailableError
 from ecoscan.image_processing.validation import ImageValidationError
 from ecoscan.segmentation.methods import SegmentationUnavailableError
 from ecoscan.services.dataset_ingestion import DatasetIngestionError
-from ecoscan.training.transfer_learning import TrainingEnvironmentError
 
 
 @dataclass(frozen=True)
@@ -62,7 +61,7 @@ _TEMPLATES: tuple[tuple[type[BaseException], _ErrorTemplate], ...] = (
             "MODEL-001",
             "Modelo indisponível",
             "O modelo necessário para reconhecimento não pôde ser carregado.",
-            "Treine a baseline ou o modelo final antes de rodar a inferência.",
+            "Verifique o artefato ONNX publicado e tente novamente.",
             "model",
         ),
     ),
@@ -84,16 +83,6 @@ _TEMPLATES: tuple[tuple[type[BaseException], _ErrorTemplate], ...] = (
             "O método de segmentação selecionado depende de uma biblioteca que não está disponível neste ambiente.",
             "Instale as dependências opcionais ou escolha Otsu/sem segmentação.",
             "segmentation",
-        ),
-    ),
-    (
-        TrainingEnvironmentError,
-        _ErrorTemplate(
-            "TRAIN-001",
-            "Ambiente de treino incompleto",
-            "O ambiente atual não está pronto para treinar o modelo final.",
-            "Use um ambiente com TensorFlow instalado, preferencialmente Python 3.12, e rode novamente após curar o dataset.",
-            "training",
         ),
     ),
     (

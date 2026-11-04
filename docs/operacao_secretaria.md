@@ -36,24 +36,23 @@ futura: conteudo, contaminacao e risco nao sao confirmados por formato ou cor.
 2. O registro entra na mesma fila do servidor usada pela secretaria.
 3. Analista autenticado confirma/corrige o item, aprova/rejeita e responde.
 4. O cidadao consulta o estado e a resposta em Perfil > Minhas contribuicoes.
-5. Aprovacao pode gerar candidato automaticamente, ou aguardar treino em lote.
-6. O treino usa filtragem/segmentacao adaptativa e os descritores do modelo
-   visual atual, combinando base existente e exemplos aprovados.
-7. Candidato fica aguardando validacao. O arquivo ativo nao e substituido.
+5. Aprovacao pode colocar a foto na fila privada de aprendizado revisado.
+6. O trabalhador extrai atributos com o encoder neural congelado e ajusta apenas
+   a cabeca supervisionada com os exemplos aprovados.
+7. O candidato e comparado com a release ativa; a publicacao ocorre somente se
+   passar os gates configurados e conservar o contrato de preparacao.
 
-Treino de kNN atualiza exemplos e normalizacao, nao pesos de uma rede neural.
 Cada candidato registra hash do modelo-base, revisoes, fotos e resultado da
 execucao. Uma revisao concorrente impede uso de um rotulo alterado; retirar a
 aprovacao invalida o candidato na central. Lotes iguais nao geram novo treino.
-O limite online e de 40 exemplos distintos; lotes maiores devem ser exportados.
 
 ## Validacao e publicacao
 
 Separar um conjunto novo, independente, sem o mesmo objeto/origem no treino.
 Medir precisao, recall e F1 por classe, matriz de confusao e abstencoes; incluir
 latas/vidro, PET/papelao e negativos fora do escopo. Nao avaliar fotos usadas no
-treino como prova de melhora. O modelo legado foi treinado com toda a base
-processada; a divisao historica nao comprova independencia desse modelo.
+treino como prova de melhora. A validacao reutilizada da release atual nao
+comprova generalizacao em fotos novas do piloto.
 
 Nao ha promocao automatica nem ganho de precisao comprovado por este fluxo.
 O candidato deve ser avaliado pelo responsavel e publicado como versao nova,

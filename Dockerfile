@@ -18,8 +18,11 @@ COPY config ./config
 COPY assets ./assets
 COPY models ./models
 COPY src ./src
+COPY templates ./templates
+COPY migrations ./migrations
 COPY .streamlit ./.streamlit
+COPY streamlit_app.py ./streamlit_app.py
 
 EXPOSE 8501
 
-CMD ["sh", "-c", "streamlit run src/ecoscan/ui/streamlit_app.py --server.address=0.0.0.0 --server.port=${PORT} --server.headless=true --browser.gatherUsageStats=false"]
+CMD ["sh", "-c", "streamlit run streamlit_app.py --server.address=0.0.0.0 --server.port=${PORT} --server.headless=true --browser.gatherUsageStats=false"]

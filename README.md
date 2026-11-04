@@ -1,466 +1,111 @@
-# EcoScan
+# Recicla SP · EcoScan
 
-**Da imagem à orientação de descarte, com educação ambiental e revisão humana.**
+[![Qualidade](https://github.com/Gabrielhamad/ecoscan/actions/workflows/quality.yml/badge.svg)](https://github.com/Gabrielhamad/ecoscan/actions/workflows/quality.yml)
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB.svg)](runtime.txt)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.66%2B-FF4B4B.svg)](https://ecoscan-gabrielhamad.streamlit.app)
 
-**Preparação e convolução:** ensaio controlado em 23 fotos, pares antes/depois,
-kernel gaussiano verificável e bloqueio de treino com classes sem exemplos
-suficientes. Consulte [métodos, resultados e próximo ciclo CNN](docs/preparo_e_convolucao.md).
+Aplicação de educação ambiental que analisa uma foto, sugere o material e orienta o descarte. O produto combina processamento de imagens, reconhecimento assistido, mapa de coleta, conteúdo educativo, missões e uma área de gestão.
 
-**Dataset revisado por objeto:** aplicadas 98 exclusões acumuladas de treino e
-exportadas 23 novas imagens TACO revisadas. Corrigida a orientação EXIF antes
-dos recortes e bloqueadas cenas repetidas da referência. Veja
-[resultados, lacunas e reprodução](docs/dataset_corrigido_v1.md).
-Esta etapa prepara os dados; o reconhecimento público ainda não foi retreinado.
+**Aplicação:** https://ecoscan-gabrielhamad.streamlit.app
 
-**Escopo inicial fechado:** 12 tipos de objeto, agrupados em seis materiais.
-Consulte a [lista de objetos, variacoes e exclusoes](docs/escopo_objetos_v1.md)
-antes de coletar imagens ou revisar reportes. Essa lista define os alvos de
-validacao; nao representa uma declaracao de acuracia ja atingida.
+## Estado da entrega
 
-**Avaliação por material:** implementada e testada uma política experimental
-de limites e margem entre hipóteses. Ela não melhorou o teste e não foi ativada.
-Veja [resultados medidos e próximos critérios de aceite](docs/validacao_seletiva_20261017.md).
+O fluxo web, a autenticação, o processamento de imagens e o reconhecedor ONNX estão implementados e cobertos por testes automatizados. O reconhecimento permanece **assistido**: a hipótese exibida exige confirmação humana antes de orientar descarte ou pontuar uma missão.
 
-**Proteção no resultado público:** baixa pontuação, evidência insuficiente da
-classe e pontuações inválidas bloqueiam a orientação automática de destino.
-Regras visuais não contornam o limite de pontuação. A consulta manual de
-materiais continua disponível. A pontuação apresentada pelo modelo não equivale
-a uma probabilidade comprovada de acerto. Essas proteções não aumentam, por si
-só, a acurácia: a promoção de um novo modelo depende de avaliação independente
-por material e de testes no ambiente de hospedagem.
-
-Aplicação web para celular e computador que combina processamento digital de imagens, classificação de resíduos e orientações de descarte. O piloto conecta participantes a uma área de gestão que simula o trabalho de uma secretaria ambiental.
-
-[Acessar o piloto](https://ecoscan-gabrielhamad.streamlit.app/) · [Guia do grupo](docs/guia_do_grupo.md) · [Arquitetura](docs/arquitetura_atual.md) · [Como contribuir](CONTRIBUTING.md)
-
-> **Status: piloto acadêmico em validação.** Não é um serviço oficial da Prefeitura e não substitui a orientação do operador de coleta. O reconhecimento pode errar, inclusive em objetos comuns. Não há garantia de identificar todo resíduo.
-
-**Atualização de 29/09/2026:** preparação `rgb-preserved-v2`, com proporções e
-cores preservadas, filtros condicionais e máscaras somente para inspeção.
-O modelo antigo **aguarda novo treinamento compatível**: suas hipóteses não são
-confirmadas automaticamente. O grupo pode testar o processamento, consultar
-Descarte e enviar correções consentidas. Consulte o
-[levantamento técnico e as evidências](docs/processamento_preservado_v2.md).
-
-**Continuação:** contexto técnico dos novos reportes implementado; processamento
-público e download de evidências testados. Próximo aceite: rodada do grupo entre
-participantes e secretaria, seguida de curadoria e treino de um candidato.
-O [roadmap atualizado](docs/plano_entrega.md#retomada-em-29092026) contém a ordem,
-os responsáveis e os critérios de aceite, sem confundir implementação com validação real.
-
-## Segurança das missões
-
-**Novo ciclo de treinamento:** candidato MobileNetV2 + regressao logistica,
-executado em CPU, com preparo RGB compativel, agrupamento de duplicatas,
-manifesto e metricas por classe. Consulte o
-[procedimento de treino e criterios de publicacao](docs/treinamento_mobilenet.md).
-Gerar o candidato nao substitui automaticamente o reconhecimento publicado.
-Primeira rodada executada: [resultados, limitacoes e casos de regressao](docs/resultado_treino_20261016.md).
-O treino agora extrai 1280 caracteristicas internas antes da classificacao.
-[Comparacao medida e proximos criterios de reconhecimento](docs/resultado_embeddings_20261016.md):
-ganho no lote exploratorio, com erros reais ainda pendentes. O comando de
-avaliacao de casos registra o preparo de cada foto e os erros aceitos.
-**Rodada de 17/10/2026:** variacoes de luz e inclinacao geradas exclusivamente
-no treino, com manifesto e comparacao automatica pela validacao. Nesta rodada,
-o treino original venceu; [resultados e decisao tecnica](docs/treino_variacoes_20261017.md).
-Tambem foram executados SVM com calibracao por grupos e fine-tuning real da
-MobileNetV2. Eles nao superaram o candidato anterior e nao foram ativados.
-Consulte [medidas por material e casos reais](docs/resultado_neural_20261017.md)
-e o [procedimento neural reproduzivel](docs/fine_tuning.md).
-**Imagens publicas:** importadas 2358 fotos TrashNet com proveniencia e licenca,
-preparo adaptativo e teste preservado. As misturas completa e ponderada foram
-treinadas; a referencia venceu a validacao. Consulte
-[importacao reproduzivel](docs/dataset_web.md) e
-[resultados por material](docs/resultado_dataset_web_20261017.md).
-**Revisao visual:** 25 exemplos inadequados foram excluidos apenas do ajuste,
-com razoes e hashes; validacao e teste foram preservados. O candidato curado e
-o experimento de recorte nao demonstraram ganho e nao foram ativados.
-Veja a [auditoria e o roteiro de reconhecimento](docs/auditoria_visual_20261017.md).
-**Ganho medido:** o novo candidato CLIP hibrido, ajustado com 408 exemplos
-revisados, passou de 64,83% para 73,79% de acerto no teste exploratorio e
-acertou as tres fotos conhecidas de PET/latas. Pilhas regrediram e a hospedagem
-ainda precisa de validacao; o modelo publico nao foi substituido.
-Veja [resultados e reproducao](docs/reconhecimento_contrastivo_20261017.md)
-e [anotacoes de objetos](docs/anotacoes_objetos.md).
-
-**Acesso remoto (16/10/2026):** cadastro, reenvio e recuperacao validam os dados
-antes de consumir o intervalo entre envios. Falhas de autenticacao possuem
-orientacao em portugues e codigo de atendimento sem expor credenciais.
-O [roteiro de aceite com contas reais](docs/login_piloto.md#revisao-operacional-de-16102026)
-separa configuracao verificada de cadastro e entrega de email ainda a validar pelo grupo.
-
-A área **Perfil** apresenta a revisão do código quando o checkout Git está
-disponível. Novos reportes guardam essa revisão junto ao contexto de processamento
-para comparar testes entre versões; registros anteriores não são reescritos.
-A revisão identifica o commit do processo, não garante que uma cópia local esteja
-sem alterações. O envio e a confirmação das contas estão no
-[guia de acesso](docs/login_piloto.md#convite-e-confirmacao-sao-etapas-distintas).
-
-A validação por imagem se aplica somente às missões `recognize_waste`.
-Denúncias exigem o fluxo da secretaria e **não recebem pontos automaticamente**
-por uma foto reconhecida. Pontuação inválida, identificadores duplicados e ações
-desconhecidas são rejeitados na configuração. Resultados sem confiança numérica
-finita entre 0 e 1 não validam missões; isso não substitui a calibração do modelo.
-
-Campanhas e relatos possuem uma camada compartilhada com revisão protegida contra
-concorrência e fotos privadas. O recebimento exige a migração 003 e ativação
-explícita; não há gravação local alternativa na interface. Consulte o
-[fluxo, ativação e limites operacionais](docs/campanhas_e_relatos.md).
-
-## Sumário
-
-- [Proposta](#proposta)
-- [Recursos e perfis](#recursos-e-perfis)
-- [Escopo](#escopo)
-- [Tecnologias e arquitetura](#tecnologias-e-arquitetura)
-- [Pipeline de análise](#pipeline-de-análise)
-- [Sincronização do modelo](#sincronização-do-modelo)
-- [Execução local](#execução-local)
-- [Banco e autenticação](#banco-e-autenticação)
-- [Testes e publicação](#testes-e-publicação)
-- [Aprendizado supervisionado](#aprendizado-supervisionado)
-- [Estrutura](#estrutura)
-- [Próximas entregas](#próximas-entregas)
-- [Documentação e direitos de uso](#documentação-e-direitos-de-uso)
-
-## Proposta
-
-O EcoScan procura reduzir dúvidas sobre separação e destinação de resíduos do dia a dia. A experiência começa pela foto, apresenta uma hipótese de categoria e orienta o descarte; o participante pode reportar um erro para revisão da equipe. Missões e conteúdo educativo complementam o fluxo.
-
-O projeto torna observáveis as etapas de processamento de imagem do trabalho acadêmico: métodos utilizados, comparação antes/depois, máscara e regiões encontradas. Os requisitos acadêmicos estão no [checklist da APS](docs/checklist_aps.md); a interface pública usa linguagem de produto.
-
-## Recursos e perfis
-
-| Perfil | Recursos | Condições |
+| Área | Estado | Observação |
 | --- | --- | --- |
-| Visitante | Analisar foto, consultar descarte, coleta e conteúdo educativo | Análise temporária; não acumula participação persistente |
-| Participante | Recursos públicos, correções consentidas, protocolos e participação | Cadastro, confirmação do e-mail e login |
-| Analista | Revisar correções, responder protocolos, consultar cadastros e operar ferramentas de gestão | Identidade verificada e autorização explícita |
+| Interface pública | Pronta para piloto | Câmera, upload, mapa, descarte e educação |
+| Gestão | Pronta para piloto controlado | Revisões, campanhas, protocolos e indicadores |
+| Reconhecimento | Assistido | Uma única release ONNX; confirmação obrigatória |
+| Persistência | Condicional | Requer Supabase e migrações configuradas |
+| Operação pública | Em validação | Falta aceite real em celular, contas e banco de produção |
 
-O parâmetro de perfil na URL **não concede acesso administrativo**. O mesmo link público atende participantes e analistas; os recursos dependem da autenticação.
+Os bloqueios para entrega estão em [Avaliação técnica](docs/avaliacao_tecnica.md) e no [Roadmap de entrega](docs/roadmap_entrega.md).
 
-| Área do participante | Finalidade |
-| --- | --- |
-| Escanear | Tirar/enviar foto e consultar resultado com orientação |
-| Mapa | Consultar coleta em São Paulo e abrir rotas externas |
-| Descarte | Orientação por material, incluindo casos de confirmação manual |
-| Aprender | Por que reciclar, possíveis novos produtos e fontes consultadas |
-| Missões | Atividades educativas e participação vinculada ao perfil |
-| Denunciar | Relatos de descarte inadequado; fluxo distinto da correção de reconhecimento |
-| Perfil | Participação e protocolos vinculados à conta |
+## Escopo do reconhecimento
 
-**Coleta:** a base auditada em 20/09/2026 contém seis ecopontos, não todos os pontos de São Paulo. Há acesso ao mapa municipal completo. A base não possui coordenadas verificadas para ordenar por proximidade, nem aceitação presumida de pilhas e eletrônicos. Veja a [auditoria](docs/education_and_collection_audit.md).
+O modelo trabalha com seis materiais:
 
-## Escopo
+- plástico, com prioridade para garrafas PET e recipientes rígidos;
+- metal, com prioridade para latas de bebida e conserva;
+- vidro, com prioridade para garrafas e potes;
+- papel e papelão;
+- pilhas domésticas;
+- pequenos eletrônicos.
 
-As seis categorias ativas estão em [config/settings.json](config/settings.json). Os objetos abaixo são alvos de coleta e avaliação, não uma certificação de desempenho.
+Metal, plástico e vidro são as classes prioritárias do piloto. Alimentos, orgânicos, medicamentos e óleo não são identificados automaticamente.
 
-| Categoria | Objetos prioritários | Variações importantes |
-| --- | --- | --- |
-| `plastic` | Garrafa PET, pote e frasco rígido vazio | Transparência, cor, rótulo e deformação |
-| `metal` | Lata de bebida ou conserva vazia | Inteira, amassada, achatada, com/sem rótulo |
-| `paper_cardboard` | Caixa, folha e jornal | Montado, dobrado, rasgado e impresso |
-| `glass` | Garrafa e pote de embalagem | Cores e transparência; cacos são casos difíceis |
-| `battery` | Pilhas domésticas AA/AAA | Marca, tamanho e agrupamento; outras baterias exigem revisão |
-| `electronic` | Celular, mouse e carregador de celular | Frente, verso, lateral e cabos |
-
-Óleo de cozinha e medicamentos têm **orientação assistida**, não reconhecimento automático do conteúdo. Orgânicos e alimentos estão fora do escopo. Não manipule resíduos perigosos para melhorar um teste. Veja [escopo e variações](docs/escopo_e_variacoes.md).
-
-## Tecnologias e arquitetura
-
-| Camada | Tecnologia | Uso no projeto |
-| --- | --- | --- |
-| Aplicação | Python 3.11+ e Streamlit | Interface para celular e computador, sessão e painéis |
-| Imagens | Pillow, NumPy e OpenCV | Leitura com orientação EXIF, filtros, segmentação e morfologia |
-| Visão computacional | scikit-image e scikit-learn | Estimativa de ruído, SSIM, descritores HOG/LBP, histogramas e classificador visual supervisionado |
-| Persistência | Supabase Auth, PostgreSQL e Storage privado | Contas confirmadas, protocolos e fotos consentidas |
-| Publicação | GitHub e Streamlit Community Cloud | Código versionado e implantação da aplicação pública |
-
-O fluxo principal é `streamlit_app.py` → `ui/streamlit_app.py` →
-`services/analysis_service.py` → `app/pipeline.py` → `classification/` →
-`disposal/`. O módulo `services/` também contém autenticação, revisão e
-persistência. A [arquitetura atual](docs/arquitetura_atual.md) descreve as
-fronteiras e o que ainda depende de arquivos locais. TensorFlow/MobileNetV2
-está configurado para um experimento futuro, mas não é o modelo publicado.
-
-## Pipeline de análise
+## Arquitetura atual
 
 ```mermaid
 flowchart LR
-    A[Foto] --> B[Validação e preparação]
-    B --> C[Filtragem adaptativa]
-    C --> D[Segmentação auxiliar]
-    D --> M[Abertura e fechamento da máscara]
-    M --> V[Evidências visuais]
-    C --> L[RGB completo com margens]
-    L --> E[Classificação e verificações]
-    E --> F[Resultado ou incerteza]
-    F --> G[Orientação de descarte]
-    F --> H[Correção consentida]
-    H --> I[Revisão humana]
+    UI[Streamlit] --> AS[Serviço de análise]
+    AS --> PP[Pipeline RGB]
+    PP --> CV[Filtros e segmentação]
+    PP --> RT[Runtime ONNX]
+    RT --> SAFE[Confirmação humana]
+    SAFE --> GUIDE[Orientação de descarte]
+    UI --> DB[Supabase opcional]
 ```
 
-1. **Entrada:** validação, orientação EXIF, transparência sobre branco e RGB. Redução proporcional até 640 px no lado maior, sem ampliar a foto.
-2. **Filtragem:** diagnóstico por imagem e comparação com o controle sem alteração. Mediana seletiva para impulsos, Gaussiano/bilateral para ruído e CLAHE suave para contraste; uma correção no máximo, com limites de preservação.
-3. **Segmentação:** candidatos Otsu e GrabCut, com possibilidade de não encontrar primeiro plano confiável. HSV permanece como experimento manual.
-4. **Morfologia aplicada:** abertura/fechamento da máscara, com elemento 3×3. Máscaras, componentes e contornos são evidências auxiliares, não recortes obrigatórios para o modelo.
-5. **Reconhecimento:** RGB completo ajustado a 224×224 com margens, extração de atributos, classificação e verificações de material, escopo e compatibilidade de preparação.
-6. **Apresentação:** original/final e antes/depois de cada operação, diferenças, parâmetros, download das evidências em PNG/ZIP e orientação quando houver resultado aceito.
+O runtime aceita somente `semantic_onnx_assisted`. A configuração aponta para `models/semantic-v1/semantic.json`; releases remotas precisam usar o mesmo encoder, classes, contrato de preparação e hashes. Os classificadores históricos e seus fallbacks foram removidos do produto atual.
 
-O [roteiro prático de processamento](docs/pratica_processamento_imagens.md) orienta a demonstração acadêmica. O laboratório fica disponível na página pública e na área técnica, com exportação de máscaras sem perdas e um experimento sintético reproduzível. A página pública exibe o processamento aplicado antes do cartão de reconhecimento, com comparação antes/depois específica da foto. O controle sem operação é explícito; aplicar morfologia não comprova aumento de acurácia.
-
-O modo adaptativo usa métricas e regras: não prova que escolheu o melhor método para toda imagem. O mapa visual de regiões **não é imagem térmica nem explicação Grad-CAM**. Regiões segmentadas não equivalem a objetos semanticamente identificados.
-
-O serviço suporta baseline, KNN visual, artefato visual supervisionado e Keras. Sem um modelo final `.keras`, o artefato `vision_svm_classifier.joblib` tem prioridade quando disponível; o KNN visual é a alternativa leve. Apesar do nome histórico do arquivo, a seleção atual escolheu **Random Forest** entre SVM, regressão logística e ensembles. O artefato publicado do piloto possui cartão de modelo e métricas em [model_card_piloto.md](docs/model_card_piloto.md); ele ainda não deve ser descrito como reconhecimento final. Configurar MobileNetV2 não significa que ela já esteja treinada ou publicada. Veja o [pipeline](src/ecoscan/app/pipeline.py) e o [serviço de análise](src/ecoscan/services/analysis_service.py).
-
-## Sincronização do modelo
-
-O app aplica o perfil de `config/settings.json` antes da inferência. A preparação
-do dataset usa o mesmo pipeline e salva em PNG a matriz RGB completa entregue ao
-classificador, sem aplicar a máscara. O antes/depois e os parâmetros correspondem
-à foto analisada; nenhuma correção é obrigatória só para produzir diferença visual.
-
-O contrato `rgb-preserved-v2` registra versão, filtros, dimensões e margens.
-O ciclo de treinamento vincula esse contrato ao hash do modelo em
-`<modelo>.processing.json`. Sem correspondência, inclusive com o artefato legado
-atual, a hipótese fica **não confirmada**, mesmo se o score for alto. Ajustes manuais
-de filtro também podem invalidar essa compatibilidade. Mudar apenas a máscara
-diagnóstica não muda os pixels da entrada do classificador.
-
-**Alterar um filtro no código ou aprovar um reporte não modifica os parâmetros do
-classificador.** O ciclo `scripts/train_recognition_cycle.py` prepara as fotos curadas,
-cria treino/validação/teste e gera um candidato visual separado. O analista avalia
-as métricas e os erros reais antes de substituir o artefato ativo. O GitHub
-recebe a versão aprovada; o Streamlit atualiza a aplicação após a implantação.
-Consulte o [procedimento de treinamento](docs/treinamento_reconhecimento.md).
-
-As métricas antigas (27,5% top-1 no teste daquela rodada) não avaliam a preparação
-v2. Esta revisão não retreinou nem promoveu um modelo. Os testes com referência
-limpa medem redução de ruído, não aumento da precisão de reconhecimento.
+Detalhes: [Arquitetura](docs/arquitetura_atual.md) e [Modelo de reconhecimento](docs/modelo_reconhecimento.md).
 
 ## Execução local
 
-Pré-requisitos: Git e Python **3.11 ou superior**; **3.12** é recomendado para compatibilidade com treinamento opcional. O clone exige permissão caso o repositório esteja privado. O dataset completo não acompanha o Git.
+Requer Python 3.12.
 
 ```bash
 git clone https://github.com/Gabrielhamad/ecoscan.git
 cd ecoscan
 python -m venv .venv
-```
-
-Ative o ambiente conforme o sistema:
-
-```powershell
-# Windows PowerShell
-.\.venv\Scripts\Activate.ps1
-```
-
-```bash
-# Linux/macOS
-source .venv/bin/activate
-```
-
-Instale e execute a partir da raiz do repositório:
-
-```bash
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-python -m pip install --no-deps -e .
-python -m streamlit run streamlit_app.py
+python -m pip install -e '.[dev]'
+streamlit run streamlit_app.py
 ```
 
-Abra `http://localhost:8501`. Se a porta estiver ocupada, use `python -m streamlit run streamlit_app.py --server.port 8502`. Sem credenciais de nuvem, é possível experimentar como visitante; cadastro e persistência compartilhada exigem configuração.
+A aplicação abre em `http://localhost:8501`.
 
-**Celular:** o `localhost` do aparelho não é o computador. Para testes remotos, use a URL pública HTTPS. O seletor de câmera/galeria depende do navegador. O **EcoScan Live** é um servidor separado e não é publicado automaticamente com o Streamlit. Veja [acesso multidispositivo](docs/acesso_multidispositivo.md) e [câmera ao vivo](docs/live_camera_mobile.md).
+## Configuração de serviços
 
-## Banco e autenticação
+Copie `.streamlit/secrets.example.toml` para `.streamlit/secrets.toml` e preencha somente no ambiente local ou no painel do Streamlit Cloud. Nunca publique chaves, tokens, fotos privadas ou dados de participantes.
 
-O backend integra Supabase Auth, PostgreSQL e Storage privado. Preparar um ambiente novo é responsabilidade do mantenedor, não de cada colega que vai testar.
+O modo sem banco continua útil para demonstração pública. Cadastro, protocolos persistentes, campanhas compartilhadas e treinamento revisado exigem Supabase configurado conforme [Banco](docs/banco_gratuito.md) e [Autenticação](docs/autenticacao.md).
 
-1. Aplicar, na ordem, [migration 001](migrations/001_contributions.sql) e [migration 002](migrations/002_operational_records.sql).
-2. Conferir RLS e bucket privado, sem liberar acesso direto público às tabelas.
-3. Configurar credenciais somente em `.streamlit/secrets.toml` local ou nos Secrets da hospedagem.
-4. Configurar SMTP, URL de retorno e confirmação de e-mail; testar entrega antes de liberar cadastro.
-5. Autorizar analistas explicitamente e testar isolamento entre contas.
-
-Exemplo mínimo para **Supabase Auth**, com valores fictícios:
-
-```toml
-[persistence]
-url = "https://SEU_PROJETO.supabase.co"
-service_key = "CHAVE_PRIVADA_SOMENTE_NO_SERVIDOR"
-operations_enabled = true
-
-[community]
-enabled = false # Ativar após migration 003 e validação
-
-[access]
-public_signup_enabled = false
-supabase_admin_emails = []
-```
-
-Ative `public_signup_enabled` somente após validar SMTP e confirmação. Autorize apenas e-mails verificados. Não copie o bloco OIDC do [exemplo completo](.streamlit/secrets.example.toml) sem configurar esse provedor: OIDC é uma alternativa, não requisito do login Supabase.
-
-| Informação | Persistência implementada |
-| --- | --- |
-| Identidade e confirmação de e-mail | Supabase Auth |
-| Correções de reconhecimento, revisão e resposta | PostgreSQL e foto no Storage privado, quando configurados |
-| Pontos e registros de testes | PostgreSQL com `operations_enabled = true` e migration 002 |
-| Campanha ativa, relatos cívicos e respostas | PostgreSQL e Storage privado com `[community] enabled = true` e migration 003 |
-| Artefatos de treino | Arquivos locais; exigem promoção e publicação separadas |
-| Histórico técnico local | Não deve ser tratado como histórico durável compartilhado |
-
-Falha do banco configurado não deve virar gravação local silenciosa. Arquivos locais da hospedagem não garantem durabilidade. A chave privilegiada é exclusiva do servidor; a aplicação também valida identidade e acesso. Veja [banco](docs/banco_gratuito.md), [login](docs/login_piloto.md) e [aceite](docs/aceite_banco_piloto.md).
-
-## Testes e publicação
-
-**Controle de entrega atualizado:** [marcos M1–M5, riscos e aceite](docs/controle_entrega.md).
-Em 05/10/2026: **314 testes locais aprovados**, incluindo 23 casos novos de
-campanhas, autorização, protocolos e revisões. Migração validada no PostgreSQL
-em transação desfeita ao final; detalhes no [registro M2](docs/campanhas_e_relatos.md).
-Em 03/10/2026 foram aprovados **291 testes locais**. O diagnóstico foi alinhado ao
-modelo realmente selecionado; existência de arquivos e perfis locais não aprova
-reconhecimento, autorização ou persistência real. O fluxo de GitHub Actions está
-em `.github/workflows/quality.yml`. Em 04/10/2026, os **291 testes passaram também
-na CI em Python 3.12/Linux**, após ajustar o teste visual ao Streamlit atual:
-[execução validada](https://github.com/Gabrielhamad/ecoscan/actions/runs/37200298709).
-Novas publicações devem conferir a execução correspondente na aba Actions.
-
-Com o pacote instalado em modo editável:
+## Qualidade
 
 ```bash
-python -m unittest discover -s tests
-python scripts/run_acceptance_checks.py --diagnostic --output reports/diagnostico
-python scripts/run_acceptance_checks.py --output reports/acceptance_checks
+python -m ruff check src scripts tests
+python -m pytest -q
+python -m pip check
+python scripts/run_acceptance_checks.py --diagnostic
 ```
 
-Sem `--diagnostic`, o aceite retorna **2 para pendências** e **1 para falhas**.
-No modo diagnóstico, zero significa apenas ausência de falhas detectadas, não
-aprovação final. CI não usa credenciais reais nem comprova entrega de e-mail,
-isolamento em produção ou precisão. A aprovação humana e os testes publicados
-continuam no [plano de entrega](docs/plano_entrega.md).
-
-A suíte cobre processamento, serviços, autorização, persistência com simulações e partes da interface. Não comprova acurácia, entrega de e-mail, integração real da nuvem ou funcionamento em todos os celulares. O [guia do grupo](docs/guia_do_grupo.md) complementa a suíte com testes manuais.
-
-Auditoria reproduzível, sem treinar ou enviar imagens:
-
-```bash
-python scripts/audit_preprocessing.py --synthetic --output reports/preprocessing_audit/synthetic
-python scripts/audit_preprocessing.py --output reports/preprocessing_audit/manual caminho/foto.jpg
-```
-
-As pranchas e métricas ficam locais. Consulte [técnicas, critérios e resultados](docs/processamento_preservado_v2.md).
-
-Para publicar, envie alterações revisadas ao repositório ligado ao Streamlit e confira a implantação e os logs. Um `git push` bem-sucedido não comprova que a nova versão já está disponível. Veja [hospedagem](docs/hospedagem_gratuita.md).
-
-## Aprendizado supervisionado
-
-```text
-Foto com erro + consentimento + categoria sugerida
-    -> protocolo -> revisão do analista -> aprovação ou rejeição
-    -> exportação das aprovadas -> curadoria e treino local
-    -> avaliação independente -> decisão de publicação
-```
-
-**Reportar ou aprovar uma imagem não altera automaticamente o modelo ativo.** Com persistência remota, o treino de candidatos na hospedagem está bloqueado; o fluxo previsto é exportar e treinar localmente. Separe dados por objeto/cena antes de gerar variações para evitar vazamento entre treino e teste.
-
-Novos reportes registram versão e hash do preparo, filtro, segmentação,
-compatibilidade com o modelo e hash do RGB analisado. A secretaria consulta esse
-contexto técnico, que acompanha a exportação para curadoria sem copiar caminhos
-da máquina. Registros antigos não recebem uma versão inventada retroativamente.
-A foto consentida pode ser reduzida/reencodificada no armazenamento; o hash do
-RGB refere-se à análise original, não ao arquivo JPEG exportado.
-
-```powershell
-python scripts\train_recognition_cycle.py --overwrite --min-quality-score 55 --min-per-class 20
-```
-
-O candidato padrão é `models/vision_svm_classifier_candidate.joblib` (nome legado,
-não garantia de algoritmo SVM) e o relatório fica em
-`reports/recognition_training_candidate/`. O script bloqueia
-o caminho do modelo ativo. O contrato correspondente é salvo em
-`models/vision_svm_classifier_candidate.joblib.processing.json`. Reprepare a partir
-dos **originais curados**, não de imagens já mascaradas. A promoção revisada deve
-incluir o artefato e seu contrato. O dataset de treino não é enviado ao repositório.
-
-Avalie precisão, recall, F1, matriz de confusão, rejeição de desconhecidos e fotos reais. Para vídeo, avalie também latência e estabilidade. Não substitua o modelo com base somente no acerto das imagens usadas no treino. O ciclo reproduzível está em [treinamento e preparação do reconhecimento](docs/treinamento_reconhecimento.md). Veja também [operação da secretaria](docs/operacao_secretaria.md) e [gestão do dataset](docs/gestao_dataset_e_classes.md).
+A CI executa testes, lint crítico, verificação de dependências, diagnóstico e validação das migrações PostgreSQL.
 
 ## Estrutura
 
 ```text
-streamlit_app.py          Entrada da aplicação hospedada
-src/ecoscan/
-  app/                   Pipeline de processamento
-  image_processing/      Validação, qualidade e filtros
-  segmentation/          Máscaras, seleção adaptativa e regiões
-  classification/        Atributos e classificadores
-  training/              Treinamento opcional por transferência
-  services/              Casos de uso, identidade e persistência
-  disposal/              Orientações e pontos de coleta
-  live_camera/           Servidor e rastreamento experimental
-  ui/                    Interface Streamlit
-config/                  Classes, parâmetros, campanhas e orientações
-migrations/              Esquema e proteções do banco
-templates/               Modelo de e-mail de confirmação
-assets/                  Recursos visuais
-models/                  Artefatos de inferência selecionados
-data/                    Dados locais; originais e splits fora do Git
-scripts/                 Ferramentas de análise, treino e operação
-tests/                   Testes automatizados
-docs/                    Documentação técnica e acadêmica
-reports/ e logs/          Saídas locais, em geral fora do Git
+config/             configuração funcional e conteúdo ambiental
+models/semantic-v1 release ativa, licença e hashes
+src/ecoscan/        aplicação, domínio, processamento e serviços
+scripts/            operação, dataset e diagnóstico atuais
+tests/              regressões automatizadas
+migrations/         banco compartilhado e políticas de acesso
+docs/               documentação atual da entrega
 ```
 
-## Próximas entregas
+## Documentação
 
-### Mapa, educação e participação
+- [Índice da documentação](docs/README.md)
+- [Arquitetura atual](docs/arquitetura_atual.md)
+- [Modelo de reconhecimento](docs/modelo_reconhecimento.md)
+- [Operação da gestão](docs/operacao_secretaria.md)
+- [Roadmap de entrega](docs/roadmap_entrega.md)
+- [Avaliação técnica](docs/avaliacao_tecnica.md)
+- [Como contribuir](CONTRIBUTING.md)
+- [Catálogo de scripts](scripts/README.md)
 
-- **Mapa SP:** 22 ecopontos nas cinco regiões, filtros e mapa oficial incorporado.
-- **CEP:** valida endereço da capital e oferece consultas oficiais de coleta.
-  Dias e horários ainda são consultados nos portais; não são calculados pelo CEP.
-- **Aprender:** oito materiais, impactos, reaproveitamento, preparo seguro, fontes
-  e desafios de 10 pontos. Óleo e medicamentos permanecem orientação manual.
-- **Missões:** pontos uma vez por missão e conta; selos digitais para baixar.
-  Benefícios materiais dependem de parceiros e não têm resgate ativo.
-
-Veja [critérios, fontes e planejamento do programa cidadão](docs/programa_cidadao_sp.md).
-Campanhas já publicadas no banco são preservadas; a secretaria revisa incentivos
-no editor e publica as alterações para os participantes.
-
-A preparação operacional inclui um [roteiro de backup, recuperação e retorno de
-versão](docs/recuperacao_operacional.md) e o verificador offline
-`scripts/check_backup.py`. Ele verifica integridade de exportações privadas de
-banco e fotos, sem acessar produção. O ensaio de restauração e o aceite entre
-contas reais continuam necessários antes de encerrar a entrega.
-
-Consulte a [avaliação de conformidade e resultados](docs/avaliacao_e_entrega.md) e o
-[plano de entrega por etapas](docs/plano_entrega.md), preparados em 27/09/2026.
-
-- Validar ponta a ponta: cadastro, confirmação, analista, reporte e resposta entre contas reais.
-- Melhorar reconhecimento com curadoria e avaliação independente por classe e estado.
-- Concluir aceite entre contas das campanhas e relatos compartilhados, incluindo reinício.
-- Validar recuperação de senha na nuvem (fluxo implementado); evoluir gestão de sessões e proteção contra abuso.
-- Definir retenção, exclusão, backups e procedimento de incidentes antes do uso amplo.
-- Ampliar coleta com fontes auditáveis e coordenadas verificadas.
-- Validar acessibilidade e dispositivos reais; medir a câmera separadamente.
-
-Não há resultado medido de massa reciclada, emissões evitadas ou renda gerada pelo EcoScan. Fotos, pontos e missões não comprovam entrega física.
-
-## Documentação e direitos de uso
-
-Comece pelo [índice de documentação](docs/README.md). Documentos de fases anteriores podem conter escopos históricos; código/configuração e guias atuais orientam a operação. README revisado em **29/09/2026**.
-
-Não publique senhas, chaves, exportações de usuários ou fotos pessoais em issues e commits. Dados de treinamento exigem consentimento ou licença compatível e rastreabilidade. Remover metadados não remove pessoas ou documentos visíveis.
-
-Não há licença de software declarada neste repositório. Não presuma autorização de redistribuição; o grupo deve definir uma licença e conferir separadamente os direitos dos datasets e recursos visuais. Para alterações, siga [CONTRIBUTING.md](CONTRIBUTING.md).
-## Validacao das jornadas
-
-Para dividir estudos, evidencias e apresentacao entre os quatro integrantes,
-consulte o [roteiro tecnico do grupo](docs/roadmap_estudos_grupo.md).
-
-Os testes de cadastro, confirmacao, reportes, revisao, pontos e mapa estao
-descritos em [Validacao de jornadas e dispositivos](docs/validacao_jornadas.md).
-O documento separa testes automatizados isolados, inspecao responsiva e
-homologacao pendente com contas e dispositivos reais. A CI publica resultados
-JUnit por execucao; testes locais nao comprovam entrega de e-mail em producao.
-
+O histórico de experimentos e métodos substituídos continua disponível no Git. O branch principal documenta apenas o produto atual.
