@@ -67,7 +67,8 @@ _render_admin_tab(st, load_config(), UserProfile("supabase_admin", "Admin", "adm
 ''')
     app.secrets["access"] = {}
     with ExitStack() as stack:
-        for name in ("render_review", "_render_admin_campaign_operations", "_render_admin_recognition_quality",
+        stack.enter_context(patch("ecoscan.ui.learning.render_review"))
+        for name in ("_render_admin_campaign_operations", "_render_admin_recognition_quality",
                      "_render_admin_field_tests"):
             stack.enter_context(patch("ecoscan.ui.streamlit_app." + name))
         stack.enter_context(patch("ecoscan.ui.community.render_campaign_editor"))

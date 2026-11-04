@@ -16,9 +16,14 @@ from ecoscan.config import load_config
 from ecoscan.ui.identity import render_identity
 from ecoscan.ui.app_resources import load_app_resources
 from ecoscan.ui.navigation import navigation_for
-from ecoscan.ui.processing_lab import select_morphology_parameters, render_processing_lab
+from ecoscan.ui.processing_controls import (
+    FILTERS,
+    SEGMENTATIONS,
+    select_filter_parameters,
+    select_segmentation_parameters,
+)
 from ecoscan.ui.education import render_education
-from ecoscan.ui.learning import render_contribution, render_review, render_scope, render_citizen_protocols
+from ecoscan.ui.scope import render_scope
 from ecoscan.disposal.collection_points import (
     CollectionPoint,
     build_collection_point_directions_url,
@@ -995,6 +1000,7 @@ def _render_processing_evidence(
     *,
     render_details_expander: bool = True,
 ) -> None:
+    from ecoscan.ui.processing_lab import render_processing_lab
     pipeline = result.pipeline
     filter_name = pipeline.filter_result.name
     segmentation_name = pipeline.segmentation_result.name
@@ -1089,64 +1095,8 @@ def _render_recognition_feedback_form(
     active_profile: UserProfile,
     guidance_by_class: dict[str, DisposalGuidance],
 ) -> None:
+    from ecoscan.ui.learning import render_contribution
     render_contribution(st, config, result, active_profile)
-
-
-def _select_filter_parameters(st: Any, filter_name: str, config=None) -> dict[str, Any]:
-    if filter_name == "auto":
-        st.caption("Correções condicionais por ruído e faixa tonal, com limites para preservar cor e contornos.")
-        return {}
-    if filter_name == "gaussian":
-        return {
-            "kernel_size": st.select_slider("Kernel Gaussiano", options=[3, 5, 7, 9], value=5),
-            "sigma": st.slider("Sigma", 0.1, 5.0, 1.0, 0.1),
-        }
-    if filter_name == "median":
-        return {"kernel_size": st.select_slider("Kernel mediana", options=[3, 5, 7, 9],
-                                                value=config.filters.get("median", {}).get("kernel_size", 3) if config else 3)}
-    if filter_name == "bilateral":
-        return {
-            "diameter": st.select_slider("Diâmetro bilateral", options=[5, 7, 9, 11], value=9),
-            "sigma_color": st.slider("Sigma cor", 10, 150, 75, 5),
-            "sigma_space": st.slider("Sigma espaço", 10, 150, 75, 5),
-        }
-    if filter_name == "clahe":
-        return {
-            "clip_limit": st.slider("Clip limit", 0.5, 6.0, 2.0, 0.1),
-            "tile_grid_size": [
-                st.select_slider("Grade CLAHE horizontal", options=[4, 8, 12, 16], value=8),
-                st.select_slider("Grade CLAHE vertical", options=[4, 8, 12, 16], value=8),
-            ],
-        }
-    if filter_name == "canny":
-        low = st.slider("Canny baixo", 10, 240, 80, 5)
-        high = st.slider("Canny alto", low + 5, 255, max(160, low + 5), 5)
-        return {"threshold1": low, "threshold2": high}
-    return {}
-
-
-def _select_segmentation_parameters(st: Any, segmentation_name: str) -> dict[str, Any]:
-    if segmentation_name == "auto":
-        st.caption("Máscara auxiliar por Otsu ou GrabCut. Se a separação falhar, a foto completa é preservada.")
-        return {}
-    if segmentation_name == "otsu":
-        mode = st.radio("Máscara Otsu", ["automática", "objeto claro", "objeto escuro"], horizontal=True)
-        if mode == "objeto claro":
-            return {"invert": False}
-        if mode == "objeto escuro":
-            return {"invert": True}
-        return {"invert": None}
-    if segmentation_name == "hsv_color":
-        return {
-            "saturation_min": st.slider("Saturação mínima", 0, 255, 45, 5),
-            "value_min": st.slider("Brilho mínimo", 0, 255, 35, 5),
-        }
-    if segmentation_name == "grabcut":
-        return {
-            "iterations": st.slider("Iterações GrabCut", 1, 10, 5, 1),
-            "margin_percent": st.slider("Margem central", 0.02, 0.25, 0.08, 0.01),
-        }
-    return {}
 
 
 def _render_model_status(st: Any, config: Any) -> None:
@@ -2242,6 +2192,7 @@ def _render_account_tab(
     campaign: Campaign | None,
     guidance_by_class: dict[str, DisposalGuidance],
 ) -> None:
+    from ecoscan.ui.learning import render_citizen_protocols
     st.markdown('<div class="ecoscan-section-title">Minha participação</div>', unsafe_allow_html=True)
     _render_active_profile_card(st, active_profile)
     from ecoscan.services.release_info import release_info
@@ -2505,6 +2456,7 @@ def _render_admin_tab(
     collection_points: list[CollectionPoint],
     guidance_by_class: dict[str, DisposalGuidance],
 ) -> None:
+    from ecoscan.ui.learning import render_review
     st.markdown('<div class="ecoscan-section-title">Gestão ambiental</div>', unsafe_allow_html=True)
     if not active_profile.is_admin:
         st.warning("Este painel é restrito ao perfil administrativo.")
@@ -2589,6 +2541,7 @@ def _temporary_upload(uploaded_file: Any, prefix: str = "upload") -> Path:
 
 def main(*, page_configured=False) -> None:
     import streamlit as st
+    from ecoscan.ui.processing_lab import select_morphology_parameters
 
     config = load_config()
     configure_logging(config.directories["logs"])
@@ -2626,17 +2579,17 @@ def main(*, page_configured=False) -> None:
             st.header("Parâmetros técnicos")
             filter_name = st.selectbox(
                 "Filtro",
-                ["auto", "none", "gaussian", "median", "clahe", "sobel", "canny", "bilateral"],
-                index=["auto", "none", "gaussian", "median", "clahe", "sobel", "canny", "bilateral"].index(defaults.filter_name),
+                FILTERS,
+                index=FILTERS.index(defaults.filter_name),
             )
-            filter_parameters = _select_filter_parameters(st, filter_name, config)
+            filter_parameters = select_filter_parameters(st, filter_name, config)
 
             segmentation_name = st.selectbox(
                 "Segmentação",
-                ["auto", "none", "otsu", "hsv_color", "grabcut"],
-                index=["auto", "none", "otsu", "hsv_color", "grabcut"].index(defaults.segmentation_name),
+                SEGMENTATIONS,
+                index=SEGMENTATIONS.index(defaults.segmentation_name),
             )
-            segmentation_parameters = _select_segmentation_parameters(st, segmentation_name)
+            segmentation_parameters = select_segmentation_parameters(st, segmentation_name)
             morphology_name, morphology_parameters = select_morphology_parameters(st, config.segmentation.get("morphology"))
             save_history = st.checkbox("Salvar no histórico local", value=False)
         else:
@@ -2659,18 +2612,18 @@ def main(*, page_configured=False) -> None:
             st.caption("Compare técnicas da disciplina. Alterar parâmetros reprocessa a foto carregada.")
             filter_name = st.selectbox(
                 "Filtro",
-                ["auto", "none", "gaussian", "median", "clahe", "sobel", "canny", "bilateral"],
-                index=["auto", "none", "gaussian", "median", "clahe", "sobel", "canny", "bilateral"].index(defaults.filter_name),
+                FILTERS,
+                index=FILTERS.index(defaults.filter_name),
                 key="public_filter",
             )
-            filter_parameters = _select_filter_parameters(st, filter_name, config)
+            filter_parameters = select_filter_parameters(st, filter_name, config)
             segmentation_name = st.selectbox(
                 "Segmentação",
-                ["auto", "none", "otsu", "hsv_color", "grabcut"],
-                index=["auto", "none", "otsu", "hsv_color", "grabcut"].index(defaults.segmentation_name),
+                SEGMENTATIONS,
+                index=SEGMENTATIONS.index(defaults.segmentation_name),
                 key="public_segmentation",
             )
-            segmentation_parameters = _select_segmentation_parameters(st, segmentation_name)
+            segmentation_parameters = select_segmentation_parameters(st, segmentation_name)
             morphology_name, morphology_parameters = select_morphology_parameters(st, config.segmentation.get("morphology"))
             if not active_profile.id.startswith("visitor_"):
                 save_history = st.checkbox("Salvar no histórico local", value=False, key="public_history")
@@ -2906,6 +2859,7 @@ def main(*, page_configured=False) -> None:
 
     if "Processamento" in tabs and tabs["Processamento"].open:
         with tabs["Processamento"]:
+            from ecoscan.ui.processing_lab import render_processing_lab
             if result is None:
                 st.info("Aguardando análise.")
             else:

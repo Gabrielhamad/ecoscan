@@ -172,7 +172,7 @@ As seis categorias ativas estão em [config/settings.json](config/settings.json)
 | --- | --- | --- |
 | Aplicação | Python 3.11+ e Streamlit | Interface para celular e computador, sessão e painéis |
 | Imagens | Pillow, NumPy e OpenCV | Leitura com orientação EXIF, filtros, segmentação e morfologia |
-| Visão computacional | scikit-image, PyWavelets e scikit-learn | Estimativa de ruído, SSIM, descritores HOG/LBP, histogramas e classificador visual supervisionado |
+| Visão computacional | scikit-image e scikit-learn | Estimativa de ruído, SSIM, descritores HOG/LBP, histogramas e classificador visual supervisionado |
 | Persistência | Supabase Auth, PostgreSQL e Storage privado | Contas confirmadas, protocolos e fotos consentidas |
 | Publicação | GitHub e Streamlit Community Cloud | Código versionado e implantação da aplicação pública |
 
