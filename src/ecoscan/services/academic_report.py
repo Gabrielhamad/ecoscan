@@ -94,6 +94,8 @@ def build_academic_report(config: AppConfig) -> str:
     lines = [
         "# EcoScan: Guia Inteligente de Descarte de Resíduos",
         "",
+        "**Autoria acadêmica:** inserir na versão final os nomes completos e RAs reais dos integrantes, conforme a capa da APS. Não usar o login do GitHub como autor.",
+        "",
         f"Relatório técnico gerado em {generated_at}.",
         "",
         "## 1. Problema",
@@ -164,10 +166,12 @@ def build_academic_report(config: AppConfig) -> str:
         "Esses números descrevem a release atual, mas não autorizam reconhecimento automático. "
         "O próximo gate usa um conjunto novo e congelado, com métricas por classe.",
         "",
-        "## 11. Tratamento de incerteza",
+        "## 11. Confirmação do material e orientação de descarte",
         "",
-        "O sistema usa limiar de probabilidade para evitar forçar respostas. Quando o score é baixo, a interface informa que não foi possível "
-        "identificar o resíduo com segurança e sugere melhorar iluminação, fundo e enquadramento.",
+        "A análise apresenta uma categoria visual sugerida, sem expor pontuações de classificação ao usuário. "
+        "O usuário seleciona explicitamente o material antes de visualizar a orientação completa, "
+        "com a cor da lixeira para metal, plástico, vidro e papel, ou ponto especial para pilhas e eletrônicos. "
+        "A confirmação humana distingue identificação visual de composição efetiva do resíduo.",
         "",
         "## 12. Tratamento de erros",
         "",
