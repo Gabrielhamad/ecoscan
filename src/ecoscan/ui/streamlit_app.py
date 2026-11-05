@@ -1,52 +1,34 @@
 from __future__ import annotations
 
 import base64
-import hashlib
 import html
-import json
 import logging
 import os
-import tempfile
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from ecoscan.app.processing_options import ProcessingPipelineOptions
 from ecoscan.config import load_config
-from ecoscan.disposal.collection_points import (
-    CollectionPoint,
-    build_collection_point_directions_url,
-    build_collection_point_map_url,
-    filter_collection_points,
-    rank_collection_points,
-)
+from ecoscan.disposal.collection_points import CollectionPoint
 from ecoscan.disposal.guidance import DisposalGuidance
 from ecoscan.disposal.impact import (
     EnvironmentalImpact,
     get_environmental_impact,
 )
-from ecoscan.disposal.targets import (
-    DisposalTarget,
-    build_map_search_url,
-    get_disposal_target,
-)
+from ecoscan.disposal.targets import DisposalTarget, get_disposal_target
 from ecoscan.services.accounts import (
     UserProfile,
     points_ledger_path_from_config,
     read_point_transactions,
-    summarize_points_by_user,
     total_points_for_user,
 )
 from ecoscan.services.campaigns import (
     Campaign,
-    Mission,
     campaign_path_from_config,
-    evaluate_mission_submission,
     load_campaign,
 )
-from ecoscan.services.photo_requirements import PhotoRequirement
 from ecoscan.services.recognition_safety import (
-    RecognitionSafetyDecision,
     build_recognition_safety_decision,
     capture_photo_tips,
 )
@@ -138,11 +120,6 @@ from ecoscan.ui.disposal_views import (
     _render_public_next_action as _render_public_next_action,
 )
 from ecoscan.utils.logging_config import configure_logging
-
-if TYPE_CHECKING:
-    from ecoscan.services.public_flow import PublicNextAction
-    from ecoscan.services.recognition_improvement import RecognitionImprovementPlan
-
 
 LOGGER = logging.getLogger(__name__)
 
