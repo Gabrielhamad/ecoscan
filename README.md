@@ -8,9 +8,15 @@ Aplicação de educação ambiental que analisa uma foto, sugere o material e or
 
 **Aplicação:** https://ecoscan-gabrielhamad.streamlit.app
 
+**Autoria acadêmica:** identificada pelos nomes completos dos integrantes na capa
+e nos elementos pré-textuais da APS. O identificador da conta GitHub é apenas o
+endereço técnico do repositório; não substitui nomes de autores nem deve ser
+tratado como referência autoral de conceitos científicos. Consulte
+[Registro de autoria e contribuições](docs/autoria_aps.md).
+
 ## Estado da entrega
 
-O fluxo web, a autenticação, o processamento de imagens e o reconhecedor ONNX estão implementados e cobertos por testes automatizados. O reconhecimento permanece **assistido**: a hipótese exibida exige confirmação humana antes de orientar descarte ou pontuar uma missão.
+O fluxo web, a autenticação, o processamento de imagens e o reconhecedor ONNX estão implementados e cobertos por testes automatizados. A interface exibe o material sugerido e a cor do coletor padronizada; a pessoa confirma a classe para obter instruções completas. Percentuais da classificação permanecem restritos à avaliação técnica.
 
 | Área | Estado | Observação |
 | --- | --- | --- |
@@ -18,7 +24,7 @@ O fluxo web, a autenticação, o processamento de imagens e o reconhecedor ONNX 
 | Gestão | Pronta para piloto controlado | Revisões, campanhas, protocolos e indicadores |
 | Reconhecimento | Assistido | Uma única release ONNX; confirmação obrigatória |
 | Persistência | Condicional | Requer Supabase e migrações configuradas |
-| Operação pública | Em validação | Falta aceite real em celular, contas e banco de produção |
+| Operação pública | Piloto validado | Jornada pública e contas verificadas em 04/11; continuidade operacional ainda em validação |
 
 Os bloqueios para entrega estão em [Avaliação técnica](docs/avaliacao_tecnica.md) e no [Roadmap de entrega](docs/roadmap_entrega.md).
 
@@ -100,6 +106,7 @@ docs/               documentação atual da entrega
 ## Documentação
 
 - [Índice da documentação](docs/README.md)
+- [Autoria da APS](docs/autoria_aps.md)
 - [Arquitetura atual](docs/arquitetura_atual.md)
 - [Modelo de reconhecimento](docs/modelo_reconhecimento.md)
 - [Operação da gestão](docs/operacao_secretaria.md)

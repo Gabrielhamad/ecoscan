@@ -6,7 +6,7 @@ from PIL import Image
 
 from ecoscan.classification.prediction import ClassificationPrediction
 from ecoscan.config import PROJECT_ROOT
-from ecoscan.live_camera.analyzer import LiveCameraAnalyzer
+from ecoscan.live_camera.analyzer import LiveCameraAnalyzer, _suggested_target_payload
 from ecoscan.live_camera.server import LIVE_CAMERA_HTML
 from ecoscan.live_camera.tracking import CentroidTracker
 from ecoscan.segmentation.elements import VisualElement
@@ -47,6 +47,11 @@ class LiveCameraHtmlTests(unittest.TestCase):
         self.assertIn("backCameraPattern", LIVE_CAMERA_HTML)
         self.assertIn("câmera ativa; traseira não confirmada", LIVE_CAMERA_HTML)
         self.assertIn("Iniciar traseira", LIVE_CAMERA_HTML)
+        self.assertNotIn('id="scoreRing"', LIVE_CAMERA_HTML)
+        self.assertNotIn('id="probabilities"', LIVE_CAMERA_HTML)
+        self.assertNotIn('id="score"', LIVE_CAMERA_HTML)
+        self.assertNotIn("renderProbabilities(", LIVE_CAMERA_HTML)
+        self.assertIn("confira o material", LIVE_CAMERA_HTML)
 
 
 class FakeBundle:
@@ -54,6 +59,16 @@ class FakeBundle:
 
 
 class LiveCameraAnalyzerTests(unittest.TestCase):
+    def test_suggested_color_is_not_a_confirmed_disposal_instruction(self) -> None:
+        from ecoscan.disposal.targets import load_disposal_targets
+        targets = load_disposal_targets(PROJECT_ROOT / "config" / "disposal_targets.json")
+        result = _suggested_target_payload("metal", targets)
+        self.assertEqual(result["destination_title"], "Lixeira amarela")
+        self.assertNotIn("preparation_steps", result)
+        self.assertNotIn("map_url", result)
+        self.assertIsNone(_suggested_target_payload("unknown", targets))
+
+
     def test_analyzer_returns_structured_error_for_empty_frame(self) -> None:
         live_analyzer = LiveCameraAnalyzer(
             _fake_config(),
@@ -122,7 +137,10 @@ class LiveCameraAnalyzerTests(unittest.TestCase):
 
         self.assertTrue(payload["ok"])
         self.assertEqual(payload["predicted_class"], "metal")
-        self.assertEqual(payload["probabilities"]["metal"], 0.91)
+        self.assertNotIn("probabilities", payload)
+        self.assertNotIn("probability", payload)
+        self.assertNotIn("score", payload["detections"][0])
+        self.assertEqual(payload["suggested_target"]["destination_title"], "Lixeira amarela")
         self.assertEqual(payload["disposal_target"]["destination_title"], "Lixeira amarela")
         self.assertEqual(payload["environmental_impact"]["risk_label"], "Desperdício de material reciclável")
         self.assertEqual(payload["detections"][0]["track_id"], 1)

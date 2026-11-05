@@ -29,6 +29,23 @@ class DisposalTargetTests(unittest.TestCase):
         self.assertTrue(battery.asset_path.endswith(".png"))
         self.assertGreaterEqual(len(battery.preparation_steps), 3)
 
+    def test_brazil_standard_bin_colors_are_mapped_correctly(self) -> None:
+        targets = load_disposal_targets(PROJECT_ROOT / "config" / "disposal_targets.json")
+        expected = {
+            "metal": ("Amarela", "Lixeira amarela"),
+            "plastic": ("Vermelha", "Lixeira vermelha"),
+            "glass": ("Verde", "Lixeira verde"),
+            "paper_cardboard": ("Azul", "Lixeira azul"),
+        }
+        for class_id, (color, title) in expected.items():
+            with self.subTest(class_id=class_id):
+                self.assertEqual(color, targets[class_id].bin_color_name)
+                self.assertEqual(title, targets[class_id].destination_title)
+        for class_id in ("battery", "electronic"):
+            with self.subTest(class_id=class_id):
+                self.assertTrue(targets[class_id].destination_title.startswith("Ponto"))
+                self.assertNotIn("Lixeira", targets[class_id].destination_title)
+
     def test_map_search_url_encodes_query_and_location(self) -> None:
         url = build_map_search_url("ponto de coleta pilhas baterias", "São Paulo SP")
 

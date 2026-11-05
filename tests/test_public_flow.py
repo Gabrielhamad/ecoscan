@@ -3,72 +3,87 @@ from __future__ import annotations
 import unittest
 from types import SimpleNamespace
 
-from ecoscan.disposal.targets import DisposalTarget
+from ecoscan.config import PROJECT_ROOT
+from ecoscan.disposal.targets import load_disposal_targets
 from ecoscan.services.public_flow import build_public_next_action
 from ecoscan.services.recognition_safety import RecognitionSafetyDecision
-
-
-class PublicFlowTests(unittest.TestCase):
-    def test_builds_collection_action_when_guidance_is_safe(self) -> None:
-        result = SimpleNamespace(
-            guidance=SimpleNamespace(display_name="Lata de alumínio"),
-            predicted_class="metal",
-            top_class="metal",
-            probability=0.91,
-        )
-        target = DisposalTarget(
-            class_id="metal",
-            destination_title="Coleta seletiva - metal",
-            destination_type="Lixeira amarela ou ecoponto",
-            bin_color_name="amarela",
-            bin_color_hex="#d79f35",
-            asset_path="assets/disposal_targets/metal.png",
-            search_query="ecoponto coleta metal",
-            preparation_steps=("Esvazie a lata.", "Amasse se possível.", "Leve limpa e seca."),
-            attention_note="Não descarte com líquido dentro.",
-        )
-        decision = _decision(allow=True)
-
-        action = build_public_next_action(result, target, decision)
-
-        self.assertTrue(action.can_search_collection)
-        self.assertEqual("Coleta seletiva - metal", action.destination_title)
-        self.assertEqual("Lata de alumínio", action.material_label)
-        self.assertEqual("Pontuação do modelo: 91/100", action.confidence_label)
-
-    def test_blocks_collection_action_when_recognition_is_uncertain(self) -> None:
-        result = SimpleNamespace(
-            guidance=None,
-            predicted_class=None,
-            top_class="glass",
-            probability=0.39,
-        )
-        decision = _decision(allow=False, tone="warn", status="uncertain")
-
-        action = build_public_next_action(result, None, decision)
-
-        self.assertFalse(action.can_search_collection)
-        self.assertEqual("Destino não confirmado", action.destination_title)
-        self.assertIn("outra foto", action.destination_type)
-        self.assertEqual("Pontuação do modelo: 39/100", action.confidence_label)
-
-    def test_invalid_score_does_not_break_public_result(self) -> None:
-        for value in (None, float("nan"), float("inf"), "invalid", True, -0.1, 1.1):
-            with self.subTest(value=value):
-                action = build_public_next_action(SimpleNamespace(probability=value), None, _decision(allow=False))
-                self.assertEqual("pontuação indisponível", action.confidence_label)
 
 
 def _decision(*, allow: bool, tone: str = "ok", status: str = "identified") -> RecognitionSafetyDecision:
     return RecognitionSafetyDecision(
         status=status,
         tone=tone,
-        title="Identificado",
+        title="Material sugerido",
         message="Mensagem de teste.",
         primary_action="Ação recomendada.",
         allow_disposal_guidance=allow,
         encourage_feedback=not allow,
     )
+
+
+class PublicFlowTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.targets = load_disposal_targets(PROJECT_ROOT / "config" / "disposal_targets.json")
+
+    def test_confirmed_material_has_correct_bin_without_model_percentage(self) -> None:
+        result = SimpleNamespace(
+            guidance=SimpleNamespace(display_name="Metal"), predicted_class="metal",
+            top_class="metal", probability=0.91,
+        )
+        action = build_public_next_action(result, self.targets["metal"], _decision(allow=True))
+        self.assertTrue(action.can_search_collection)
+        self.assertEqual("Lixeira amarela", action.destination_title)
+        self.assertEqual("Metal", action.material_label)
+        self.assertFalse(hasattr(action, "confidence_label"))
+
+    def test_unconfirmed_material_previews_destination_without_authorizing_disposal(self) -> None:
+        result = SimpleNamespace(
+            guidance=None, predicted_class=None, top_class="glass", probability=0.39,
+        )
+        action = build_public_next_action(
+            result, self.targets["glass"],
+            _decision(allow=False, tone="warn", status="needs_confirmation"),
+            suggested_material_label="Vidro",
+        )
+        self.assertFalse(action.can_search_collection)
+        self.assertEqual("Lixeira verde", action.destination_title)
+        self.assertEqual("Vidro", action.material_label)
+        self.assertEqual((), action.preparation_steps)
+        self.assertNotIn("39", str(action))
+        self.assertFalse(hasattr(action, "confidence_label"))
+
+    def test_unknown_or_bad_photo_has_no_automatic_destination(self) -> None:
+        result = SimpleNamespace(guidance=None, top_class="metal", probability=0.99)
+        for status in ("retake", "outside_scope", "uncertain", "needs_training"):
+            with self.subTest(status=status):
+                action = build_public_next_action(
+                    result, self.targets["metal"],
+                    _decision(allow=False, tone="warn", status=status),
+                )
+                self.assertFalse(action.can_search_collection)
+                self.assertEqual("Selecione o material", action.destination_title)
+
+    def test_never_exposes_invalid_or_extreme_scores(self) -> None:
+        values = (None, 0.0, 0.25, 0.95, 1.0, float("nan"), "invalid")
+        for value in values:
+            with self.subTest(value=value):
+                action = build_public_next_action(
+                    SimpleNamespace(probability=value), None, _decision(allow=False),
+                )
+                self.assertNotIn("pontuação", str(action).lower())
+                self.assertNotIn("confiança", str(action).lower())
+                self.assertNotIn("%", str(action))
+
+    def test_special_materials_require_collection_points_not_recycling_bin(self) -> None:
+        for class_id in ("battery", "electronic"):
+            with self.subTest(class_id=class_id):
+                action = build_public_next_action(
+                    SimpleNamespace(top_class=class_id),
+                    self.targets[class_id],
+                    _decision(allow=False, tone="warn", status="needs_confirmation"),
+                )
+                self.assertIn("Ponto", action.destination_title)
+                self.assertFalse(action.can_search_collection)
 
 
 if __name__ == "__main__":

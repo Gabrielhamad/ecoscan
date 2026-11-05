@@ -113,8 +113,6 @@ class LiveCameraAnalyzer:
             "top_class": result.top_class,
             "predicted_class": result.predicted_class,
             "accepted": result.accepted,
-            "probability": result.probability,
-            "probabilities": result.probabilities,
             "message": result.message,
             "reliability": _reliability_payload(getattr(result, "reliability", None)),
             "guidance": _guidance_payload(result.guidance),
@@ -122,6 +120,9 @@ class LiveCameraAnalyzer:
                 result.predicted_class,
                 accepted=result.accepted,
                 targets_by_class=self.disposal_targets,
+            ),
+            "suggested_target": _suggested_target_payload(
+                result.top_class, self.disposal_targets,
             ),
             "environmental_impact": _impact_payload(
                 result.predicted_class,
@@ -142,7 +143,6 @@ class LiveCameraAnalyzer:
                     track,
                     class_id=result.predicted_class,
                     top_class=result.top_class,
-                    probability=result.probability,
                     accepted=result.accepted,
                     guidance=result.guidance,
                 )
@@ -244,12 +244,27 @@ def _target_payload(
     }
 
 
+
+def _suggested_target_payload(
+    class_id: str | None,
+    targets_by_class: dict[str, DisposalTarget],
+) -> dict[str, str] | None:
+    """Public preview of the category destination, without action links or scores."""
+    target = targets_by_class.get(class_id) if class_id else None
+    if target is None:
+        return None
+    return {
+        "destination_title": target.destination_title,
+        "bin_color_name": target.bin_color_name,
+        "bin_color_hex": target.bin_color_hex,
+    }
+
+
 def _detection_payload(
     track: TrackedDetection,
     *,
     class_id: str | None,
     top_class: str | None,
-    probability: float | None,
     accepted: bool,
     guidance: DisposalGuidance | None,
 ) -> dict[str, Any]:
@@ -257,6 +272,5 @@ def _detection_payload(
     payload["class_id"] = class_id
     payload["top_class"] = top_class
     payload["label"] = guidance.display_name if accepted and guidance else "incerto"
-    payload["score"] = probability
     payload["accepted"] = accepted
     return payload
