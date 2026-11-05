@@ -20,7 +20,7 @@ O estado atual é adequado para **piloto controlado**. Ainda não é adequado pa
 | Ponto | Impacto | Ajuste recomendado |
 | --- | --- | --- |
 | Encoder no Git | O repositório contém cerca de 168 MB só no encoder e aumenta clone/build | Publicar o artefato em storage versionado com checksum e cache; manter no Git apenas metadados e licença após validar o download |
-| Interface monolítica | `ui/streamlit_app.py` ainda possui cerca de 3 mil linhas | Separar páginas públicas, conta, gestão e sistema em módulos, mantendo `main()` como orquestrador |
+| Coordenação da interface | A refatoração #7 reduziu `ui/streamlit_app.py` de aproximadamente 2.875 para 906 linhas e extraiu oito módulos especializados; a função `main()` ainda coordena diferentes páginas | Em outra etapa, separar controladores de navegação e sessão mediante testes integrados, preservando APIs e estados do Streamlit |
 | Observabilidade | Logs locais não sobrevivem necessariamente ao Streamlit Cloud | Registrar latência, erro, revisão e versão sem foto nem dado pessoal em backend persistente |
 | Dependências sem lock | Faixas amplas podem resolver versões diferentes em novos builds | Gerar lock/constraints para deploy e automatizar atualização controlada |
 

@@ -24,7 +24,7 @@ flowchart TD
 
 | Camada | Responsabilidade | Não deve fazer |
 | --- | --- | --- |
-| `ui/` | Montar páginas, estado de sessão e interação | Treinar ou escolher modelos por extensão |
+| `ui/` | Coordenar navegação, sessão e apresentação em módulos especializados (veja [Arquitetura modular da interface](arquitetura_interface.md)) | Treinar ou escolher modelos por extensão |
 | `services/` | Orquestrar casos de uso, persistência e políticas | Implementar filtros ou redes neurais |
 | `app/pipeline.py` | Executar preparação, filtro, segmentação e evidências | Definir autorização ou descarte |
 | `classification/` | Carregar a release atual e produzir probabilidades | Confirmar material ou destino |

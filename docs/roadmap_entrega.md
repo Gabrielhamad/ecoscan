@@ -52,8 +52,9 @@ objeto e sessão continua pendente e não pode ser substituído por esse benchma
 
 ## 5. Manutenção estrutural
 
-- dividir `ui/streamlit_app.py` por página;
-- adicionar testes de contrato entre páginas e serviços;
+- **concluído em #7:** extrair oito módulos de interface para processamento, descarte, campanhas, relatos, administração, sistema, utilitários e operações de upload; o coordenador passou a 906 linhas;
+- **concluído em #7:** acrescentar testes de reexportação, dependências acíclicas e limite de tamanho do coordenador;
+- **próxima etapa:** extrair controladores de navegação e sessão tipados, com validação end-to-end para novos estados de página;
 - decidir e publicar a licença do código;
 - criar tag, changelog e notas da primeira release candidata.
 
