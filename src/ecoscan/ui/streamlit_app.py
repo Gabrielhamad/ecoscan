@@ -378,63 +378,6 @@ def _render_overview_strip(st: Any, config: Any) -> None:
     st.markdown(f'<section class="ecoscan-status-strip">{strip}</section>', unsafe_allow_html=True)
 
 
-def _confidence_tone(class_id: str, predicted_class: str | None, accepted: bool) -> str:
-    if accepted and class_id == predicted_class:
-        return "ok"
-    return "warn"
-
-
-def _probability_bar(
-    class_id: str,
-    probability: float,
-    *,
-    guidance_by_class: dict[str, DisposalGuidance],
-    predicted_class: str | None,
-    accepted: bool,
-) -> str:
-    guidance = guidance_by_class.get(class_id)
-    label = guidance.display_name if guidance else class_id
-    width = max(0.0, min(100.0, probability * 100.0))
-    tone = _confidence_tone(class_id, predicted_class, accepted)
-    fill_class = "ecoscan-prob-fill" if tone == "ok" else "ecoscan-prob-fill ecoscan-prob-fill-warn"
-    return (
-        '<div class="ecoscan-prob-row">'
-        f'<div class="ecoscan-prob-label">{html.escape(label)}</div>'
-        '<div class="ecoscan-prob-track">'
-        f'<div class="{fill_class}" style="width: {width:.1f}%"></div>'
-        "</div>"
-        f'<div class="ecoscan-prob-value">{width:.0f}%</div>'
-        "</div>"
-    )
-
-
-def _render_probability_bars(st: Any, result: Any, guidance_by_class: dict[str, DisposalGuidance]) -> None:
-    probabilities = sorted(
-        result.probabilities.items(),
-        key=lambda item: item[1],
-        reverse=True,
-    )[:5]
-    if not probabilities:
-        return
-    rows = "".join(
-        _probability_bar(
-            class_id,
-            float(probability),
-            guidance_by_class=guidance_by_class,
-            predicted_class=result.predicted_class,
-            accepted=result.accepted,
-        )
-        for class_id, probability in probabilities
-    )
-    st.markdown(
-        '<section class="ecoscan-confidence-panel">'
-        '<div class="ecoscan-confidence-title">Leitura de confiança por classe</div>'
-        f"{rows}"
-        "</section>",
-        unsafe_allow_html=True,
-    )
-
-
 def _render_live_camera_link(st: Any) -> None:
     configured_live_url = os.environ.get("ECOSCAN_LIVE_URL", "").strip()
     live_url = configured_live_url or "http://localhost:8765/"
@@ -703,10 +646,7 @@ def _render_public_next_action(st: Any, action: PublicNextAction) -> None:
                         <span>Material</span>
                         <strong>{html.escape(action.material_label)}</strong>
                     </div>
-                    <div class="ecoscan-public-action-tile">
-                        <span>Confiança</span>
-                        <strong>{html.escape(action.confidence_label)}</strong>
-                    </div>
+
                     <div class="ecoscan-public-action-tile">
                         <span>Destino</span>
                         <strong>{html.escape(action.destination_title)}</strong>
@@ -2646,12 +2586,21 @@ def main(*, page_configured=False) -> None:
                     result,
                     action_confidence_threshold=max(0.72, float(config.confidence_threshold)),
                 )
-                target = _target_for_guidance(result.guidance, targets_by_class)
-                impact = _impact_for_guidance(result.guidance, impacts_by_class)
+                # The suggestion can preview a category's bin, but only an
+                # explicitly selected material unlocks complete instructions.
+                suggested_guidance = guidance_by_class.get(result.top_class)
+                suggested_target = targets_by_class.get(result.top_class)
                 if not active_profile.is_admin:
                     from ecoscan.services.public_flow import build_public_next_action
 
-                    public_action = build_public_next_action(result, target, safety_decision)
+                    public_action = build_public_next_action(
+                        result,
+                        suggested_target,
+                        safety_decision,
+                        suggested_material_label=(
+                            suggested_guidance.display_name if suggested_guidance else None
+                        ),
+                    )
                     _render_public_next_action(st, public_action)
 
                 # Keep the executed preprocessing before the recognition card so the
@@ -2666,28 +2615,23 @@ def main(*, page_configured=False) -> None:
                     st.markdown('<div class="ecoscan-result">', unsafe_allow_html=True)
                     _render_recognition_decision(st, safety_decision)
                     if result.model_type == "semantic_onnx_assisted":
-                        suggested = guidance_by_class.get(result.top_class)
-                        st.subheader("Hipótese: " + (suggested.display_name if suggested else "material não identificado"))
-                        st.metric("Pontuação relativa", _format_percent(result.probability))
-                        st.write("Confira o material em Descarte antes de seguir uma orientação. Se a hipótese estiver errada, envie uma correção à secretaria.")
-                        st.caption("Reconhecimento assistido em avaliação. A pontuação não é uma garantia de acerto.")
-                    elif result.accepted and result.guidance and safety_decision.allow_disposal_guidance:
-                        st.subheader("Sugestão: " + result.guidance.display_name)
-                        st.metric("Pontuação do modelo", _format_percent(result.probability))
-                        st.caption("A pontuação não é uma garantia de acerto. Confirme o material e o conteúdo antes de descartar.")
-                        st.write(f"**Categoria ambiental:** {result.guidance.environmental_category}")
-                        st.write(result.guidance.guidance)
-                        if getattr(result, "reliability", None) and not result.reliability.is_sufficient:
-                            st.warning(result.reliability.message)
-                        st.caption(result.guidance.educational_note)
-                    else:
-                        st.subheader("Não identificado com segurança")
-                        st.metric("Maior pontuação", _format_percent(result.probability))
-                        if not getattr(result, "processing_compatible", True):
-                            st.info(result.message)
+                        if suggested_guidance is not None and safety_decision.status == "needs_confirmation":
+                            st.subheader("Material sugerido: " + suggested_guidance.display_name)
+                            if suggested_target is not None:
+                                st.write(
+                                    f"**Destino para {suggested_guidance.display_name}: "
+                                    f"{suggested_target.destination_title}.**"
+                                )
+                            st.caption("Confira a composição e o conteúdo da embalagem antes de escolher a orientação.")
                         else:
-                            st.write("Tente outra foto com melhor iluminação, fundo simples e objeto centralizado.")
-                        st.caption(f"Classe mais próxima: {result.top_class}")
+                            st.subheader("Selecione o material para consultar o descarte")
+                            st.write("Você pode identificar o material manualmente na lista abaixo.")
+                    elif result.accepted and result.guidance and safety_decision.allow_disposal_guidance:
+                        st.subheader("Material sugerido: " + result.guidance.display_name)
+                        st.write(f"**Categoria ambiental:** {result.guidance.environmental_category}")
+                    else:
+                        st.subheader("Escolha o material da foto")
+                        st.write("Se necessário, tire outra foto em boa iluminação e com o objeto centralizado.")
                     st.markdown('<div class="ecoscan-soft-divider"></div>', unsafe_allow_html=True)
                     if active_profile.is_admin:
                         st.caption(f"Filtro aplicado: {result.pipeline.filter_result.name}")
@@ -2700,12 +2644,6 @@ def main(*, page_configured=False) -> None:
                         with st.expander("Como a imagem foi tratada"):
                             _render_photo_processing_summary(st, result.pipeline)
                     st.markdown("</div>", unsafe_allow_html=True)
-                    if active_profile.is_admin:
-                        _render_probability_bars(st, result, guidance_by_class)
-                    else:
-                        with st.expander("Ver confiança por classe"):
-                            _render_probability_bars(st, result, guidance_by_class)
-
                     if active_profile.is_admin and st.button("Exportar evidência técnica"):
                         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                         output_dir = config.directories["reports"] / "ui_exports" / timestamp
@@ -2727,26 +2665,37 @@ def main(*, page_configured=False) -> None:
                     )
                 _render_recognition_feedback_form(st, config, result, active_profile, guidance_by_class)
 
-                if safety_decision.allow_disposal_guidance and result.guidance:
-                    if active_profile.is_admin:
+                st.markdown(
+                    '<div class="ecoscan-section-title">Confirme o material e veja o descarte</div>',
+                    unsafe_allow_html=True,
+                )
+                confirmed_class = st.selectbox(
+                    "Qual material você identificou na foto?",
+                    [None, *config.classes],
+                    format_func=lambda class_id: (
+                        "Selecione o material (confirmação manual)"
+                        if class_id is None else guidance_by_class[class_id].display_name
+                    ),
+                    key=f"confirmed_disposal_{signature}",
+                    help="Escolha a categoria do material. A foto não determina composição ou contaminação.",
+                )
+                if confirmed_class is not None:
+                    confirmed_guidance = guidance_by_class.get(confirmed_class)
+                    confirmed_target = targets_by_class.get(confirmed_class)
+                    confirmed_impact = impacts_by_class.get(confirmed_class)
+                    if confirmed_guidance is not None and confirmed_target is not None:
+                        st.success(
+                            f"{confirmed_guidance.display_name}: "
+                            f"{confirmed_target.destination_title}."
+                        )
                         _render_disposal_action_panel(
                             st,
                             config,
-                            result.guidance,
-                            target,
-                            impact,
+                            confirmed_guidance,
+                            confirmed_target,
+                            confirmed_impact,
                             collection_points,
                         )
-                    else:
-                        with st.expander("Ver preparo, impacto e pontos de coleta"):
-                            _render_disposal_action_panel(
-                                st,
-                                config,
-                                result.guidance,
-                                target,
-                                impact,
-                                collection_points,
-                            )
 
     if tabs[navigation.campaign].open:
         with tabs[navigation.campaign]:
@@ -2915,9 +2864,6 @@ def main(*, page_configured=False) -> None:
             _render_delivery_pack(st, config)
             st.markdown('<div class="ecoscan-section-title">Ambiente local</div>', unsafe_allow_html=True)
             _render_dependencies(st)
-            if result is not None:
-                st.markdown('<div class="ecoscan-section-title">Última análise</div>', unsafe_allow_html=True)
-                st.json(result.probabilities)
 
 
 if __name__ == "__main__":
