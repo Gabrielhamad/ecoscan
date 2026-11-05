@@ -37,6 +37,7 @@ Esta pasta descreve o produto presente no `main`. Resultados e métodos substitu
 | [Anotações de objetos](anotacoes_objetos.md) | Caixas revisadas e exportação COCO |
 | [Treino com contribuições](treino_contribuicoes.md) | Fila privada, gates e publicação |
 | [Roteiro de testes](roteiro_testes_manuais.md) | Aceite manual em celular e computador |
+| [Avaliação com fotos reais](avaliacao_campo.md) | Protocolo de coleta, auditoria de grupos e métricas por classe |
 
 ## Critério de leitura
 
