@@ -108,6 +108,7 @@ docs/               documentação atual da entrega
 - [Índice da documentação](docs/README.md)
 - [Autoria da APS](docs/autoria_aps.md)
 - [Arquitetura atual](docs/arquitetura_atual.md)
+- [Arquitetura modular da interface](docs/arquitetura_interface.md)
 - [Modelo de reconhecimento](docs/modelo_reconhecimento.md)
 - [Operação da gestão](docs/operacao_secretaria.md)
 - [Roadmap de entrega](docs/roadmap_entrega.md)

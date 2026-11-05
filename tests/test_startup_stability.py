@@ -70,11 +70,11 @@ _render_admin_tab(st, load_config(), UserProfile("supabase_admin", "Admin", "adm
         stack.enter_context(patch("ecoscan.ui.learning.render_review"))
         for name in ("_render_admin_campaign_operations", "_render_admin_recognition_quality",
                      "_render_admin_field_tests"):
-            stack.enter_context(patch("ecoscan.ui.streamlit_app." + name))
+            stack.enter_context(patch("ecoscan.ui.admin_views." + name))
         stack.enter_context(patch("ecoscan.ui.community.render_campaign_editor"))
         stack.enter_context(patch("ecoscan.ui.community.render_reports"))
-        stack.enter_context(patch("ecoscan.ui.streamlit_app.read_point_transactions", return_value=[]))
-        stack.enter_context(patch("ecoscan.ui.streamlit_app.summarize_points_by_user", return_value=[]))
+        stack.enter_context(patch("ecoscan.ui.admin_views.read_point_transactions", return_value=[]))
+        stack.enter_context(patch("ecoscan.ui.admin_views.summarize_points_by_user", return_value=[]))
         directory = stack.enter_context(patch("ecoscan.services.participant_directory.registered_users", return_value=[]))
         app.run()
         assert not app.exception
