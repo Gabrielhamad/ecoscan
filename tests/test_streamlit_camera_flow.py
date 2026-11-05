@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import inspect
 import unittest
 
 from ecoscan.app.pipeline import ProcessingPipelineOptions
-from ecoscan.ui.streamlit_app import _input_signature, _probability_bar
+from ecoscan.ui.streamlit_app import _input_signature, main, _render_public_next_action
 
 
 class FakeUploadedFile:
@@ -34,17 +35,16 @@ class StreamlitCameraFlowTest(unittest.TestCase):
         self.assertNotEqual(default_camera, tuned_camera)
         self.assertNotEqual(default_camera, default_upload)
 
-    def test_probability_bar_renders_bounded_width(self) -> None:
-        html = _probability_bar(
-            "metal",
-            1.25,
-            guidance_by_class={},
-            predicted_class="metal",
-            accepted=True,
-        )
+    def test_recognition_page_does_not_render_prediction_percentages(self) -> None:
+        source = inspect.getsource(main)
+        self.assertNotIn('st.metric("Pontuação', source)
+        self.assertNotIn("_render_probability_bars", source)
+        self.assertNotIn("st.json(result.probabilities)", source)
 
-        self.assertIn("width: 100.0%", html)
-        self.assertIn("metal", html)
+    def test_public_action_component_contains_no_confidence_tile(self) -> None:
+        source = inspect.getsource(_render_public_next_action)
+        self.assertNotIn("confidence_label", source)
+        self.assertNotIn("<span>Confiança</span>", source)
 
 
 if __name__ == "__main__":
