@@ -101,6 +101,19 @@ class PreservedProcessingTests(unittest.TestCase):
             self.assertEqual(result.segmentation_result.mask[32, 70], 0)
             np.testing.assert_array_equal(result.recognition_image, source)
 
+    def test_morphology_changes_only_diagnostic_mask_not_rgb_model_input(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = reference_scene()
+            path = Path(tmp) / "metal.png"
+            Image.fromarray(source).save(path)
+            config = replace(load_config(), image_size=(160, 160))
+            result = run_processing_pipeline(path, config, ProcessingPipelineOptions(
+                filter_name="none", segmentation_name="otsu",
+                morphology_name="open_close", morphology_parameters={"kernel_size": 3}))
+            self.assertEqual(result.morphology_result.metadata["operation"], "open_close")
+            self.assertFalse(result.metadata["recognition_preparation"]["mask_applied"])
+            np.testing.assert_array_equal(result.recognition_image, source)
+
     def test_missing_foreground_preserves_photo_without_fake_detection(self):
         result = segment_image_adaptive(np.full((80, 80, 3), 120, dtype=np.uint8))
         self.assertEqual(result.decision["status"], "unresolved")
