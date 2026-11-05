@@ -43,9 +43,9 @@ def build_recognition_safety_decision(
 
     if not getattr(result, "processing_compatible", True):
         return RecognitionSafetyDecision(
-            status="needs_training", tone="warn", title="Confirme o material",
-            message="A preparação de imagem foi atualizada; o modelo ainda precisa ser treinado e validado com ela.",
-            primary_action="Consulte Descarte para escolher o material ou envie uma correção para revisão.",
+            status="needs_training", tone="warn", title="Escolha o material",
+            message="Não foi possível concluir a análise desta imagem com a configuração atual.",
+            primary_action="Selecione a categoria que você reconhece para consultar o descarte.",
             allow_disposal_guidance=False, encourage_feedback=True,
         )
 
@@ -62,9 +62,9 @@ def build_recognition_safety_decision(
 
     if getattr(result, "model_type", "") == "semantic_onnx_assisted":
         return RecognitionSafetyDecision(
-            status="needs_confirmation", tone="warn", title="Confirme o material sugerido",
-            message="O novo reconhecedor está em avaliação. A hipótese não confirma o material do objeto.",
-            primary_action="Confira a hipótese, escolha o material em Descarte ou envie uma correção à secretaria.",
+            status="needs_confirmation", tone="warn", title="Material sugerido para conferência",
+            message="A análise apresenta uma categoria visual para você conferir.",
+            primary_action="Confirme o material na lista e veja a lixeira ou ponto de coleta correspondente.",
             allow_disposal_guidance=False, encourage_feedback=True,
         )
 
@@ -72,9 +72,9 @@ def build_recognition_safety_decision(
         return RecognitionSafetyDecision(
             status="uncertain",
             tone="warn",
-            title="Não identificado com segurança",
-            message="O sistema ainda não tem confiança suficiente para indicar um destino como certo.",
-            primary_action="Envie outra foto com fundo simples ou corrija a classe para melhorar o dataset.",
+            title="Selecione o material",
+            message="A foto não gerou uma sugestão utilizável para orientar o descarte.",
+            primary_action="Escolha o material na lista ou tire outra foto em boa iluminação.",
             allow_disposal_guidance=False,
             encourage_feedback=True,
         )
