@@ -4,7 +4,7 @@ import unittest
 from types import SimpleNamespace
 
 from ecoscan.config import PROJECT_ROOT
-from ecoscan.disposal.targets import DisposalTarget, load_disposal_targets
+from ecoscan.disposal.targets import load_disposal_targets
 from ecoscan.services.public_flow import build_public_next_action
 from ecoscan.services.recognition_safety import RecognitionSafetyDecision
 
