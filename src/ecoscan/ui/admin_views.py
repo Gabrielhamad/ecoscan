@@ -5,10 +5,15 @@ Role authorization is enforced by the coordinator and server-side services.
 from __future__ import annotations
 
 import html
-import os
 from typing import TYPE_CHECKING, Any
 
-from ecoscan.services.accounts import UserProfile
+from ecoscan.services.accounts import (
+    UserProfile,
+    points_ledger_path_from_config,
+    read_point_transactions,
+    summarize_points_by_user,
+)
+from ecoscan.disposal.collection_points import CollectionPoint
 from ecoscan.services.campaigns import Campaign
 from ecoscan.disposal.guidance import DisposalGuidance
 from ecoscan.ui.common_views import (
