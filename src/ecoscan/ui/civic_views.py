@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import html
-import os
 from typing import Any
 
 from ecoscan.app.processing_options import ProcessingPipelineOptions
