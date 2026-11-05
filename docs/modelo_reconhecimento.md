@@ -46,6 +46,7 @@ reauditar vazamento por cena. Os 16 hashes reservados também não possuem vetor
 e rótulos versionados. Estes números não comprovam desempenho em fotos novas.
 
 Metal, plástico e vidro são prioridades de validação. A próxima avaliação precisa separar cenas, objetos e pessoas de captura, registrar precisão, recall, F1, rejeição e confusões por classe.
+O [protocolo para fotos reais](avaliacao_campo.md) descreve o manifesto com IDs de objeto/sessão, controle de hashes e avaliação reproduzível. A auditoria de metadados não certifica por si só a independência das fotos.
 
 O recorte TACO preservado no repositório contém 23 crops, todos de treino:
 9 plásticos, 7 metais e 7 papéis, em 20 grupos. Ele não contém vidro e não pode

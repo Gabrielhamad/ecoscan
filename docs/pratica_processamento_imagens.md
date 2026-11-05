@@ -63,9 +63,10 @@ confiança do modelo. HSV e GrabCut preservam o uso de cor; não se converte tod
 o fluxo para cinza indiscriminadamente.
 
 O redimensionamento preserva a proporção e adiciona margens; não recorta nem
-estica o objeto. O modelo antigo aguarda treinamento nessa nova preparação e
-suas hipóteses não são confirmadas automaticamente. A normalização mostrada é uma referência do pipeline:
-o classificador efetivo pode normalizar ou extrair atributos de outra forma.
+estica o objeto. A release ativa `semantic_onnx_assisted` utiliza um encoder
+CLIP exportado para ONNX e uma cabeça supervisionada. A entrada efetiva é o RGB
+preparado em 224×224, normalizado no classificador; a sugestão de classe sempre
+exige confirmação humana. A máscara de segmentação não modifica essa entrada.
 
 ## Escolha das técnicas
 
@@ -100,7 +101,7 @@ as quatro primitivas. Para comparar com o controle, selecionar explicitamente
 - Fechamento executa dilatação seguida de erosão.
 - Abertura + fechamento executa erosão, dilatação, dilatação e erosão.
 - Gradiente exibe o contorno pela diferença dilatação menos erosão; não substitui
-  a máscara usada pelo classificador.
+  a imagem RGB usada pelo classificador.
 
 Parâmetros disponíveis:
 
@@ -125,9 +126,11 @@ Nenhuma máscara degenerada é silenciosamente substituída pela anterior.
 ## Evidência do antes e depois
 
 A interface usa os arrays produzidos pela análise. Não repete as transformações
-para produzir uma imagem ilustrativa. Cada primitiva recebe a máscara de saída
-da anterior; a última máscara participa da imagem entregue a analysis_service._predict.
-Os testes verificam essa identidade e o conteúdo exportado pixel a pixel.
+para produzir uma imagem ilustrativa. Cada primitiva morfológica recebe a máscara
+de saída da anterior; a última máscara serve à prévia segmentada, aos contornos
+e às medições. O classificador recebe o RGB filtrado e redimensionado, **sem
+aplicação da máscara**. Os testes verificam a preservação dos pixels do objeto
+e a correspondência das evidências exportadas com as operações executadas.
 
 - Antes/depois de redimensionamento, filtro, segmentação, cada primitiva e aplicação da máscara.
 - Diferença absoluta por pixel (máximo entre canais RGB), sem amplificação artificial.
@@ -137,10 +140,10 @@ Os testes verificam essa identidade e o conteúdo exportado pixel a pixel.
 - ZIP em memória por análise: PNGs sem perdas, prancha e manifesto com hashes de conteúdo.
   O manifesto do ZIP não inclui caminhos do servidor nem identidade da conta.
 
-Uma foto do conjunto local, escolhida pela primeira entrada ordenada de metal,
-foi processada com os padrões ativos. Exemplo e relatório:
-O relatório local gera `reports/processing_applied/foto_real/antes_depois.png`.
-Não foi escolhida por acerto do classificador; a prancha demonstra operações, não qualidade.
+A prancha de antes/depois demonstra operações, não acurácia do classificador.
+O caminho de imagem abaixo é um **exemplo de um conjunto local não versionado**;
+substitua-o por uma foto autorizada que realmente exista no seu computador.
+Os relatórios gerados na pasta `reports/` não são distribuídos pelo Git.
 
 Para reproduzir (na raiz do projeto):
 
@@ -195,7 +198,7 @@ Mais área, menos ruído aparente ou menos componentes não garantem uma máscar
 5. Mostrar o kernel e prever o efeito antes de executar dilatação/erosão.
 6. Comparar abertura/fechamento e suas etapas intermediárias.
 7. Identificar pixels alterados e componentes que foram unidos ou removidos.
-8. Exibir a imagem segmentada que efetivamente segue para reconhecimento.
+8. Comparar a prévia segmentada à entrada RGB preservada que realmente segue para reconhecimento.
 9. Separar conclusão sobre qualidade da máscara da conclusão sobre classificação.
 10. Entregar parâmetros, imagens, resultados, limitações e fontes usadas.
 
@@ -213,11 +216,11 @@ vazias/cheias, bordas, iterações, parâmetros inválidos, preservação do ori
 equivalência ao OpenCV usando o mesmo kernel e borda explícita, integração com o
 classificador, exportação PNG, troca de parâmetros e acesso ao laboratório público.
 
-A regressão do padrão ativo concluiu com **243 execuções aprovadas, zero falhas**,
-em 14,081 segundos. Evidências em reports/processing_applied_2026-09-27/tests.log
-e validation.json. O registro histórico anterior contém 232 execuções.
-Os testes sustentam o comportamento
-implementado; não substituem avaliação de segmentação e reconhecimento em campo.
+O registro histórico de 27/09/2026 relata 243 execuções sem falhas, com arquivos
+locais em `reports/` que não acompanham o Git. Para a situação **atual**,
+use os resultados da execução do GitHub Actions associada ao commit avaliado.
+Esses testes sustentam o comportamento implementado; não substituem a
+avaliação independente da segmentação e do reconhecimento em campo.
 
 ## Fontes e código
 

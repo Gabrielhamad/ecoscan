@@ -11,10 +11,11 @@ Pontos de missao e registros de testes possuem adaptador remoto com ativacao
 separada, apos a migration 002. Arquivos CSV antigos nao sao importados automaticamente.
 Campanhas e relatos possuem persistencia compartilhada pela migration 003,
 com ativacao separada; veja [campanhas e relatos](campanhas_e_relatos.md).
-Artefatos de modelos nao sao armazenados por essa integracao. Login Supabase foi
-implementado, mas provisionamento das contas e autorizacao de analistas exigem
-configuracao e aceite (ver [autenticacao](autenticacao.md) e
-[aceite do piloto](aceite_banco_piloto.md)).
+Artefatos de modelos nao sao armazenados por essa integracao. Login Supabase e autorizacao por allowlist foram implementados. O
+[aceite do piloto](aceite_banco_piloto.md) registra que cadastro, duas contas,
+isolamento, analista e migracoes 001–004 foram validados no ambiente publicado em
+04/11/2026. Novas instalacoes ainda exigem configuracao e aceite no seu proprio
+projeto Supabase (ver [autenticacao](autenticacao.md)).
 Treino na hospedagem fica desativado quando o banco esta ativo: exportar aprovadas
 e treinar localmente ate implementar persistencia dos candidatos.
 
@@ -49,8 +50,10 @@ e email explicitamente autorizado. Nunca tornar admin um visitante por parametro
    acesso direto ao banco/bucket e que um cidadao nao ve protocolos de outro.
 7. Configurar login e autorizar emails dos analistas conforme autenticacao.md.
 
-Os passos de SQL e acesso real ainda exigem validacao no projeto provisionado.
-Testes locais com doubles verificam a integracao, nao substituem esse aceite.
+No ambiente publicado do piloto, as migracoes e os fluxos principais de acesso
+foram validados em 04/11/2026. Esse aceite **nao** substitui a verificacao em
+um novo projeto provisionado nem os ensaios ainda pendentes de indisponibilidade,
+backup e restauracao. Testes locais com doubles nao comprovam estes ensaios.
 
 ## Pontos e testes: implantacao em duas fases
 

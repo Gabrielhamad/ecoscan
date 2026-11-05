@@ -126,14 +126,14 @@ def analyze_waste_image(
             processing_compatible=compatible,
             model_sha256=hashlib.sha256(selected_model_path.read_bytes()).hexdigest() if selected_model_path.is_file() else "unavailable",
         )
-    except Exception:
-        LOGGER.exception("analysis_failed image=%s", image_path)
+    except Exception as exc:
+        # Uploaded file names and exception messages may contain personal information.
+        LOGGER.error("analysis_failed error_type=%s", type(exc).__name__)
         raise
 
     elapsed_ms = round((time.perf_counter() - start) * 1000, 1)
     LOGGER.info(
-        "analysis_complete image=%s model=%s top_class=%s accepted=%s predicted=%s score=%s filter=%s segmentation=%s elapsed_ms=%s",
-        image_path,
+        "analysis_complete model=%s top_class=%s accepted=%s predicted=%s score=%s filter=%s segmentation=%s elapsed_ms=%s",
         result.model_type,
         result.top_class,
         result.accepted,
