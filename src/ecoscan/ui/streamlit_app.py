@@ -551,6 +551,10 @@ def _render_disposal_action_panel(
                         <span>Categoria</span>
                         <strong>{html.escape(guidance.environmental_category)}</strong>
                     </div>
+                    <div class="ecoscan-destination-tile">
+                        <span>{"Cor da lixeira" if target.class_id in {"plastic", "paper_cardboard", "metal", "glass"} else "Tipo de destino"}</span>
+                        <strong>{html.escape(target.bin_color_name if target.class_id in {"plastic", "paper_cardboard", "metal", "glass"} else "Ponto especial")}</strong>
+                    </div>
                 </div>
                 <p class="ecoscan-muted">{html.escape(guidance.guidance)}</p>
                 <ol class="ecoscan-step-list">{steps}</ol>
