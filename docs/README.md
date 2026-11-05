@@ -9,6 +9,7 @@ Esta pasta descreve o produto presente no `main`. Resultados e métodos substitu
 | Documento | Finalidade |
 | --- | --- |
 | [Arquitetura atual](arquitetura_atual.md) | Componentes, fronteiras e fluxo de execução |
+| [Autoria acadêmica](autoria_aps.md) | Registro correto dos integrantes e suas contribuições |
 | [Modelo de reconhecimento](modelo_reconhecimento.md) | Release ONNX, segurança, métricas e atualização |
 | [Avaliação técnica](avaliacao_tecnica.md) | Riscos, bloqueios e qualidade observada |
 | [Roadmap de entrega](roadmap_entrega.md) | Ordem de trabalho e critérios de aceite |
