@@ -10,28 +10,36 @@ release ONNX, regras de descarte ou esquema do Supabase.
 A aplicação segue uma separação pragmática de camadas:
 
 ```text
-streamlit_app.py                  # composição, navegação, sessão e políticas de acesso
+streamlit_app.py                  # composição das páginas (~100 linhas em main)
   |
-  +-- common_views.py            # textos, estados e tratamento de erros da apresentação
-  +-- interaction_helpers.py     # arquivos temporários e assinatura da entrada
-  +-- disposal_views.py          # cor de lixeira, pontos de entrega e impacto
-  +-- processing_views.py        # etapas e evidências de processamento
-  +-- campaign_views.py          # campanhas, missões e recompensas
-  +-- civic_views.py             # relatos e acompanhamento
-  +-- admin_views.py             # operações administrativas e testes de campo
-  +-- system_views.py            # auditoria, diagnóstico e relatório
+  +-- navigation_controller.py  # abas por papel, ativação sob demanda
+  +-- session_state.py          # estado tipado de análise e ingestão
+  +-- processing_configuration.py # controles e opções técnicas
+  +-- analysis_controller.py    # foto, inferência e descarte confirmado
+  +-- analysis_widgets.py       # captura, dicas e feedback
+  +-- technical_page_controllers.py # base, processamento e sistema
   |
-  +-- services/                  # identidade, autorização, análise, persistência
-  +-- app/ + image_processing/   # pipeline e operações de imagem
-  +-- classification/            # inferência ONNX e contrato do modelo
-  +-- disposal/                  # domínio e regras ambientais
-  +-- config/                    # mapeamentos e opções explícitas
+  +-- common_views.py           # textos, estados e erros
+  +-- interaction_helpers.py    # arquivos temporários/assinaturas
+  +-- disposal_views.py         # orientação de descarte
+  +-- processing_views.py       # etapas e evidências de imagem
+  +-- campaign_views.py         # campanhas e missões
+  +-- civic_views.py            # relatos e protocolos
+  +-- admin_views.py            # gestão administrativa
+  +-- system_views.py           # indicadores e auditorias
+  |
+  +-- services/                 # autorização, persistência e casos de uso
+  +-- app/ + image_processing/  # pipeline de imagens
+  +-- classification/           # modelo semântico ONNX
+  +-- disposal/                 # regras ambientais e destinos
 ```
 
 ## Regras de dependência
 
-1. O **coordenador** configura página, sessão, recursos, navegação e acesso e
-   chama os componentes específicos. Ele não deve duplicar regras de domínio.
+1. O **coordenador** apenas inicializa recursos e identidade, escolhe os
+   controladores de página por perfil e cria a navegação. A sessão de análise,
+   os parâmetros de processamento e as interações com fotos são delegados a
+   contratos próprios, sem duplicar regras de domínio.
 2. Os **componentes de apresentação** podem consultar serviços existentes,
    mas **não importam `ecoscan.ui.streamlit_app`**. Isso evita dependência
    circular e permite testar componentes isolados.
@@ -81,9 +89,31 @@ arquivo principal.
 - Novos testes de campo: criar dados e serviços próprios e renderizar
   resultados em `admin_views.py`.
 
-## Próximos limites de arquitetura
+## Estado após a segunda refatoração
 
-A função `main()` ainda coordena várias páginas dentro do mesmo fluxo de
-execução. Uma próxima etapa pode extrair controladores por página e contratos
-de sessão tipados, **desde que** sejam preservados os mesmos IDs de estado e
-os percursos de visitante, usuário e gestor, com testes de integração.
+Os controladores de navegação e de página foram extraídos sem alterar a entrada
+do Streamlit ou os nomes das abas. Os campos de análise têm acesso tipado por
+`AnalysisSession`, que preserva as chaves existentes:
+`last_analysis_result`, `last_analysis_signature`,
+`last_analysis_source`, `last_history_saved_signature` e
+`dataset_ingestion_results`. O estado de login permanece sob responsabilidade
+da camada de identidade; invalidar uma foto não apaga credenciais ou rascunhos.
+
+O controlador de navegação mantém `main_navigation_user` e
+`main_navigation_admin`. A aba da câmera permanece montada enquanto o
+usuário alterna abas. Campanhas, área administrativa e demais páginas pesadas
+são executadas apenas quando ativadas. Os testes de regressão protegem
+exatamente esses contratos.
+
+Os fluxos de domínio existentes (ONNX, preparação RGB, banco, permissões,
+cores de lixeira e confirmação humana) continuam fora do coordenador.
+O serviço de câmera ao vivo segue separado do Streamlit Cloud.
+
+## Próximas oportunidades
+
+- Avaliar se o estado de ingestão e o histórico técnico precisam de repositórios
+  específicos quando houver múltiplas instâncias do servidor.
+- Repetir o aceite manual no aplicativo publicado, em Android e iPhone, após
+  a mudança de organização da interface.
+- Evitar novas abstrações antes de existir um caso de uso concreto, mantendo
+  os módulos atuais testáveis, coesos e com dependências acíclicas.
