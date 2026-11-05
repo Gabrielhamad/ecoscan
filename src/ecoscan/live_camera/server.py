@@ -572,12 +572,7 @@ LIVE_CAMERA_HTML = """<!doctype html>
         <p>Inicie a câmera e aponte para um resíduo.</p>
       </div>
       <div id="targetPanel" class="target-panel"></div>
-      <div id="scoreRing" class="score-ring" style="--score: 0%"><span>-</span></div>
       <div class="metric-grid">
-        <div class="metric">
-          <span>Confiança</span>
-          <strong id="score">-</strong>
-        </div>
         <div class="metric">
           <span>Latência</span>
           <strong id="latency">-</strong>
@@ -591,7 +586,6 @@ LIVE_CAMERA_HTML = """<!doctype html>
           <strong id="segmentation">-</strong>
         </div>
       </div>
-      <div id="probabilities" class="probabilities"></div>
       <div id="quality" class="message"></div>
       <div id="detections" class="detections"></div>
     </aside>
@@ -611,12 +605,9 @@ LIVE_CAMERA_HTML = """<!doctype html>
     const mainResult = document.getElementById("mainResult");
     const targetPanel = document.getElementById("targetPanel");
     const stateBadge = document.getElementById("stateBadge");
-    const scoreRing = document.getElementById("scoreRing");
-    const score = document.getElementById("score");
     const latency = document.getElementById("latency");
     const filter = document.getElementById("filter");
     const segmentation = document.getElementById("segmentation");
-    const probabilities = document.getElementById("probabilities");
     const quality = document.getElementById("quality");
     const detections = document.getElementById("detections");
     const secureWarning = document.getElementById("secureWarning");
@@ -796,63 +787,61 @@ LIVE_CAMERA_HTML = """<!doctype html>
       }
     }
 
+    const categoryLabels = {
+      metal: "Metal", plastic: "Plástico", glass: "Vidro",
+      paper_cardboard: "Papel e papelão", battery: "Pilha ou bateria",
+      electronic: "Eletrônico"
+    };
+
     function renderResult(result) {
       if (!result.ok) {
         renderError(result);
         return;
       }
-
-      const probability = typeof result.probability === "number" ? `${Math.round(result.probability * 100)}%` : "-";
-      const scorePercent = typeof result.probability === "number" ? Math.round(result.probability * 100) : 0;
-      const label = result.guidance?.display_name || result.predicted_class || result.top_class || "incerto";
+      const label = result.guidance?.display_name ||
+        categoryLabels[result.predicted_class || result.top_class] || "Material para confirmar";
       mainResult.className = result.accepted ? "result" : "result warn";
       mainResult.innerHTML = `<strong>${escapeHtml(label)}</strong><p>${escapeHtml(result.message || "")}</p>`;
       stateBadge.className = result.accepted ? "state-badge" : "state-badge warn";
-      stateBadge.textContent = result.accepted ? "identificado" : "incerto";
-      scoreRing.style.setProperty("--score", `${scorePercent}%`);
-      scoreRing.querySelector("span").textContent = probability;
-      score.textContent = probability;
+      stateBadge.textContent = result.accepted ? "categoria confirmada" : "confira o material";
       latency.textContent = `${result.latency_ms} ms`;
       filter.textContent = result.filter?.decision?.selected || result.filter?.name || "-";
       segmentation.textContent = result.segmentation?.decision?.selected || result.segmentation?.name || "-";
       quality.className = `message ${result.capture_quality?.status === "retake" ? "danger" : ""}`;
       quality.textContent = captureQualityMessage(result);
-      renderDisposalTarget(result.disposal_target, result.environmental_impact);
-      renderProbabilities(result.probabilities || {});
+      renderDisposalTarget(result.disposal_target || result.suggested_target,
+        result.environmental_impact, !result.disposal_target);
       trackingStatus.textContent = `${result.detections.length} objeto${result.detections.length === 1 ? "" : "s"}`;
       detections.innerHTML = result.detections.map((item) => {
-        const itemScore = typeof item.score === "number" ? `${Math.round(item.score * 100)}%` : "-";
-        return `<div class="detection"><div><strong>#${item.track_id} ${escapeHtml(item.label)}</strong><small>${escapeHtml(item.top_class || "sem classe")}</small></div><strong>${itemScore}</strong></div>`;
+        return `<div class="detection"><div><strong>#${item.track_id} ${escapeHtml(item.label)}</strong><small>${escapeHtml(categoryLabels[item.top_class] || "categoria a confirmar")}</small></div></div>`;
       }).join("");
-    }
-
-    function renderProbabilities(values) {
-      const rows = Object.entries(values)
-        .sort((left, right) => Number(right[1]) - Number(left[1]))
-        .slice(0, 5)
-        .map(([label, value]) => {
-          const percent = Math.max(0, Math.min(100, Math.round(Number(value) * 100)));
-          return `<div class="probability"><div class="probability-label">${escapeHtml(label)}</div><div class="probability-track"><div class="probability-fill" style="width:${percent}%"></div></div><div class="probability-value">${percent}%</div></div>`;
-        });
-      probabilities.innerHTML = rows.join("");
     }
 
     function captureQualityMessage(result) {
       const captureQuality = result.capture_quality || {};
-      const score = typeof captureQuality.score === "number" ? ` (${captureQuality.score}/100)` : "";
       const action = Array.isArray(captureQuality.actions) && captureQuality.actions.length
         ? ` ${captureQuality.actions[0]}`
         : "";
       if (captureQuality.title || captureQuality.message) {
-        return `${captureQuality.title || "Qualidade da captura"}${score}: ${captureQuality.message || ""}${action}`.trim();
+        return `${captureQuality.title || "Qualidade da captura"}: ${captureQuality.message || ""}${action}`.trim();
       }
       return result.elements_warning || "";
     }
 
-    function renderDisposalTarget(target, impact) {
+    function renderDisposalTarget(target, impact, preview = false) {
       if (!target) {
         targetPanel.style.display = "none";
         targetPanel.innerHTML = "";
+        return;
+      }
+      if (preview) {
+        targetPanel.style.display = "block";
+        targetPanel.innerHTML =
+          '<div class="target-title"><span class="target-dot" style="background:' +
+          escapeHtml(target.bin_color_hex || "#d9e1db") +
+          '"></span><strong>' + escapeHtml(target.destination_title) +
+          '</strong></div><p>Destino referente ao material sugerido. ' +
+          'Confirme a categoria do objeto para seguir as instruções.</p>';
         return;
       }
       const steps = (target.preparation_steps || [])
@@ -889,9 +878,6 @@ LIVE_CAMERA_HTML = """<!doctype html>
       mainResult.innerHTML = `<strong>${escapeHtml(code + title)}</strong><p>${escapeHtml(message)}</p>${action}`;
       stateBadge.className = "state-badge warn";
       stateBadge.textContent = "atenção";
-      scoreRing.style.setProperty("--score", "0%");
-      scoreRing.querySelector("span").textContent = "-";
-      probabilities.innerHTML = "";
       targetPanel.style.display = "none";
       targetPanel.innerHTML = "";
     }
