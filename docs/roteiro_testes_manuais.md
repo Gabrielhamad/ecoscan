@@ -97,6 +97,14 @@ Execução de 04/11/2026 sobre o código funcional `16344df`:
 | iPhone | Aprovado | Abertura, câmera e análise confirmadas em aparelho real |
 | GitHub Actions | Aprovado | [Execução 46](https://github.com/Gabrielhamad/ecoscan/actions/runs/41891056500) concluída com sucesso |
 
-Este resultado aprova a jornada pública de visitante nos três tipos de dispositivo.
-Cadastro, isolamento entre contas, gestão e persistência continuam pendentes do
-aceite integrado com o Supabase.
+Este marco **histórico** aprovou a jornada de visitante nesses três tipos de
+dispositivo no commit `16344df`. O aceite posterior de 04/11/2026, registrado
+em [Aceite do Supabase](aceite_banco_piloto.md), também aprovou cadastro, duas
+contas, persistência, isolamento e revisão administrativa. Não confundir essa
+evidência com uma repetição dos testes na release mais recente.
+
+**Permanecem pendentes:** teste de restauração de banco/Storage, indisponibilidade
+controlada, definição formal de retenção e resposta a incidente e repetição da
+matriz mínima depois de mudanças relevantes no runtime. A CI mais recente
+verificada para `dc1dcb3` aprovou 455 testes e 96 subtestes, mas CI local não
+substitui teste no aplicativo público.
