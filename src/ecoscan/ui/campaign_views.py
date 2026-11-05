@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import hashlib
 import html
-import os
 from pathlib import Path
 from typing import Any
 
@@ -14,8 +13,10 @@ from ecoscan.app.processing_options import ProcessingPipelineOptions
 from ecoscan.disposal.guidance import DisposalGuidance
 from ecoscan.disposal.impact import EnvironmentalImpact
 from ecoscan.disposal.targets import DisposalTarget
-from ecoscan.services.accounts import UserProfile
-from ecoscan.services.campaigns import Campaign, Mission
+from ecoscan.services.accounts import (
+    UserProfile, points_ledger_path_from_config, total_points_for_user,
+)
+from ecoscan.services.campaigns import Campaign, Mission, evaluate_mission_submission
 from ecoscan.ui.common_views import _guidance_class_labels, _render_user_error
 from ecoscan.ui.disposal_views import _render_environmental_impact
 from ecoscan.ui.interaction_helpers import _temporary_upload
