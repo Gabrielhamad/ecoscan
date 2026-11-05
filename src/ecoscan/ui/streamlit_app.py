@@ -4,11 +4,9 @@ import base64
 import html
 import logging
 import os
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from ecoscan.app.processing_options import ProcessingPipelineOptions
 from ecoscan.config import load_config
 from ecoscan.disposal.collection_points import CollectionPoint
 from ecoscan.disposal.guidance import DisposalGuidance
@@ -28,21 +26,28 @@ from ecoscan.services.campaigns import (
     campaign_path_from_config,
     load_campaign,
 )
-from ecoscan.services.recognition_safety import (
-    build_recognition_safety_decision,
-    capture_photo_tips,
-)
 from ecoscan.ui.app_resources import load_app_resources
 from ecoscan.ui.education import render_education
 from ecoscan.ui.identity import render_identity
-from ecoscan.ui.navigation import navigation_for
-from ecoscan.ui.processing_controls import (
-    FILTERS,
-    SEGMENTATIONS,
-    select_filter_parameters,
-    select_segmentation_parameters,
-)
 from ecoscan.ui.scope import render_scope
+from ecoscan.ui.analysis_widgets import (
+    _render_capture_tips as _render_capture_tips,
+    _render_live_camera_link as _render_live_camera_link,
+    _render_recognition_feedback_form as _render_recognition_feedback_form,
+)
+from ecoscan.ui.analysis_controller import render_analysis_page
+from ecoscan.ui.navigation_controller import build_navigation
+from ecoscan.ui.processing_configuration import (
+    render_public_lab_controls,
+    render_sidebar_controls,
+)
+from ecoscan.ui.session_state import AnalysisSession
+from ecoscan.ui.technical_page_controllers import (
+    render_conclusion_page,
+    render_dataset_page,
+    render_processing_details_page,
+    render_system_page,
+)
 from ecoscan.ui.interaction_helpers import (
     _input_signature as _input_signature,
     _temporary_upload as _temporary_upload,
@@ -283,48 +288,6 @@ def _render_public_overview_strip(st: Any) -> None:
     st.markdown(f'<section class="ecoscan-status-strip">{strip}</section>', unsafe_allow_html=True)
 
 
-def _render_live_camera_link(st: Any) -> None:
-    configured_live_url = os.environ.get("ECOSCAN_LIVE_URL", "").strip()
-    live_url = configured_live_url or "http://localhost:8765/"
-    st.link_button(
-        "Escanear com câmera traseira",
-        live_url,
-        icon=":material/photo_camera:",
-        width="stretch",
-    )
-    if configured_live_url:
-        st.caption("Modo ao vivo em backend HTTPS dedicado.")
-    else:
-        st.caption(
-            "O endereço local funciona com o servidor de câmera iniciado neste computador. "
-            "No app público, use a captura de foto abaixo."
-        )
-
-
-def _render_capture_tips(st: Any) -> None:
-    tips = "".join(f"<li>{html.escape(tip)}</li>" for tip in capture_photo_tips())
-    st.markdown(
-        f"""
-        <div class="ecoscan-admin-panel">
-            <strong>Para reconhecer melhor</strong>
-            <ul>{tips}</ul>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-def _render_recognition_feedback_form(
-    st: Any,
-    config: Any,
-    result: Any,
-    active_profile: UserProfile,
-    guidance_by_class: dict[str, DisposalGuidance],
-) -> None:
-    from ecoscan.ui.learning import render_contribution
-    render_contribution(st, config, result, active_profile)
-
-
 def _render_collection_points_tab(
     st: Any,
     config: Any,
@@ -417,488 +380,108 @@ def _render_account_tab(
     render_reports(st, key="profile_reports")
 
 
-def main(*, page_configured=False) -> None:
+def main(*, page_configured: bool = False) -> None:
+    """Compose authenticated navigation while delegating each page's behavior."""
     import streamlit as st
-
-    from ecoscan.ui.processing_lab import select_morphology_parameters
 
     config = load_config()
     configure_logging(config.directories["logs"])
     resources = load_app_resources(config)
-    guidance_by_class = resources.guidance_by_class
-    targets_by_class = resources.targets_by_class
-    impacts_by_class = resources.impacts_by_class
-    requirements_by_class = resources.requirements_by_class
-    collection_points = resources.collection_points
-    profiles = resources.profiles
     if not page_configured:
         st.set_page_config(page_title="Recicla SP", layout="wide", initial_sidebar_state="collapsed")
     _render_theme(st)
-    campaign = None  # Public entry must not wait for the campaign database.
-
-    from ecoscan.app.processing_options import default_processing_options
-    defaults = default_processing_options(config)
-    filter_name = defaults.filter_name
-    filter_parameters: dict[str, Any] = {}
-    segmentation_name = defaults.segmentation_name
-    segmentation_parameters: dict[str, Any] = {}
-    morphology_name = defaults.morphology_name
-    morphology_parameters: dict[str, Any] = {}
-    save_history = False
 
     active_profile = render_identity(st)
-    with st.sidebar:
-        st.header("Identificação")
-        _render_active_profile_card(st, active_profile)
-
-        if active_profile.is_admin:
-            st.header("Operação da Secretaria")
-            _render_model_status(st, config)
-
-            st.header("Parâmetros técnicos")
-            filter_name = st.selectbox(
-                "Filtro",
-                FILTERS,
-                index=FILTERS.index(defaults.filter_name),
-            )
-            filter_parameters = select_filter_parameters(st, filter_name, config)
-
-            segmentation_name = st.selectbox(
-                "Segmentação",
-                SEGMENTATIONS,
-                index=SEGMENTATIONS.index(defaults.segmentation_name),
-            )
-            segmentation_parameters = select_segmentation_parameters(st, segmentation_name)
-            morphology_name, morphology_parameters = select_morphology_parameters(st, config.segmentation.get("morphology"))
-            save_history = st.checkbox("Salvar no histórico local", value=False)
-        else:
-            st.header("Atendimento")
-            st.caption("Use o laboratório na página para comparar técnicas de processamento.")
+    selection = render_sidebar_controls(
+        st,
+        config,
+        active_profile,
+        render_profile=_render_active_profile_card,
+        render_model_status=_render_model_status,
+    )
 
     if not active_profile.is_admin:
         _render_public_app_chrome(st)
-
     if active_profile.is_admin:
-        _render_institutional_hero(st, config, active_profile, campaign)
+        _render_institutional_hero(st, config, active_profile, None)
     else:
         from ecoscan.ui.citizen_design import render_citizen_design
-        render_citizen_design(st, _asset_data_uri(config.project_root, "assets/disposal_targets/plastic_red_bin.png"))
+        render_citizen_design(
+            st, _asset_data_uri(config.project_root, "assets/disposal_targets/plastic_red_bin.png"),
+        )
     st.caption("Recicla SP · piloto independente de educação ambiental. Não é um canal oficial de atendimento municipal.")
     if active_profile.is_admin:
         render_scope(st)
     else:
-        with st.expander("Laboratório de processamento de imagens"):
-            st.caption("Compare técnicas da disciplina. Alterar parâmetros reprocessa a foto carregada.")
-            filter_name = st.selectbox(
-                "Filtro",
-                FILTERS,
-                index=FILTERS.index(defaults.filter_name),
-                key="public_filter",
-            )
-            filter_parameters = select_filter_parameters(st, filter_name, config)
-            segmentation_name = st.selectbox(
-                "Segmentação",
-                SEGMENTATIONS,
-                index=SEGMENTATIONS.index(defaults.segmentation_name),
-                key="public_segmentation",
-            )
-            segmentation_parameters = select_segmentation_parameters(st, segmentation_name)
-            morphology_name, morphology_parameters = select_morphology_parameters(st, config.segmentation.get("morphology"))
-            if not active_profile.id.startswith("visitor_"):
-                save_history = st.checkbox("Salvar no histórico local", value=False, key="public_history")
+        selection = render_public_lab_controls(st, config, active_profile, selection)
 
+    routing = build_navigation(st, active_profile)
+    navigation, tabs = routing.spec, routing.tabs
+    campaign = _load_campaign_config(config) if routing.campaign_required else None
+    session = AnalysisSession(st.session_state)
+    options = selection.to_options()
 
-    class_chips = "".join(_class_chip(class_id, guidance_by_class) for class_id in config.classes)
-
-    pipeline_options = ProcessingPipelineOptions(
-        filter_name=filter_name,
-        filter_parameters=filter_parameters,
-        segmentation_name=segmentation_name,
-        segmentation_parameters=segmentation_parameters,
-        morphology_name=morphology_name,
-        morphology_parameters=morphology_parameters,
-    )
-
-    navigation = navigation_for(admin=active_profile.is_admin)
-    tabs = dict(zip(navigation.tabs, st.tabs(
-        navigation.tabs, key="main_navigation_" + active_profile.role, on_change="rerun")))
-    if any(tabs[name].open for name in (navigation.campaign, navigation.account, "Gestão") if name in tabs):
-        campaign = _load_campaign_config(config)
-    result = st.session_state.get("last_analysis_result")
-
-    if tabs["Aprender"].open:
+    if routing.open("Aprender"):
         with tabs["Aprender"]:
-            render_education(st, config.project_root, active_profile, points_ledger_path_from_config(config))
-
-    if "Descarte" in tabs and tabs["Descarte"].open:
+            render_education(
+                st, config.project_root, active_profile, points_ledger_path_from_config(config),
+            )
+    if routing.open("Descarte"):
         with tabs["Descarte"]:
             st.subheader("Descarte responsável")
             render_scope(st)
 
-    with tabs[navigation.analysis]:
-        section_title = "Escanear resíduo" if not active_profile.is_admin else "Analisar resíduo"
-        st.markdown(f'<div class="ecoscan-section-title">{section_title}</div>', unsafe_allow_html=True)
-        if not active_profile.is_admin:
-            with st.expander("Preparar uma boa foto"):
-                _render_capture_tips(st)
-        source_options = ["Câmera", "Imagem"] if active_profile.is_admin else ["Tirar foto", "Enviar foto"]
-        source = st.radio("Entrada", source_options, horizontal=True)
-        source_kind = "camera" if source in {"Câmera", "Tirar foto"} else "upload"
-        if source in {"Imagem", "Enviar foto"}:
-            upload_label = "Selecionar imagem do resíduo" if active_profile.is_admin else "Enviar foto do resíduo"
-            uploaded_file = st.file_uploader(upload_label, type=["jpg", "jpeg", "png"])
-            waiting_message = "Aguardando imagem."
-        else:
-            if active_profile.is_admin:
-                _render_live_camera_link(st)
-                uploaded_file = st.camera_input("Ligar câmera e capturar resíduo", key="camera_capture")
-                waiting_message = "Aguardando captura da câmera."
-            else:
-                st.caption(
-                    "No celular, escolha Câmera ou Galeria no seletor do aparelho. "
-                    "A disponibilidade da câmera depende do navegador."
-                )
-                uploaded_file = st.file_uploader(
-                    "Tirar ou enviar foto do resíduo",
-                    type=["jpg", "jpeg", "png"],
-                    key="mobile_camera_upload",
-                )
-                waiting_message = "Tire ou envie uma foto do resíduo para analisar."
+    # Keep the photo widget mounted across navigation, as in the original flow.
+    result = render_analysis_page(
+        st, tabs[navigation.analysis], config, active_profile,
+        resources.guidance_by_class, resources.targets_by_class, resources.impacts_by_class,
+        resources.collection_points, options, selection.save_history, session,
+    )
 
-        if uploaded_file is None:
-            st.info(waiting_message)
-        else:
-            signature = _input_signature(uploaded_file, source_kind, pipeline_options)
-            if st.session_state.get("last_analysis_signature") != signature:
-                for stale_key in ("last_analysis_result", "last_analysis_signature", "last_analysis_source"):
-                    st.session_state.pop(stale_key, None)
-                temp_path = None
-                try:
-                    temp_path = _temporary_upload(uploaded_file, prefix=source_kind)
-                    with st.spinner("Detectando resíduo na captura..." if source_kind == "camera" else "Detectando resíduo na imagem..."):
-                        from ecoscan.services.analysis_service import analyze_waste_image
-                        result = analyze_waste_image(
-                            temp_path,
-                            config,
-                            options=pipeline_options,
-                        )
-                    st.session_state["last_analysis_result"] = result
-                    st.session_state["last_analysis_signature"] = signature
-                    st.session_state["last_analysis_source"] = source_kind
-                except Exception as exc:
-                    result = None
-                    _render_user_error(st, exc, context="image_analysis")
-                finally:
-                    if temp_path is not None:
-                        try:
-                            temp_path.unlink(missing_ok=True)
-                        except OSError:
-                            LOGGER.warning("temporary_upload_cleanup_failed")
-            else:
-                result = st.session_state.get("last_analysis_result")
-
-            if result is not None:
-                should_save_history = not active_profile.id.startswith("visitor_") and (
-                    bool(config.history.get("enabled", True)) or save_history)
-                if should_save_history and st.session_state.get("last_history_saved_signature") != signature:
-                    try:
-                        from ecoscan.services.history import (
-                            append_history_entry,
-                            build_history_entry,
-                            history_path_from_config,
-                        )
-
-                        append_history_entry(
-                            history_path_from_config(config),
-                            build_history_entry(result, source_path=st.session_state.get("last_analysis_source")),
-                        )
-                        st.session_state["last_history_saved_signature"] = signature
-                    except OSError:
-                        LOGGER.warning("local_history_write_failed")
-                        st.warning("A análise foi concluída, mas o histórico local não pôde ser gravado. O envio de uma contribuição é independente.")
-
-                safety_decision = build_recognition_safety_decision(
-                    result,
-                    action_confidence_threshold=max(0.72, float(config.confidence_threshold)),
-                )
-                # The suggestion can preview a category's bin, but only an
-                # explicitly selected material unlocks complete instructions.
-                suggested_guidance = guidance_by_class.get(result.top_class)
-                suggested_target = targets_by_class.get(result.top_class)
-                if not active_profile.is_admin:
-                    from ecoscan.services.public_flow import build_public_next_action
-
-                    public_action = build_public_next_action(
-                        result,
-                        suggested_target,
-                        safety_decision,
-                        suggested_material_label=(
-                            suggested_guidance.display_name if suggested_guidance else None
-                        ),
-                    )
-                    _render_public_next_action(st, public_action)
-
-                # Keep the executed preprocessing before the recognition card so the
-                # user can see exactly what image is handed to the classifier.
-                from ecoscan.ui.processing_lab import render_applied_processing
-                render_applied_processing(st, result.pipeline)
-
-                left, right = st.columns([1.05, 1])
-                with left:
-                    st.image(result.pipeline.loaded.array, caption="Imagem analisada", width="stretch")
-                with right:
-                    st.markdown('<div class="ecoscan-result">', unsafe_allow_html=True)
-                    _render_recognition_decision(st, safety_decision)
-                    if result.model_type == "semantic_onnx_assisted":
-                        if suggested_guidance is not None and safety_decision.status == "needs_confirmation":
-                            st.subheader("Material sugerido: " + suggested_guidance.display_name)
-                            if suggested_target is not None:
-                                st.write(
-                                    f"**Destino para {suggested_guidance.display_name}: "
-                                    f"{suggested_target.destination_title}.**"
-                                )
-                            st.caption("Confira a composição e o conteúdo da embalagem antes de escolher a orientação.")
-                        else:
-                            st.subheader("Selecione o material para consultar o descarte")
-                            st.write("Você pode identificar o material manualmente na lista abaixo.")
-                    elif result.accepted and result.guidance and safety_decision.allow_disposal_guidance:
-                        st.subheader("Material sugerido: " + result.guidance.display_name)
-                        st.write(f"**Categoria ambiental:** {result.guidance.environmental_category}")
-                    else:
-                        st.subheader("Escolha o material da foto")
-                        st.write("Se necessário, tire outra foto em boa iluminação e com o objeto centralizado.")
-                    st.markdown('<div class="ecoscan-soft-divider"></div>', unsafe_allow_html=True)
-                    if active_profile.is_admin:
-                        st.caption(f"Filtro aplicado: {result.pipeline.filter_result.name}")
-                        st.caption(result.pipeline.element_analysis.warning)
-                        _render_quality_snapshot(st, result.pipeline)
-                    _render_capture_quality_advice(st, result.pipeline)
-                    if active_profile.is_admin:
-                        _render_photo_processing_summary(st, result.pipeline)
-                    else:
-                        with st.expander("Como a imagem foi tratada"):
-                            _render_photo_processing_summary(st, result.pipeline)
-                    st.markdown("</div>", unsafe_allow_html=True)
-                    if active_profile.is_admin and st.button("Exportar evidência técnica"):
-                        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                        output_dir = config.directories["reports"] / "ui_exports" / timestamp
-                        try:
-                            from ecoscan.services.visual_report import save_pipeline_artifacts
-                            save_pipeline_artifacts(result.pipeline, output_dir)
-                            st.success(f"Evidência salva em {output_dir}")
-                        except Exception as exc:
-                            _render_user_error(st, exc, context="ui_export")
-
-                if active_profile.is_admin:
-                    _render_processing_evidence(st, result, active_profile)
-                else:
-                    _render_processing_evidence(
-                        st,
-                        result,
-                        active_profile,
-                        render_details_expander=True,
-                    )
-                _render_recognition_feedback_form(st, config, result, active_profile, guidance_by_class)
-
-                st.markdown(
-                    '<div class="ecoscan-section-title">Confirme o material e veja o descarte</div>',
-                    unsafe_allow_html=True,
-                )
-                confirmed_class = st.selectbox(
-                    "Qual material você identificou na foto?",
-                    [None, *config.classes],
-                    format_func=lambda class_id: (
-                        "Selecione o material (confirmação manual)"
-                        if class_id is None else guidance_by_class[class_id].display_name
-                    ),
-                    key=f"confirmed_disposal_{signature}",
-                    help="Escolha a categoria do material. A foto não determina composição ou contaminação.",
-                )
-                if confirmed_class is not None:
-                    confirmed_guidance = guidance_by_class.get(confirmed_class)
-                    confirmed_target = targets_by_class.get(confirmed_class)
-                    confirmed_impact = impacts_by_class.get(confirmed_class)
-                    if confirmed_guidance is not None and confirmed_target is not None:
-                        st.success(
-                            f"{confirmed_guidance.display_name}: "
-                            f"{confirmed_target.destination_title}."
-                        )
-                        _render_disposal_action_panel(
-                            st,
-                            config,
-                            confirmed_guidance,
-                            confirmed_target,
-                            confirmed_impact,
-                            collection_points,
-                        )
-
-    if tabs[navigation.campaign].open:
+    if routing.open(navigation.campaign):
         with tabs[navigation.campaign]:
             _render_campaign_tab(
-                st,
-                config,
-                campaign,
-                active_profile,
-                guidance_by_class,
-                impacts_by_class,
-                targets_by_class,
-                pipeline_options,
+                st, config, campaign, active_profile, resources.guidance_by_class,
+                resources.impacts_by_class, resources.targets_by_class, options,
             )
-
-    if tabs[navigation.report].open:
+    if routing.open(navigation.report):
         with tabs[navigation.report]:
-            _render_civic_reports_tab(st, config, active_profile, pipeline_options)
-
-    if tabs[navigation.collection].open:
+            _render_civic_reports_tab(st, config, active_profile, options)
+    if routing.open(navigation.collection):
         with tabs[navigation.collection]:
-            _render_collection_points_tab(st, config, guidance_by_class, collection_points)
-
-    if "Processamento" in tabs and tabs["Processamento"].open:
-        with tabs["Processamento"]:
-            from ecoscan.ui.processing_lab import render_processing_lab
-            if result is None:
-                st.info("Aguardando análise.")
-            else:
-                cols = st.columns(3)
-                cols[0].image(result.pipeline.preprocessing.resized, caption="Redimensionada", width="stretch")
-                cols[1].image(result.pipeline.filter_result.image, caption=f"Filtro: {result.pipeline.filter_result.name}", width="stretch")
-                cols[2].image(result.pipeline.segmentation_result.mask, caption=f"Máscara: {result.pipeline.segmentation_result.name}", width="stretch")
-                cols = st.columns(3)
-                cols[0].image(result.pipeline.segmentation_result.image, caption="Segmentada", width="stretch")
-                cols[1].image(result.pipeline.detection_heatmap, caption="Mapa de detecção", width="stretch")
-                cols[2].image(result.pipeline.model_input_preview, caption="Entrada do modelo", width="stretch")
-                render_processing_lab(st, result.pipeline)
-                st.markdown('<div class="ecoscan-section-title">Qualidade da captura</div>', unsafe_allow_html=True)
-                _render_capture_quality_advice(st, result.pipeline)
-                st.markdown('<div class="ecoscan-section-title">Decisão de filtragem</div>', unsafe_allow_html=True)
-                _render_filter_decision(st, result.pipeline)
-                st.markdown('<div class="ecoscan-section-title">Decisão de segmentação</div>', unsafe_allow_html=True)
-                _render_segmentation_decision(st, result.pipeline)
-                st.markdown('<div class="ecoscan-section-title">Elementos visuais segmentados</div>', unsafe_allow_html=True)
-                cols = st.columns([0.95, 1.05])
-                cols[0].image(result.pipeline.element_overlay, caption="Componentes detectados na máscara", width="stretch")
-                with cols[1]:
-                    _render_element_diagnostics(st, result.pipeline)
-                st.markdown('<div class="ecoscan-section-title">Métricas de qualidade da imagem</div>', unsafe_allow_html=True)
-                _render_pipeline_diagnostics(st, result.pipeline)
-                st.markdown('<div class="ecoscan-section-title">Metadados técnicos</div>', unsafe_allow_html=True)
-                st.json(result.pipeline.metadata)
-
-    if "Base de imagens" in tabs and tabs["Base de imagens"].open:
-        with tabs["Base de imagens"]:
-            from ecoscan.services.dataset_ingestion import (
-                IncomingImage,
-                ingest_uploaded_images,
-                ingestion_manifest_path_from_config,
+            _render_collection_points_tab(
+                st, config, resources.guidance_by_class, resources.collection_points,
             )
 
-            st.markdown('<div class="ecoscan-section-title">Adicionar fotos à base</div>', unsafe_allow_html=True)
-            st.markdown(
-                '<div class="ecoscan-note">As fotos entram primeiro na base bruta por classe. '
-                "Antes do treino final, elas devem passar por revisão, curadoria e divisão de treino/validação/teste.</div>",
-                unsafe_allow_html=True,
-            )
-            upload_col, context_col = st.columns([1.1, 0.9])
-            with upload_col:
-                target_class = st.selectbox(
-                    "Classe de destino",
-                    config.classes,
-                    format_func=lambda class_id: _class_label(class_id, guidance_by_class),
-                )
-                dataset_uploads = st.file_uploader(
-                    "Selecionar fotos",
-                    type=[extension.lstrip(".") for extension in sorted(config.allowed_extensions)],
-                    accept_multiple_files=True,
-                    key="dataset_uploads",
-                )
-                source_note = st.text_input("Origem do lote", placeholder="ex.: fotos do grupo - setembro")
-                save_disabled = not dataset_uploads
-                if save_disabled:
-                    st.caption("Selecione uma ou mais fotos para liberar o envio para a base bruta.")
-                if st.button("Salvar na base bruta", disabled=save_disabled):
-                    incoming = [
-                        IncomingImage(
-                            name=uploaded.name,
-                            data=uploaded.getvalue(),
-                            source_note=source_note or "streamlit-upload",
-                        )
-                        for uploaded in dataset_uploads
-                    ]
-                    try:
-                        results = ingest_uploaded_images(config, target_class, incoming)
-                        st.session_state["dataset_ingestion_results"] = [result.__dict__ for result in results]
-                        saved_count = sum(1 for result in results if result.status == "saved")
-                        st.success(f"{saved_count} imagem(ns) adicionada(s) à base bruta.")
-                    except Exception as exc:
-                        _render_user_error(st, exc, context="dataset_ingestion")
-            with context_col:
-                st.markdown('<div class="ecoscan-section-title">Classes ativas</div>', unsafe_allow_html=True)
-                st.markdown(
-                    f'<div class="ecoscan-chip-row">{class_chips}</div>',
-                    unsafe_allow_html=True,
-                )
-                st.caption(f"Registro de uploads: {ingestion_manifest_path_from_config(config)}")
-                st.markdown('<div class="ecoscan-section-title">Plano de coleta</div>', unsafe_allow_html=True)
-                _render_photo_requirement_plan(st, requirements_by_class.get(target_class))
-
-            _render_ingestion_results(st, st.session_state.get("dataset_ingestion_results", []))
-            st.markdown('<div class="ecoscan-section-title">Prontidão para treino</div>', unsafe_allow_html=True)
-            _render_dataset_readiness(st, config)
-            st.markdown('<div class="ecoscan-section-title">Resumo da base de imagens</div>', unsafe_allow_html=True)
-            _render_dataset_status(st, config, guidance_by_class)
-
-    if "Histórico" in tabs and tabs["Histórico"].open:
+    if routing.open("Processamento"):
+        render_processing_details_page(st, tabs["Processamento"], result)
+    if routing.open("Base de imagens"):
+        class_chips = "".join(
+            _class_chip(class_id, resources.guidance_by_class) for class_id in config.classes
+        )
+        render_dataset_page(
+            st, tabs["Base de imagens"], config, resources.guidance_by_class,
+            resources.requirements_by_class, class_chips, session,
+        )
+    if routing.open("Histórico"):
         with tabs["Histórico"]:
             _render_history(st, config)
 
-    if tabs[navigation.account].open:
+    if routing.open(navigation.account):
         with tabs[navigation.account]:
-            _render_account_tab(st, config, active_profile, campaign, guidance_by_class)
-
-    if active_profile.is_admin and tabs["Gestão"].open:
+            _render_account_tab(
+                st, config, active_profile, campaign, resources.guidance_by_class,
+            )
+    if active_profile.is_admin and routing.open("Gestão"):
         with tabs["Gestão"]:
             _render_admin_tab(
-                st,
-                config,
-                active_profile,
-                profiles,
-                campaign,
-                collection_points,
-                guidance_by_class,
+                st, config, active_profile, resources.profiles, campaign,
+                resources.collection_points, resources.guidance_by_class,
             )
-
-    if "Conclusão" in tabs and tabs["Conclusão"].open:
-        with tabs["Conclusão"]:
-            st.markdown('<div class="ecoscan-section-title">Conclusão e prontidão final</div>', unsafe_allow_html=True)
-            _render_completion_panel(st, config)
-            _render_model_governance(st, config, guidance_by_class)
-
-    if "Sistema" in tabs and tabs["Sistema"].open:
-        with tabs["Sistema"]:
-            _render_overview_strip(st, config)
-            st.markdown('<div class="ecoscan-section-title">Acesso e rodada de testes</div>', unsafe_allow_html=True)
-            _render_access_testing_panel(st)
-            st.markdown('<div class="ecoscan-section-title">Hospedagem gratuita HTTPS</div>', unsafe_allow_html=True)
-            _render_free_hosting_panel(st, config)
-            st.markdown('<div class="ecoscan-section-title">Auditoria técnica</div>', unsafe_allow_html=True)
-            _render_aps_audit(st, config)
-            st.markdown('<div class="ecoscan-section-title">Relatório técnico</div>', unsafe_allow_html=True)
-            if st.button("Gerar relatório consolidado"):
-                try:
-                    from ecoscan.services.academic_report import write_academic_report
-
-                    report_path = write_academic_report(config)
-                    st.success(f"Relatório gerado em {report_path}")
-                except Exception as exc:
-                    _render_user_error(st, exc, context="academic_report")
-            st.markdown('<div class="ecoscan-section-title">Validação do sistema</div>', unsafe_allow_html=True)
-            _render_acceptance_checks(st, config)
-            st.markdown('<div class="ecoscan-section-title">Mensagens de erro do sistema</div>', unsafe_allow_html=True)
-            _render_error_catalog(st)
-            st.markdown('<div class="ecoscan-section-title">Pacote técnico</div>', unsafe_allow_html=True)
-            _render_delivery_pack(st, config)
-            st.markdown('<div class="ecoscan-section-title">Ambiente local</div>', unsafe_allow_html=True)
-            _render_dependencies(st)
+    if routing.open("Conclusão"):
+        render_conclusion_page(st, tabs["Conclusão"], config, resources.guidance_by_class)
+    if routing.open("Sistema"):
+        render_system_page(st, tabs["Sistema"], config)
 
 
 if __name__ == "__main__":
