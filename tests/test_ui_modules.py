@@ -12,6 +12,12 @@ from ecoscan.ui import streamlit_app
 
 UI_ROOT = Path(streamlit_app.__file__).resolve().parent
 COMPONENTS = (
+    "analysis_controller",
+    "analysis_widgets",
+    "navigation_controller",
+    "processing_configuration",
+    "session_state",
+    "technical_page_controllers",
     "admin_views",
     "campaign_views",
     "civic_views",
@@ -89,5 +95,11 @@ def test_ui_component_dependencies_are_acyclic():
 
 def test_coordinator_stays_below_monolith_budget():
     source = (UI_ROOT / "streamlit_app.py").read_text(encoding="utf-8")
-    assert len(source.splitlines()) <= 1100
+    assert len(source.splitlines()) <= 550
     assert "def main(" in source
+
+def test_new_page_controllers_keep_their_domain_logic_outside_main():
+    coordinator = (UI_ROOT / "streamlit_app.py").read_text(encoding="utf-8")
+    assert "analyze_waste_image" not in coordinator
+    assert "ingest_uploaded_images" not in coordinator
+    assert "last_analysis_signature" not in coordinator

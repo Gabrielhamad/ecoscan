@@ -54,7 +54,8 @@ objeto e sessão continua pendente e não pode ser substituído por esse benchma
 
 - **concluído em #7:** extrair oito módulos de interface para processamento, descarte, campanhas, relatos, administração, sistema, utilitários e operações de upload; o coordenador passou a 906 linhas;
 - **concluído em #7:** acrescentar testes de reexportação, dependências acíclicas e limite de tamanho do coordenador;
-- **próxima etapa:** extrair controladores de navegação e sessão tipados, com validação end-to-end para novos estados de página;
+- **concluído no PR #9:** extrair controladores de navegação, estado de análise tipado, seleção técnica, fotos e páginas administrativas/técnicas, preservando IDs Streamlit;
+- **próxima etapa:** repetir o aceite manual do código publicado nos navegadores e aparelhos reais;
 - decidir e publicar a licença do código;
 - criar tag, changelog e notas da primeira release candidata.
 
