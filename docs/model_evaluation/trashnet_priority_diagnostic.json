@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "evaluation_kind": "external_reference_diagnostic",
+  "independent_test": false,
+  "source": {
+    "name": "TrashNet",
+    "repository": "https://github.com/garythung/trashnet",
+    "commit": "6fa2b878c6c1b4304b91109070ce0edf9279bb31",
+    "license": "MIT",
+    "license_sha256": "e33347ae1589c1c7d7de5cf2e433e6c8060256273c7287a29d7c6e1e45c466f1",
+    "dataset_zip_sha256": "0bf472790f8b20e5c950d5b5012a9d38af0d3392efd65f8ce171334fc16b07c2",
+    "official_test_split_sha256": "a8cc4e520e4676c6e1bd6346d51a101f80e468763a36f2818ed4e32abb05bb79",
+    "capture_description": "Objects photographed on white posterboard with three iPhone models; resized to 512x384."
+  },
+  "selection": {
+    "classes": [
+      "plastic",
+      "metal",
+      "glass"
+    ],
+    "records": 224,
+    "counts": {
+      "plastic": 74,
+      "metal": 68,
+      "glass": 82
+    },
+    "manifest": "b8ad0f3b7304e54d466eb38b339ff16c87e745c1ef129b81df0483360aeb783e"
+  },
+  "evaluation": {
+    "schema_version": 2,
+    "evaluation_classes": [
+      "plastic",
+      "metal",
+      "glass"
+    ],
+    "integrity": {
+      "manifest_sha256": "b8ad0f3b7304e54d466eb38b339ff16c87e745c1ef129b81df0483360aeb783e",
+      "model_metadata_sha256": "5821ecf3ccc4e5b7dd807cab74978df14aae6e82a2360c765c7232bdf1fa75f2",
+      "head_sha256": "5cc1aa6b5ee4d0e0ed74bca37a8510802f739b61c5e179165beae15c68e8386a",
+      "encoder_sha256": "dfad0c5b643cc67908fbfc88b7ba5ecad10aa6567cc72bfced3a759baaf509bd",
+      "processing_sha256": "2a1a47bad72255684a7a33a3f038d6b622f120ff5ee10c6597734e27fa46a61d"
+    },
+    "top1": {
+      "accuracy": 0.8303571428571429,
+      "macro_precision": 0.8702865761689291,
+      "macro_recall": 0.8330780565357324,
+      "macro_f1": 0.8510149130074565,
+      "uncertain_count": 0,
+      "total": 224,
+      "by_class": {
+        "plastic": {
+          "support": 74,
+          "precision": 0.8676470588235294,
+          "recall": 0.7972972972972973,
+          "f1": 0.8309859154929577
+        },
+        "metal": {
+          "support": 68,
+          "precision": 0.8970588235294118,
+          "recall": 0.8970588235294118,
+          "f1": 0.8970588235294118
+        },
+        "glass": {
+          "support": 82,
+          "precision": 0.8461538461538461,
+          "recall": 0.8048780487804879,
+          "f1": 0.8250000000000001
+        }
+      },
+      "confusion_matrix": [
+        [
+          59,
+          1,
+          8
+        ],
+        [
+          0,
+          61,
+          4
+        ],
+        [
+          9,
+          6,
+          66
+        ]
+      ],
+      "classes": [
+        "plastic",
+        "metal",
+        "glass"
+      ]
+    },
+    "accepted": {
+      "accuracy": 0.41964285714285715,
+      "macro_precision": 1.0,
+      "macro_recall": 0.43023834451381077,
+      "macro_f1": 0.5794453544260468,
+      "uncertain_count": 130,
+      "total": 224,
+      "by_class": {
+        "plastic": {
+          "support": 74,
+          "precision": 1.0,
+          "recall": 0.2702702702702703,
+          "f1": 0.4255319148936171
+        },
+        "metal": {
+          "support": 68,
+          "precision": 1.0,
+          "recall": 0.6911764705882353,
+          "f1": 0.817391304347826
+        },
+        "glass": {
+          "support": 82,
+          "precision": 1.0,
+          "recall": 0.32926829268292684,
+          "f1": 0.4954128440366972
+        }
+      },
+      "confusion_matrix": [
+        [
+          20,
+          0,
+          0
+        ],
+        [
+          0,
+          47,
+          0
+        ],
+        [
+          0,
+          0,
+          27
+        ]
+      ],
+      "classes": [
+        "plastic",
+        "metal",
+        "glass"
+      ]
+    },
+    "acceptance": {
+      "threshold": 0.8,
+      "accepted": 94,
+      "correct": 94,
+      "wrong": 0,
+      "rejected": 130
+    },
+    "cases": []
+  },
+  "limitations": [
+    "Possible source overlap with historical EcoScan development data cannot be excluded because original training images are not bundled.",
+    "TrashNet does not provide physical-object or capture-session group identifiers.",
+    "White-posterboard scenes do not represent deployment backgrounds, damaged waste, mixed objects or out-of-scope rejection.",
+    "This benchmark was not used to adjust the evaluated release and must not be promoted to the independent mobile acceptance set."
+  ]
+}

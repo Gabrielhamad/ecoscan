@@ -51,6 +51,31 @@ O recorte TACO preservado no repositório contém 23 crops, todos de treino:
 9 plásticos, 7 metais e 7 papéis, em 20 grupos. Ele não contém vidro e não pode
 ser promovido a teste independente da release atual.
 
+## Diagnóstico externo TrashNet
+
+Como as APIs Wikimedia e Openverse estavam bloqueadas pelo proxy do ambiente,
+o acervo TrashNet foi obtido pelo GitHub no commit
+`6fa2b878c6c1b4304b91109070ce0edf9279bb31`. Foram avaliadas apenas as 224
+imagens de metal, plástico e vidro do split oficial de teste:
+
+| Classe | Suporte | Top-1: precisão / recall | Acima do limiar: precisão / recall |
+| --- | ---: | --- | --- |
+| Metal | 68 | 89,7% / 89,7% | 100,0% / 69,1% |
+| Plástico | 74 | 86,8% / 79,7% | 100,0% / 27,0% |
+| Vidro | 82 | 84,6% / 80,5% | 100,0% / 32,9% |
+
+No total, houve 186/224 primeiras escolhas corretas. O limiar aceitou 94 e
+rejeitou 130; os 94 aceitos estavam corretos nesse recorte. O
+[relatório](model_evaluation/trashnet_priority_diagnostic.json) e o
+[manifesto com hashes](model_evaluation/trashnet_priority_manifest.json) estão
+versionados, sem copiar as imagens.
+
+Este resultado é diagnóstico, não teste independente: uma origem histórica em
+comum não pode ser descartada, o TrashNet não fornece grupos por objeto/sessão e
+as fotos usam fundo branco. O benchmark não mede cenas reais, resíduos
+amassados, múltiplos objetos nem rejeição fora do escopo. Nenhuma decisão de
+treino ou limiar foi tomada com esse resultado.
+
 ## Atualização
 
 1. O participante envia uma correção com consentimento.

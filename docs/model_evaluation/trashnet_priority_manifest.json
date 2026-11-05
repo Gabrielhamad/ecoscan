@@ -1,0 +1,1570 @@
+[
+  {
+    "id": "glass12",
+    "path": "glass/glass12.jpg",
+    "sha256": "ba156b04601294102bfbdfd577561e093d31450ba73e52cacfc9a73c7772ea7f",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass373",
+    "path": "glass/glass373.jpg",
+    "sha256": "38dec10915658f16888ee956e108457632dc1baf95b8f8a9d29d8d26c18c484a",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic125",
+    "path": "plastic/plastic125.jpg",
+    "sha256": "2da1dc04aecdffdf22714aff09a76c9c6aa591544130d2c7c3a0b1b2896eb867",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal159",
+    "path": "metal/metal159.jpg",
+    "sha256": "2db6e692e6f70e497acd068167546bb14ee4b3e423e8c80deb5a35a7215c2453",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass429",
+    "path": "glass/glass429.jpg",
+    "sha256": "21ce1057d4c8e3a9b9e262b9e45c8ece711af7d71c1e058cb166c64a20b94a35",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic103",
+    "path": "plastic/plastic103.jpg",
+    "sha256": "87b7c1963f3edaf573ca0b650117b57f082754cf03e96e9b5f32c89bb0d4baf3",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass173",
+    "path": "glass/glass173.jpg",
+    "sha256": "8fae57e5b4d3ac7065ed383cc15fd361dd85d049281160973fee7be13d793b53",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic328",
+    "path": "plastic/plastic328.jpg",
+    "sha256": "6b09eee0722c2a8e562bae5c657e1db64bad8e90040d599a26480268a125fde6",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic305",
+    "path": "plastic/plastic305.jpg",
+    "sha256": "3fb602d0fe1022300e1c63168f0f24a5c504ef3d3d026e93d8424d458c86ef9f",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal18",
+    "path": "metal/metal18.jpg",
+    "sha256": "397b8780b62f129acddb0758d07f8570542427e97750f11f0bac39c8908ca55d",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal119",
+    "path": "metal/metal119.jpg",
+    "sha256": "fef949be03c4d314c3ff645a4a0f1a25edc95e5a228ad2e2ea9e8c798878447c",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic145",
+    "path": "plastic/plastic145.jpg",
+    "sha256": "1782030f5438851c5b95628ba661fc0815070591ef12835903cccb2c2550106a",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic21",
+    "path": "plastic/plastic21.jpg",
+    "sha256": "2a9d33453f886a84673eca85a60d2ef62d0bc5783c6200b52adc1dab01841664",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal77",
+    "path": "metal/metal77.jpg",
+    "sha256": "f2de4bd92628f714cfa496bb5269b5ac2ec25ed1a45682b1f338c591b84a4e2f",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal134",
+    "path": "metal/metal134.jpg",
+    "sha256": "17a57deae02dfa268f964fde93494e8504565bcf2de190663d621e9b4d9df439",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal248",
+    "path": "metal/metal248.jpg",
+    "sha256": "748f022de77f98b4f437853c8bfbe63c505115f1632f1c2379abc75485c743ab",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic227",
+    "path": "plastic/plastic227.jpg",
+    "sha256": "aab36d5a8153cdf5533467fffdb0fa843ed0db87f46bbd19f0f634eb2fde11fc",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass329",
+    "path": "glass/glass329.jpg",
+    "sha256": "eefd9034dda5356ad38474eace7542896e9c3ab359291cd33d0062110eca0887",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass451",
+    "path": "glass/glass451.jpg",
+    "sha256": "ae648a635864eaf0812810784f4e5dcf292933ca6ee1afb86724d3e565d5b7ea",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic242",
+    "path": "plastic/plastic242.jpg",
+    "sha256": "3d1e36e5e4c1af663d0509513d856d7430c70915e52c20cb1b9f2e0979a2a2fe",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass144",
+    "path": "glass/glass144.jpg",
+    "sha256": "3b673c0a98f66b2153983e049f2231acd197da6322ec81a5e26dc4281dcf1edd",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass194",
+    "path": "glass/glass194.jpg",
+    "sha256": "7b3048aa393beb091ccb4c4a431dbfe515eb0a036f8ee1c742c910ae5bc0740b",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass317",
+    "path": "glass/glass317.jpg",
+    "sha256": "0910bb42fa87c679c2b84ba4a93ab425acb4e2f7d2d89351b3feebb17d464507",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal325",
+    "path": "metal/metal325.jpg",
+    "sha256": "294c88e5d6d03d5b9a9c4cea826286adde0491f22b82ca87a50cadd798d6364b",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal198",
+    "path": "metal/metal198.jpg",
+    "sha256": "67bb6cea363369ce6ede15e32f664bb08393386c0950c2b4f835a6a3badc8b24",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal364",
+    "path": "metal/metal364.jpg",
+    "sha256": "b95bc24b3a9779fac5aed239cc482c3eae8515e762b67f754464f9458307b03d",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass35",
+    "path": "glass/glass35.jpg",
+    "sha256": "a7b12b1cdc0e41d0d77c7e4dbfe941926307b047b5bbe60c2aef87676f50252d",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal170",
+    "path": "metal/metal170.jpg",
+    "sha256": "7ca0341822ae42c3cbe89d17a4336c3bfa2f50bce8fa6cb559dd0b767098d4db",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal395",
+    "path": "metal/metal395.jpg",
+    "sha256": "6ed31f3df9dabc2642d832ca5ff886a10106d3ad38af087ad23a8e270c7bcde7",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic152",
+    "path": "plastic/plastic152.jpg",
+    "sha256": "c41b99aec8a3257c8668a2144ebbaf8042018f0a85d88e22bf4e413b43693dd8",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic426",
+    "path": "plastic/plastic426.jpg",
+    "sha256": "ca3db4385012f56b510d13abc9b9871b5410af4dd09ad3535fdf6af638a24eae",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic473",
+    "path": "plastic/plastic473.jpg",
+    "sha256": "55210883fc994028c402fe62582610b48f99f8a1ef4929677eb2e9ef46db8cbf",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal157",
+    "path": "metal/metal157.jpg",
+    "sha256": "c83928d26f05a7f35d043fe35f28d3e45f8b953294a591d44d97858583346eba",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic398",
+    "path": "plastic/plastic398.jpg",
+    "sha256": "204739a2e73afca691e41130f49ffa8c5b40d25a110b56aa2a67041a07bc259d",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic405",
+    "path": "plastic/plastic405.jpg",
+    "sha256": "d61be560ee231eac62e7dc581fc44160644ba269c08cd9fa6eea7d9e68a9162d",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal263",
+    "path": "metal/metal263.jpg",
+    "sha256": "871b620dcae2c9bb012162c756a53e00d7c288a9b5014c67f7f7bf0f8da82bd2",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal341",
+    "path": "metal/metal341.jpg",
+    "sha256": "dbd950d05165c3595b7daab51f387fc0dbc10cfea64d1273e9aef76047a4abad",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic80",
+    "path": "plastic/plastic80.jpg",
+    "sha256": "350124b58b826b16e7e73331b4c16846229343a1099c61b3868bfd8bd9ca8075",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic252",
+    "path": "plastic/plastic252.jpg",
+    "sha256": "61a89874be4f9fcdeeefec2c2f2a8eed113a96ada46b4c7dd54b7b81dc43ee09",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass353",
+    "path": "glass/glass353.jpg",
+    "sha256": "b090b5f2c9ab3782bcc0ec877e810f19ea109dc7f69609f9e6aca742aa631410",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic312",
+    "path": "plastic/plastic312.jpg",
+    "sha256": "9b24c96bed046e3c870b0086621726803d6d3127b8011d08c75ac7a9340873af",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal370",
+    "path": "metal/metal370.jpg",
+    "sha256": "9384852d8b01d1059b7d39a3f10f448467d60bb03aea8967839264f049eab30a",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal139",
+    "path": "metal/metal139.jpg",
+    "sha256": "e69ce4a19ea7ad865800d6ba1dc67e51c19ad3f3116fb5d7f7734ef427dffb4c",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal143",
+    "path": "metal/metal143.jpg",
+    "sha256": "06a375005afe2eaa148c3151b5887374b35724bd7f0998027602c111a468565c",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic285",
+    "path": "plastic/plastic285.jpg",
+    "sha256": "e21f74112fbce5b9eecee6cfe77ed24f361ac7a4daeb237719c6c02cb8310506",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic79",
+    "path": "plastic/plastic79.jpg",
+    "sha256": "f8de98b15b5f39ae3c170242ac145414367f87f7f55651a4a9916e77e9d068a5",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal205",
+    "path": "metal/metal205.jpg",
+    "sha256": "fd8f76d8e26f61856dcdb9a5cdc0725951f5d360ccd80541a3c55bfffd3a9998",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic306",
+    "path": "plastic/plastic306.jpg",
+    "sha256": "e163acb20d023630b198c38b093169bcea1989da9cca0d3c66fb409c6eed7cf6",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic434",
+    "path": "plastic/plastic434.jpg",
+    "sha256": "a84ac2040a83ac6ddd90622dbd63a0109896421b5819d2f5c8aee72efa8d5f35",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass77",
+    "path": "glass/glass77.jpg",
+    "sha256": "9809f7c8c1b5f52ba1133de91bcc83bce55780d1d58b9eb40e3cdddfe431bd82",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic388",
+    "path": "plastic/plastic388.jpg",
+    "sha256": "3cea91cd461f29869fb632d8e6e4ee625dcc6dcdaf4d2a3e5c457c70a0ed7bd9",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic172",
+    "path": "plastic/plastic172.jpg",
+    "sha256": "570ba0c54b086b600a253a9522a636f848051dbad9c7dbc1af7c1e05d5f357c5",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic411",
+    "path": "plastic/plastic411.jpg",
+    "sha256": "90f72638e98c7d98446b1ddc98c0826e55d7b87714b9395e39d36141da2a2e4a",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic268",
+    "path": "plastic/plastic268.jpg",
+    "sha256": "2f032358d0a9c0f9eb1782f04438907900eff8595cd6d90827a524f2be451170",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic270",
+    "path": "plastic/plastic270.jpg",
+    "sha256": "f3653cb5116826633f695145eb1a4af66156e0b27ece17a17304831fe06a5361",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass385",
+    "path": "glass/glass385.jpg",
+    "sha256": "73a7977ece3caaa792fa9aa9a9778b7360874385ee99584a6d29682ab07abe27",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal84",
+    "path": "metal/metal84.jpg",
+    "sha256": "d8b064ff312daf7f8b73c4b32a880226fa78ddb27a7f07d9aa3dd4b7e7fc03cb",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic177",
+    "path": "plastic/plastic177.jpg",
+    "sha256": "b0dbf76688a902b77194dc78f8fb422ae6372bae747a9c6df479c930ce58c13a",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal355",
+    "path": "metal/metal355.jpg",
+    "sha256": "fdca4976b739e7cf49cac29a4cc8ce0e2f29550928f3cbd3f95bb7060b6af10b",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass423",
+    "path": "glass/glass423.jpg",
+    "sha256": "93593c57dd926131e3c2a1a2354936f9c898de04dc1c4d5b62b783908137bb8d",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass306",
+    "path": "glass/glass306.jpg",
+    "sha256": "5ed3c43a1b31daea8ae3c6d0837d3a353f7b3033cd183d95d9363ffbbc2d7ee8",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass19",
+    "path": "glass/glass19.jpg",
+    "sha256": "40c8393aae8bba3c72093e8e1085f898cff0ba21a28da08608f65c0dcfbf6c5d",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal50",
+    "path": "metal/metal50.jpg",
+    "sha256": "83e366a9abd3d4a450916672b6043699cfcb8c20ea31d0b28cf928e69589cac6",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass374",
+    "path": "glass/glass374.jpg",
+    "sha256": "432a5d3f5e82b75c82ee6b504329e27b3b55b34a0907d3faa6800f3bb2bd000e",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic82",
+    "path": "plastic/plastic82.jpg",
+    "sha256": "1a2af231f4f280680a67d841707a6b36d9438e816be6fdaf70e2e2609a2979bf",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass388",
+    "path": "glass/glass388.jpg",
+    "sha256": "d6d9f191f330bb9f9268e70e835f5a24ad80cd19157d0b29c218b218cc765826",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic372",
+    "path": "plastic/plastic372.jpg",
+    "sha256": "31b4750d5072f1c4e7ae5b66a3fecb0f94f9439307627952e810b3764fd40ef5",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass59",
+    "path": "glass/glass59.jpg",
+    "sha256": "9be6caa848a980f2eaff70803bebbe73118b0fc967682b839f0785c1e9f7a98c",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal269",
+    "path": "metal/metal269.jpg",
+    "sha256": "e56df9be46fbbb5fadd739b24a058acc4f419ff7a567f2c164a89390be832f04",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass297",
+    "path": "glass/glass297.jpg",
+    "sha256": "92d3ac044c9ace82a0e0087a84b5682591bbdef9faad78b5c08e46012e433a3c",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic187",
+    "path": "plastic/plastic187.jpg",
+    "sha256": "b9766ff94bc626bc5f2dea58d70d7ca679acb3ce1f30a6e75d7cd40885fcd090",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal328",
+    "path": "metal/metal328.jpg",
+    "sha256": "d476473e802901fc009eb708a3a41c5198fd3ed9ccef527c48de890bcbaa14cb",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass350",
+    "path": "glass/glass350.jpg",
+    "sha256": "1aa33cc9b8206a4b81e95575a94e02020a52f33504772f5518af448e3469dd93",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic383",
+    "path": "plastic/plastic383.jpg",
+    "sha256": "d011086eef5790df6f9109c38ad6b5cf601879fc4c7d0247c4e4006362bc1eaf",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic114",
+    "path": "plastic/plastic114.jpg",
+    "sha256": "721001d815684542d682a210cdc5eb7f3ee84a6b45a5a2208275f5d9bb34c5bb",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal24",
+    "path": "metal/metal24.jpg",
+    "sha256": "b135bd2ebbcaccd4f1e134372bf85e177d3f42afa5415758a9e4c615c57d8607",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass121",
+    "path": "glass/glass121.jpg",
+    "sha256": "726b624ca2206fa9a82d656e9b35ab893d4543850fd45df8722520f0ac37a2ed",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic315",
+    "path": "plastic/plastic315.jpg",
+    "sha256": "c0427850434fbd1daaec76e205ec253dfcefe277e12c0d707018ebbe58621cc5",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal12",
+    "path": "metal/metal12.jpg",
+    "sha256": "077c55b3fedbef7bed89a822a33b6543cc7724b6160928d58d8bfc8354c4cba6",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal186",
+    "path": "metal/metal186.jpg",
+    "sha256": "f6fbe70ee36fb0907264735e8abf67ebea2283dcaa3fcf08a273baf528ab35e5",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass493",
+    "path": "glass/glass493.jpg",
+    "sha256": "bd8509c9e7ae1f432907fc3c0912dc88136fc6918112e5d28802d43d06bd0fbb",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass323",
+    "path": "glass/glass323.jpg",
+    "sha256": "0ae973374777878d2f29b4ae38a5f70b901573e8aa4d17b2ac2f9340eb781804",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass53",
+    "path": "glass/glass53.jpg",
+    "sha256": "e9319d2ac8cf666814030b0222c3f45a56094ebaf3d89ee18f93de9fdb267eb1",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic205",
+    "path": "plastic/plastic205.jpg",
+    "sha256": "9d98b9fdaeb4f7ab6877330e345e4e40be5f8086a558eb20480f75f2faeb6a41",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal27",
+    "path": "metal/metal27.jpg",
+    "sha256": "9c2415a47e9b1c1744ab393a6d065820384ea47a23c0a625fa52d8e98ce6a13f",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic390",
+    "path": "plastic/plastic390.jpg",
+    "sha256": "74eed91f34db1284b8e69bd6c54dd37c97722f961493d3e7ae45725a8119033d",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass310",
+    "path": "glass/glass310.jpg",
+    "sha256": "b196fbf78445391dea3d9099d39697f9ecdefa76f8ee911e16e324c792b8534d",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal247",
+    "path": "metal/metal247.jpg",
+    "sha256": "ab6e62249c7a90795afe3420b50ea141a8d8fd7bc1ea162d7d6660978feee123",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic374",
+    "path": "plastic/plastic374.jpg",
+    "sha256": "f0a5bc491963e626629fc5b428636a27c96610c0cfd4fc748c6f5932436aa22f",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal344",
+    "path": "metal/metal344.jpg",
+    "sha256": "75541c15a811597a817da2d32117b2f90c36ef7d4a4680b8b5a734daf45e53c8",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal68",
+    "path": "metal/metal68.jpg",
+    "sha256": "90df0d9174b239a2af75328dd80fd3b6dfc96471b59566e5181307ffc86e7f5f",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass446",
+    "path": "glass/glass446.jpg",
+    "sha256": "bd56995ebe7cee2e1d1f838c735b56005d9d3ae0192dfcf36d86849bb4d66be6",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass192",
+    "path": "glass/glass192.jpg",
+    "sha256": "a0251609850efa59b9ba88efd0c02178ce2901df8dc5cdf0c960d38aadfd6a2a",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass256",
+    "path": "glass/glass256.jpg",
+    "sha256": "090284c9439f7721302127d75180f285d148ead5f923a3b0ca020260bacf18fa",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass278",
+    "path": "glass/glass278.jpg",
+    "sha256": "14ad5395a54cf1a0376e7bcc8d40f6abc6066e921606226597b6139ca5664793",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass218",
+    "path": "glass/glass218.jpg",
+    "sha256": "e9c17878a28c94b225d82a8f71e6742f335aa0c44f4d84b5a7f62a49610c90ff",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal275",
+    "path": "metal/metal275.jpg",
+    "sha256": "cbcca3f28ab464eaf7ecd98412dba2417a7fcc9c6b6b47d0594ca1a86ed75bd6",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic226",
+    "path": "plastic/plastic226.jpg",
+    "sha256": "ceb4d3b5df9f6fac3cb972ac7a7abf9848791ccbcb7af21734554b3965b98509",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass427",
+    "path": "glass/glass427.jpg",
+    "sha256": "397ecafd3816d263b77e35923e90881b8b5577a93ae8ee8d65852a568766643e",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic201",
+    "path": "plastic/plastic201.jpg",
+    "sha256": "1e0b2094a10bec25a65f4c01b6f7f8ecd6da63825f27829d9631360f8ba3aeda",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass485",
+    "path": "glass/glass485.jpg",
+    "sha256": "0e561c15c18303512b8baad98b5e5b7920b44cc23ae0d7cb6565d7c5aa5022ef",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal350",
+    "path": "metal/metal350.jpg",
+    "sha256": "e5c11cab3471d63231449c669f779d85a372492cae981a3731efab9d6a0ed26a",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass57",
+    "path": "glass/glass57.jpg",
+    "sha256": "f648f8b660a09532bf649b8fd03708ad000ca34600f7b86b380266e96713d003",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal161",
+    "path": "metal/metal161.jpg",
+    "sha256": "a35b3d08ada679342504b59e4fd634e0d5c556e84b4688149dd39f4a8acf3162",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal296",
+    "path": "metal/metal296.jpg",
+    "sha256": "34bc4ee4ce56e91e3e0561067d5a05ad377b3dcd26175c6f732ae583d89683c3",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic260",
+    "path": "plastic/plastic260.jpg",
+    "sha256": "4763161eb2f6db915cd378a3c8b1e407d240030d4b1f924007853bdccf3352a1",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass386",
+    "path": "glass/glass386.jpg",
+    "sha256": "807191c231fdef759b4d6496ba9d58e78bde4837d9571eda95f8a5a9649ae4b3",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic465",
+    "path": "plastic/plastic465.jpg",
+    "sha256": "de61b40d77ae95cde7cf7700f79383477984a3892a8146ddc44ad13a77c15f06",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic170",
+    "path": "plastic/plastic170.jpg",
+    "sha256": "1f4467071265642d3170c0336c19644f5f9b7b3944cfb5b5ad41f8771094e801",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal217",
+    "path": "metal/metal217.jpg",
+    "sha256": "735503b328adb446f9787f872a439af4ca5bf2c33041b3728432d59d01504a6a",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass119",
+    "path": "glass/glass119.jpg",
+    "sha256": "915d181548f0f3c7b6749b271fd0d73c7726157b54442cae32ed35953d26558a",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass91",
+    "path": "glass/glass91.jpg",
+    "sha256": "c1c6eb287885d70899ab080246cb1fb6ccda43953c0d74d036d5937e0578b876",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass318",
+    "path": "glass/glass318.jpg",
+    "sha256": "feb6ce284cc9eebed14648f907a7fdd0743ad6c36b89008de84d0409a74fffa2",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass159",
+    "path": "glass/glass159.jpg",
+    "sha256": "3a14177bc50b3e0785c831f68805dfcf2d707067ffcf8047c320ef25e0313166",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal13",
+    "path": "metal/metal13.jpg",
+    "sha256": "a4d7df36d807f540e62fb91552e0a1926a8154c30c80fbf4207d4c1b845c4e6d",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic84",
+    "path": "plastic/plastic84.jpg",
+    "sha256": "e601da110e32d80f61767e7551bbb7840d3c87f3a3bbe2b1040ae02124094217",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic32",
+    "path": "plastic/plastic32.jpg",
+    "sha256": "dd4b43a6ba69f04f3264f855f632f83f1cb5656b8bd47c08a958176662bcb27a",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass354",
+    "path": "glass/glass354.jpg",
+    "sha256": "6d2b60249550673aa6cc9c073b0e7607511cb9d66150e3cc10eeda988d0b42ed",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal48",
+    "path": "metal/metal48.jpg",
+    "sha256": "8cf0c25a3722935900dd455ed58d8d42915c01710c542cada4d2d877240709d6",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic98",
+    "path": "plastic/plastic98.jpg",
+    "sha256": "5dcdd840b2ef4863a974153e836821955c0d8a179529fd9ae3dff29af628b8b8",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic207",
+    "path": "plastic/plastic207.jpg",
+    "sha256": "91d77a33f85b448aae6b334b477010f5e181c01615c6d41329432e13945381dd",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass128",
+    "path": "glass/glass128.jpg",
+    "sha256": "4a4a4e2d5bab88aa1c75b92687f37caf32adff970946e999400ad398eb66693e",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal52",
+    "path": "metal/metal52.jpg",
+    "sha256": "35603bfbca4ee38bdfb80d48b080595399f7d2429355140d29f4954ff7a52876",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass61",
+    "path": "glass/glass61.jpg",
+    "sha256": "ec88fe102840837987b2e2c538f0b25102957d49b59cb8cca01b3af54cd5b0be",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal172",
+    "path": "metal/metal172.jpg",
+    "sha256": "849031109bca9ca152522d22922047701690fe65679a0d648f55f71a0813da0d",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic67",
+    "path": "plastic/plastic67.jpg",
+    "sha256": "bac537b6725eceb69e3aa20ed650cb9540aff2543e83e9df4214394c008f48c3",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass60",
+    "path": "glass/glass60.jpg",
+    "sha256": "35a60a89ff0913df2c0c068470fd9ea069abe2c383a2464ec2af765b52b1d282",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass322",
+    "path": "glass/glass322.jpg",
+    "sha256": "f799d188b2642a677cf12f2522e4e73c0afbf7991aaa7f76c1b6b17e89ff8c66",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass418",
+    "path": "glass/glass418.jpg",
+    "sha256": "b39b231915cc0a2ce4e871d9675408bd83180754c3e6f76709537a4531b51a92",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic253",
+    "path": "plastic/plastic253.jpg",
+    "sha256": "63ac5e258be03cca86f2dd5012f4366a15c7b4dd794dba32afede551761ace5f",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic132",
+    "path": "plastic/plastic132.jpg",
+    "sha256": "554e898f89e123b1f1801e9863d60cc789277dc2b5b62112f6c7cf9a7b603bdf",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass293",
+    "path": "glass/glass293.jpg",
+    "sha256": "317b8d9894ffb98bf8c0b3aa81206fe1ffa19c19ef3bf012e7fc174f549ffb27",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic49",
+    "path": "plastic/plastic49.jpg",
+    "sha256": "42961ff5bb972e412575a53d3d24459a04e4ab47cbf18961d3cdbc70d49ca404",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass476",
+    "path": "glass/glass476.jpg",
+    "sha256": "ecb3ac2213e6b10534fe89f3cd75008ed416791a4f3a901eca2b3717749f2f7a",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass52",
+    "path": "glass/glass52.jpg",
+    "sha256": "04450fe6aa64a795c4826aa5cf8f60143d9171049ffb07a97546b9aa1792867e",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass365",
+    "path": "glass/glass365.jpg",
+    "sha256": "d9f9c7a9d266eeba9ab3690743b9802ba306d90f4176467abad71d83b11974d3",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic2",
+    "path": "plastic/plastic2.jpg",
+    "sha256": "86c49ad6ad1213ca8e78308201430378e8fb87b3ffe624993773e6828bf7e30a",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass267",
+    "path": "glass/glass267.jpg",
+    "sha256": "b3585984de7bd265b238537b2c57713ab62d3db03e98a81c0b5973b74540b2fa",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass341",
+    "path": "glass/glass341.jpg",
+    "sha256": "3dc88815b7460818c470fa8ae1e45fb439ac5fca8ca2009bf917367c2f00973e",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass139",
+    "path": "glass/glass139.jpg",
+    "sha256": "45a69094577ef5145e52bf1885b5c52f90db42455c6382e663d99b11a0e9b21c",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal387",
+    "path": "metal/metal387.jpg",
+    "sha256": "4fb781fce54a6d4f689f6eba2cf41e42285e4963c76d25292bab5f3b066a3d01",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal175",
+    "path": "metal/metal175.jpg",
+    "sha256": "d3982a15a88776bcddc2a257b2d319d69c3bd23a1bbd7b5c121818da85f4a7a5",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic217",
+    "path": "plastic/plastic217.jpg",
+    "sha256": "498e64723afe4e5e440dddb990f636a44f2b166b699fd882e502cece63e20c85",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal65",
+    "path": "metal/metal65.jpg",
+    "sha256": "5bb983664aae5f1f02a852a10d33114a1f97ad19ed78a313276ad732cdad117d",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass426",
+    "path": "glass/glass426.jpg",
+    "sha256": "4a7b06d066c3cd879e9664640df08587b987459ae55d771116a976e9be8b1d39",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal99",
+    "path": "metal/metal99.jpg",
+    "sha256": "6b33e62797187f90563f7f0341f563b4d1dc07a64fa7007fa3a0b1cffb779bb1",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal188",
+    "path": "metal/metal188.jpg",
+    "sha256": "6f9179ad6a8fe315a897c71d49199ae16597a8f4dacce768cf43578fcf4e24f4",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass450",
+    "path": "glass/glass450.jpg",
+    "sha256": "06ac9e96b53cdb3cbc59e519a989e082f0093a7b03c3f9accda3eb0946d29300",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass68",
+    "path": "glass/glass68.jpg",
+    "sha256": "b209df41ef8cf844aba8190a2655dc1d080f6409e541bf37d176773ebadc78b7",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass479",
+    "path": "glass/glass479.jpg",
+    "sha256": "1a0c4e76e0413a6539d501fbb65d3b7b530eaa3306da3a6b5398ca0300691268",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic265",
+    "path": "plastic/plastic265.jpg",
+    "sha256": "9ce823c13128cdde96b3fea06608b3ce5c0991ccd45a5ac832e2464360169b1a",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic122",
+    "path": "plastic/plastic122.jpg",
+    "sha256": "54408331bae646ccabeb2e77330bc9430d6c6ea7440f294ab7aeed0c458b4add",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal80",
+    "path": "metal/metal80.jpg",
+    "sha256": "8ed72e0c27c92095fc99d0af7c7a32f5378138f2031df9aa11ba9ea843c1b8b5",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic399",
+    "path": "plastic/plastic399.jpg",
+    "sha256": "301e771d2ea138815666f1f0345f7ebb7fc92f8fe15e865ca6d93e81cba14f79",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic379",
+    "path": "plastic/plastic379.jpg",
+    "sha256": "6ee988c39df74a3d4bae4662d28ef523daf7e2ca4b0c0b2fc550cb3336fd72a1",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass193",
+    "path": "glass/glass193.jpg",
+    "sha256": "ff2ac90f6c67f577a2083c4bb643b30a4fb4f59694ce62a1413b01705c54bc68",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass472",
+    "path": "glass/glass472.jpg",
+    "sha256": "05b945d5d004b3c64416a2b92727d8b493f87b63732e03fb5180376d34600c70",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass268",
+    "path": "glass/glass268.jpg",
+    "sha256": "7c5d74fc1d111def2783fa121c6246d01be3beeb571c26cca4410fb2e4012bf4",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal258",
+    "path": "metal/metal258.jpg",
+    "sha256": "408da93fefe2c7c939e13aabdde2c8ede85690177d8377a244d0794ec38466a3",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass338",
+    "path": "glass/glass338.jpg",
+    "sha256": "37b42d8eb83eb9db4e31a090cb2b6959b501e202885a996ee31180a3d44c5e86",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic317",
+    "path": "plastic/plastic317.jpg",
+    "sha256": "eb326e1c218874929d693edd6d3555f34ae18a287253edcda9a89b3c04267b7c",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass155",
+    "path": "glass/glass155.jpg",
+    "sha256": "af01c6d84a461d5e396f6eefabcbfb628cd3e07ed8d2fded241a7924976695ec",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic314",
+    "path": "plastic/plastic314.jpg",
+    "sha256": "694e49b212ea8b4c1f4cad6ea8758c3a5b7aae9b54bb2da120ddbad3ca146d9e",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass148",
+    "path": "glass/glass148.jpg",
+    "sha256": "f017c4b8a62097611ce69d393a72b0abca2426d4c3b6d6d65ddb6bd73ee19c38",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal324",
+    "path": "metal/metal324.jpg",
+    "sha256": "fe049594033f81b4464b63208b68f68c0cbb3b8dac8d0c059e771e8418a88393",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal33",
+    "path": "metal/metal33.jpg",
+    "sha256": "8a6c01737989c3abcc5380fb964442823bcc7e7d2145146f9f2600cbf332b1de",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic39",
+    "path": "plastic/plastic39.jpg",
+    "sha256": "faf28d8f09c1075d3337ebf19bcafda1427053deb2ee9827926f9077f9ebdf1e",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal62",
+    "path": "metal/metal62.jpg",
+    "sha256": "ba1e9103370776db0f48019aaa67ecf449d359e76b7f7cce8cc4fae189f8528b",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass415",
+    "path": "glass/glass415.jpg",
+    "sha256": "bae5907e90053845469c3f15e587f4364990b39c1841d52b1aab06756a3240a4",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass311",
+    "path": "glass/glass311.jpg",
+    "sha256": "b39aa12f708cfe510fed276ed590eed15b6630d2ddd258ce455c88eee39e4dca",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic214",
+    "path": "plastic/plastic214.jpg",
+    "sha256": "94ef473a8dde0a7eec8f1e2c6d9301da37a04757f8a000ce8a662e3565f25755",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass154",
+    "path": "glass/glass154.jpg",
+    "sha256": "7b0b2410231626f2ae574750c944ac9770caa8c3492a4ea50fcf7571762686a9",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass83",
+    "path": "glass/glass83.jpg",
+    "sha256": "956d8be4a2512c9cba2208849ef6350a64205ebd4aedc88705a5a3a584c0b7df",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass181",
+    "path": "glass/glass181.jpg",
+    "sha256": "993b631986ade472a92ab48c766d0cd1bdf56a4cf9652165350ed2496a310fb1",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic423",
+    "path": "plastic/plastic423.jpg",
+    "sha256": "2420707c919e4d373408adf3d85620610d701a9bf667e61e5d3e3d60ada78dbd",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic64",
+    "path": "plastic/plastic64.jpg",
+    "sha256": "daaba9da8e9b2d76aae5c21030392f8069bd053c9993b2b227f6df5ded49e03a",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal192",
+    "path": "metal/metal192.jpg",
+    "sha256": "658bf4daf9cf82ab9b4f5794946d0be8db7c2e0cfd33f1b656bc8bc5b6878d7e",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass8",
+    "path": "glass/glass8.jpg",
+    "sha256": "7d3842706c35ca750a320481e9f293b1ebc664e07038050ca56d3e38c84105cb",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal403",
+    "path": "metal/metal403.jpg",
+    "sha256": "23e20d8dd91193b3a6df158a8d0e80fd2524cd609d998dcda5a055a8ed9c5074",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass73",
+    "path": "glass/glass73.jpg",
+    "sha256": "3634290f2e8e578e36042841453d307eb95437fdc0001834403b3a3f9b7d27e2",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass118",
+    "path": "glass/glass118.jpg",
+    "sha256": "f4988cb65c5bbc438eec949a7e0628c591cba94798718c9ad7a274b764ee43b8",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic99",
+    "path": "plastic/plastic99.jpg",
+    "sha256": "f974ebe90df82d6e9e011848f4542e5fce471d27c85902ce8866bb0131d494b5",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic93",
+    "path": "plastic/plastic93.jpg",
+    "sha256": "2e772db456e0cedc180bbbdceb428d6b5a071981d81c6968e7db385e5418a2ac",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic138",
+    "path": "plastic/plastic138.jpg",
+    "sha256": "80c1dadce4be8f73ce9cc0f2cc8deded5d9c7781304e1d61fa2db9b50f7ce985",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass287",
+    "path": "glass/glass287.jpg",
+    "sha256": "3f136831cbe89c6e52fa4e675a7d6f55b5ea5e97fc5422a2ffa633c35898ce8a",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic438",
+    "path": "plastic/plastic438.jpg",
+    "sha256": "eae8dcca1e55ceb89f478cb8a82cd496fe4175031410cf17b4e1c8eb31b68095",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic348",
+    "path": "plastic/plastic348.jpg",
+    "sha256": "7a6dfb86c6b5d8c45e298989408e85cc3c4c3c872fecdd086ea87a41629d1764",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass466",
+    "path": "glass/glass466.jpg",
+    "sha256": "97baf9536e750d14c54b0096d370e28b4eea6fa1b272315547e4a18c2989e077",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic159",
+    "path": "plastic/plastic159.jpg",
+    "sha256": "e1a19322d0a390190ad4308f5dd7f5926f8070376592d621d4104d16427f010e",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass255",
+    "path": "glass/glass255.jpg",
+    "sha256": "c9be8cce671a82570080d018e80c24256f35b04ddc3d0a2b58adf59f4de1cd78",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass486",
+    "path": "glass/glass486.jpg",
+    "sha256": "cfda64d080b5f77200ba4afe4ee4e2feca0b32618365629f8f0bf6084b5110c1",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic126",
+    "path": "plastic/plastic126.jpg",
+    "sha256": "219faadf8ca0140bbe363127e9414f3e53718c2ff180c4ac1a6173a66a2abae1",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal209",
+    "path": "metal/metal209.jpg",
+    "sha256": "45ac1160c83f9b3e15d55a4e440f2259a63b1bfbb6e85e0f94a9d8ff163a015b",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass135",
+    "path": "glass/glass135.jpg",
+    "sha256": "da6da5f684a7073a2a22c2e01e1ff7fe2122bc543e28b4573be1f84a049a1f4e",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal146",
+    "path": "metal/metal146.jpg",
+    "sha256": "2f48e712ac253a576e000248b523c970264a95e572c23e9ccb57404c15a16857",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic251",
+    "path": "plastic/plastic251.jpg",
+    "sha256": "8dbb1979032fb913540fbe907be48bf3559b594bcb5101e69ba6f6ac1e29baea",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal249",
+    "path": "metal/metal249.jpg",
+    "sha256": "b94f43400e61f17ac2a9cc720d5dd05ff33282dca59e0743055b6140e0c81798",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal394",
+    "path": "metal/metal394.jpg",
+    "sha256": "faa78494494831097ab686e7de6e1db569390fb1d5976a5f12cc3fa9bcd5cf56",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal114",
+    "path": "metal/metal114.jpg",
+    "sha256": "ff3491a1b204be3e76ad92bcf8158dd26e7b9b35b2e291528e651876ee5125f4",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal292",
+    "path": "metal/metal292.jpg",
+    "sha256": "9e7ef3d5d3a675800e44eddd06a21ef8ea4e3396ede10baa7537e8cefdd2a38b",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal317",
+    "path": "metal/metal317.jpg",
+    "sha256": "2b0bf75581cbeb9eaaa4fb7788362fe87cce5089f2ab4ff58ee9541a072f0e78",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass382",
+    "path": "glass/glass382.jpg",
+    "sha256": "24ad3a3342e4f1fbf4ff5060171fb26835225df98dba3dbc0fa2269a71582110",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "metal261",
+    "path": "metal/metal261.jpg",
+    "sha256": "770b06b68120e8ec7c5906381f0f70d6fed1b1d7ac457f60e94466b12aaa5823",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal187",
+    "path": "metal/metal187.jpg",
+    "sha256": "bcbf889aa70c570c63ad34a9d7e7ab233ac2e018df130dfa758c8cb328ddeec7",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass227",
+    "path": "glass/glass227.jpg",
+    "sha256": "15a8c957f25b6d3e6041e66c39d2f9edee0df009217a7312966ca50a843eb56e",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass439",
+    "path": "glass/glass439.jpg",
+    "sha256": "7eb308d3a1169c1cdfbb10c9a9facda01204aba733795f1051225c4932866b1f",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic146",
+    "path": "plastic/plastic146.jpg",
+    "sha256": "9b7b14d2025b1827110fd60d02a54b605e6b0e18da547c35dc240f9b324fa698",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "glass10",
+    "path": "glass/glass10.jpg",
+    "sha256": "f11d856b820653d32078fa0b0cdca5b3976f1410d40fe8e222431d2087607f6f",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass465",
+    "path": "glass/glass465.jpg",
+    "sha256": "00cba166ae35f321e828c3a5bf23a3f626b027ffa14e43c11423994972f319a0",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic420",
+    "path": "plastic/plastic420.jpg",
+    "sha256": "094c6c3a65cbea6b2a26f25e763b073b57a90786a13eeb010b5d139426a90a5f",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal201",
+    "path": "metal/metal201.jpg",
+    "sha256": "4302630b651a017c0c0e98695384f4373f67390a7472fac5105d388ffa131701",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic264",
+    "path": "plastic/plastic264.jpg",
+    "sha256": "1df8d5c5690689c8d0119bbb7f8fd98d94943931e281a0776f84a89eecb4250d",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "plastic66",
+    "path": "plastic/plastic66.jpg",
+    "sha256": "193a15fa9c0f2b9385bd569c056122ae9c27c6f2784bd5efbb50d1dd6c1026d1",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal246",
+    "path": "metal/metal246.jpg",
+    "sha256": "ec5b921975637bd4db2d74e57e497ebdd96264e338dc777d1829a6520bbea24c",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "plastic349",
+    "path": "plastic/plastic349.jpg",
+    "sha256": "de5931a4efb3532c996b49ae1e803a116f6dfaf0dd5f16c126d3dc97877cf1b8",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal87",
+    "path": "metal/metal87.jpg",
+    "sha256": "8dba589d0f805b89f4a63ea6be21705c686b5f72d99faed21f7dd89b173207c0",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "glass292",
+    "path": "glass/glass292.jpg",
+    "sha256": "3b41c3a115d25e41fdcabd738d207e7a2f99f45519ce8ad45a58293de281ac33",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "glass149",
+    "path": "glass/glass149.jpg",
+    "sha256": "ec2d7c20b64c2cb0b417b98644c7c80ce98a4946137b2955699f2e883ac4a97a",
+    "split": "test",
+    "class_id": "glass"
+  },
+  {
+    "id": "plastic156",
+    "path": "plastic/plastic156.jpg",
+    "sha256": "6e76b073923dcfef1a4cd1b7510d0a840d8ee83f68258ab9a285955c354d17e5",
+    "split": "test",
+    "class_id": "plastic"
+  },
+  {
+    "id": "metal112",
+    "path": "metal/metal112.jpg",
+    "sha256": "00cb113efab64e877fe763e04113e4d6cd0f7448fad899bac05164614edf779a",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal239",
+    "path": "metal/metal239.jpg",
+    "sha256": "d984583b9ff25cfa175329f01af7c88fe3b75160ae751bfaea46ff39800b7f72",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal133",
+    "path": "metal/metal133.jpg",
+    "sha256": "e90c83c63ff95a469f03207efbcd9339785013a63b570fb74d4afe5e400e82b3",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal393",
+    "path": "metal/metal393.jpg",
+    "sha256": "03df33467ca34568ab435414614bb91881b006510bfa7fcc5cb131f51990ec9c",
+    "split": "test",
+    "class_id": "metal"
+  },
+  {
+    "id": "metal389",
+    "path": "metal/metal389.jpg",
+    "sha256": "33ed5bedbe97a9b8244afc1603b335cb88b397475eb0a064f542fd7d0a0193ec",
+    "split": "test",
+    "class_id": "metal"
+  }
+]

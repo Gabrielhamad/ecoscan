@@ -28,6 +28,10 @@ testes de campo. Falta o ensaio de continuidade operacional.
 
 **Aceite:** relatório reproduzível e independente, sem uso do conjunto para ajustar o mesmo candidato.
 
+**Estado:** avaliação histórica reproduzida por hash e diagnóstico externo
+TrashNet concluído com 224 imagens prioritárias. O teste novo de celular por
+objeto e sessão continua pendente e não pode ser substituído por esse benchmark.
+
 ## 3. Operação e observabilidade
 
 - persistir eventos técnicos sem imagens ou dados pessoais;

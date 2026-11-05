@@ -36,8 +36,32 @@ def main():
         labels.append(row["class_id"])
         top.append(prediction.top_class_id)
         accepted.append(prediction.class_id)
-    result = {"top1": classification_report(labels, top, config.classes),
-              "accepted": classification_report(labels, accepted, config.classes), "cases": []}
+    evaluation_classes = [class_id for class_id in config.classes if class_id in set(labels)]
+    if not evaluation_classes:
+        raise ValueError("The test manifest has no supported class labels")
+    accepted_total = sum(value is not None for value in accepted)
+    accepted_correct = sum(expected == prediction for expected, prediction in zip(labels, accepted, strict=True))
+    result = {
+        "schema_version": 2,
+        "evaluation_classes": evaluation_classes,
+        "integrity": {
+            "manifest_sha256": hashlib.sha256(args.manifest.read_bytes()).hexdigest(),
+            "model_metadata_sha256": hashlib.sha256(args.model.read_bytes()).hexdigest(),
+            "head_sha256": model.metadata["head_sha256"],
+            "encoder_sha256": model.metadata["encoder_sha256"],
+            "processing_sha256": model.metadata["processing"]["sha256"],
+        },
+        "top1": classification_report(labels, top, evaluation_classes),
+        "accepted": classification_report(labels, accepted, evaluation_classes),
+        "acceptance": {
+            "threshold": model.metadata["threshold"],
+            "accepted": accepted_total,
+            "correct": accepted_correct,
+            "wrong": accepted_total - accepted_correct,
+            "rejected": len(labels) - accepted_total,
+        },
+        "cases": [],
+    }
     with args.cases.open(encoding="utf-8-sig", newline="") as file:
         for row in csv.DictReader(file):
             prediction = model.predict_image(run_processing_pipeline(Path(row["path"]), config, options).recognition_image)
@@ -46,7 +70,7 @@ def main():
     args.output.write_text(json.dumps(result, indent=2), encoding="utf-8")
     print(json.dumps({"top1_accuracy": result["top1"]["accuracy"],
                       "accepted_accuracy_over_all": result["accepted"]["accuracy"],
-                      "uncertain": result["accepted"]["uncertain_count"], "cases": result["cases"]}))
+                      **result["acceptance"], "cases": result["cases"]}))
 
 
 if __name__ == "__main__":
