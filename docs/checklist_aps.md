@@ -18,7 +18,7 @@
 
 - aceite no URL público em celular e computador;
 - validação das contas, RLS e Storage no Supabase de produção;
-- conjunto independente com fotos novas de metal, plástico e vidro;
+- conjunto independente com fotos novas de metal, plástico e vidro, seguindo [protocolo de avaliação](avaliacao_campo.md);
 - métricas por classe e decisão documentada dos limiares;
 - tag de release, changelog e ensaio de rollback;
 - licença do código definida pelo responsável.
