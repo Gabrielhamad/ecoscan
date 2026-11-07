@@ -137,7 +137,7 @@ class PreservedProcessingTests(unittest.TestCase):
             result = run_processing_pipeline(path, config, ProcessingPipelineOptions(
                 filter_name="canny", segmentation_name="none", morphology_name="none"))
             np.testing.assert_array_equal(result.recognition_image, source)
-            self.assertIs(processing_evidence(result)[-1].before, result.preprocessing.resized)
+            self.assertIs(processing_evidence(result)[-1].before, result.recognition_preparation.source)
 
     def test_model_contract_detects_changed_filters_and_changed_artifact(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -155,23 +155,19 @@ class PreservedProcessingTests(unittest.TestCase):
 
     def test_stale_model_predictions_remain_unconfirmed(self):
         from types import SimpleNamespace
-        from ecoscan.classification.prediction import ClassificationPrediction
         from ecoscan.services.analysis_service import analyze_waste_image
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "can.png"
             Image.fromarray(reference_scene()).save(path)
-            predicted = ClassificationPrediction("metal", "metal", .99, {"metal": .99}, True, .6)
+            from ecoscan.classification.runtime import ModelLoadError
             bundle = SimpleNamespace(
                 model_type="semantic_onnx_assisted",
                 classifier=SimpleNamespace(metadata={"processing": {}}),
             )
-            with patch("ecoscan.services.analysis_service._predict", return_value=predicted):
-                result = analyze_waste_image(path, load_config(),
-                                             model_bundle=bundle)
-            self.assertFalse(result.processing_compatible)
-            self.assertFalse(result.accepted)
-            self.assertEqual(result.top_class, "metal")
-            self.assertIsNone(result.guidance)
+            with patch("ecoscan.services.analysis_service._predict") as predict:
+                with self.assertRaises(ModelLoadError):
+                    analyze_waste_image(path, load_config(), model_bundle=bundle)
+            predict.assert_not_called()
 
 
 if __name__ == "__main__":

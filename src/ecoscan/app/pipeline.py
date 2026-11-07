@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+import hashlib
 from pathlib import Path
 from time import perf_counter
 from typing import Any
@@ -13,7 +14,7 @@ from ecoscan.image_processing.adaptive_filters import apply_adaptive_filter_pipe
 from ecoscan.image_processing.capture_quality import CaptureQualityAssessment, assess_capture_quality
 from ecoscan.image_processing.filters import FilterResult, apply_filter
 from ecoscan.image_processing.image_io import LoadedImage, load_rgb_image
-from ecoscan.image_processing.contracts import processing_contract
+from ecoscan.image_processing.contracts import recognition_processing_contract
 from ecoscan.image_processing.preprocessing import (
     PreprocessResult,
     letterbox_image,
@@ -35,6 +36,21 @@ from ecoscan.segmentation.morphology import MorphologyResult, apply_morphology
 
 
 @dataclass(frozen=True)
+class DiagnosticProcessing:
+    filter_result: FilterResult
+    segmentation_result: SegmentationResult
+    morphology_result: MorphologyResult | None
+
+
+@dataclass(frozen=True)
+class RecognitionPreparation:
+    source: np.ndarray
+    image: np.ndarray
+    filter_result: FilterResult
+    metadata: dict[str, Any]
+
+
+@dataclass(frozen=True)
 class ProcessingPipelineResult:
     loaded: LoadedImage
     preprocessing: PreprocessResult
@@ -50,6 +66,12 @@ class ProcessingPipelineResult:
     metadata: dict[str, Any]
     raw_segmentation_result: SegmentationResult | None = None
     morphology_result: MorphologyResult | None = None
+    recognition_preparation: RecognitionPreparation | None = None
+
+    @property
+    def diagnostic_processing(self) -> DiagnosticProcessing:
+        """Compatibility view over the existing diagnostic arrays."""
+        return DiagnosticProcessing(self.filter_result, self.segmentation_result, self.morphology_result)
 
     @property
     def recognition_image(self) -> np.ndarray:
@@ -170,23 +192,31 @@ def run_processing_pipeline(
     element_analysis = analyze_visual_elements(analysis_mask)
     element_overlay = draw_element_overlay(filter_result.image, element_analysis)
     detection_heatmap = draw_detection_heatmap(preprocessing.resized, analysis_mask, element_analysis)
+    # Official RGB profile: no options from the teaching controls enter this path.
+    official_filter = str(config.filters.get("default", "auto"))
+    if official_filter == "auto":
+        recognition_filter = apply_adaptive_filter_pipeline(
+            preprocessing.resized, _adaptive_filter_parameters(config), quality=quality_original,
+        ).filter_result
+    else:
+        recognition_filter = apply_filter(
+            preprocessing.resized, official_filter, _configured_filter_parameters(config, official_filter),
+        )
+    recognition_source = recognition_filter.image
+    if official_filter in {"sobel", "canny"}:
+        recognition_source = preprocessing.resized
     capture_quality = assess_capture_quality(
-        quality_original, quality_filtered, element_analysis,
+        quality_original, analyze_image_quality(recognition_source), element_analysis,
         use_segmentation=False,
     )
-
-    # Masks are diagnostic: uncertain foreground must not erase material cues.
-    recognition_source = filter_result.image
-    if requested_filter in {"sobel", "canny"}:
-        recognition_source = preprocessing.resized
     preview, recognition_metadata = letterbox_image(
         recognition_source, config.image_size, config.processing.get("padding_rgb", 127)
     )
     recognition_metadata["mask_applied"] = False
-    recognition_metadata["contract"] = processing_contract(
-        config, filter_name=selected_options.filter_name,
-        filter_parameters=selected_options.filter_parameters,
-    )
+    recognition_metadata["contract"] = recognition_processing_contract(config)
+    recognition_metadata["rgb_sha256"] = hashlib.sha256(preview.tobytes(order="C")).hexdigest()
+    recognition_metadata["filter"] = {"name": recognition_filter.name, "parameters": recognition_filter.parameters}
+    recognition = RecognitionPreparation(recognition_source, preview, recognition_filter, recognition_metadata)
 
     return ProcessingPipelineResult(
         loaded=loaded,
@@ -202,6 +232,7 @@ def run_processing_pipeline(
         detection_heatmap=detection_heatmap,
         capture_quality=capture_quality,
         model_input_preview=preview,
+        recognition_preparation=recognition,
         metadata={
             "timings_ms": {
                 "decode": round((decoded - started) * 1000, 2),
@@ -217,6 +248,13 @@ def run_processing_pipeline(
             "target_size": list(config.image_size),
             "preprocessing": preprocessing.metadata,
             "recognition_preparation": recognition_metadata,
+            "diagnostic_processing": {
+                "filter": requested_filter,
+                "filter_parameters": selected_options.filter_parameters or {},
+                "segmentation": requested_segmentation,
+                "morphology": morphology_result.metadata,
+                "affects_recognition": False,
+            },
             "morphology": morphology_result.metadata,
             "quality": {
                 "before_filter": quality_original.to_dict(),

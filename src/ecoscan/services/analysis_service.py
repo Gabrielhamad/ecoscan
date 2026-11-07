@@ -14,6 +14,7 @@ from ecoscan.classification.runtime import (
     resolve_model_path,
 )
 from ecoscan.config import AppConfig
+from ecoscan.image_processing.contracts import processing_contract_matches
 from ecoscan.disposal.guidance import DisposalGuidance, get_guidance, load_guidance
 from ecoscan.services.dataset_reliability import ClassReliability, assess_class_reliability
 from ecoscan.services.recognition_scope import restrict_prediction
@@ -82,9 +83,11 @@ def analyze_waste_image(
             if remote_release
             else model_bundle or load_recognition_model(config, selected_model_path)
         )
-        prediction = _predict(pipeline.recognition_image, bundle)
         contract = pipeline.metadata.get("recognition_preparation", {}).get("contract", {})
-        compatible = bundle.classifier.metadata["processing"] == contract
+        compatible = processing_contract_matches(bundle.classifier.metadata.get("processing", {}), contract)
+        if not compatible:
+            raise ModelLoadError("Modelo incompatível com a preparação para reconhecimento.")
+        prediction = _predict(pipeline.recognition_image, bundle)
         outside_scope = prediction.top_class_id not in config.classes
         if config.model.get("confirmation_required", True):
             # The current assisted release suggests a class but never confirms disposal.
@@ -92,15 +95,11 @@ def analyze_waste_image(
         if outside_scope:
             prediction = replace(prediction, class_id=None, top_class_id="", accepted=False)
         prediction = restrict_prediction(prediction, config.classes)
-        if not compatible:
-            prediction = replace(prediction, class_id=None, accepted=False)
         outside_scope = outside_scope or not prediction.top_class_id
 
         guidance = None
         message = "Não foi possível identificar o resíduo com segurança."
         message = "Análise assistida: confira a hipótese e confirme o material antes do descarte."
-        if not compatible:
-            message = "A foto foi preparada. A hipótese ainda exige confirmação: o modelo aguarda treinamento com esta preparação."
         if outside_scope:
             message = "A análise não corresponde às categorias deste piloto. Alimentos e orgânicos estão fora do escopo; não há destino confirmado."
         reliability = assess_class_reliability(config, prediction.class_id or prediction.top_class_id)
