@@ -1,0 +1,4 @@
+[0;93m2026-11-07 20:49:42.212617055 [W:onnxruntime:Default, telemetry_1ds.cc:600 operator()] Failed to persist telemetry device ID; using an in-memory identifier[m
+Real CPU ONNX load + synthetic uniform input: OK
+model_type: semantic_onnx_assisted classes: 7 threshold: 0.8
+Synthetic smoke only; no accuracy claim.

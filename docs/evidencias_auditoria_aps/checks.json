@@ -1,0 +1,91 @@
+[
+  {
+    "check": "ruff",
+    "command": [
+      "/workspace/work/venv/bin/python",
+      "-m",
+      "ruff",
+      "check",
+      "src",
+      "scripts",
+      "tests"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.03
+  },
+  {
+    "check": "pytest",
+    "command": [
+      "/workspace/work/venv/bin/python",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 11.06
+  },
+  {
+    "check": "pip-check",
+    "command": [
+      "/workspace/work/venv/bin/python",
+      "-m",
+      "pip",
+      "check"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.21
+  },
+  {
+    "check": "reproducao",
+    "command": [
+      "/workspace/work/venv/bin/python",
+      "docs/evidencias_auditoria_aps/reproduzir.py"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 1.9
+  },
+  {
+    "check": "historico",
+    "command": [
+      "/workspace/work/venv/bin/python",
+      "scripts/evaluate_bundled_model.py",
+      "--output",
+      "docs/evidencias_auditoria_aps/historico.json"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.08
+  },
+  {
+    "check": "diagnostico",
+    "command": [
+      "/workspace/work/venv/bin/python",
+      "scripts/run_acceptance_checks.py",
+      "--diagnostic",
+      "--output",
+      "/workspace/work/acceptance"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.16
+  },
+  {
+    "check": "laboratorio",
+    "command": [
+      "/workspace/work/venv/bin/python",
+      "scripts/run_processing_lab.py",
+      "--output",
+      "/workspace/work/processing_lab"
+    ],
+    "exit_code": 0,
+    "elapsed_seconds": 0.26
+  },
+  {
+    "check": "postgresql",
+    "exit_code": 0,
+    "details": "PostgreSQL 16 isolated Docker; migrations 001..004, 003/004 twice; tests transaction rolled back"
+  },
+  {
+    "check": "onnx-smoke",
+    "exit_code": 0,
+    "details": "Real bundled CPU ONNX + synthetic 224x224 RGB; no accuracy claim"
+  }
+]

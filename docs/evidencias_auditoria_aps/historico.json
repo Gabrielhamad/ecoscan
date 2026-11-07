@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "evaluation_kind": "historical_reused_features",
+  "independent_test": false,
+  "artifacts": {
+    "semantic_sha256": "5821ecf3ccc4e5b7dd807cab74978df14aae6e82a2360c765c7232bdf1fa75f2",
+    "head_sha256": "5cc1aa6b5ee4d0e0ed74bca37a8510802f739b61c5e179165beae15c68e8386a",
+    "seed_sha256": "31d5312a474050207f2ccdc666fb184dbaf10878610b5e08f7f6e6b767179e3a",
+    "encoder_sha256": "dfad0c5b643cc67908fbfc88b7ba5ecad10aa6567cc72bfced3a759baaf509bd",
+    "processing_sha256": "2a1a47bad72255684a7a33a3f038d6b622f120ff5ee10c6597734e27fa46a61d"
+  },
+  "counts": {
+    "train": {
+      "battery": 2,
+      "electronic": 1,
+      "glass": 87,
+      "metal": 103,
+      "paper_cardboard": 86,
+      "plastic": 118
+    },
+    "validation": {
+      "battery": 14,
+      "electronic": 16,
+      "glass": 29,
+      "metal": 29,
+      "paper_cardboard": 29,
+      "plastic": 28
+    },
+    "held_out_hashes_without_features": 16
+  },
+  "hash_intersections": {
+    "train_validation": 0,
+    "train_held_out": 0,
+    "validation_held_out": 0
+  },
+  "top1": {
+    "accuracy": 0.696551724137931,
+    "macro_precision": 0.7374749133369823,
+    "macro_recall": 0.6410098522167488,
+    "macro_f1": 0.6510344159582698,
+    "uncertain_count": 0,
+    "total": 145,
+    "by_class": {
+      "battery": {
+        "support": 14,
+        "precision": 0.75,
+        "recall": 0.21428571428571427,
+        "f1": 0.3333333333333333
+      },
+      "electronic": {
+        "support": 16,
+        "precision": 0.8888888888888888,
+        "recall": 0.5,
+        "f1": 0.64
+      },
+      "glass": {
+        "support": 29,
+        "precision": 0.7931034482758621,
+        "recall": 0.7931034482758621,
+        "f1": 0.7931034482758621
+      },
+      "metal": {
+        "support": 29,
+        "precision": 0.7857142857142857,
+        "recall": 0.7586206896551724,
+        "f1": 0.7719298245614034
+      },
+      "paper_cardboard": {
+        "support": 29,
+        "precision": 0.55,
+        "recall": 0.7586206896551724,
+        "f1": 0.6376811594202898
+      },
+      "plastic": {
+        "support": 28,
+        "precision": 0.6571428571428571,
+        "recall": 0.8214285714285714,
+        "f1": 0.73015873015873
+      }
+    },
+    "confusion_matrix": [
+      [
+        3,
+        1,
+        1,
+        2,
+        7,
+        0
+      ],
+      [
+        1,
+        8,
+        1,
+        1,
+        3,
+        2
+      ],
+      [
+        0,
+        0,
+        23,
+        1,
+        2,
+        3
+      ],
+      [
+        0,
+        0,
+        3,
+        22,
+        2,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        2,
+        22,
+        5
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        4,
+        23
+      ]
+    ],
+    "classes": [
+      "battery",
+      "electronic",
+      "glass",
+      "metal",
+      "paper_cardboard",
+      "plastic"
+    ]
+  },
+  "accepted": {
+    "accuracy": 0.32413793103448274,
+    "macro_precision": 0.609280303030303,
+    "macro_recall": 0.2731937602627258,
+    "macro_f1": 0.3740865723423863,
+    "uncertain_count": 94,
+    "total": 145,
+    "by_class": {
+      "battery": {
+        "support": 14,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "electronic": {
+        "support": 16,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "glass": {
+        "support": 29,
+        "precision": 0.9,
+        "recall": 0.3103448275862069,
+        "f1": 0.4615384615384615
+      },
+      "metal": {
+        "support": 29,
+        "precision": 1.0,
+        "recall": 0.4827586206896552,
+        "f1": 0.6511627906976745
+      },
+      "paper_cardboard": {
+        "support": 29,
+        "precision": 0.8181818181818182,
+        "recall": 0.3103448275862069,
+        "f1": 0.45000000000000007
+      },
+      "plastic": {
+        "support": 28,
+        "precision": 0.9375,
+        "recall": 0.5357142857142857,
+        "f1": 0.6818181818181818
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        9,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        14,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        9,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        15
+      ]
+    ],
+    "classes": [
+      "battery",
+      "electronic",
+      "glass",
+      "metal",
+      "paper_cardboard",
+      "plastic"
+    ]
+  },
+  "acceptance": {
+    "threshold": 0.8,
+    "accepted": 51,
+    "correct": 47,
+    "wrong": 4,
+    "rejected": 94
+  },
+  "limitations": [
+    "The same historical validation features were used during model development.",
+    "Original images and object/session groups are not bundled, so scene leakage cannot be re-audited.",
+    "Held-out hashes have no bundled labels or features and cannot be scored from this repository.",
+    "These metrics do not measure new mobile photos or out-of-scope rejection."
+  ]
+}

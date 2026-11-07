@@ -1,0 +1,87 @@
+WARNING: Running in rootless-mode without cgroups. Systemd is required to enable cgroups in rootless-mode.
+7ec228bb358b7ac6b1c2588dcab7278de20b736be2c694e3ed35531b6d51e04e
+/var/run/postgresql:5432 - no response
+/var/run/postgresql:5432 - accepting connections
+CREATE ROLE
+CREATE ROLE
+CREATE ROLE
+CREATE SCHEMA
+CREATE TABLE
+BEGIN
+CREATE TABLE
+ALTER TABLE
+REVOKE
+GRANT
+CREATE FUNCTION
+REVOKE
+psql:/audit-migrations/001_contributions.sql:34: NOTICE:  trigger "ecoscan_contribution_limit" for relation "public.ecoscan_contributions" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+INSERT 0 1
+COMMIT
+BEGIN
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+ALTER TABLE
+ALTER TABLE
+REVOKE
+GRANT
+CREATE FUNCTION
+REVOKE
+DO
+COMMIT
+BEGIN
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+REVOKE
+GRANT
+GRANT
+CREATE FUNCTION
+CREATE FUNCTION
+REVOKE
+DO
+INSERT 0 1
+COMMIT
+BEGIN
+psql:/audit-migrations/003_community.sql:11: NOTICE:  relation "ecoscan_campaigns" already exists, skipping
+CREATE TABLE
+psql:/audit-migrations/003_community.sql:30: NOTICE:  relation "ecoscan_civic_reports" already exists, skipping
+CREATE TABLE
+psql:/audit-migrations/003_community.sql:32: CREATE INDEX
+NOTICE:  relation "ecoscan_civic_owner" already exists, skipping
+psql:/audit-migrations/003_community.sql:42: NOTICE:  relation "ecoscan_community_audit" already exists, skipping
+CREATE TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+REVOKE
+GRANT
+GRANT
+CREATE FUNCTION
+CREATE FUNCTION
+REVOKE
+DO
+INSERT 0 0
+COMMIT
+BEGIN
+DO
+COMMIT
+BEGIN
+DO
+COMMIT
+BEGIN
+DO
+RESET
+                                       validation
+-----------------------------------------------------------------------------------------
+ M2 schema, RLS, CAS, immutable evidence metadata and audit: OK; transaction rolled back
+(1 row)
+
+ROLLBACK

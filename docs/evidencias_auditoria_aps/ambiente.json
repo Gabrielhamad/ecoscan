@@ -1,0 +1,8 @@
+{
+  "python": "3.12.14",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "baseline": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+  "postgres_image": "postgres:16@sha256:f9a7b9ebf6f56201f949db745e47bc423c0f0f8294bafe991cc10bf74b029657",
+  "timezone": "America/Sao_Paulo",
+  "date": "2026-11-07"
+}
