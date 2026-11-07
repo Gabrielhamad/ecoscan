@@ -112,6 +112,7 @@ docs/               documentação atual da entrega
 - [Modelo de reconhecimento](docs/modelo_reconhecimento.md)
 - [Operação da gestão](docs/operacao_secretaria.md)
 - [Roadmap de entrega e marcos](docs/roadmap_entrega.md)
+- [Plano de validação técnica da APS em quatro dias](docs/plano_validacao_aps_4_dias.md)
 - [Parecer de prontidão (07/11/2026)](docs/parecer_prontidao_2026-11-07.md)
 - [Gestão do projeto: papéis, RACI, backlog, riscos e DoD](docs/gestao_projeto.md)
 - [Avaliação técnica](docs/avaliacao_tecnica.md)
