@@ -33,7 +33,7 @@ def render_processing_lab(st, pipeline):
         st.info("Refaça a análise para visualizar as etapas morfológicas desta versão.")
         return
     st.subheader("Preparação e morfologia matemática")
-    st.caption("Aquisição → RGB e tamanho → filtro → segmentação → morfologia → regiões → reconhecimento.")
+    st.caption("Processamento experimental: RGB → filtro → segmentação → morfologia → regiões. A preparação para reconhecimento usa uma trilha independente.")
     columns = st.columns(3)
     gray = to_grayscale(pipeline.preprocessing.resized)
     filtered_gray = to_grayscale(pipeline.filter_result.image)
@@ -82,19 +82,16 @@ def render_applied_processing(st, pipeline):
     if not stages:
         st.info("Refaça a análise para gerar o antes e depois das operações.")
         return
-    st.subheader("Processamento aplicado: antes e depois")
-    st.caption("Correções desta foto, com preservação de cor e proporções.")
+    st.subheader("Processamento aplicado: processamento experimental")
+    st.caption("Filtros e máscaras para demonstrar PDI. Estas escolhas não alteram a preparação para reconhecimento.")
     columns = st.columns(2)
     columns[0].image(pipeline.loaded.array, caption="Antes: imagem original em RGB", width="stretch")
-    prepared_rgb = (pipeline.preprocessing.resized if pipeline.filter_result.name in {"sobel", "canny"}
-                    else pipeline.filter_result.image)
-    columns[1].image(prepared_rgb,
-                     caption="Depois: imagem preparada, sem remoção do objeto", width="stretch")
+    columns[1].image(pipeline.filter_result.image,
+                     caption="Depois: resultado experimental do filtro", width="stretch")
     st.write(pipeline.metadata["filter"]["decision"]["reason"])
-    if pipeline.filter_result.name in {"sobel", "canny"}:
-        st.caption("Bordas são um experimento visual; o RGB permanece sem esse filtro na classificação.")
-    st.caption("A máscara abaixo é auxiliar. O reconhecimento recebe o RGB completo com margens para "
-               "o tamanho fixo, preservando tampa, rótulo, transparência e contexto.")
+    st.subheader("Preparação para reconhecimento")
+    st.image(pipeline.recognition_image, caption="RGB oficial enviado ao classificador, com proporções e margens preservadas", width=224)
+    st.caption("Perfil fixo do modelo. Filtros experimentais e máscaras não modificam esta entrada.")
     for tab, stage in zip(st.tabs([stage.label for stage in stages]), stages):
         with tab:
             st.write(stage.status)

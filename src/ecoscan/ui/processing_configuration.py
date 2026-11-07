@@ -67,7 +67,8 @@ def render_sidebar_controls(
             st.header("Operação da Secretaria")
             render_model_status(st, config)
 
-            st.header("Parâmetros técnicos")
+            st.header("Parâmetros técnicos — processamento experimental")
+            st.caption("Estas escolhas não alteram a preparação para reconhecimento.")
             filter_name = st.selectbox(
                 "Filtro", FILTERS, index=FILTERS.index(defaults.filter_name),
             )
@@ -110,7 +111,7 @@ def render_public_lab_controls(
 
     defaults = _defaults(config)
     with st.expander("Laboratório de processamento de imagens"):
-        st.caption("Compare técnicas da disciplina. Alterar parâmetros reprocessa a foto carregada.")
+        st.caption("Processamento experimental: compare técnicas da disciplina. Alterar parâmetros reprocessa o experimento; a preparação para reconhecimento permanece fixa.")
         filter_name = st.selectbox(
             "Filtro", FILTERS, index=FILTERS.index(defaults.filter_name),
             key="public_filter",
