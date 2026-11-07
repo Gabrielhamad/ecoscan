@@ -21,7 +21,8 @@ da inicialização pública do Streamlit.
 | Comando | Finalidade |
 | --- | --- |
 | `run_inference.py` | Analisa uma imagem com a release ativa |
-| `validate_semantic_onnx.py` | Confere integridade e inferência da release ONNX |
+| `build_field_manifest.py` | Valida fotos locais/CSV, proveniência e separação por objeto/sessão, sem copiar fotos |
+| `validate_semantic_onnx.py` | Avalia manifesto congelado com ONNX e exporta JSON/Markdown/CSV antes da confirmação humana |
 | `evaluate_bundled_model.py` | Reproduz a avaliação histórica da release sem chamá-la de teste independente |
 | `run_reviewed_training.py` | Processa a fila privada de contribuições aprovadas |
 | `build_training_corpus.py` | Monta um corpus a partir de fontes revisadas |
