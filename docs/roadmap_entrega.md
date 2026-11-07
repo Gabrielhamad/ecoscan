@@ -2,6 +2,8 @@
 
 **Revisão:** 07/11/2026 · **baseline:** `04c1a34bcb22026e03b2a3b2396856c2994746e1`  
 **Objetivo:** encerrar a APS com um produto tecnicamente demonstrável, documentação rastreável e aprovação verificável.  
+**Plano emergencial para entrega em 11/11/2026:** [Validação técnica da APS em quatro dias](plano_validacao_aps_4_dias.md).
+
 **Fonte de acompanhamento:** [backlog GitHub Issues](https://github.com/Gabrielhamad/ecoscan/issues?q=is%3Aissue+is%3Aopen), [parecer de prontidão](parecer_prontidao_2026-11-07.md) e [plano de gestão](gestao_projeto.md).
 
 ## Decisão de escopo
