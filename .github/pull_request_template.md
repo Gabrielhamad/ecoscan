@@ -1,16 +1,38 @@
-## Problema e resultado
+## Referência e motivação
 
-Descreva o comportamento observado e o resultado entregue.
+- Issue vinculada: #
+- Problema, usuário afetado e resultado entregue:
+- Fora do escopo deste PR:
 
-## Validação
+## Risco e impacto
 
-- [ ] `python -m ruff check src scripts tests`
-- [ ] `python -m pytest -q`
-- [ ] `python -m pip check`
-- [ ] Fluxo afetado testado no navegador quando aplicável
+- [ ] Fluxo de visitante
+- [ ] Conta, dados privados ou permissão
+- [ ] Banco/migração ou Storage
+- [ ] Modelo, hashes ou contrato RGB
+- [ ] Deploy, configuração, pacote acadêmico ou documentação
+- [ ] Apenas documentação/sem alteração de runtime
 
-## Risco e operação
+**Impacto conhecido, plano de retorno e dependências:**
 
-- Dados, migração ou rollback necessário:
-- Impacto em visitante, participante ou gestão:
-- Impacto no modelo, contrato de preparação ou release:
+## Critérios de aceite e evidências
+
+- Requisito/critério atendido:
+- SHA ou captura de CI:
+- Teste manual no navegador/aparelho necessário? Resultado e responsável:
+- Documentos atualizados:
+
+## Verificação técnica
+
+- [ ] `python -m ruff check src scripts tests` (ou N/A documentado)
+- [ ] `python -m pytest -q` (ou N/A documentado)
+- [ ] `python -m pip check` (ou N/A documentado)
+- [ ] CI do PR verificada
+- [ ] Sem segredo, foto privada, RA ou dado identificável no diff
+- [ ] Nenhuma alegação de precisão, recuperação ou operação sem evidência
+
+## Decisão de revisão
+
+- Revisor responsável (preencher com pessoa real):
+- Resultado: aprovado / mudanças solicitadas / N/A justificado
+- Evidência de aceite e próximos passos:

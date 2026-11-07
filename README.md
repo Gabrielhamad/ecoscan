@@ -26,7 +26,7 @@ O fluxo web, a autenticação, o processamento de imagens e o reconhecedor ONNX 
 | Persistência | Condicional | Requer Supabase e migrações configuradas |
 | Operação pública | Piloto validado | Jornada pública e contas verificadas em 04/11; continuidade operacional ainda em validação |
 
-Os bloqueios para entrega estão em [Avaliação técnica](docs/avaliacao_tecnica.md) e no [Roadmap de entrega](docs/roadmap_entrega.md).
+**Parecer de 07/11/2026:** candidato técnico à entrega acadêmica; a aprovação formal depende de aceite do SHA publicado, pacote de autoria/APS e release versionada. A última CI do commit `04c1a34` passou com 496 testes e 108 subtestes. [Parecer de prontidão](docs/parecer_prontidao_2026-11-07.md) · [Roadmap por marcos](docs/roadmap_entrega.md) · [Plano de gestão](docs/gestao_projeto.md).
 
 ## Escopo do reconhecimento
 
@@ -111,7 +111,9 @@ docs/               documentação atual da entrega
 - [Arquitetura modular da interface](docs/arquitetura_interface.md)
 - [Modelo de reconhecimento](docs/modelo_reconhecimento.md)
 - [Operação da gestão](docs/operacao_secretaria.md)
-- [Roadmap de entrega](docs/roadmap_entrega.md)
+- [Roadmap de entrega e marcos](docs/roadmap_entrega.md)
+- [Parecer de prontidão (07/11/2026)](docs/parecer_prontidao_2026-11-07.md)
+- [Gestão do projeto: papéis, RACI, backlog, riscos e DoD](docs/gestao_projeto.md)
 - [Avaliação técnica](docs/avaliacao_tecnica.md)
 - [Como contribuir](CONTRIBUTING.md)
 - [Catálogo de scripts](scripts/README.md)

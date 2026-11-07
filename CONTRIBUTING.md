@@ -5,8 +5,8 @@ testar: comece pelo [guia do participante](docs/guia_do_grupo.md).
 
 ## Antes de alterar
 
-1. Consulte o [README](README.md), o escopo ativo e as limitações conhecidas.
-2. Descreva a tarefa em uma issue: problema, resultado esperado e critério de aceite.
+1. Consulte o [README](README.md), o [plano de gestão do projeto](docs/gestao_projeto.md), o escopo ativo e as limitações conhecidas.
+2. Descreva a tarefa em uma issue: problema, resultado esperado, critério de aceite, evidência, prioridade e dependências (veja o [roadmap](docs/roadmap_entrega.md)).
 3. Combine o responsável para evitar alterações simultâneas conflitantes.
 4. Crie uma branch curta por tarefa, por exemplo `docs/guia-testes` ou `fix/login-error`.
 
