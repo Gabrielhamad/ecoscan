@@ -1,0 +1,11 @@
+{
+  "macro_f1_gain": 0.005,
+  "max_recall_drop": 0.0,
+  "minimum_objects_per_class": 10,
+  "minimum_sessions_per_class": 2,
+  "minimum_accepted_precision": 0.95,
+  "minimum_accepted": 10,
+  "max_coverage_drop": 0.0,
+  "max_head_latency_ratio": 1.25,
+  "head_latency_allowance_ms": 1.0
+}
