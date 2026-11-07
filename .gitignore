@@ -17,6 +17,7 @@ data/processed/*
 data/train/*
 data/validation/*
 data/test/*
+data/field/
 models/*
 logs/*
 
