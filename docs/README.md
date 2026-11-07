@@ -14,6 +14,7 @@ Esta pasta descreve o produto presente no `main`. Resultados e métodos substitu
 | [Modelo de reconhecimento](modelo_reconhecimento.md) | Release ONNX, segurança, métricas e atualização |
 | [Avaliação técnica](avaliacao_tecnica.md) | Riscos, bloqueios e qualidade observada |
 | [Roadmap de entrega](roadmap_entrega.md) | Marcos, backlog, priorização, rastreabilidade e gates de liberação |
+| [Validação da APS em quatro dias](plano_validacao_aps_4_dias.md) | Matriz de testes técnicos, evidências PDI, avaliação honesta do modelo e roteiro até 11/11 |
 | [Parecer de prontidão — 07/11/2026](parecer_prontidao_2026-11-07.md) | Diagnóstico fundamentado do GitHub e decisão de entrega por cenário |
 | [Gestão do projeto](gestao_projeto.md) | Termo de abertura, entregáveis, papéis, RACI, riscos, mudança, DoR e DoD |
 | [Escopo e variações](escopo_e_variacoes.md) | Materiais, objetos e casos fora do escopo |
