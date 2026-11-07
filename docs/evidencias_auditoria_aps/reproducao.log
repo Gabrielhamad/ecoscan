@@ -1,0 +1,47 @@
+2026-11-07 20:49:14.180 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+{
+  "synthetic_only": true,
+  "threshold": 0.8,
+  "default_contract_matches_model_and_seed": true,
+  "default_inference_training_rgb_equal": true,
+  "laboratory_evidence_uses_inference_array": true,
+  "none": {
+    "rgb_sha256": "91830a4513486cb2c4298f47214ccfea000592602a3c0ee03165b6b3f7af52ad",
+    "encoder_tensor_sha256": "991b13a7435a5aed7501409ae55aecdf6280a22c959e849a917c9efded68cef3",
+    "contract_matches_model": false
+  },
+  "median": {
+    "rgb_sha256": "95001b2dea195ea03fd0106f359c58ad98dd64d69f2a8656511fbbf605e36c80",
+    "encoder_tensor_sha256": "56c7939a095b8d0aa49cc32e248768f5f261ea44c17344031a9d8335f40ec8cd",
+    "contract_matches_model": false
+  },
+  "gaussian": {
+    "rgb_sha256": "b812791ce92ee9a338605e3b185ff6f9140b74cffb19a056d9fb60f31ac76c5e",
+    "encoder_tensor_sha256": "8d3ca15096999a1b6ccecd50e43bb794dd95386dd4427a7a40bb020727e84fe4",
+    "contract_matches_model": false
+  },
+  "sobel": {
+    "rgb_sha256": "91830a4513486cb2c4298f47214ccfea000592602a3c0ee03165b6b3f7af52ad",
+    "encoder_tensor_sha256": "991b13a7435a5aed7501409ae55aecdf6280a22c959e849a917c9efded68cef3",
+    "contract_matches_model": false
+  },
+  "canny": {
+    "rgb_sha256": "91830a4513486cb2c4298f47214ccfea000592602a3c0ee03165b6b3f7af52ad",
+    "encoder_tensor_sha256": "991b13a7435a5aed7501409ae55aecdf6280a22c959e849a917c9efded68cef3",
+    "contract_matches_model": false
+  },
+  "controlled_prediction_policy": {
+    "True": {
+      "accepted": false,
+      "predicted_class": null,
+      "safety_status": "needs_confirmation",
+      "guidance_allowed": false
+    },
+    "False": {
+      "accepted": true,
+      "predicted_class": "metal",
+      "safety_status": "needs_confirmation",
+      "guidance_allowed": false
+    }
+  }
+}

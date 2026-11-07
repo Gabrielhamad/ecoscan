@@ -1,0 +1,2061 @@
+{
+  "baseline": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+  "files": [
+    {
+      "path": "config/settings.json",
+      "sha256": "438920775c2c2576bf6888d19092854ccd6fe89741a4dc90c1cab8030b41103e"
+    },
+    {
+      "path": "migrations/001_contributions.sql",
+      "sha256": "82461474f5c2ed7d3137478bdf7d90dcc825c4d28f061e1c1970e995bbc0b147"
+    },
+    {
+      "path": "migrations/002_operational_records.sql",
+      "sha256": "b487d494e068e1387297ef6ad33852f61e2e71d46bb8535f55ad35ad0d79c159"
+    },
+    {
+      "path": "migrations/003_community.sql",
+      "sha256": "461333cf4ee7bfa333e6cbc8fa45b5014de31d61c25ae7d92c3b58f4277ff70a"
+    },
+    {
+      "path": "migrations/004_verified_identity_constraints.sql",
+      "sha256": "801f89e66efcb13c0ee42ec3ed02dd3a2aa1b68f5d7d7388511d2244979a667e"
+    },
+    {
+      "path": "models/semantic-v1/learning_seed.json",
+      "sha256": "3f4769e3547f4f2e5e803643b5c7e1150d7291b1e28c5858babd3c0b7df08ba4"
+    },
+    {
+      "path": "models/semantic-v1/semantic.json",
+      "sha256": "5821ecf3ccc4e5b7dd807cab74978df14aae6e82a2360c765c7232bdf1fa75f2"
+    },
+    {
+      "path": "scripts/validate_semantic_onnx.py",
+      "sha256": "4bba1871f5286e2dd65f7322464305708254d9707018a7ee1f0d1de92f581229",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.app.pipeline",
+        "ecoscan.classification.semantic_onnx",
+        "ecoscan.config",
+        "ecoscan.metrics.classification_metrics",
+        "ecoscan.services.evaluation_manifest"
+      ]
+    },
+    {
+      "path": "src/ecoscan/app/pipeline.py",
+      "sha256": "be71bb4fe62e83a2cf6c73e8e439f0a0b5593187902681e5f22aa38e3f46da05",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.app.processing_options",
+        "ecoscan.config",
+        "ecoscan.image_processing.adaptive_filters",
+        "ecoscan.image_processing.capture_quality",
+        "ecoscan.image_processing.contracts",
+        "ecoscan.image_processing.filters",
+        "ecoscan.image_processing.image_io",
+        "ecoscan.image_processing.preprocessing",
+        "ecoscan.image_processing.quality",
+        "ecoscan.segmentation.adaptive",
+        "ecoscan.segmentation.elements",
+        "ecoscan.segmentation.methods",
+        "ecoscan.segmentation.morphology"
+      ]
+    },
+    {
+      "path": "src/ecoscan/app/processing_options.py",
+      "sha256": "db7820dbe87c9c5e3bca7afbbae794b65960e7c5a8e7046aa4f26dc5d3f14198",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.config"
+      ]
+    },
+    {
+      "path": "src/ecoscan/classification/semantic_onnx.py",
+      "sha256": "922cba98b48cce3e9d094ffa248591df832758545031e0b069432c59aedb7f4b",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.classification.prediction"
+      ]
+    },
+    {
+      "path": "src/ecoscan/image_processing/contracts.py",
+      "sha256": "2fe95c4a6962a265f8b0e4bb6449cb2b05dca59481b601b2ba00bdae0aca2eb9",
+      "tests": [],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "src/ecoscan/services/analysis_service.py",
+      "sha256": "87f238ef50ca0363819bdf329f44ee3870533deafb97be39846480a729c3f816",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.app.pipeline",
+        "ecoscan.classification.runtime",
+        "ecoscan.config",
+        "ecoscan.disposal.guidance",
+        "ecoscan.services.dataset_reliability",
+        "ecoscan.services.recognition_scope"
+      ]
+    },
+    {
+      "path": "src/ecoscan/services/recognition_safety.py",
+      "sha256": "a569085819d0629111af2243920fbde72acc110ba262b52afa80f1e7638971ab",
+      "tests": [],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "src/ecoscan/training/semantic_learning.py",
+      "sha256": "a50b00ea98aff81ddabd1878caeb74f24beafe29e94c2d6ee4e8c47ddc4b8bc4",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.app.pipeline",
+        "ecoscan.classification.semantic_onnx",
+        "ecoscan.image_processing.contracts",
+        "ecoscan.metrics.classification_metrics",
+        "ecoscan.services.semantic_release",
+        "ecoscan.training.diagnostics",
+        "ecoscan.training.review_queue"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/__init__.py",
+      "sha256": "6cd3a58d0875491b951123988a355a33edc99cf19bc65cca0b0d633937e2351c",
+      "tests": [],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "src/ecoscan/ui/admin_views.py",
+      "sha256": "fb2ee4ffac530a194b7c0cf8f0ca5425e4bcdca705ca7e8ab022d4e809326240",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.disposal.collection_points",
+        "ecoscan.disposal.guidance",
+        "ecoscan.services.accounts",
+        "ecoscan.services.campaigns",
+        "ecoscan.services.diagnostics",
+        "ecoscan.services.field_testing",
+        "ecoscan.services.history",
+        "ecoscan.services.operations",
+        "ecoscan.services.participant_directory",
+        "ecoscan.services.recognition_feedback",
+        "ecoscan.services.recognition_improvement",
+        "ecoscan.services.usage_quality",
+        "ecoscan.ui.common_views",
+        "ecoscan.ui.community",
+        "ecoscan.ui.learning"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/analysis_controller.py",
+      "sha256": "52a88b68bfcbe7de4a524e5c54e1ac0f47ec8020fa5435bda1f5b166ca2c634d",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.app.processing_options",
+        "ecoscan.config",
+        "ecoscan.disposal.collection_points",
+        "ecoscan.disposal.guidance",
+        "ecoscan.disposal.impact",
+        "ecoscan.disposal.targets",
+        "ecoscan.services.accounts",
+        "ecoscan.services.analysis_service",
+        "ecoscan.services.history",
+        "ecoscan.services.public_flow",
+        "ecoscan.services.recognition_safety",
+        "ecoscan.services.visual_report",
+        "ecoscan.ui.analysis_widgets",
+        "ecoscan.ui.common_views",
+        "ecoscan.ui.disposal_views",
+        "ecoscan.ui.interaction_helpers",
+        "ecoscan.ui.processing_lab",
+        "ecoscan.ui.processing_views",
+        "ecoscan.ui.session_state"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/analysis_widgets.py",
+      "sha256": "6b34ab28ae6cf0a05ccf699a4d1998ea2f664c1a0e3f4eee165273505598de8d",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.disposal.guidance",
+        "ecoscan.services.accounts",
+        "ecoscan.services.recognition_safety",
+        "ecoscan.ui.learning"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/app_resources.py",
+      "sha256": "1d45fe534994c58971075a1423ea2319fa4b74b667190d60662092cfea4bf522",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.disposal.collection_points",
+        "ecoscan.disposal.guidance",
+        "ecoscan.disposal.impact",
+        "ecoscan.disposal.targets",
+        "ecoscan.services.accounts",
+        "ecoscan.services.photo_requirements"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/appearance.css",
+      "sha256": "fe4521cd76151a53d5792647d3bec7d3191089dff4394a5d9b918de8df6f8d96"
+    },
+    {
+      "path": "src/ecoscan/ui/appearance.py",
+      "sha256": "7e1b25ef90ecfe45c7233020a4907941a831994e95665685b68e9d3833cbd8dc",
+      "tests": [],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "src/ecoscan/ui/bootstrap.py",
+      "sha256": "9cfdbd67fd3f7da6962f1d1817265639129ce831e249008c2aa489607898ced8",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.ui.streamlit_app"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/campaign_views.py",
+      "sha256": "5bc29132dce85fce4ed92f29029f8f8ec81d8bee5f53e84c08bdf1dda37e4a60",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.app.processing_options",
+        "ecoscan.disposal.guidance",
+        "ecoscan.disposal.impact",
+        "ecoscan.disposal.targets",
+        "ecoscan.services.accounts",
+        "ecoscan.services.analysis_service",
+        "ecoscan.services.campaigns",
+        "ecoscan.services.engagement",
+        "ecoscan.services.operational_store",
+        "ecoscan.services.operations",
+        "ecoscan.ui.common_views",
+        "ecoscan.ui.disposal_views",
+        "ecoscan.ui.interaction_helpers",
+        "ecoscan.ui.processing_views",
+        "ecoscan.ui.rewards"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/citizen_design.py",
+      "sha256": "e23766e1166ba25903188dd5738a1b5f1ad1beae480894152c2f81d1bd4e6eaf",
+      "tests": [],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "src/ecoscan/ui/civic_views.py",
+      "sha256": "6cde67f02a7e90b4db3ac28f5db8ea5f1db62143fc8f8d42cb8375d409829e15",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.app.processing_options",
+        "ecoscan.services.accounts",
+        "ecoscan.services.analysis_service",
+        "ecoscan.services.civic_reports",
+        "ecoscan.services.community_store",
+        "ecoscan.ui.common_views",
+        "ecoscan.ui.community",
+        "ecoscan.ui.interaction_helpers",
+        "ecoscan.ui.processing_views"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/collection_map.py",
+      "sha256": "fc6913dfbe86bf09206dab5e4f06a9a9e558b356c2f20412f3e608d074e16634",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.disposal.collection_points",
+        "ecoscan.disposal.postal_lookup"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/common_views.py",
+      "sha256": "bd811becae951e57d11525653172c3f87584b8b9a96891ac37dcc0a737b34c21",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.disposal.guidance",
+        "ecoscan.errors"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/community.py",
+      "sha256": "9bd1570a112b99b94eba9b5a9e580c0169fd50adac80e4635281f1ff05f4c6da",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.services.community_store"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/disposal_views.py",
+      "sha256": "bdcedbd9fca53ca5198fa22e589484a4b15df8a42c8e3f168a63b76407fe2313",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.disposal.collection_points",
+        "ecoscan.disposal.guidance",
+        "ecoscan.disposal.impact",
+        "ecoscan.disposal.targets",
+        "ecoscan.services.photo_requirements",
+        "ecoscan.services.public_flow",
+        "ecoscan.services.recognition_safety"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/education.py",
+      "sha256": "5ceedeadfd8a0a45aca2b88e8723ca9f104a83b4772dcc4fbe991a168bfadfa6",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.services.engagement"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/identity.py",
+      "sha256": "2e8bd6648b37f83676397936a789e683296520b8b8fbf62019ed01aff015d9a8",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.services.accounts",
+        "ecoscan.services.contribution_store",
+        "ecoscan.services.identity",
+        "ecoscan.services.password_identity"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/interaction_helpers.py",
+      "sha256": "44908021dd7c2d7a2b3ed5c24ad90bac42ca7f06a820876b37c77e51992384ec",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.app.processing_options",
+        "ecoscan.image_processing.contracts"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/learning.py",
+      "sha256": "469c0afd9c190b40a0bc255d471c6f3d6845a8bbb43ae4c7844f3da08779640c",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.services.contribution_store",
+        "ecoscan.services.learning_contributions",
+        "ecoscan.services.recognition_scope",
+        "ecoscan.ui.scope"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/navigation.py",
+      "sha256": "58952f21490e1522b2088b8d30aa432a27aa85c188a5f81652afa887a9675b6b",
+      "tests": [],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "src/ecoscan/ui/navigation_controller.py",
+      "sha256": "ae6a919c4af6cc844c7a10a62061b63559d88603690275c104fb126ac80598d2",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.services.accounts",
+        "ecoscan.ui.navigation"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/processing_comparison.py",
+      "sha256": "85ecf595173d133db126fcaf2210d5d3865c77c18c2f0e9e0cd491f051c27c43",
+      "tests": [],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "src/ecoscan/ui/processing_configuration.py",
+      "sha256": "0188ae3b1091c5a5faa213c46352ff7c37c654ad511d5bea1273837d435e62df",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.app.processing_options",
+        "ecoscan.services.accounts",
+        "ecoscan.ui.processing_controls",
+        "ecoscan.ui.processing_lab"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/processing_controls.py",
+      "sha256": "481368e454ebdfedeb5f8b2a91d9bcf5f9a72e23314bb5ee4c45a380d58cca19",
+      "tests": [],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "src/ecoscan/ui/processing_lab.py",
+      "sha256": "17cdb4e6e58aa07ca9395eb9f83687636b7219a49e8c9e6c83b8a2c25e2e6a2e",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.image_processing.preprocessing",
+        "ecoscan.segmentation.morphology",
+        "ecoscan.services.processing_evidence"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/processing_views.py",
+      "sha256": "b612b37817f1ea1c519e416581dfd10af63062e46d8de8e6a772da184fff2b94",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.services.accounts",
+        "ecoscan.ui.processing_lab"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/rewards.py",
+      "sha256": "fa0c3c01e31b1d21b593d317ccffaaa6edb49e562a6def3ffbc6cdabf2cba18c",
+      "tests": [],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "src/ecoscan/ui/scope.py",
+      "sha256": "c659cdb38c7f9af2e0ff57323c749afab705f3a4c073cbb302042a9f35529e81",
+      "tests": [],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "src/ecoscan/ui/session_state.py",
+      "sha256": "b6357f30e1369511665d6ca89f34f03477991af14a5ed2019176d877431f5400",
+      "tests": [],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "src/ecoscan/ui/streamlit_app.py",
+      "sha256": "3446ec8dc037d0956cfd1a9a7b3f76b7223f5e538f0088a15f88b2321c8c3d96",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.disposal.collection_points",
+        "ecoscan.disposal.guidance",
+        "ecoscan.disposal.impact",
+        "ecoscan.disposal.targets",
+        "ecoscan.services.accounts",
+        "ecoscan.services.campaigns",
+        "ecoscan.services.community_store",
+        "ecoscan.services.release_info",
+        "ecoscan.ui.admin_views",
+        "ecoscan.ui.analysis_controller",
+        "ecoscan.ui.analysis_widgets",
+        "ecoscan.ui.app_resources",
+        "ecoscan.ui.appearance",
+        "ecoscan.ui.campaign_views",
+        "ecoscan.ui.citizen_design",
+        "ecoscan.ui.civic_views",
+        "ecoscan.ui.collection_map",
+        "ecoscan.ui.common_views",
+        "ecoscan.ui.community",
+        "ecoscan.ui.disposal_views",
+        "ecoscan.ui.education",
+        "ecoscan.ui.identity",
+        "ecoscan.ui.interaction_helpers",
+        "ecoscan.ui.learning",
+        "ecoscan.ui.navigation_controller",
+        "ecoscan.ui.processing_configuration",
+        "ecoscan.ui.processing_views",
+        "ecoscan.ui.scope",
+        "ecoscan.ui.session_state",
+        "ecoscan.ui.system_views",
+        "ecoscan.ui.technical_page_controllers",
+        "ecoscan.utils.logging_config"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/system_views.py",
+      "sha256": "8b612b2a3b84b3eb9a93a4dd33d7ff3d8761412525ab9e30f30248645e66fd38",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.disposal.guidance",
+        "ecoscan.errors",
+        "ecoscan.image_processing.contracts",
+        "ecoscan.services.acceptance_checks",
+        "ecoscan.services.access_plan",
+        "ecoscan.services.aps_audit",
+        "ecoscan.services.completion",
+        "ecoscan.services.dataset_governance",
+        "ecoscan.services.delivery_pack",
+        "ecoscan.services.deployment_readiness",
+        "ecoscan.services.diagnostics",
+        "ecoscan.services.field_testing",
+        "ecoscan.services.final_readiness",
+        "ecoscan.services.history",
+        "ecoscan.services.model_governance",
+        "ecoscan.services.recognition_feedback",
+        "ecoscan.ui.common_views"
+      ]
+    },
+    {
+      "path": "src/ecoscan/ui/technical_page_controllers.py",
+      "sha256": "580726bae3e1e913e292655ecdf6f0bf6f4cf15869d3e35e13a38525220249cd",
+      "tests": [],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.disposal.guidance",
+        "ecoscan.services.academic_report",
+        "ecoscan.services.dataset_ingestion",
+        "ecoscan.services.photo_requirements",
+        "ecoscan.ui.common_views",
+        "ecoscan.ui.disposal_views",
+        "ecoscan.ui.processing_lab",
+        "ecoscan.ui.processing_views",
+        "ecoscan.ui.session_state",
+        "ecoscan.ui.system_views"
+      ]
+    },
+    {
+      "path": "tests/community_database_checks.sql",
+      "sha256": "5a50e64ade5e09f6049a6aeb021b48cdadd331a03a1a5c0cabe1deb5adcceec3"
+    },
+    {
+      "path": "tests/community_database_fixture.sql",
+      "sha256": "91488cd2848c7871d3723cfb819d2de8e60b446f69a8f72490d1c320d249582f"
+    },
+    {
+      "path": "tests/test_academic_report.py",
+      "sha256": "b321a0d5cc92a04a08ed3e6b39c38d8ed27ade7ee1b0bd0f32e413768cd3e116",
+      "tests": [
+        "test_academic_report_contains_required_sections",
+        "test_academic_report_is_written"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.academic_report"
+      ]
+    },
+    {
+      "path": "tests/test_acceptance_checks.py",
+      "sha256": "4e8e6067208d7188d2d299faaed8eb55edbaa7469c07d3a47ddef2e16f62b9bc",
+      "tests": [
+        "test_acceptance_checks_write_report_files",
+        "test_strict_exit_requires_all_checks_ok",
+        "test_missing_or_duplicate_checks_never_pass_strict_mode",
+        "test_failure_and_unknown_status_fail_even_in_diagnostic_mode",
+        "test_summary_cannot_override_actual_checks",
+        "test_empty_diagnostic_is_not_success"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.acceptance_checks"
+      ]
+    },
+    {
+      "path": "tests/test_acceptance_cli.py",
+      "sha256": "0c5464ce4958dcddaeb6528db1844c66d70549ba938db4ed3fe3906183de9a89",
+      "tests": [
+        "test_default_is_strict",
+        "test_diagnostic_must_be_explicit",
+        "test_diagnostic_still_reports_failures"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.acceptance_checks"
+      ]
+    },
+    {
+      "path": "tests/test_access_plan.py",
+      "sha256": "85821ac1f63e14ace21f5da248a5338eb102e0df6c439c276e8f16c215cff7f8",
+      "tests": [
+        "test_builds_local_and_network_links",
+        "test_share_text_guides_group_testing"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.access_plan"
+      ]
+    },
+    {
+      "path": "tests/test_accounts.py",
+      "sha256": "127242abd79265b91f13ccd297ddca16b2961272fde0d4a2799e0129d76e0cdc",
+      "tests": [
+        "test_load_user_profiles_requires_user_and_admin_roles",
+        "test_points_ledger_persists_user_total_and_duplicate_evidence_check",
+        "test_summarize_points_by_user_keeps_unknown_users_visible"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.accounts"
+      ]
+    },
+    {
+      "path": "tests/test_adaptive_filters.py",
+      "sha256": "60601d31fcf4f181a53c48fac9834c20c3af3131cb0c9bf704d6543bbe262c13",
+      "tests": [
+        "test_low_contrast_does_not_force_clahe_without_measurable_gain",
+        "test_adaptive_filter_uses_only_enhancement_filters"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.image_processing.adaptive_filters",
+        "ecoscan.image_processing.quality"
+      ]
+    },
+    {
+      "path": "tests/test_adaptive_segmentation.py",
+      "sha256": "677d401b32ddb0045e62c7e8558844ce76d4e7445eebc4819caf44eb2af8e92b",
+      "tests": [
+        "test_adaptive_segmentation_records_decision",
+        "test_adaptive_segmentation_falls_back_to_available_method"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.segmentation.adaptive"
+      ]
+    },
+    {
+      "path": "tests/test_analysis_logging_privacy.py",
+      "sha256": "61d584840083b548b49203cd4f0babf0226c1e0bf4c14a8e7837d9d55046366c",
+      "tests": [
+        "test_failed_analysis_logs_only_error_type_not_uploaded_path"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.analysis_service"
+      ]
+    },
+    {
+      "path": "tests/test_app_resources.py",
+      "sha256": "864651d1e41cde5d4a7d46d65a47ecb114acf45a4c4de6612917f944abb721e9",
+      "tests": [
+        "test_reference_data_is_cached_and_invalidated_by_file_change",
+        "test_missing_reference_isolated_without_hiding_other_data",
+        "test_navigation_labels_are_unique_and_keep_analysis_first"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.ui.app_resources",
+        "ecoscan.ui.navigation"
+      ]
+    },
+    {
+      "path": "tests/test_appearance.py",
+      "sha256": "08af8d8ed8a500b05207c4eb87e7e78b5da2d02fc55f2c59a48c0e82a2e3fcde",
+      "tests": [
+        "test_text_and_action_colors_meet_normal_text_contrast",
+        "test_control_boundaries_have_visible_contrast",
+        "test_manual_theme_overrides_automatic_and_palette_has_single_source",
+        "test_embedded_components_use_manual_palette_after_os_rule",
+        "test_live_camera_uses_native_link_without_custom_javascript",
+        "test_appearance_switch_preserves_page_and_selection",
+        "test_shared_theme_renders_both_workspace_headers"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.ui.appearance",
+        "ecoscan.ui.streamlit_app"
+      ]
+    },
+    {
+      "path": "tests/test_aps_audit.py",
+      "sha256": "254ca64bd822b34e1ec0773453d9b267e9fc3a3f25d86fbd4d15796753ca6700",
+      "tests": [
+        "test_audit_contains_manual_gates",
+        "test_summary_has_readiness_score",
+        "test_markdown_mentions_attention_items"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.aps_audit"
+      ]
+    },
+    {
+      "path": "tests/test_auth_diagnostics.py",
+      "sha256": "c04b47d8f90d6c32c8b0f6fc8c0a59b0404e9e5c16050b1206a79fc5ec74cf9d",
+      "tests": [
+        "test_errors_are_actionable_and_redacted",
+        "test_http_rate_limit_without_code_is_handled",
+        "test_duplicate_account_error_does_not_disclose_existence",
+        "test_invalid_signup_does_not_consume_remote_cooldown",
+        "test_invalid_email_does_not_consume_send_cooldown"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.password_identity"
+      ]
+    },
+    {
+      "path": "tests/test_backup_integrity.py",
+      "sha256": "7cef84cf281b8313cc7e1ec08d112df50313fda98f07105dc12c3a0d3c47ef7d",
+      "tests": [
+        "test_seal_and_verify_empty_buckets",
+        "test_detects_photo_changes",
+        "test_requires_database_and_both_buckets",
+        "test_rejects_empty_database",
+        "test_rejects_bad_revision",
+        "test_does_not_follow_manifest_paths",
+        "test_rejects_symlinks"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.backup_integrity"
+      ]
+    },
+    {
+      "path": "tests/test_bootstrap.py",
+      "sha256": "1364c795ec3c7f852f5928cc5e1ea7e32e0c6a1c4689d52c03e04df35d48f33d",
+      "tests": [
+        "test_first_page_does_not_require_image_or_training_engines",
+        "test_public_ui_module_defers_image_and_admin_services",
+        "test_bootstrap_dependency_failure_has_actionable_error_and_retry",
+        "test_processing_options_remain_compatible_with_existing_pipeline_imports"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.app",
+        "ecoscan.app.processing_options",
+        "ecoscan.config"
+      ]
+    },
+    {
+      "path": "tests/test_campaigns.py",
+      "sha256": "964732706e4f15c1cce18d66336c4990fac639bc4bba484e407c40bbafc98428",
+      "tests": [
+        "test_invalid_campaigns_are_rejected",
+        "test_photo_cannot_validate_complaint_or_unknown_action",
+        "test_invalid_confidence_never_awards_points",
+        "test_campaign_config_loads_missions_and_rewards",
+        "test_evaluate_mission_awards_points_for_matching_class",
+        "test_evaluate_mission_rejects_incompatible_class"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.campaigns"
+      ]
+    },
+    {
+      "path": "tests/test_capture_augmentation.py",
+      "sha256": "5baec0984428308a2dcfb8879df9be2645d8942041bdb834accfaf6888fd81fd",
+      "tests": [
+        "test_capture_variants_preserve_color_geometry_and_are_reproducible",
+        "test_variations_never_select_validation_or_test_parents"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.training.augmentation"
+      ]
+    },
+    {
+      "path": "tests/test_capture_quality.py",
+      "sha256": "a612b941eecbe0106005868d6a97f980c24e47f0bdc4725815e72f43e7059efd",
+      "tests": [
+        "test_good_capture_receives_good_status",
+        "test_blurry_or_empty_capture_requests_retake"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.image_processing.capture_quality",
+        "ecoscan.image_processing.quality",
+        "ecoscan.segmentation.elements"
+      ]
+    },
+    {
+      "path": "tests/test_capture_source_filters.py",
+      "sha256": "a3fba7a36710195c5715b569a34ae5c095e41b752943c26cc25f586ad5146d25",
+      "tests": [
+        "test_openverse_rejects_non_photographic_results",
+        "test_class_terms_merge_global_and_specific_rejects",
+        "test_wikimedia_rejects_vector_preview_candidates"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_citizen_views.py",
+      "sha256": "00d35cd912f4b3116da12b12c57fa1d04b74d5d4c8fc0ec9c93dc22acf742c5e",
+      "tests": [
+        "test_map_default_and_invalid_postcode",
+        "test_rewards_unlock_without_monetary_claims"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_civic_reports.py",
+      "sha256": "3e7555593ca96e30f8e9e39b261198805ac6c81cfccca10f459f43c281a1bca6",
+      "tests": [
+        "test_classify_report_consistent_when_analysis_is_accepted",
+        "test_classify_report_recommends_new_image_when_quality_is_bad",
+        "test_append_and_read_civic_report",
+        "test_append_and_read_civic_report_review"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.civic_reports"
+      ]
+    },
+    {
+      "path": "tests/test_collection_points.py",
+      "sha256": "524b2a0d9526c1c4db7c2ae24e96f0193aac0f01421f359dd9e50e7f8028a371",
+      "tests": [
+        "test_loads_official_initial_points",
+        "test_filters_points_by_class",
+        "test_builds_map_and_directions_urls",
+        "test_ranks_by_distance_when_coordinates_exist"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.disposal.collection_points"
+      ]
+    },
+    {
+      "path": "tests/test_community_store.py",
+      "sha256": "6cdbf4f641b7bba57e1b941165531a207ac15b787999167fcb33cf97d666b530",
+      "tests": [
+        "test_rollout_closed_without_connecting",
+        "test_rollout_requires_credentials",
+        "test_missing_or_invalid_session_does_not_write",
+        "test_submit_overrides_owner_and_removes_local_path",
+        "test_retry_is_idempotent_even_after_committed_timeout",
+        "test_upload_timeout_retry_validates_existing_photo",
+        "test_changed_form_cannot_reuse_protocol",
+        "test_consent_and_required_fields_before_storage",
+        "test_private_queries_filter_before_limiting",
+        "test_user_cannot_review_or_publish",
+        "test_review_visible_to_author_and_original_immutable",
+        "test_concurrent_review_cannot_overwrite",
+        "test_stale_revision_rejected_before_update",
+        "test_outage_never_looks_like_empty_history_or_success",
+        "test_image_integrity_and_metadata_removal",
+        "test_campaign_public_read_and_optimistic_update",
+        "test_campaign_outage_does_not_fall_back",
+        "test_full_queue_does_not_upload_new_photo"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.civic_reports",
+        "ecoscan.services.community_store"
+      ]
+    },
+    {
+      "path": "tests/test_community_ui.py",
+      "sha256": "0e3a7f78f4237dc2be10695a358cf9ab38d209e8345dabf51da2369d24d6e3fc",
+      "tests": [
+        "test_citizen_sees_response_without_admin_controls",
+        "test_unavailable_is_not_empty_history",
+        "test_admin_keeps_original_revision_during_rerun",
+        "test_disabled_does_not_connect",
+        "test_campaign_draft_keeps_revision_on_publish"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_completion.py",
+      "sha256": "897a79a8a78229849dd3ef1f3bfe68a17fdef8345a6a23a393263feeedfa6a27",
+      "tests": [
+        "test_completion_plan_separates_demo_from_final_model",
+        "test_completion_markdown_contains_final_reading"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.completion"
+      ]
+    },
+    {
+      "path": "tests/test_config.py",
+      "sha256": "cd764404528b6d32fe25800d1b59d88ff3666773ff16b774fe607aef38681a55",
+      "tests": [
+        "test_load_default_config",
+        "test_reject_duplicate_classes"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config"
+      ]
+    },
+    {
+      "path": "tests/test_contribution_import.py",
+      "sha256": "e7f6a1458ddb8826aa6d074d66402de0d4d71a953f2cb9767409d7569c19d594",
+      "tests": [
+        "test_import_is_isolated_and_not_marked_trained",
+        "test_invalid_package_does_not_create_batch"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.training.contribution_import"
+      ]
+    },
+    {
+      "path": "tests/test_contribution_receipts_ui.py",
+      "sha256": "702c3c50e4d5f15858f93510df48af09e2bb82b09ed220f222384058fe4cd20d",
+      "tests": [
+        "test_saved_receipt_survives_failed_photo_export",
+        "test_write_failure_has_no_success_receipt",
+        "test_own_protocols_render_on_mobile_without_wide_table",
+        "test_receipt_from_same_photo_is_not_reused_by_another_account"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_contribution_store.py",
+      "sha256": "4a4174e027432fdece1fe0d768ad84baf0fd144161760fd254bdebd7ea178a06",
+      "tests": [
+        "test_remote_round_trip_across_local_directories",
+        "test_error_does_not_expose_credentials",
+        "test_partial_settings_fail_closed",
+        "test_remote_outage_does_not_use_local_files"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.accounts",
+        "ecoscan.services.contribution_store",
+        "ecoscan.services.learning_contributions"
+      ]
+    },
+    {
+      "path": "tests/test_current_recognition.py",
+      "sha256": "24a8dd381255c01053658c73e50f768904fb01c9a3d94ea9fefab23a78a90724",
+      "tests": [
+        "test_current_recognizer_requires_confirmation_even_at_high_score",
+        "test_current_prediction_dispatch",
+        "test_compact_head_alignment_and_preparation",
+        "test_softmax_handles_large_logits",
+        "test_encoder_parts_are_verified_and_reassembled",
+        "test_encoder_rejects_untrusted_part_paths"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.classification.prediction",
+        "ecoscan.classification.runtime",
+        "ecoscan.classification.semantic_onnx",
+        "ecoscan.services.analysis_service",
+        "ecoscan.services.recognition_safety"
+      ]
+    },
+    {
+      "path": "tests/test_dataset_analysis.py",
+      "sha256": "a026bc5c95d772f5a148e95cd49850f3a9af249714ae9e46d48f87d140d6e36b",
+      "tests": [
+        "test_analyze_dataset_counts_classes_and_invalid_files",
+        "test_write_dataset_report_creates_expected_files"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.dataset_analysis"
+      ]
+    },
+    {
+      "path": "tests/test_dataset_governance.py",
+      "sha256": "1432ffb9cd0f2103e8034dbdc00a514c8438d22e0eb0d948380d3a5b978077f5",
+      "tests": [
+        "test_dataset_readiness_reports_missing_images",
+        "test_dataset_readiness_marks_special_waste",
+        "test_dataset_readiness_report_is_written"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.dataset_governance"
+      ]
+    },
+    {
+      "path": "tests/test_dataset_ingestion.py",
+      "sha256": "e9e714ac39d4b08e7f2fa8e1f99cc4fb636fa3b699bfcbbadc355dc8c40be3ce",
+      "tests": [
+        "test_valid_upload_goes_to_raw_dataset_and_manifest",
+        "test_duplicate_upload_is_not_saved_twice",
+        "test_invalid_extension_is_rejected"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.dataset_ingestion"
+      ]
+    },
+    {
+      "path": "tests/test_dataset_preparation.py",
+      "sha256": "9f554a15c0be4a3bdae7029483f1ba08e6f45b1fa88e3263e915ce604fb0bd5b",
+      "tests": [
+        "test_prepare_dataset_images_writes_processed_images_and_manifest"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.app.pipeline",
+        "ecoscan.config",
+        "ecoscan.services.dataset_preparation"
+      ]
+    },
+    {
+      "path": "tests/test_dataset_reliability.py",
+      "sha256": "f56e23f33a4523ee2eb235c337853bb883ba5e2f3e82597b78c6b64b8afd32ac",
+      "tests": [
+        "test_assess_class_reliability_returns_status_for_active_class"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.dataset_reliability"
+      ]
+    },
+    {
+      "path": "tests/test_dataset_review.py",
+      "sha256": "507b31cc24aeffe9535c5628eb140c901d1fed4bbd14b2191dd352bf1fdbfab1",
+      "tests": [
+        "test_create_and_apply_review_sheet"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.dataset_review"
+      ]
+    },
+    {
+      "path": "tests/test_dataset_split.py",
+      "sha256": "546e50dcae4d53543ac7594bd9993b8c6295435fea4c531335847c4f99bd3500",
+      "tests": [
+        "test_split_dataset_creates_expected_records"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.dataset_split"
+      ]
+    },
+    {
+      "path": "tests/test_delivery_pack.py",
+      "sha256": "6a14da253860df5b006c19427cd2b40a04bab1565592335f95a142bdf0086478",
+      "tests": [
+        "test_delivery_pack_contains_acceptance_and_decisions",
+        "test_delivery_pack_writes_expected_files"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.delivery_pack"
+      ]
+    },
+    {
+      "path": "tests/test_deployment_readiness.py",
+      "sha256": "7c98f48b124fb92a87fa4faa5cc65a72acbe48c9ecfc7fdbf9a845e8be9b8aae",
+      "tests": [
+        "test_free_hosting_plan_exposes_streamlit_cloud_path"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.deployment_readiness"
+      ]
+    },
+    {
+      "path": "tests/test_detection_contract.py",
+      "sha256": "557cd306750ba476855fb62934e442102a8471c951e4ee0824b6e56d29bfb42d",
+      "tests": [
+        "test_multiple_object_detection_is_explicitly_future_feature"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.detection.contracts"
+      ]
+    },
+    {
+      "path": "tests/test_diagnostics.py",
+      "sha256": "ecbf92a6b8a69fff17c5fb2870547be07fe01d6c0ae8a7c0fafbe3c81bf27690",
+      "tests": [
+        "test_model_status_matches_the_configured_current_artifact",
+        "test_diagnostics_report_is_written"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.analysis_service",
+        "ecoscan.services.diagnostics"
+      ]
+    },
+    {
+      "path": "tests/test_disposal_targets.py",
+      "sha256": "e7cd1b8dbab7c5d6d871fdf13ff1038259a559dc6f226bbd9f485eb7229972f5",
+      "tests": [
+        "test_targets_cover_active_classes",
+        "test_target_contains_visual_and_search_metadata",
+        "test_brazil_standard_bin_colors_are_mapped_correctly",
+        "test_map_search_url_encodes_query_and_location"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.disposal.targets"
+      ]
+    },
+    {
+      "path": "tests/test_documentation_links.py",
+      "sha256": "ff482b9f858b9f7e992dbcc4af89c5fcaae075a1161578d1635778b8617abf50",
+      "tests": [
+        "test_local_markdown_links_resolve"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_education.py",
+      "sha256": "2e71780066c6804f0eafa6717cfb07d50b5a53680241d55592b795122531a09e",
+      "tests": [
+        "test_material_assets_and_sources",
+        "test_all_material_views_render",
+        "test_email_preserves_provider_confirmation_link"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.ui.education"
+      ]
+    },
+    {
+      "path": "tests/test_engagement.py",
+      "sha256": "c5a8810e051d387504bb4d19a1b2a387ffce15843cf677d68258a23149132a12",
+      "tests": [
+        "test_correct_quiz_once_per_account",
+        "test_wrong_answer_and_visitor_do_not_save",
+        "test_no_fallback_or_success_on_remote_failure",
+        "test_stable_key_for_database_unique_constraint",
+        "test_legacy_reward_not_promised_as_available",
+        "test_visitor_can_practice_without_saving"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.accounts",
+        "ecoscan.services.campaigns",
+        "ecoscan.services.engagement"
+      ]
+    },
+    {
+      "path": "tests/test_environmental_impact.py",
+      "sha256": "6babd0cb76b575bd1ef37a1b340931f184a47ec7ad12de0160343e550dcc7eee",
+      "tests": [
+        "test_impacts_cover_active_classes",
+        "test_special_waste_contains_risks_and_source"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.disposal.impact"
+      ]
+    },
+    {
+      "path": "tests/test_error_handling.py",
+      "sha256": "0cc3ada300940a6906a389db8ce262d8471539f90ff78f4191e3cdb4d79a7a18",
+      "tests": [
+        "test_image_validation_error_is_user_facing",
+        "test_public_payload_hides_technical_detail_by_default",
+        "test_debug_payload_can_include_technical_detail",
+        "test_error_catalog_contains_main_operational_codes",
+        "test_console_error_contains_recommended_action"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.classification.runtime",
+        "ecoscan.errors",
+        "ecoscan.image_processing.validation"
+      ]
+    },
+    {
+      "path": "tests/test_evaluation_manifest.py",
+      "sha256": "f4cfe2968ef420e1ba54c2a66a50a6bcaedad61123e2ff5dda29824b7f7c54ad",
+      "tests": [
+        "test_strict_manifest_reports_counts_without_claiming_independence",
+        "test_manifest_refuses_unsafe_paths",
+        "test_manifest_refuses_duplicate_image_hash_even_if_renamed",
+        "test_strict_manifest_rejects_groups_leaking_across_splits",
+        "test_strict_manifest_requires_provenance_fields",
+        "test_manifest_refuses_known_training_overlap",
+        "test_missing_or_invalid_test_rows_are_rejected"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.evaluation_manifest"
+      ]
+    },
+    {
+      "path": "tests/test_external_benchmark_evidence.py",
+      "sha256": "d0050970b4139e39b3350211e996edc5f664864f03bc25e6dbcb277eb99000c3",
+      "tests": [
+        "test_trashnet_diagnostic_evidence_is_internally_consistent"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_field_testing.py",
+      "sha256": "2453ebd444dbe64053f51d8a90f461757f27af6ef51cb5d3adddf01f3a069a28",
+      "tests": [
+        "test_records_and_summarizes_field_tests",
+        "test_rejects_invalid_status"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.field_testing"
+      ]
+    },
+    {
+      "path": "tests/test_final_readiness.py",
+      "sha256": "4a1d5f3757aa75d495737acc0f8c4bf25eac3b59cd647ae2e4e1f8684559d512",
+      "tests": [
+        "test_local_inventory_does_not_approve_real_operation",
+        "test_final_readiness_exposes_final_workstreams"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.final_readiness"
+      ]
+    },
+    {
+      "path": "tests/test_gaussian_evidence.py",
+      "sha256": "bfaaf9cc1960f3eca1bcd079f2429409964aa68ce28a2b9722a8b0c03c93ec26",
+      "tests": [
+        "test_reported_kernel_reproduces_convolution_and_preserves_channels"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.image_processing.filters"
+      ]
+    },
+    {
+      "path": "tests/test_guidance.py",
+      "sha256": "bd25d0245016f1cde3d7ca4d9ae2e757281d25b8a377353c8d460aceed1e5a60",
+      "tests": [
+        "test_guidance_is_loaded_separately_from_model"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.disposal.guidance"
+      ]
+    },
+    {
+      "path": "tests/test_history.py",
+      "sha256": "93aefab234e2aaf5b84654ac9fe8e1d357a4571f3a467352c06f3e258862123f",
+      "tests": [
+        "test_append_and_read_history_entry",
+        "test_read_history_ignores_unknown_future_fields"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.history"
+      ]
+    },
+    {
+      "path": "tests/test_identity.py",
+      "sha256": "079b421e0eaface9b0d566d6242e743507c7c50e5c7ccdc9159dcb39aacae17b",
+      "tests": [
+        "test_authorized_verified_account_is_admin",
+        "test_missing_or_untrusted_claims_cannot_elevate",
+        "test_empty_or_malformed_access_denies_admin",
+        "test_visitors_are_isolated_and_never_admin",
+        "test_identity_stable_across_sessions_not_email_based"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.identity"
+      ]
+    },
+    {
+      "path": "tests/test_identity_ui.py",
+      "sha256": "9ca7c2a6026100b629cd3c8b80b3036724cd8f7f49d4d5c21232ad9a8f7243b4",
+      "tests": [
+        "test_admin_query_does_not_grant_access",
+        "test_verified_admin_and_revocation"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_image_processing.py",
+      "sha256": "93be7b50e83da7def8b56edc1133000cf09396c14ec92671793f7fd69549a193",
+      "tests": [
+        "test_load_rgb_image_validates_and_converts",
+        "test_load_rgb_image_rejects_small_image",
+        "test_resize_and_model_input_shape",
+        "test_filters_return_same_shape",
+        "test_exif_orientation_is_corrected_before_resize",
+        "test_grayscale_luminance_and_legacy_resize_contract"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.image_processing.filters",
+        "ecoscan.image_processing.image_io",
+        "ecoscan.image_processing.preprocessing",
+        "ecoscan.image_processing.validation"
+      ]
+    },
+    {
+      "path": "tests/test_image_resource_limits.py",
+      "sha256": "05670cb939b59a4a79aa52206d8ce65332e29051dc3de1f40c8ae07819df3e0b",
+      "tests": [
+        "test_byte_limit_rejects_before_open",
+        "test_pixel_limit_rejects_before_verify_or_decode",
+        "test_pillow_decompression_error_is_user_validation_error",
+        "test_valid_image_at_configured_pixel_limit"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.image_processing.validation"
+      ]
+    },
+    {
+      "path": "tests/test_learning_contributions.py",
+      "sha256": "71b4b053c1825ebd07813a0806a2c72a5b3646759d0a7ae511237f3102219b27",
+      "tests": [
+        "test_consent_required_and_no_side_effect",
+        "test_dedup_and_portable_package",
+        "test_technical_context_is_preserved_without_private_pipeline_metadata",
+        "test_legacy_context_is_explicitly_unknown_not_assumed_current",
+        "test_only_reviewed_records_export_for_training",
+        "test_unknown_not_approved",
+        "test_legacy_organic_never_promotes_runner_up",
+        "test_valid_class_unchanged",
+        "test_pipeline_rejects_legacy_class_even_if_rule_changes_it",
+        "test_form_submits_only_after_consent"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.classification.prediction",
+        "ecoscan.config",
+        "ecoscan.services.accounts",
+        "ecoscan.services.analysis_service",
+        "ecoscan.services.learning_contributions",
+        "ecoscan.services.recognition_scope"
+      ]
+    },
+    {
+      "path": "tests/test_learning_evaluation_ui.py",
+      "sha256": "467c3de42084b025e3682ffd98b3c8767633bea9cffcc24c42d26fab4a5a8e8e",
+      "tests": [
+        "test_no_completed_run_does_not_render_metrics",
+        "test_shared_batch_is_not_counted_twice_and_old_metrics_are_supported",
+        "test_completed_detailed_run_renders_per_class_metrics",
+        "test_streamlit_can_render_completed_batch"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.ui.learning"
+      ]
+    },
+    {
+      "path": "tests/test_live_camera.py",
+      "sha256": "9e5928b5cb1f7ac6f142940f394ccca67420ffd6e5dd97785ed0891bd053ffbb",
+      "tests": [
+        "test_tracker_keeps_id_for_nearby_element",
+        "test_live_camera_prioritizes_rear_camera_on_mobile",
+        "test_suggested_color_is_not_a_confirmed_disposal_instruction",
+        "test_analyzer_returns_structured_error_for_empty_frame",
+        "test_analyzer_returns_detection_payload"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.classification.prediction",
+        "ecoscan.config",
+        "ecoscan.disposal.targets",
+        "ecoscan.live_camera",
+        "ecoscan.live_camera.analyzer",
+        "ecoscan.live_camera.server",
+        "ecoscan.live_camera.tracking",
+        "ecoscan.segmentation.elements"
+      ]
+    },
+    {
+      "path": "tests/test_logging_config.py",
+      "sha256": "212eb57d37b08f17f985267a9500dbb9ad0f58f4621104a5494e2aaf9ce8e09a",
+      "tests": [
+        "test_configure_logging_writes_log_file"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.utils.logging_config"
+      ]
+    },
+    {
+      "path": "tests/test_model_evidence.py",
+      "sha256": "6a0840e4def0664b2c12978e0ef05c136185e8c2f3b370608df00e47929f197b",
+      "tests": [
+        "test_versioned_historical_evidence_matches_bundled_artifacts"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.model_evidence"
+      ]
+    },
+    {
+      "path": "tests/test_model_governance.py",
+      "sha256": "ffe3f7190f7bd55e11bc3f17ee631b1e4ca2afca623532656fb0d617308cd894",
+      "tests": [
+        "test_builds_governance_plan_from_metrics_and_real_errors",
+        "test_reads_metric_snapshots_and_exposes_reference_row",
+        "test_hard_cases_ignore_correct_predictions"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.diagnostics",
+        "ecoscan.services.field_testing",
+        "ecoscan.services.model_governance",
+        "ecoscan.services.recognition_feedback"
+      ]
+    },
+    {
+      "path": "tests/test_morphology.py",
+      "sha256": "c967fa0158aa014cfc2ae0b889c7e2da0559fbe466d881392a982458449786cc",
+      "tests": [
+        "test_single_pixel_expands_to_footprint_without_mutating_input",
+        "test_erosion_shrinks_square_and_gradient_is_diagnostic",
+        "test_opening_removes_speck_and_closing_fills_small_hole",
+        "test_empty_full_border_and_iterations",
+        "test_identity_footprint_and_binary_contract",
+        "test_invalid_inputs_fail_explicitly",
+        "test_matches_opencv_with_explicit_zero_border",
+        "test_morphology_changes_mask_without_erasing_classifier_pixels",
+        "test_classifier_receives_rgb_and_mask_remains_diagnostic",
+        "test_lossless_exports_and_metadata_include_intermediate_stages"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.app.pipeline",
+        "ecoscan.classification.prediction",
+        "ecoscan.config",
+        "ecoscan.image_processing.contracts",
+        "ecoscan.segmentation.methods",
+        "ecoscan.segmentation.morphology",
+        "ecoscan.services.analysis_service",
+        "ecoscan.services.visual_report"
+      ]
+    },
+    {
+      "path": "tests/test_navigation_session_controllers.py",
+      "sha256": "99788717d6ecec513e3d788e8a334bf9a1b8f50240a7aa6ebfb668b3e5dc7c4a",
+      "tests": [
+        "test_navigation_preserves_existing_role_scoped_key_and_tab_order",
+        "test_campaign_data_is_loaded_only_for_pages_that_use_it",
+        "test_analysis_cache_reuses_signature_and_updates_source_atomically",
+        "test_invalidation_does_not_discard_auth_or_history_on_new_image",
+        "test_history_and_ingestion_use_original_streamlit_keys",
+        "test_processing_selection_preserves_all_custom_parameters",
+        "test_main_is_a_small_coordinator_not_a_duplicate_image_service"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.accounts",
+        "ecoscan.ui.navigation",
+        "ecoscan.ui.navigation_controller",
+        "ecoscan.ui.processing_configuration",
+        "ecoscan.ui.session_state",
+        "ecoscan.ui.streamlit_app"
+      ]
+    },
+    {
+      "path": "tests/test_object_annotations.py",
+      "sha256": "abb308aa516518d53cf7fa7ab1444b1532717b73b15a6594fe80161d1769c721",
+      "tests": [
+        "test_material_is_independent_of_object_type_and_boxes_convert_correctly",
+        "test_image_integrity_orientation_and_root_are_checked",
+        "test_same_object_or_image_cannot_cross_splits",
+        "test_detector_export_requires_verified_individual_boxes_and_preserves_coco_dimensions",
+        "test_coco_export_writes_oriented_images_aligned_with_boxes"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.training.object_annotations"
+      ]
+    },
+    {
+      "path": "tests/test_openverse_source_config.py",
+      "sha256": "ec7938ee45a241a6cde44608892ed65fc8be87293c33f145b55fda0eb1ab199d",
+      "tests": [
+        "test_openverse_source_config_covers_all_configured_classes"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config"
+      ]
+    },
+    {
+      "path": "tests/test_operational_store.py",
+      "sha256": "ad1b970e9b197aadde7857a9546ea94a5aa98be99fe9cec4be6258550c3a3942",
+      "tests": [
+        "test_rollout_disabled_does_not_connect",
+        "test_enabled_without_credentials_fails_closed",
+        "test_field_test_rejects_oversized_note",
+        "test_records_roundtrip_uses_remote_not_paths",
+        "test_field_test_uses_same_database_across_paths",
+        "test_pagination_and_chronological_order",
+        "test_outage_is_not_an_empty_history",
+        "test_visitor_cannot_receive_permanent_points",
+        "test_database_conflict_is_reported_without_second_insert"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.accounts",
+        "ecoscan.services.field_testing",
+        "ecoscan.services.operational_store"
+      ]
+    },
+    {
+      "path": "tests/test_operations.py",
+      "sha256": "72225ea1dd76668762429a5d85c4ce50999464f7f3ac344cada9c5a84027fcf3",
+      "tests": [
+        "test_campaign_operations_summary_aggregates_secretariat_metrics"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.disposal.collection_points",
+        "ecoscan.disposal.guidance",
+        "ecoscan.services.accounts",
+        "ecoscan.services.campaigns",
+        "ecoscan.services.operations"
+      ]
+    },
+    {
+      "path": "tests/test_participant_directory.py",
+      "sha256": "e7ad25f6020383d85b880ed7c6805d0ab42ac9271de5d0e9ec178ee93b1cac30",
+      "tests": [
+        "test_missing_token_never_calls_provider",
+        "test_citizen_cannot_list_users",
+        "test_confirmed_account_and_pagination",
+        "test_error_does_not_leak_provider_details"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.participant_directory"
+      ]
+    },
+    {
+      "path": "tests/test_password_identity.py",
+      "sha256": "d7811a6948828f87d70b4ccced113c77f766dcbc30ad8eea7c45cd74ba8aae25",
+      "tests": [
+        "test_only_verified_allowlisted_account_is_admin",
+        "test_provider_failure_never_exposes_secret",
+        "test_invalid_session_cannot_authenticate"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.password_identity"
+      ]
+    },
+    {
+      "path": "tests/test_password_recovery.py",
+      "sha256": "27189c95c7b2ad6aa248b3b5854c1e597bc849881658f3f9edeb17ac5f50dfe1",
+      "tests": [
+        "test_request_uses_provider_and_does_not_create_account",
+        "test_invalid_request_never_calls_provider",
+        "test_recovery_verifies_before_update_and_never_uses_admin",
+        "test_validation_does_not_consume_link",
+        "test_expired_replayed_and_missing_sessions_fail_closed",
+        "test_update_failure_is_sanitized_and_session_discarded",
+        "test_logout_failure_does_not_hide_successful_password_change",
+        "test_link_clears_other_account_and_requires_explicit_submission",
+        "test_wrong_callback_type_cannot_become_recovery",
+        "test_request_cooldown_and_generic_success"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.password_identity"
+      ]
+    },
+    {
+      "path": "tests/test_photo_requirements.py",
+      "sha256": "0204c31ebc105ea78e1ae3113bd45d1fbe5871fca2b3e340bfc5e09fff5da21e",
+      "tests": [
+        "test_requirements_cover_active_classes",
+        "test_requirement_has_enough_guidance"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.photo_requirements"
+      ]
+    },
+    {
+      "path": "tests/test_pilot_02.py",
+      "sha256": "5027ad06383c47e984ee2c472eb79bf61098b3c2cb390571d04f42b59379c83f",
+      "tests": [
+        "test_two_accounts_analyst_response_and_restart_preserve_protocols",
+        "test_remote_service_rejects_unverified_or_cross_account_actor",
+        "test_account_change_and_expiry_clear_private_session_data",
+        "test_verified_analyst_sees_queue_and_revocation_removes_it",
+        "test_logout_clears_all_account_state"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.learning_contributions",
+        "ecoscan.services.password_identity"
+      ]
+    },
+    {
+      "path": "tests/test_pipeline.py",
+      "sha256": "37c41dfb59b54f673e991c44abbcfeaa5fe1d0cc46311bbe0aff1cad895f3a04",
+      "tests": [
+        "test_pipeline_builds_all_processing_stages"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.app.pipeline",
+        "ecoscan.config"
+      ]
+    },
+    {
+      "path": "tests/test_pipeline_timings.py",
+      "sha256": "b8c238d2436d4712a4d0c42f8f02c5229b43c6136a462e2926338bb6c6080372",
+      "tests": [
+        "test_pipeline_records_nonnegative_stage_timings_without_changing_input"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.app.pipeline",
+        "ecoscan.config"
+      ]
+    },
+    {
+      "path": "tests/test_postal_lookup.py",
+      "sha256": "13bc3163ccdb1b7c82a06ee434f4f35028b27f236866b9d5f7b3bf2e22ec03a1",
+      "tests": [
+        "test_rejects_invalid_cep_without_network",
+        "test_address_never_infers_schedule",
+        "test_handles_missing_outside_capital_and_bad_responses",
+        "test_timeout_is_actionable",
+        "test_directory_accepts_unaccented_name_and_postcode",
+        "test_zero_distance_sorts_first"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.disposal.collection_points",
+        "ecoscan.disposal.postal_lookup"
+      ]
+    },
+    {
+      "path": "tests/test_preserved_processing.py",
+      "sha256": "f891ba6527bc90fe4b6e2c27734538547b770c242df5c50ec33ac03e913f2d46",
+      "tests": [
+        "test_transparency_is_composited_instead_of_revealing_hidden_pixels",
+        "test_preparation_refuses_overlapping_directories_even_with_overwrite",
+        "test_preparation_refuses_to_mix_unversioned_images",
+        "test_clean_scene_and_regular_texture_are_unchanged",
+        "test_impulse_correction_improves_known_reference",
+        "test_gaussian_noise_correction_improves_known_reference",
+        "test_letterbox_preserves_complete_portrait_and_geometry",
+        "test_hsv_cannot_remove_silver_cap_from_classifier_input",
+        "test_morphology_changes_only_diagnostic_mask_not_rgb_model_input",
+        "test_missing_foreground_preserves_photo_without_fake_detection",
+        "test_valid_mask_is_not_discarded_when_invalid_candidate_scores_higher",
+        "test_edge_experiment_keeps_rgb_and_evidence_tracks_real_input",
+        "test_model_contract_detects_changed_filters_and_changed_artifact",
+        "test_stale_model_predictions_remain_unconfirmed"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.app.pipeline",
+        "ecoscan.classification.prediction",
+        "ecoscan.config",
+        "ecoscan.image_processing.adaptive_filters",
+        "ecoscan.image_processing.contracts",
+        "ecoscan.image_processing.image_io",
+        "ecoscan.image_processing.preprocessing",
+        "ecoscan.segmentation.adaptive",
+        "ecoscan.services.analysis_service",
+        "ecoscan.services.dataset_preparation",
+        "ecoscan.services.processing_evidence"
+      ]
+    },
+    {
+      "path": "tests/test_processing_comparison.py",
+      "sha256": "245bde43c9b6375f2775da6b0a3c313f2d659354e301f532c3a89f03534ab14a",
+      "tests": [
+        "test_unchanged_control",
+        "test_change_does_not_underflow_uint8",
+        "test_different_sizes_are_rejected",
+        "test_view_renders_real_pipeline_without_recognition"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.ui.processing_comparison"
+      ]
+    },
+    {
+      "path": "tests/test_processing_controls.py",
+      "sha256": "01ce7ddf6f46292ef8abc40d1aa781b775622ce998b675d563f8cb98696bf405",
+      "tests": [
+        "test_default_controls_do_not_add_parameters",
+        "test_otsu_and_canny_parameters_remain_available"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_processing_evidence.py",
+      "sha256": "b71b73d035bf562438cfa401ea494f2dc88f458a94438e7ae0b23b9e5dc23687",
+      "tests": [
+        "test_default_executes_filter_segmentation_and_four_primitives",
+        "test_actual_arrays_form_morphology_chain_and_classifier_input",
+        "test_controls_and_unchanged_execution_are_distinct",
+        "test_lossless_package_matches_arrays_without_private_paths",
+        "test_difference_uses_wide_arithmetic_no_uint8_wrap_or_amplification",
+        "test_custom_configuration_and_control_remain_available",
+        "test_public_evidence_renders_all_pairs_and_download"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.app.pipeline",
+        "ecoscan.classification.prediction",
+        "ecoscan.config",
+        "ecoscan.image_processing.contracts",
+        "ecoscan.services.analysis_service",
+        "ecoscan.services.processing_evidence"
+      ]
+    },
+    {
+      "path": "tests/test_processing_lab.py",
+      "sha256": "fd1a90f038477abe7a3b0bba5da1efd0cb4169f4e76daa6b18b0fee0cb3e2724",
+      "tests": [
+        "test_controls_and_before_after_render",
+        "test_empty_mask_warning_after_excessive_erosion",
+        "test_each_morphology_parameter_invalidates_analysis_signature",
+        "test_public_app_exposes_controls_outside_hidden_sidebar"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.app.pipeline",
+        "ecoscan.services.accounts",
+        "ecoscan.ui.streamlit_app"
+      ]
+    },
+    {
+      "path": "tests/test_project_status.py",
+      "sha256": "40a9608a163b93856148172ff113e6c01d216248677dc482d4f4b73af7ce5881",
+      "tests": [
+        "test_project_status_contains_final_model_item"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.project_status"
+      ]
+    },
+    {
+      "path": "tests/test_public_flow.py",
+      "sha256": "3f2244a0deb34b820a62572ad423494a561be397e598ed84dff095be7949db5e",
+      "tests": [
+        "test_confirmed_material_has_correct_bin_without_model_percentage",
+        "test_unconfirmed_material_previews_destination_without_authorizing_disposal",
+        "test_unknown_or_bad_photo_has_no_automatic_destination",
+        "test_never_exposes_invalid_or_extreme_scores",
+        "test_special_materials_require_collection_points_not_recycling_bin"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.disposal.targets",
+        "ecoscan.services.public_flow",
+        "ecoscan.services.recognition_safety"
+      ]
+    },
+    {
+      "path": "tests/test_public_signup_flow.py",
+      "sha256": "18ab92f48fd395b4bc2b269c0a55bd242ace002ab9c0abc8f9e0b5531a38bc56",
+      "tests": [
+        "test_public_registration_stores_name_without_admin_permissions",
+        "test_public_signup_form_requires_name_and_explains_confirmation",
+        "test_recovery_cancel_opens_account_help"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.password_identity"
+      ]
+    },
+    {
+      "path": "tests/test_published_model.py",
+      "sha256": "1cc23f3643b3ea4238e87a2a82b83d65fcef6d1cc2c67cf8edac573a8b8315c3",
+      "tests": [
+        "test_current_semantic_release_is_selected",
+        "test_revoked_review_blocks_current_release"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.published_model"
+      ]
+    },
+    {
+      "path": "tests/test_quality_and_elements.py",
+      "sha256": "da0d3abbcb7d3160c32784c46922101d41802c2ccda43641603136d440d4a833",
+      "tests": [
+        "test_quality_detects_underexposed_image",
+        "test_visual_elements_detects_significant_components",
+        "test_element_overlay_keeps_image_shape",
+        "test_detection_heatmap_keeps_image_shape"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.image_processing.quality",
+        "ecoscan.segmentation.elements"
+      ]
+    },
+    {
+      "path": "tests/test_recognition_feedback.py",
+      "sha256": "209d64c7336d785c2b84b17a335f93c7128150cf39187d561b8ece61bbc04caa",
+      "tests": [
+        "test_append_recognition_feedback_writes_manifest_and_image"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.services.recognition_feedback"
+      ]
+    },
+    {
+      "path": "tests/test_recognition_improvement.py",
+      "sha256": "fff840f122b2818ccca4d4bf605f7e6d2c23eccf8b18f2fc0b94e84f1ec54ab7",
+      "tests": [
+        "test_prioritizes_class_with_feedback_confusion_and_low_dataset",
+        "test_recommends_test_round_when_no_operational_data_exists",
+        "test_field_tests_feed_priority_and_confusion_plan"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.diagnostics",
+        "ecoscan.services.field_testing",
+        "ecoscan.services.history",
+        "ecoscan.services.recognition_feedback",
+        "ecoscan.services.recognition_improvement"
+      ]
+    },
+    {
+      "path": "tests/test_recognition_runtime.py",
+      "sha256": "4e73e8f7c63764a51474ef9cdd66a712b37a8c01fffbf69c9afc16fd8f3a843e",
+      "tests": [
+        "test_runtime_rejects_unconfigured_engine",
+        "test_runtime_rejects_non_semantic_override",
+        "test_runtime_reports_missing_release",
+        "test_runtime_rejects_incompatible_classes"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.classification.runtime",
+        "ecoscan.config"
+      ]
+    },
+    {
+      "path": "tests/test_recognition_safety.py",
+      "sha256": "94796b0c7812bf9b903181ade566f6e20ea891fc609fb3725414b07bac824450",
+      "tests": [
+        "test_blocks_disposal_when_result_is_uncertain",
+        "test_blocks_automatic_guidance_for_low_confidence",
+        "test_invalid_scores_never_release_guidance",
+        "test_visual_rule_cannot_bypass_confidence",
+        "test_insufficient_class_evidence_blocks_guidance_even_with_high_score",
+        "test_valid_supported_result_remains_available",
+        "test_invalid_threshold_is_rejected",
+        "test_capture_tips_are_actionable"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.recognition_safety"
+      ]
+    },
+    {
+      "path": "tests/test_registration_and_guest.py",
+      "sha256": "060c43cc0457c56d80a69b45e7723884c78dba6228a256d7cde5443c11d0b4f1",
+      "tests": [
+        "test_resend_uses_signup_flow_and_never_creates_account",
+        "test_resend_disabled_and_invalid_email_do_not_call_provider",
+        "test_resend_error_does_not_leak_provider_details",
+        "test_resend_ui_enforces_cooldown",
+        "test_registration_never_uses_admin_or_accepts_session",
+        "test_invalid_or_disabled_does_not_call_provider",
+        "test_guest_writes_rejected_before_storage",
+        "test_guest_ui_never_queries_or_submits",
+        "test_registration_form_requires_consent"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.accounts",
+        "ecoscan.services.field_testing",
+        "ecoscan.services.learning_contributions",
+        "ecoscan.services.password_identity"
+      ]
+    },
+    {
+      "path": "tests/test_release_cache.py",
+      "sha256": "d9d2cec3ca19de2a8e848890d4684347a51a19c8db51ef816173c55f39fc6e38",
+      "tests": [
+        "test_unchanged_release_does_not_download_again",
+        "test_corrupt_cached_file_is_repaired",
+        "test_cached_file_does_not_bypass_processing_contract"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.semantic_release"
+      ]
+    },
+    {
+      "path": "tests/test_release_info.py",
+      "sha256": "5300056e91cff595960fc8e20197fca62cd2d54b592045600d516ccff8e98944",
+      "tests": [
+        "test_returns_only_version_and_commit_and_caches_lookup",
+        "test_parent_workspace_is_not_application_revision",
+        "test_invalid_revision_is_not_exposed",
+        "test_git_failure_does_not_block_the_application"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services"
+      ]
+    },
+    {
+      "path": "tests/test_runtime_dependencies.py",
+      "sha256": "be2a665b9fbeaef91d3a1ed93744e771caeecb396e6d8d392282fc2f634908e4",
+      "tests": [
+        "test_requirements_only_list_imported_runtime_packages",
+        "test_requirements_and_project_keep_core_runtime_packages_aligned"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_scope_dataset_export.py",
+      "sha256": "ec6b3310327658e21442d7a75da2bc64a6a060d0d047800ccf0c30d83c19bdb1",
+      "tests": [
+        "test_reference_scene_is_excluded_even_with_different_pixels"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_scope_guidance.py",
+      "sha256": "1d3b34909bcb16fcfa77474b5f3aed8d1437a92f118d3aecb881b4de957a2f60",
+      "tests": [
+        "test_assisted_disposal_is_separate_from_recognition"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_scope_objects.py",
+      "sha256": "187f99db1c5f48d32807cdf94074c18550e5fe73e8c2f6d88b0c537f76ed84da",
+      "tests": [
+        "test_initial_scope_is_closed_and_maps_to_existing_materials",
+        "test_old_broad_labels_remain_readable_but_are_not_new_report_choices"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.recognition_scope"
+      ]
+    },
+    {
+      "path": "tests/test_segmentation.py",
+      "sha256": "1819d2416bd3d17b0f3bf6cd9e63e6abc474a4966cb6222c28a24e7623a2d481",
+      "tests": [
+        "test_otsu_segmentation_returns_mask_and_segmented_image",
+        "test_none_segmentation_keeps_full_image",
+        "test_hsv_color_segments_colored_region",
+        "test_apply_mask_sets_background_to_white"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.segmentation.methods"
+      ]
+    },
+    {
+      "path": "tests/test_semantic_learning.py",
+      "sha256": "3b6899d417ed73707ce212252898bd50bbb2980b87b857639745646dfbb651c5",
+      "tests": [
+        "test_improvement_rejects_equal_and_regressing_classes",
+        "test_idle_does_not_read_model_or_write_data",
+        "test_approved_report_trains_and_only_publishes_improvement",
+        "test_unchanged_seed_does_not_retrain_a_completed_batch",
+        "test_neural_release_verifies_hashes"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.app.pipeline",
+        "ecoscan.services.semantic_release",
+        "ecoscan.training.semantic_learning"
+      ]
+    },
+    {
+      "path": "tests/test_stage_training_experiment.py",
+      "sha256": "5020714f467a46141551493629cdd1e3a117aaaa0121707483b7d60b0065284d",
+      "tests": [
+        "test_staging_preserves_source_and_records_groups",
+        "test_staging_rejects_invalid_additions_before_writing"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_startup_stability.py",
+      "sha256": "d6888f0f769eade82f064692c7d6584833e476b1360995d47d6dc49487219895",
+      "tests": [
+        "test_entry_does_not_query_hidden_pages_and_navigation_is_lazy",
+        "test_closed_directory_does_not_paginate_auth_accounts",
+        "test_temporary_outage_keeps_session_blocks_content_and_retry_recovers",
+        "test_invalid_session_clears_token_and_previous_identity_data",
+        "test_guest_option_after_outage_discards_private_session",
+        "test_transport_failure_is_temporary_redacted_and_closes_client",
+        "test_real_sdk_propagates_timeout_policy_and_isolates_clients"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.accounts",
+        "ecoscan.services.password_identity",
+        "ecoscan.services.supabase_client"
+      ]
+    },
+    {
+      "path": "tests/test_streamlit_camera_flow.py",
+      "sha256": "f5189621400fc431c4721e38e9c4f3ec3bad3ab0f4a089da5f9f7a30b54f04eb",
+      "tests": [
+        "test_input_signature_changes_with_source_and_processing_options",
+        "test_recognition_page_does_not_render_prediction_percentages",
+        "test_public_action_component_contains_no_confidence_tile"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.app.pipeline",
+        "ecoscan.ui.streamlit_app"
+      ]
+    },
+    {
+      "path": "tests/test_supabase_readiness.py",
+      "sha256": "9674cf475f2def62aee2e97921b1627f4a9f9d27a8e67aad5dc34b4e781fd52a",
+      "tests": [
+        "test_readiness_checks_all_tables_and_private_buckets",
+        "test_readiness_reports_resource_without_leaking_backend_exception"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.supabase_readiness"
+      ]
+    },
+    {
+      "path": "tests/test_taco_capture.py",
+      "sha256": "cb7026ae9d54d50be870f1cd2153711c93a461651dbc73502b1013185d32089f",
+      "tests": [
+        "test_category_map_points_taco_categories_to_ecoscan_classes",
+        "test_scaled_crop_box_respects_actual_download_size_and_margin",
+        "test_scaled_crop_box_clamps_to_image_bounds"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_taco_orientation.py",
+      "sha256": "6fa0ed647187b49858a30287652a1219b64fbbe96af830d56f261c7af3dffba7",
+      "tests": [
+        "test_download_applies_exif_before_annotation_coordinates",
+        "test_repair_accepts_relative_output_and_preserves_source"
+      ],
+      "ecoscan_imports": []
+    },
+    {
+      "path": "tests/test_training_corpus.py",
+      "sha256": "2ea4f59cc9626747e865297cec4059c9715f63091b4932ecb5b22a6b83ec6957",
+      "tests": [
+        "test_build_reports_shortfall_and_preserves_test",
+        "test_invalid_input_leaves_no_output",
+        "test_rejects_duplicates_and_cross_split_groups",
+        "test_never_overwrites_previous_batch"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.training.corpus"
+      ]
+    },
+    {
+      "path": "tests/test_training_diagnostics.py",
+      "sha256": "c9b202847c409bfd1c19fa6c0b7758d2624ae4894b7e4be35808602f70842160",
+      "tests": [
+        "test_explains_all_rejection_conditions",
+        "test_passing_gate_has_no_reasons",
+        "test_equal_model_is_not_an_improvement"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.training.diagnostics",
+        "ecoscan.training.semantic_learning"
+      ]
+    },
+    {
+      "path": "tests/test_training_readiness.py",
+      "sha256": "392ebdcefd25d2d0d6bc9a53dc55a946e90e93b6dcf598f83dd2cd7f1f60ab71",
+      "tests": [
+        "test_holdouts_and_excluded_images_do_not_satisfy_training_minimum",
+        "test_counts_are_only_a_minimum_guard",
+        "test_invalid_minimum_rejected"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.training.readiness"
+      ]
+    },
+    {
+      "path": "tests/test_training_review.py",
+      "sha256": "a059c3c1b906ebb33e20b02f79d5917385075d74090bd7bf4ee70a74630b6b73",
+      "tests": [
+        "test_visual_review_cannot_mutate_holdout_or_changed_images",
+        "test_foreground_crop_preserves_rgb_and_falls_back_when_ambiguous",
+        "test_fine_tuning_excludes_reviewed_training_but_keeps_all_evaluation_images"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.image_processing.recognition_views",
+        "ecoscan.training.review"
+      ]
+    },
+    {
+      "path": "tests/test_ui_modules.py",
+      "sha256": "3738853770afc711940d0c0f3bc6eb9116259f5b2bbef76ed69abce78c9cdf95",
+      "tests": [
+        "test_coordinator_reexports_existing_renderer_contracts",
+        "test_specialized_views_never_depend_on_streamlit_coordinator",
+        "test_ui_component_dependencies_are_acyclic",
+        "test_coordinator_stays_below_monolith_budget",
+        "test_new_page_controllers_keep_their_domain_logic_outside_main"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.ui"
+      ]
+    },
+    {
+      "path": "tests/test_usage_quality.py",
+      "sha256": "d5088a6c72ea3e8c9375d503d24d79f0923996b45a6ca5955ccbc10a1a063bf4",
+      "tests": [
+        "test_quality_summary_counts_uncertain_and_corrections"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.services.history",
+        "ecoscan.services.recognition_feedback",
+        "ecoscan.services.usage_quality"
+      ]
+    },
+    {
+      "path": "tests/test_user_journeys.py",
+      "sha256": "c4e36ce548f916ee87d5f3c4d64968f3fef3197e93a378876464dc751453e1bc",
+      "tests": [
+        "test_registration_confirmation_and_account_switching",
+        "test_report_review_and_points_survive_new_session",
+        "test_visitor_or_missing_consent_never_persists"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config",
+        "ecoscan.disposal.collection_points",
+        "ecoscan.services.accounts",
+        "ecoscan.services.engagement",
+        "ecoscan.services.learning_contributions",
+        "ecoscan.services.password_identity"
+      ]
+    },
+    {
+      "path": "tests/test_web_dataset.py",
+      "sha256": "7c07ed7f78d4a4758ef5da2f9af1d808f72dc391de068406d5124b64e67c4850",
+      "tests": [
+        "test_external_data_cannot_change_or_enter_reference_holdout",
+        "test_public_source_mapping_and_near_copy_filter",
+        "test_source_weights_balance_classes_without_web_volume_domination"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.training.fixed_split"
+      ]
+    },
+    {
+      "path": "tests/test_web_source_config.py",
+      "sha256": "0308590e24c9cd5d220bacd99c63b1670a2720e96ffc522c8e6ff51b4842cb67",
+      "tests": [
+        "test_web_source_config_covers_all_configured_classes"
+      ],
+      "ecoscan_imports": [
+        "ecoscan.config"
+      ]
+    }
+  ]
+}

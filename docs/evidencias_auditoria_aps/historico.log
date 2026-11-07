@@ -1,0 +1,1 @@
+{"evaluation_kind": "historical_reused_features", "top1_correct": 101, "total": 145, "threshold": 0.8, "accepted": 51, "correct": 47, "wrong": 4, "rejected": 94}
