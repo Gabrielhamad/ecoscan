@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "External private audit receipt; this schema is not an attestation",
+  "type": "object",
+  "required": ["manifest_sha256", "policy_sha256", "audit_status", "scope", "reviewer_id", "evidence_reference", "reviewed_at", "development_overlap_reviewed", "approved_augmentations"],
+  "properties": {
+    "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "policy_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "audit_status": {"const": "approved"},
+    "scope": {"const": "offline_training_and_evaluation"},
+    "reviewer_id": {"type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63}$"},
+    "evidence_reference": {"type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63}$"},
+    "reviewed_at": {"type": "string", "format": "date-time"},
+    "development_overlap_reviewed": {"const": true},
+    "approved_augmentations": {"const": ["none", "brightness-0.9", "brightness-1.1"]}
+  }
+}
