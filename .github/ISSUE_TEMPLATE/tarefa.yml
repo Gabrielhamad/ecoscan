@@ -1,0 +1,64 @@
+name: Trabalho planejado
+description: Crie uma tarefa com resultado, prioridade e critérios de aceite verificáveis.
+title: "[Tarefa] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Vincule esta issue ao roadmap e não publique chaves, fotos privadas, RAs, e-mails ou protocolos identificáveis.
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioridade
+      description: P0 impede aceite essencial; P1 exige conclusão para piloto/operação; P2 é evolução.
+      options:
+        - P0 - Entrega / segurança crítica
+        - P1 - Piloto / governança
+        - P2 - Evolução
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Área responsável
+      options:
+        - Aplicação e interface
+        - Processamento e modelo
+        - Banco e segurança
+        - Testes e qualidade
+        - Documentação e APS
+        - DevOps e release
+        - Gestão do projeto
+    validations:
+      required: true
+  - type: textarea
+    id: objective
+    attributes:
+      label: Problema e resultado esperado
+      description: O que precisa mudar e por que esta entrega importa?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Critérios objetivos de aceite
+      placeholder: |
+        - [ ] Cenário reproduzível e resultado esperado
+        - [ ] Testes e documentação atualizados
+        - [ ] Evidência do SHA/deploy registrada
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependências, riscos e rollback
+      description: Identifique dependências, impacto em dados/autorização e estratégia de retorno.
+    validations:
+      required: false
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidência necessária
+      description: Relatório, teste, screenshot sem dados pessoais, arquivo de código, PR ou CI.
+    validations:
+      required: true
