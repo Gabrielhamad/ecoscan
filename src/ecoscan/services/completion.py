@@ -158,7 +158,7 @@ def build_completion_plan(config: AppConfig) -> CompletionPlan:
                 if pack_index.exists() and academic_report.exists()
                 else "Gere o relatório acadêmico e o pacote técnico antes de entregar."
             ),
-            next_step="Rodar scripts/generate_academic_report.py e scripts/prepare_delivery_pack.py após as últimas alterações.",
+            next_step="Gerar o relatório acadêmico e o inventário com prepare_delivery_pack.py legacy-report; para o ZIP executável, seguir docs/pacote_execucao_aps.md.",
         ),
         CompletionAction(
             area="Operação",

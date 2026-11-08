@@ -476,3 +476,25 @@ def _write_csv(path: Path, rows: Iterable[object]) -> None:
         writer.writeheader()
         for row in rows:
             writer.writerow(asdict(row))
+
+
+def write_execution_archive(
+    config: AppConfig,
+    output_dir: Path,
+    *,
+    ref: str,
+    runtime_lock: Path,
+    builder_root: Path,
+    lock_ref: str | None = None,
+    ci_report: Path | None = None,
+    photos_root: Path | None = None,
+    photos_manifest: Path | None = None,
+) -> dict[str, Path]:
+    """Separate the executable review archive from the legacy local evidence inventory."""
+    from ecoscan.services.execution_package import write_execution_package
+
+    return write_execution_package(
+        config.project_root, output_dir, ref=ref, runtime_lock=runtime_lock,
+        builder_root=builder_root, lock_ref=lock_ref, ci_report=ci_report,
+        photos_root=photos_root, photos_manifest=photos_manifest,
+    )
