@@ -38,8 +38,8 @@ foto ou protocolo foi fornecido/usado pelo Codex.
   antes de usar dados privados; este PR de auditoria não duplica aquela correção.
 - PostgreSQL descartável local não chegou a iniciar: o driver Docker VFS esgotou
   espaço ao materializar a imagem. Foi removida somente a imagem de teste. As
-  fixtures de RLS/permissões serão registradas como evidência técnica da CI do PR,
-  separadas de qualquer aceite do Supabase publicado.
+  fixtures de RLS/permissões passaram no job PostgreSQL 16 da CI, registradas
+  abaixo separadamente de qualquer aceite do Supabase publicado.
 
 QA-09 e QA-18..QA-21 continuam `manual_pending` neste instrumento. Não se alterou
 `acceptance_checks.py`: seus gates externos continuam pendentes. Mesmo todas as
@@ -157,3 +157,19 @@ A prova de identidade de A/B depende também da camada servidor e do deployment.
 Rollback deste PR: reverter apenas o código de relatório/CLI e a documentação.
 Não há mudança de autenticação, migração, Secrets, modelo publicado ou deploy.
 Os registros gerados são locais; não apagar evidência privada ou banco ao reverter.
+
+## Evidência CI de RLS — EVID-004
+
+[Run 42518310282](https://github.com/Gabrielhamad/ecoscan/actions/runs/42518310282),
+job `128846070971`, concluído em **08/11/2026 20:05:51 UTC**, **success**:
+preparação do banco isolado, migrations 001–004/reaplicação das aditivas,
+permissões/identidades/CAS/auditoria e término/remoção dos containers passaram.
+Commit testado: `2898252cb8a224aeb7a53497abe80f5e68da9a6f` (instrumentação deste PR).
+Migrations e os dois SQLs de fixture/teste foram comparados e são idênticos aos
+do candidato oficial `89622ec`. Nenhuma informação de conta/token foi coletada.
+
+O caso `local_rls` passou como **fixture em CI**, não como teste no Supabase
+publicado. O registro final contém **3 verificações técnicas passadas, 1 falha
+local de privacidade e 27 manual_pending**. QA-09/QA-18..QA-21 continuam pendentes.
+A CI no SHA final do PR deve permanecer verde; ela não corrige o P1 da main nem
+aprova o deployment.

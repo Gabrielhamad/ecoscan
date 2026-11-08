@@ -5,7 +5,7 @@ published_sha,PC,operator,published,,Conferir SHA completo no provedor/runtime e
 published_model,PC,operator,published,QA-09,"Conferir hashes do modelo efetivamente carregado, inclusive override remoto e contrato.",manual_pending,runtime_model_unverified,,,,,,
 local_model,Codex Linux,fixture,local_fixture,,"Verificar configuração, cabeça e montagem dos shards locais; não atesta deployment.",passed,,2026-11-08T20:02:13+00:00,,Python,3.12.14,EVID-003,technical_local
 local_error_privacy,Codex Linux,fixture,local_fixture,,Usar marcador sintético para verificar se a fronteira de erro repassa detalhe bruto à UI/log; não é incidente observado em produção.,failed,raw_exception_exposed,2026-11-08T20:02:13+00:00,,Python,3.12.14,EVID-005,technical_local
-local_rls,CI PostgreSQL 16,fixture,local_fixture,,"Executar fixtures/RLS/permissões em PostgreSQL 16 descartável, sem dados reais.",manual_pending,not_executed,,,,,,
+local_rls,CI PostgreSQL 16,fixture,local_fixture,,"Executar fixtures/RLS/permissões em PostgreSQL 16 descartável, sem dados reais.",passed,,2026-11-08T20:05:51+00:00,,PostgreSQL,16,EVID-004,technical_local
 pc_visitor,PC,visitor,published,QA-20,Abrir como visitante; navegar sem gestão/conta alheia e sem enviar contribuição.,manual_pending,no_device,,,,,,
 pc_capture,PC,visitor,published,QA-20,Capturar/enviar foto real autorizada; conferir EXIF e alternativa após negar câmera.,manual_pending,no_real_photo,,,,,,
 pc_analysis,PC,visitor,published,QA-09,"Analisar foto real; separar hipótese, rejeição, confirmação humana e limites do reconhecimento.",manual_pending,no_real_photo,,,,,,
