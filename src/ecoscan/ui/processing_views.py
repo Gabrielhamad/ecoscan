@@ -299,6 +299,8 @@ def _render_element_diagnostics(st: Any, pipeline: Any) -> None:
     metric_cols[3].metric("Múltiplos objetos", "sim" if analysis.likely_multi_object else "não")
 
     st.caption(analysis.warning)
+    st.caption("Componentes usam conectividade de quatro vizinhos. Área, caixas e contornos descrevem a máscara; "
+               "não comprovam que ela corresponde ao objeto. IoU/Dice exigem anotação humana de referência.")
     rows = [
         {
             "id": element.label,

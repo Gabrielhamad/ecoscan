@@ -11,7 +11,7 @@ a ementa oficial não foi fornecida.
   página principal. Selecionar os parâmetros e tirar/enviar a foto em Escanear.
   O resultado exibe **Processamento aplicado: antes e depois**, sem exigir abrir a área técnica.
   As abas apresentam o antes/depois e a diferença de cada operação.
-  **Baixar evidências do processamento (ZIP)** salva as imagens PNG e o manifesto de parâmetros.
+  **Baixar evidências do processamento (ZIP)** salva PNGs, cinza/histogramas, parâmetros CSV, hashes, tempos e relatório Markdown. O pacote contém a foto e não atesta sua origem.
 - Analista: usar os **Parâmetros técnicos** na barra lateral e a aba **Processamento**.
 - Mudar uma operação ou parâmetro reprocessa a foto carregada; não é necessário
   reenviar uma contribuição à secretaria.
@@ -55,7 +55,7 @@ Os controles sem operação e os métodos manuais continuam disponíveis no labo
 | Morfologia | Erosão, dilatação, abertura, fechamento e abertura seguida de fechamento | Máscara antes/depois, kernel e estágios |
 | Contorno morfológico | Gradiente da máscara final | Diferença entre dilatação e erosão, somente para inspeção |
 | Regiões | Componentes conectados, área, caixas e diagnósticos | Overlay e metadados de elementos |
-| Avaliação | IoU em máscara sintética conhecida; comparação controlada | Relatório e prancha do experimento |
+| Avaliação | Diferenças medidas; IoU/Dice somente contra referência fornecida | Relatório por execução e comparação com controle |
 
 Os tons de cinza usam 0,299R + 0,587G + 0,114B, com saída uint8.
 O histograma conta pixels por intensidade de 0 a 255. Não é um gráfico de
@@ -141,16 +141,119 @@ e a correspondência das evidências exportadas com as operações executadas.
   O manifesto do ZIP não inclui caminhos do servidor nem identidade da conta.
 
 A prancha de antes/depois demonstra operações, não acurácia do classificador.
-O caminho de imagem abaixo é um **exemplo de um conjunto local não versionado**;
-substitua-o por uma foto autorizada que realmente exista no seu computador.
-Os relatórios gerados na pasta `reports/` não são distribuídos pelo Git.
+Os relatórios em `reports/` são ignorados pelo Git. Os exemplos de caminhos abaixo
+são **placeholders locais**, não fotos existentes no repositório.
 
-Para reproduzir (na raiz do projeto):
+### Exportação acadêmica de fotos autorizadas
 
-    python scripts/export_processing_evidence.py --image data/test/metal/metal_0011_burn-wv-deckel_processed.png --output reports/evidencia_foto
+Na raiz do projeto, com Python 3.12 e as dependências declaradas:
 
-O comando usa o mesmo pipeline e salva também JSON e ZIP. Aceita uma foto autorizada
-em --image. Os arquivos de evidência contêm a foto: compartilhar apenas os autorizados.
+```bash
+python scripts/export_processing_evidence.py \
+  --image /dados/aps/foto_autorizada.png --output reports/aps/foto_01 \
+  --source-kind field_photo --consent --compare-filters \
+  --segmentation otsu --morphology open_close
+```
+
+`--compare-filters` executa **controle, gaussiano, mediana e Sobel**, uma vez cada,
+a partir do mesmo arquivo. Mantém os mesmos parâmetros solicitados de segmentação
+e morfologia. Cada variante tem relatório e manifesto próprios. Para outra técnica:
+
+```bash
+python scripts/export_processing_evidence.py \
+  --image /dados/aps/foto_autorizada.png --output reports/aps/foto_01_hsv \
+  --source-kind field_photo --consent --filter median --segmentation hsv_color
+```
+
+`--filter`, `--segmentation` e `--morphology` substituem os padrões. `--options`
+recebe um arquivo JSON com campos de `ProcessingPipelineOptions`, por exemplo:
+
+```json
+{
+  "filter_parameters": {"kernel_size": 3},
+  "segmentation_parameters": {"invert": true},
+  "morphology_parameters": {"kernel_size": 3, "kernel_shape": "cross", "iterations": 1}
+}
+```
+
+Parâmetros efetivos, inclusive limiar escolhido por Otsu e sequência adaptativa,
+estão em `parameters.csv` e `manifest.json`. O manifesto inclui SHA do arquivo de
+entrada, arrays, arquivos exportados, código, configuração, script e checkout,
+versões das dependências, opções e contrato efetivo da prévia de reconhecimento.
+O SHA do checkout sozinho não atesta árvore limpa: os hashes do código registram
+as fontes efetivamente utilizadas. Arquivar também o diff se executar com alterações.
+
+A origem e `--consent` são **declarações do operador**, não auditoria externa.
+`--source-kind synthetic_fixture` identifica testes técnicos e não converte uma
+fixture em evidência de campo. A UI exporta `source_kind=not_attested`, sem
+alegar consentimento, e não tem hash do arquivo codificado já descartado; mantém
+o hash do RGB original orientado. Nenhum nome de arquivo/caminho de upload ou
+identidade de conta é incluído no pacote. O PNG original contém o RGB decodificado,
+orientado e sem os metadados EXIF; não é cópia byte a byte do arquivo de entrada.
+
+O diretório deve ser novo. `evidence.zip` e as figuras extraídas contêm os mesmos
+bytes, sem segunda execução das operações. Para comparação, o ZIP contém as
+subpastas das quatro variantes, `comparison.csv` e o relatório que referencia
+cada execução. Para filtro único, os arquivos ficam diretamente na raiz:
+
+- `00_original_rgb.png`, cinza e histogramas antes/depois; `histogram.csv` contém as 256 contagens exatas.
+- `*_before.png`, `*_after.png`, `*_difference.png`: arrays de cada etapa, sem perdas.
+- `components.png`, `contours.png`: caixas dos componentes e gradiente morfológico real.
+- `parameters.csv`, `manifest.json`, `report.md`, `antes_depois.png`.
+- `06_classifier_input_after.png`: RGB efetivamente preparado, sem máscara; não é previsão.
+
+**Reprodutibilidade:** exportar duas vezes a mesma execução capturada produz ZIP
+idêntico (ordem e timestamps fixos). Reprocessar a foto mede novos tempos; portanto
+não promete ZIP byte idêntico entre execuções. Compare hashes dos arrays, opções,
+contrato, código e versões. Pillow/OpenCV/fonte disponível ou versões diferentes
+podem alterar PNGs e pranchas; a equivalência pixel a pixel deve usar o mesmo ambiente.
+Os tempos são os realmente medidos no pipeline: decodificação, preparação,
+filtro, segmentação e etapa conjunta de evidências/morfologia/entrada. Não se
+inventa tempo por primitiva nem latência de inferência; a CLI não carrega o encoder.
+A diferença média/máxima usa o mapa da maior diferença absoluta entre canais RGB
+(ou diferença binária), em 0–255, sem amplificação e sem interpretação de qualidade.
+
+**Limite da baseline `89622ec`:** a máscara é independente da entrada RGB, mas
+filtros de cor podem alterar essa entrada. Este trabalho não muda a preparação do
+classificador. A separação completa dos filtros didáticos é escopo do
+[PR #21](https://github.com/Gabrielhamad/ecoscan/pull/21), pendente no `main`
+consultado; não alegar compatibilidade homologada de todas as variantes.
+
+### Referência humana opcional
+
+1. Anotar manualmente o objeto no sistema de coordenadas de `01_resize_after.png`
+   (ou `none/01_resize_after.png` na comparação), já orientado e reduzido.
+2. Salvar PNG binário L/1 com exatamente a mesma largura/altura, fundo 0 e objeto
+   255. Não usar RGB/paleta/cinza intermediário nem EXIF de rotação. Registrar
+   autor/revisor, critério de contorno e limitações **fora do Git público**.
+3. Em novo diretório, repetir a mesma execução adicionando
+   `--reference-mask /dados/aps/mascara_revisada.png --reference-reviewed`.
+
+A CLI rejeita referência sem revisão declarada, dimensões diferentes ou
+conversão silenciosa. Calcula IoU/Dice contra máscaras bruta e final. Duas máscaras
+vazias recebem 1 por convenção matemática, explicitamente registrada; isso não
+valida a anotação de um objeto ausente. Sem referência, `reference_quality=null`
+e células de métricas ficam vazias. Pixels alterados, área ou redução de
+componentes não substituem IoU/Dice e não medem reconhecimento.
+
+### Autoria das operações
+
+| Operação | Implementação do projeto | Biblioteca utilizada |
+| --- | --- | --- |
+| Aquisição/RGB/EXIF/PNG | Validação, contratos e orquestração | Pillow para decodificar, orientar, compor alpha e exportar |
+| Redução/margens | Geometria, opções e metadados | OpenCV por área/linear; Pillow bicúbico apenas no helper legado |
+| Cinza/histograma | Fórmula RGB e contagens/bins | NumPy; Pillow desenha o gráfico exportado |
+| Gaussiano/mediana/bilateral/CLAHE | Seleção, parâmetros e explicações | OpenCV; gaussiano/mediana têm fallback Pillow, sem promessa de igualdade numérica |
+| Sobel | Vizinhanças, kernels, magnitude e normalização | NumPy; a função local aplica os kernels como correlação |
+| Canny | Parâmetros e despacho | OpenCV; fallback NumPy é limiar Sobel, não Canny completo |
+| Otsu | Histograma, variância entre classes, limiar e polaridade | NumPy; não chama `cv2.threshold` |
+| HSV | Regras sobre saturação/brilho | OpenCV para RGB→HSV; cálculo NumPy no fallback |
+| GrabCut | Retângulo, seed e conversão de rótulos em máscara | OpenCV para estimar primeiro plano/fundo |
+| Morfologia/gradiente | Erosão/dilatação, sequência, kernel e borda zero | NumPy; não chama `cv2.morphologyEx` |
+| Componentes/caixas | Busca em largura, 4 vizinhos, área e centroide | `deque`/NumPy; Pillow para desenhar caixas |
+
+Não atribuir ao grupo a implementação interna dos algoritmos fornecidos pelas
+bibliotecas. O manifesto registra o backend realmente escolhido e sua explicação.
 
 ## Experimento reproduzível
 
@@ -209,7 +312,7 @@ conjuntos de avaliação. Não escolher parâmetros somente para uma foto favor�
 
 ## Validação automatizada
 
-    python -m unittest tests.test_processing_evidence tests.test_morphology tests.test_processing_lab tests.test_pipeline tests.test_image_processing tests.test_streamlit_camera_flow -v
+    python -m pytest -q tests/test_processing_academic.py tests/test_processing_evidence.py tests/test_morphology.py tests/test_processing_lab.py tests/test_pipeline.py tests/test_image_processing.py tests/test_streamlit_camera_flow.py
 
 Os testes verificam resultados pixel a pixel em formas conhecidas, máscaras
 vazias/cheias, bordas, iterações, parâmetros inválidos, preservação do original,
@@ -230,3 +333,10 @@ avaliação independente da segmentação e do reconhecimento em campo.
 - Integração: src/ecoscan/app/pipeline.py.
 - Interface: src/ecoscan/ui/processing_lab.py.
 - Experimento: scripts/run_processing_lab.py.
+
+## Relatório acadêmico e gate de fotos reais
+
+O [relatório de entrega PDI](relatorio_pdi_aps.md) registra o estado verificável e
+o protocolo para completar figuras/interpretação. Nesta etapa não foram fornecidas
+fotos reais autorizadas. Os testes sintéticos validam exportação e cálculos;
+não preenchem os dois exemplos reais nem o fracasso diagnosticado exigidos.

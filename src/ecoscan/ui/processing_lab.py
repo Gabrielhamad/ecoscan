@@ -33,7 +33,8 @@ def render_processing_lab(st, pipeline):
         st.info("Refaça a análise para visualizar as etapas morfológicas desta versão.")
         return
     st.subheader("Preparação e morfologia matemática")
-    st.caption("Aquisição → RGB e tamanho → filtro → segmentação → morfologia → regiões → reconhecimento.")
+    st.caption("Aquisição → RGB/cinza/histograma → filtro → segmentação → morfologia → componentes/contornos. "
+               "A prévia RGB para reconhecimento segue sem a máscara diagnóstica.")
     columns = st.columns(3)
     gray = to_grayscale(pipeline.preprocessing.resized)
     filtered_gray = to_grayscale(pipeline.filter_result.image)
@@ -112,6 +113,9 @@ def render_applied_processing(st, pipeline):
     st.caption("Abertura = erosão → dilatação. Fechamento = dilatação → erosão. "
                "Cada aba morfológica mostra a entrada e a saída daquela primitiva. "
                "Alteração de pixels comprova o efeito, mas não comprova melhora na precisão.")
+    st.caption("O ZIP contém a foto, PNGs, histogramas, parâmetros, hashes, tempos e relatório. "
+               "Compartilhe somente imagens autorizadas. Sem referência humana, IoU/Dice não são medidos. "
+               "A origem da foto não é auditada pela interface.")
     st.download_button("Baixar evidências do processamento (ZIP)",
                        processing_evidence_zip(pipeline), "ecoscan_antes_depois.zip",
                        "application/zip", key="processing_evidence_download")
