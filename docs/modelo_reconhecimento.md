@@ -25,6 +25,14 @@ O classificador pode aceitar internamente uma hipótese pelo limiar do artefato.
 
 Essa política fica em `services/analysis_service.py` e `services/recognition_safety.py`, fora do modelo.
 
+O [motor de decisão versionado](motor_decisao_reconhecimento.md) separa hipótese,
+identificação visual e autorização de destinação. Sem evidência independente,
+mostra **Melhor correspondência** para confirmação. Um opt-in futuro por classe
+exige relatório da regra exata, calibração, qualidade, margem, escopo e hashes
+compatíveis; a configuração entregue mantém todas as classes desativadas para
+assertividade e `confirmation_required=true`. Identificação visual nunca libera
+destinação automática; pilhas/baterias e eletrônicos mantêm coleta especial.
+
 ## Evidência disponível
 
 Na reprodução da avaliação histórica registrada junto à release, houve 101

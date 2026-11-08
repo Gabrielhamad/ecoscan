@@ -16,7 +16,7 @@ from ecoscan.disposal.guidance import DisposalGuidance
 from ecoscan.disposal.impact import EnvironmentalImpact
 from ecoscan.disposal.targets import DisposalTarget
 from ecoscan.services.accounts import UserProfile
-from ecoscan.services.recognition_safety import build_recognition_safety_decision
+from ecoscan.services.recognition_safety import decision_for_result, decision_from_error
 from ecoscan.ui.analysis_widgets import (
     _render_capture_tips,
     _render_live_camera_link,
@@ -106,6 +106,7 @@ def render_analysis_page(
                 except Exception as exc:
                     result = None
                     _render_user_error(st, exc, context="image_analysis")
+                    _render_recognition_decision(st, decision_from_error(exc))
                 finally:
                     if temp_path is not None:
                         try:
@@ -135,14 +136,11 @@ def render_analysis_page(
                         LOGGER.warning("local_history_write_failed")
                         st.warning("A análise foi concluída, mas o histórico local não pôde ser gravado. O envio de uma contribuição é independente.")
 
-                safety_decision = build_recognition_safety_decision(
-                    result,
-                    action_confidence_threshold=max(0.72, float(config.confidence_threshold)),
-                )
+                safety_decision = decision_for_result(result, config)
                 # The suggestion can preview a category's bin, but only an
                 # explicitly selected material unlocks complete instructions.
-                suggested_guidance = guidance_by_class.get(result.top_class)
-                suggested_target = targets_by_class.get(result.top_class)
+                suggested_guidance = guidance_by_class.get(safety_decision.suggested_class)
+                suggested_target = targets_by_class.get(safety_decision.suggested_class)
                 if not active_profile.is_admin:
                     from ecoscan.services.public_flow import build_public_next_action
 
@@ -167,24 +165,7 @@ def render_analysis_page(
                 with right:
                     st.markdown('<div class="ecoscan-result">', unsafe_allow_html=True)
                     _render_recognition_decision(st, safety_decision)
-                    if result.model_type == "semantic_onnx_assisted":
-                        if suggested_guidance is not None and safety_decision.status == "needs_confirmation":
-                            st.subheader("Material sugerido: " + suggested_guidance.display_name)
-                            if suggested_target is not None:
-                                st.write(
-                                    f"**Destino para {suggested_guidance.display_name}: "
-                                    f"{suggested_target.destination_title}.**"
-                                )
-                            st.caption("Confira a composição e o conteúdo da embalagem antes de escolher a orientação.")
-                        else:
-                            st.subheader("Selecione o material para consultar o descarte")
-                            st.write("Você pode identificar o material manualmente na lista abaixo.")
-                    elif result.accepted and result.guidance and safety_decision.allow_disposal_guidance:
-                        st.subheader("Material sugerido: " + result.guidance.display_name)
-                        st.write(f"**Categoria ambiental:** {result.guidance.environmental_category}")
-                    else:
-                        st.subheader("Escolha o material da foto")
-                        st.write("Se necessário, tire outra foto em boa iluminação e com o objeto centralizado.")
+                    st.caption("Você pode corrigir ou confirmar o material na lista abaixo.")
                     st.markdown('<div class="ecoscan-soft-divider"></div>', unsafe_allow_html=True)
                     if active_profile.is_admin:
                         st.caption(f"Filtro aplicado: {result.pipeline.filter_result.name}")
@@ -218,37 +199,47 @@ def render_analysis_page(
                     )
                 _render_recognition_feedback_form(st, config, result, active_profile, guidance_by_class)
 
-                st.markdown(
-                    '<div class="ecoscan-section-title">Confirme o material e veja o descarte</div>',
-                    unsafe_allow_html=True,
-                )
-                confirmed_class = st.selectbox(
-                    "Qual material você identificou na foto?",
-                    [None, *config.classes],
-                    format_func=lambda class_id: (
-                        "Selecione o material (confirmação manual)"
-                        if class_id is None else guidance_by_class[class_id].display_name
-                    ),
-                    key=f"confirmed_disposal_{signature}",
-                    help="Escolha a categoria do material. A foto não determina composição ou contaminação.",
-                )
-                if confirmed_class is not None:
-                    confirmed_guidance = guidance_by_class.get(confirmed_class)
-                    confirmed_target = targets_by_class.get(confirmed_class)
-                    confirmed_impact = impacts_by_class.get(confirmed_class)
-                    if confirmed_guidance is not None and confirmed_target is not None:
-                        st.success(
-                            f"{confirmed_guidance.display_name}: "
-                            f"{confirmed_target.destination_title}."
-                        )
-                        _render_disposal_action_panel(
-                            st,
-                            config,
-                            confirmed_guidance,
-                            confirmed_target,
-                            confirmed_impact,
-                            collection_points,
-                        )
+            _render_manual_material_confirmation(
+                st, config, signature, guidance_by_class, targets_by_class,
+                impacts_by_class, collection_points,
+            )
 
 
     return result
+
+
+
+def _render_manual_material_confirmation(
+    st: Any,
+    config: AppConfig,
+    signature: str,
+    guidance_by_class: dict[str, DisposalGuidance],
+    targets_by_class: dict[str, DisposalTarget],
+    impacts_by_class: dict[str, EnvironmentalImpact],
+    collection_points: list[CollectionPoint] | tuple[CollectionPoint, ...],
+) -> None:
+    """Local human correction remains available even when image/model analysis fails."""
+    st.markdown(
+        '<div class="ecoscan-section-title">Confirme ou corrija o material e veja o descarte</div>',
+        unsafe_allow_html=True,
+    )
+    confirmed_class = st.selectbox(
+        "Qual material você identificou na foto?",
+        [None, *config.classes],
+        format_func=lambda class_id: (
+            "Selecione o material (confirmação manual)"
+            if class_id is None else guidance_by_class[class_id].display_name
+        ),
+        key=f"confirmed_disposal_{signature}",
+        help="Escolha ou corrija a categoria do material. A foto não determina composição ou contaminação.",
+    )
+    if confirmed_class is not None:
+        confirmed_guidance = guidance_by_class.get(confirmed_class)
+        confirmed_target = targets_by_class.get(confirmed_class)
+        confirmed_impact = impacts_by_class.get(confirmed_class)
+        if confirmed_guidance is not None and confirmed_target is not None:
+            st.success(f"{confirmed_guidance.display_name}: {confirmed_target.destination_title}.")
+            _render_disposal_action_panel(
+                st, config, confirmed_guidance, confirmed_target, confirmed_impact,
+                collection_points,
+            )

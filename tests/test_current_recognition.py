@@ -20,12 +20,14 @@ from ecoscan.services.recognition_safety import build_recognition_safety_decisio
 def test_current_recognizer_requires_confirmation_even_at_high_score():
     result = SimpleNamespace(
         model_type="semantic_onnx_assisted",
+        top_class="metal",
+        probabilities={"metal": .99, "glass": .01, "plastic": 0., "paper_cardboard": 0., "battery": 0., "electronic": 0., "unknown": 0.},
         probability=0.99,
         accepted=True,
         guidance=object(),
     )
     decision = build_recognition_safety_decision(result)
-    assert decision.status == "needs_confirmation"
+    assert decision.status == "probable"
     assert not decision.allow_disposal_guidance
     assert decision.encourage_feedback
 

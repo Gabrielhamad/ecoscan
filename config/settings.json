@@ -49,7 +49,8 @@
     "engine": "semantic_onnx_assisted",
     "artifact_path": "models/semantic-v1/semantic.json",
     "remote_models_enabled": true,
-    "confirmation_required": true
+    "confirmation_required": true,
+    "decision_policy_path": "config/recognition_policy.json"
   },
   "history": {
     "enabled": true,
