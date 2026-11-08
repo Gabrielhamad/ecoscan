@@ -130,7 +130,7 @@ def _render_processing_evidence(
     segmentation_name = pipeline.segmentation_result.name
     element_count = pipeline.element_analysis.significant_count
     model_name = result.model_type
-    accepted_label = "classificação sugerida" if result.accepted else "reconhecimento incerto"
+    processing_label = "Processamento desta imagem"
 
     method_chips = "".join(
         [
@@ -148,7 +148,7 @@ def _render_processing_evidence(
                     <strong>Evidência visual da análise</strong>
                     <span>Antes, depois e mapa de detecção gerados para esta imagem específica.</span>
                 </div>
-                <div class="ecoscan-evidence-badge">{html.escape(accepted_label)}</div>
+                <div class="ecoscan-evidence-badge">{html.escape(processing_label)}</div>
             </div>
             <div class="ecoscan-method-strip">{method_chips}</div>
         </section>

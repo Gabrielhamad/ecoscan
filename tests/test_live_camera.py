@@ -51,7 +51,9 @@ class LiveCameraHtmlTests(unittest.TestCase):
         self.assertNotIn('id="probabilities"', LIVE_CAMERA_HTML)
         self.assertNotIn('id="score"', LIVE_CAMERA_HTML)
         self.assertNotIn("renderProbabilities(", LIVE_CAMERA_HTML)
-        self.assertIn("confira o material", LIVE_CAMERA_HTML)
+        self.assertIn("confirme para descartar", LIVE_CAMERA_HTML)
+        self.assertIn('id="manualCorrection"', LIVE_CAMERA_HTML)
+        self.assertNotIn("categoria confirmada", LIVE_CAMERA_HTML)
 
 
 class FakeBundle:
@@ -86,6 +88,7 @@ class LiveCameraAnalyzerTests(unittest.TestCase):
         from ecoscan.live_camera import analyzer as analyzer_module
 
         original_predict = analyzer_module.analyze_waste_image
+        original_decide = analyzer_module.decision_for_result
         image = Image.new("RGB", (96, 96), (40, 130, 90))
         image_bytes = _image_bytes(image)
 
@@ -104,6 +107,7 @@ class LiveCameraAnalyzerTests(unittest.TestCase):
                 (),
                 {
                     "pipeline": pipeline,
+                    "decision": _fake_decision(),
                     "predicted_class": prediction.class_id,
                     "top_class": prediction.top_class_id,
                     "probability": prediction.probability,
@@ -126,6 +130,7 @@ class LiveCameraAnalyzerTests(unittest.TestCase):
 
         try:
             analyzer_module.analyze_waste_image = fake_analyze_waste_image
+            analyzer_module.decision_for_result = lambda result, config: _fake_decision()
             live_analyzer = LiveCameraAnalyzer(
                 _fake_config(),
                 model_bundle=FakeBundle(),
@@ -134,17 +139,20 @@ class LiveCameraAnalyzerTests(unittest.TestCase):
             payload = live_analyzer.analyze_frame(image_bytes)
         finally:
             analyzer_module.analyze_waste_image = original_predict
+            analyzer_module.decision_for_result = original_decide
 
         self.assertTrue(payload["ok"])
-        self.assertEqual(payload["predicted_class"], "metal")
+        self.assertIsNone(payload["predicted_class"])
+        self.assertFalse(payload["accepted"])
+        self.assertEqual(payload["decision"]["title"], "Melhor correspondência: METAL")
         self.assertNotIn("probabilities", payload)
         self.assertNotIn("probability", payload)
         self.assertNotIn("score", payload["detections"][0])
         self.assertEqual(payload["suggested_target"]["destination_title"], "Lixeira amarela")
-        self.assertEqual(payload["disposal_target"]["destination_title"], "Lixeira amarela")
-        self.assertEqual(payload["environmental_impact"]["risk_label"], "Desperdício de material reciclável")
+        self.assertIsNone(payload["disposal_target"])
+        self.assertIsNone(payload["environmental_impact"])
         self.assertEqual(payload["detections"][0]["track_id"], 1)
-        self.assertEqual(payload["detections"][0]["label"], "Metal")
+        self.assertEqual(payload["detections"][0]["label"], "Região visual")
 
 
 def _image_bytes(image: Image.Image) -> bytes:
@@ -198,6 +206,13 @@ def _fake_pipeline():
             },
         },
     )()
+
+
+def _fake_decision():
+    from types import SimpleNamespace
+    return SimpleNamespace(status="probable", tone="warn", title="Melhor correspondência: METAL",
+                           message="Confirme para descartar.", primary_action="Confira o material no aplicativo.",
+                           suggested_class="metal", requires_confirmation=True, can_correct=True)
 
 
 if __name__ == "__main__":

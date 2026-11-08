@@ -572,6 +572,8 @@ LIVE_CAMERA_HTML = """<!doctype html>
         <p>Inicie a câmera e aponte para um resíduo.</p>
       </div>
       <div id="targetPanel" class="target-panel"></div>
+      <p class="message">Você pode corrigir ou confirmar o material em qualquer resultado.</p>
+      <a class="map-link" id="manualCorrection" href="https://ecoscan-gabrielhamad.streamlit.app" target="_blank" rel="noopener noreferrer">Corrigir ou confirmar material no aplicativo</a>
       <div class="metric-grid">
         <div class="metric">
           <span>Latência</span>
@@ -787,33 +789,29 @@ LIVE_CAMERA_HTML = """<!doctype html>
       }
     }
 
-    const categoryLabels = {
-      metal: "Metal", plastic: "Plástico", glass: "Vidro",
-      paper_cardboard: "Papel e papelão", battery: "Pilha ou bateria",
-      electronic: "Eletrônico"
-    };
-
     function renderResult(result) {
       if (!result.ok) {
         renderError(result);
         return;
       }
-      const label = result.guidance?.display_name ||
-        categoryLabels[result.predicted_class || result.top_class] || "Material para confirmar";
-      mainResult.className = result.accepted ? "result" : "result warn";
-      mainResult.innerHTML = `<strong>${escapeHtml(label)}</strong><p>${escapeHtml(result.message || "")}</p>`;
-      stateBadge.className = result.accepted ? "state-badge" : "state-badge warn";
-      stateBadge.textContent = result.accepted ? "categoria confirmada" : "confira o material";
+      const decision = result.decision;
+      if (!decision) {
+        renderError({title: "Análise indisponível", message: "Escolha o material no aplicativo ou capture outra foto."});
+        return;
+      }
+      mainResult.className = decision.tone === "ok" ? "result" : "result warn";
+      mainResult.innerHTML = `<strong>${escapeHtml(decision.title)}</strong><p>${escapeHtml(decision.message)}</p><p>${escapeHtml(decision.primary_action)}</p>`;
+      stateBadge.className = decision.tone === "ok" ? "state-badge" : "state-badge warn";
+      stateBadge.textContent = decision.requires_confirmation ? "confirme para descartar" : decision.status;
       latency.textContent = `${result.latency_ms} ms`;
       filter.textContent = result.filter?.decision?.selected || result.filter?.name || "-";
       segmentation.textContent = result.segmentation?.decision?.selected || result.segmentation?.name || "-";
       quality.className = `message ${result.capture_quality?.status === "retake" ? "danger" : ""}`;
       quality.textContent = captureQualityMessage(result);
-      renderDisposalTarget(result.disposal_target || result.suggested_target,
-        result.environmental_impact, !result.disposal_target);
+      renderDisposalTarget(result.suggested_target);
       trackingStatus.textContent = `${result.detections.length} objeto${result.detections.length === 1 ? "" : "s"}`;
       detections.innerHTML = result.detections.map((item) => {
-        return `<div class="detection"><div><strong>#${item.track_id} ${escapeHtml(item.label)}</strong><small>${escapeHtml(categoryLabels[item.top_class] || "categoria a confirmar")}</small></div></div>`;
+        return `<div class="detection"><div><strong>#${item.track_id} ${escapeHtml(item.label)}</strong><small>A decisão se refere à foto; regiões não são classificações individuais.</small></div></div>`;
       }).join("");
     }
 
@@ -828,56 +826,32 @@ LIVE_CAMERA_HTML = """<!doctype html>
       return result.elements_warning || "";
     }
 
-    function renderDisposalTarget(target, impact, preview = false) {
+    function renderDisposalTarget(target) {
       if (!target) {
         targetPanel.style.display = "none";
         targetPanel.innerHTML = "";
         return;
       }
-      if (preview) {
-        targetPanel.style.display = "block";
-        targetPanel.innerHTML =
-          '<div class="target-title"><span class="target-dot" style="background:' +
-          escapeHtml(target.bin_color_hex || "#d9e1db") +
-          '"></span><strong>' + escapeHtml(target.destination_title) +
-          '</strong></div><p>Destino referente ao material sugerido. ' +
-          'Confirme a categoria do objeto para seguir as instruções.</p>';
-        return;
-      }
-      const steps = (target.preparation_steps || [])
-        .slice(0, 3)
-        .map((step) => `<li>${escapeHtml(step)}</li>`)
-        .join("");
-      const impactHtml = impact ? `
-        <div class="target-impact">
-          <strong>${escapeHtml(impact.impact_title || "Consequência do descarte incorreto")}</strong>
-          <span>${escapeHtml(impact.risk_label || impact.risk_level || "risco ambiental")}</span>
-          <p>${escapeHtml((impact.bad_disposal_risks || [])[0] || impact.positive_action || "")}</p>
-        </div>
-      ` : "";
       targetPanel.style.display = "block";
-      targetPanel.innerHTML = `
-        <div class="target-title">
-          <span class="target-dot" style="background:${escapeHtml(target.bin_color_hex || "#d9e1db")}"></span>
-          <span>${escapeHtml(target.destination_title || "Ponto de descarte")}</span>
-        </div>
-        <ul>${steps}</ul>
-        <a class="map-link" href="${escapeHtml(target.map_url || "#")}" target="_blank" rel="noopener noreferrer">
-          Buscar ponto próximo
-        </a>
-        ${impactHtml}
-      `;
+      targetPanel.innerHTML =
+        '<div class="target-title"><span class="target-dot" style="background:' +
+        escapeHtml(target.bin_color_hex || "#d9e1db") +
+        '"></span><strong>' + escapeHtml(target.destination_title) +
+        '</strong></div><p>Destino referente à categoria exibida. ' +
+        'Confirme o material no aplicativo antes da destinação.</p>';
     }
 
     function renderError(error) {
-      const title = error.title || "Análise indisponível";
+      const decision = error.decision;
+      const title = decision?.title || error.title || "Análise indisponível";
       const code = error.code ? `${error.code} - ` : "";
-      const message = error.error || error.message || String(error);
-      const action = error.action ? `<p><strong>Ação:</strong> ${escapeHtml(error.action)}</p>` : "";
+      const message = decision?.message || error.error || error.message || String(error);
+      const nextAction = decision?.primary_action || error.action;
+      const action = nextAction ? `<p><strong>Ação:</strong> ${escapeHtml(nextAction)}</p>` : "";
       mainResult.className = "result warn";
       mainResult.innerHTML = `<strong>${escapeHtml(code + title)}</strong><p>${escapeHtml(message)}</p>${action}`;
       stateBadge.className = "state-badge warn";
-      stateBadge.textContent = "atenção";
+      stateBadge.textContent = decision?.status || "atenção";
       targetPanel.style.display = "none";
       targetPanel.innerHTML = "";
     }
@@ -906,7 +880,7 @@ LIVE_CAMERA_HTML = """<!doctype html>
     }
 
     function drawBox(item, scaleX, scaleY) {
-      const color = item.accepted ? "#2bd492" : "#f0b84a";
+      const color = item.decision_tone === "ok" ? "#2bd492" : "#f0b84a";
       const x = item.bbox.x * scaleX;
       const y = item.bbox.y * scaleY;
       const width = item.bbox.width * scaleX;

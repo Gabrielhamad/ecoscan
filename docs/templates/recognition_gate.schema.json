@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Private external class gate; this schema is not an approval",
+  "type": "object",
+  "required": ["schema_version", "class_id", "approved", "approval_reference", "policy_version", "engine_version", "engine_sha256", "evaluation", "calibration", "source_audit"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "class_id": {"enum": ["metal", "plastic", "glass", "paper_cardboard", "battery", "electronic"]},
+    "approved": {"const": true},
+    "approval_reference": {"type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,63}$"},
+    "policy_version": {"type": "string"},
+    "engine_version": {"const": "recognition-decision-v1"},
+    "engine_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "evaluation": {"$ref": "#/$defs/reference"},
+    "calibration": {"$ref": "#/$defs/reference"},
+    "source_audit": {"$ref": "#/$defs/reference"}
+  },
+  "$defs": {
+    "reference": {
+      "type": "object", "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "description": "Relative path below reports/recognition_evidence/; no symlink escape"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

@@ -17,6 +17,9 @@ from ecoscan.config import AppConfig
 from ecoscan.disposal.guidance import DisposalGuidance, get_guidance, load_guidance
 from ecoscan.services.dataset_reliability import ClassReliability, assess_class_reliability
 from ecoscan.services.recognition_scope import restrict_prediction
+from ecoscan.services.recognition_safety import (
+    RecognitionSafetyDecision, decision_for_result, decision_from_error, record_decision,
+)
 
 
 LOGGER = logging.getLogger(__name__)
@@ -37,6 +40,11 @@ class WasteAnalysisResult:
     outside_scope: bool = False
     model_sha256: str = ""
     processing_compatible: bool = True
+    artifact_accepted: bool = False
+    artifact_threshold: float | None = None
+    encoder_sha256: str = ''
+    head_sha256: str = ''
+    decision: RecognitionSafetyDecision | None = None
 
 
 def _load_guidance_for_config(config: AppConfig) -> dict[str, DisposalGuidance]:
@@ -83,6 +91,7 @@ def analyze_waste_image(
             else model_bundle or load_recognition_model(config, selected_model_path)
         )
         prediction = _predict(pipeline.recognition_image, bundle)
+        raw_prediction = prediction
         contract = pipeline.metadata.get("recognition_preparation", {}).get("contract", {})
         compatible = bundle.classifier.metadata["processing"] == contract
         outside_scope = prediction.top_class_id not in config.classes
@@ -125,10 +134,18 @@ def analyze_waste_image(
             outside_scope=outside_scope,
             processing_compatible=compatible,
             model_sha256=hashlib.sha256(selected_model_path.read_bytes()).hexdigest() if selected_model_path.is_file() else "unavailable",
+            artifact_accepted=raw_prediction.accepted is True and raw_prediction.threshold == bundle.classifier.metadata.get('threshold'),
+            artifact_threshold=bundle.classifier.metadata.get('threshold'),
+            encoder_sha256=bundle.classifier.metadata.get('encoder_sha256', ''),
+            head_sha256=bundle.classifier.metadata.get('head_sha256', ''),
         )
+        decision = decision_for_result(result, config)
+        result = replace(result, decision=decision, message=f'{decision.title}. {decision.message}')
+        record_decision(decision)
     except Exception as exc:
         # Uploaded file names and exception messages may contain personal information.
         LOGGER.error("analysis_failed error_type=%s", type(exc).__name__)
+        record_decision(decision_from_error(exc))
         raise
 
     elapsed_ms = round((time.perf_counter() - start) * 1000, 1)

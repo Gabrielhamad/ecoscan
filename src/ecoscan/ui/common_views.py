@@ -21,19 +21,13 @@ def _render_user_error(st: Any, exc: BaseException, *, context: str) -> None:
     from ecoscan.errors import describe_exception
     error = describe_exception(exc)
     log_message = (
-        "ui_handled_error context=%s code=%s category=%s detail=%s"
-        % (context, error.code, error.category, error.technical_detail)
+        "ui_handled_error context=%s code=%s category=%s error_type=%s"
+        % (context, error.code, error.category, type(exc).__name__)
     )
-    if error.code == "APP-001":
-        LOGGER.exception(log_message)
-    else:
-        LOGGER.warning(log_message)
+    LOGGER.warning(log_message)
 
     st.error(f"{error.code} - {error.title}: {error.message}")
     st.info(f"Ação recomendada: {error.action}")
-    if error.technical_detail:
-        with st.expander("Detalhe técnico"):
-            st.code(error.technical_detail)
 
 
 def _class_label(class_id: str, guidance_by_class: dict[str, DisposalGuidance]) -> str:
