@@ -17,23 +17,26 @@ def _badge(label: str, tone: str = "ok") -> str:
     return f'<span class="ecoscan-badge ecoscan-badge-{tone}">{html.escape(label)}</span>'
 
 
-def _render_user_error(st: Any, exc: BaseException, *, context: str) -> None:
+def _render_error_payload(st: Any, error: dict[str, Any]) -> None:
+    st.error(f"{error['code']} - {error['title']}: {error['message']}")
+    st.info(f"Ação recomendada: {error['action']}")
+
+
+def _log_user_error(exc: BaseException, *, context: str) -> dict[str, Any]:
     from ecoscan.errors import describe_exception
     error = describe_exception(exc)
-    log_message = (
-        "ui_handled_error context=%s code=%s category=%s detail=%s"
-        % (context, error.code, error.category, error.technical_detail)
-    )
-    if error.code == "APP-001":
-        LOGGER.exception(log_message)
-    else:
-        LOGGER.warning(log_message)
+    LOGGER.warning("ui_handled_error context=%s code=%s category=%s error_type=%s",
+                   context, error.code, error.category, type(exc).__name__,
+                   extra={"event": "ui_handled_error", "context": context,
+                          "code": error.code, "category": error.category})
 
-    st.error(f"{error.code} - {error.title}: {error.message}")
-    st.info(f"Ação recomendada: {error.action}")
-    if error.technical_detail:
-        with st.expander("Detalhe técnico"):
-            st.code(error.technical_detail)
+    return error.public_payload()
+
+
+def _render_user_error(st: Any, exc: BaseException, *, context: str) -> dict[str, Any]:
+    payload = _log_user_error(exc, context=context)
+    _render_error_payload(st, payload)
+    return payload
 
 
 def _class_label(class_id: str, guidance_by_class: dict[str, DisposalGuidance]) -> str:

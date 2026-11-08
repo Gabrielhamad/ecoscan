@@ -123,9 +123,11 @@ def render_contribution(st, config, result, profile):
                     "record": record, "persistent": bool(record.get("storage_key")),
                     "received_at": datetime.now(timezone.utc).isoformat(), "package": None,
                 }
-            except (ValueError, OSError, PermissionError) as exc:
-                st.error(str(exc) if isinstance(exc, ValueError) else
-                         "Não foi possível confirmar o envio. Consulte Perfil → Atualizar protocolos antes de reenviar.")
+            except Exception as exc:
+                from ecoscan.ui.common_views import _log_user_error
+                _log_user_error(exc, context="contribution_submission")
+                st.error("Envio não confirmado. Confira o item e a autorização. "
+                           "Consulte Perfil → Atualizar protocolos antes de reenviar.")
         receipt = st.session_state.get(receipt_key)
         # Sessions opened before this release may still contain the old tuple.
         if receipt and not isinstance(receipt, dict):

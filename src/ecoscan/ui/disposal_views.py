@@ -205,7 +205,8 @@ def _render_disposal_action_panel(
         maps_col, ecopoint_col = st.columns(2)
         maps_col.link_button("Ponto específico", map_url, width="stretch")
         ecopoint_col.link_button("Ecopontos próximos", generic_map_url, width="stretch")
-        st.caption("Confirme horário, regras e materiais aceitos pelo ponto de coleta antes de levar o resíduo.")
+        st.caption("Os links de mapa precisam de internet. A orientação local permanece disponível. "
+                   "Confirme horário, regras e materiais aceitos antes de levar o resíduo.")
     _render_environmental_impact(st, impact)
     matching_points = filter_collection_points(collection_points, class_id=target.class_id)
     if matching_points:
