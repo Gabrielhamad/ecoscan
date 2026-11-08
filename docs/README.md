@@ -31,6 +31,7 @@ Esta pasta descreve o produto presente no `main`. Resultados e métodos substitu
 | [Banco](banco_gratuito.md) | Supabase, migrações e armazenamento |
 | [Campanhas e relatos](campanhas_e_relatos.md) | Persistência compartilhada e retorno |
 | [Recuperação operacional](recuperacao_operacional.md) | Backup, rollback e incidentes |
+| [Pacote de execução APS](pacote_execucao_aps.md) | Snapshot por SHA, lock, launcher local, conteúdo permitido e aceite de release |
 | [Hospedagem](hospedagem_gratuita.md) | Publicação no Streamlit Cloud |
 
 ## Dados e reconhecimento

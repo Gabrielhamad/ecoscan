@@ -377,7 +377,7 @@ def _render_completion_panel(st: Any, config: Any) -> None:
                 "python scripts\\run_acceptance_checks.py",
                 "python scripts\\generate_final_readiness.py",
                 "python scripts\\generate_academic_report.py",
-                "python scripts\\prepare_delivery_pack.py",
+                "python scripts\\prepare_delivery_pack.py legacy-report",
             ]
         ),
         language="powershell",

@@ -1,9 +1,9 @@
 $ErrorActionPreference = "Stop"
 Set-Location -LiteralPath $PSScriptRoot
-
-$python = Join-Path $env:LOCALAPPDATA "Python\bin\python.exe"
-if (-not (Test-Path -LiteralPath $python)) {
-    $python = "python"
+$python = Join-Path $PSScriptRoot ".venv\Scripts\python.exe"
+if (Test-Path -LiteralPath $python) {
+    & $python scripts\run_delivery_demo.py serve @args
+} else {
+    & py -3.12 scripts\run_delivery_demo.py serve @args
 }
-
-& $python scripts\ecoscan_access.py --restart
+if ($LASTEXITCODE -ne 0) { throw "Confira README_EXECUCAO.md e Python 3.12." }

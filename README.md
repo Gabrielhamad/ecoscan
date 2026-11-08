@@ -62,6 +62,10 @@ Detalhes: [Arquitetura](docs/arquitetura_atual.md) e [Modelo de reconhecimento](
 
 Requer Python 3.12.
 
+Para a apresentação e o pacote com versões/hashes, siga o
+[guia curto de execução](README_EXECUCAO.md) e o
+[roteiro de empacotamento da APS](docs/pacote_execucao_aps.md).
+
 ```bash
 git clone https://github.com/Gabrielhamad/ecoscan.git
 cd ecoscan

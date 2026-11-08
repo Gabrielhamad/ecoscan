@@ -13,7 +13,10 @@ da inicialização pública do Streamlit.
 | `check_supabase_setup.py` | Confere tabelas e buckets privados sem alterar dados |
 | `benchmark_startup.py` | Mede importação e primeira renderização do app |
 | `diagnose_project.py` | Inspeciona dependências, modelo e diretórios |
-| `prepare_delivery_pack.py` | Gera o pacote técnico para avaliação |
+| `prepare_delivery_pack.py review --ref SHA --runtime-lock LOCK --output reports/PASTA_NOVA` | ZIP executável para revisão; exige snapshot e lock exato com hashes |
+| `prepare_delivery_pack.py verify ARQUIVO.zip` | Confere a lista permitida e hashes sem extrair o ZIP |
+| `prepare_delivery_pack.py legacy-report` | Inventário antigo; não é distribuição executável nem aprovação |
+| `run_delivery_demo.py verify` / `serve` | Verifica versões/modelo e inicia Streamlit local, sem credenciais herdadas |
 | `check_backup.py` | Valida um backup operacional sem restaurá-lo |
 
 ## Modelo e dados
@@ -37,3 +40,7 @@ demonstrações locais documentadas em `docs/`.
 Arquivos em `reports/`, `data/` e segredos locais não devem entrar no Git. Uma
 nova release exige proveniência, conjunto independente, métricas por classe,
 hashes e possibilidade de retorno à versão anterior.
+
+O procedimento de pacote, limitações de plataforma e aceite do SHA está em
+[Pacote de execução APS](../docs/pacote_execucao_aps.md). Os launchers de apresentação
+usam `run_delivery_demo.py`; os demais scripts continuam fora do fluxo público.

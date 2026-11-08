@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-11-08T20:41:42+00:00",
+  "stage": "technical_review_smoke_not_release_acceptance",
+  "source_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+  "builder_sha": null,
+  "builder_workspace_dirty": true,
+  "launcher_sha256": "9b47e27cf88f3a0d6f23e61e8528777c7c9b610bfd0fc5704ba4d65f413de036",
+  "lock_source_ref": "5f255bfb934cf06466e04b21dba5bca2abe1544f",
+  "runtime_lock_sha256": "83fc126c7aa632993e9b3107f28a108c80b88993764b71f24fb2157c8f22362e",
+  "archive_sha256": "cbef2ea9faa5b9930b4bd1a2e75f0c928232d09b3526430ec6cdb6a4ff7a089f",
+  "archive_bytes": 163086591,
+  "manifest_files_verified": 180,
+  "environment": {
+    "os": "Linux",
+    "machine": "x86_64",
+    "python": "3.12.14",
+    "browser": "Chromium 156.0.8078.79",
+    "installer": "uv 0.13.5",
+    "runtime_packages": 73,
+    "fresh_virtualenv": true,
+    "editable_project_install": false
+  },
+  "installation": {
+    "first_attempt": "failed_temporary_disk_space",
+    "retry": "passed_hash_required_binary_only",
+    "pip_check": "passed"
+  },
+  "first_browser_attempt": {
+    "status": "failed",
+    "reason": "education.json omitted from package",
+    "correction": "include public education configuration and repeat extraction/smoke"
+  },
+  "browser_smoke": {
+    "source_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+    "technical_only": true,
+    "opening_seconds_observed": 1.815,
+    "passed": [
+      "visitor opening without secrets or source checkout",
+      "education and generated UI color panel without source rasters",
+      "synthetic upload, local analysis, manual glass confirmation and green bin",
+      "navigation keeps the analysis and human correction",
+      "reopening with external browser requests blocked"
+    ],
+    "page_errors": [],
+    "external_browser_requests_blocked": 0,
+    "not_tested": [
+      "presentation PC",
+      "Windows BAT/PowerShell",
+      "physical camera/phone",
+      "real authorized photos",
+      "real accounts/database",
+      "published deployment"
+    ]
+  },
+  "inference_smoke": {
+    "technical_fixture_only": true,
+    "network_socket_connections": "blocked",
+    "source_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+    "real_local_onnx_inference": "passed",
+    "processing_compatible": true,
+    "human_confirmation_required": true,
+    "elapsed_seconds_single_observation": 1.336,
+    "independent_test": false,
+    "field_accuracy": "not_measured"
+  },
+  "real_authorized_photos_provided": false,
+  "external_acceptance": {
+    "QA-09": "manual_pending",
+    "QA-18": "manual_pending",
+    "QA-19": "manual_pending",
+    "QA-20": "manual_pending",
+    "QA-21": "manual_pending"
+  },
+  "release_ready": false,
+  "tag_created": false,
+  "deployment_changed": false
+}
