@@ -1,1 +1,9 @@
+# Ownership does not activate required review; configure branch rules separately.
 * @Gabrielhamad
+/.github/ @Gabrielhamad
+/requirements* @Gabrielhamad
+/pyproject.toml @Gabrielhamad
+/Dockerfile @Gabrielhamad
+/migrations/ @Gabrielhamad
+/models/ @Gabrielhamad
+/SECURITY.md @Gabrielhamad

@@ -32,3 +32,7 @@ logs/*
 !logs/.gitkeep
 !reports/.gitkeep
 !notebooks/.gitkeep
+# Assembled encoder is a disposable cache of the tracked, hashed parts.
+models/semantic-v1/encoder.onnx
+models/semantic-v1/encoder_int8.onnx
+models/semantic-v1/encoder.tmp

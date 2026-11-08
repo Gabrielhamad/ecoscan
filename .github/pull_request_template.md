@@ -27,7 +27,11 @@
 - [ ] `python -m ruff check src scripts tests` (ou N/A documentado)
 - [ ] `python -m pytest -q` (ou N/A documentado)
 - [ ] `python -m pip check` (ou N/A documentado)
-- [ ] CI do PR verificada
+- [ ] Locks/declarações/ambiente conferidos (`check_dependency_lock.py --installed`)
+- [ ] Camadas, ONNX e inicialização passaram (ou N/A justificado)
+- [ ] PostgreSQL 16 aplicou todas as migrações duas vezes e passou permissões
+- [ ] Gitleaks/canário e pip-audit passaram, sem exceções silenciosas
+- [ ] CI do PR verificada no SHA final
 - [ ] Sem segredo, foto privada, RA ou dado identificável no diff
 - [ ] Nenhuma alegação de precisão, recuperação ou operação sem evidência
 

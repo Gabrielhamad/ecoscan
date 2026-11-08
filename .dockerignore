@@ -13,3 +13,16 @@ data/processed/
 data/train/
 data/validation/
 data/test/
+backups/
+.env
+.env.*
+.streamlit/secrets.toml
+.codex/
+.agents/
+work/
+output/
+models/candidates/
+models/remote/
+models/semantic-v1/encoder.onnx
+models/semantic-v1/encoder_int8.onnx
+models/semantic-v1/encoder.tmp

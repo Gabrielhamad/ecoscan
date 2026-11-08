@@ -1,0 +1,7 @@
+# CI tools only; never installed in the web image.
+pytest==9.2.0
+ruff==0.17.4
+pip-audit==2.10.0
+setuptools==84.1.0
+wheel==0.46.2
+PyYAML==6.0.3

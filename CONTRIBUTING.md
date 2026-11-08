@@ -18,7 +18,7 @@ git pull --ff-only
 git switch -c docs/guia-testes
 ```
 
-Configure o ambiente conforme o README. Faça alterações pequenas e mantenha as
+Configure o ambiente pelos locks conforme o README; evite atualizar dependências fora do objetivo do PR. Faça alterações pequenas e mantenha as
 regras de negócio fora da interface sempre que possível. Mudanças em permissões,
 persistência e classificação devem ter testes de regressão específicos.
 
@@ -26,6 +26,10 @@ persistência e classificação devem ter testes de regressão específicos.
 python -m ruff check src scripts tests
 python -m pytest -q
 python -m pip check
+python scripts/check_dependency_lock.py --installed
+python scripts/check_architecture.py
+python scripts/check_model_integrity.py
+python scripts/check_startup.py
 python scripts/run_acceptance_checks.py --diagnostic
 git diff --check
 git status --short
@@ -79,3 +83,21 @@ backup e decisão explícita do responsável.
 O mantenedor revisa e integra a mudança. Após a implantação, confira a versão
 servida e os fluxos afetados. Se houver regressão, preserve os dados e reverta o
 commit responsável de maneira revisada; não apague o banco para restaurar o app.
+
+## Dependências, CI e proteção de branch
+
+Os locks de runtime e ferramentas têm versões/hashes exatos. `requirements.in` e
+`pyproject.toml` continuam sendo entradas declarativas; o deploy usa
+`requirements.lock`. Uma atualização precisa ajustar o lock e executar todos os
+gates; não integrar PR do Dependabot apenas por ser patch/automático. Revisar
+cada PR e seu SHA/CI individualmente. Não usar `continue-on-error`, ignorar CVEs
+ou afrouxar o contrato do modelo para obter verde.
+
+Os quatro checks requeridos e os passos de configuração de `main` estão no
+[guia reproduzível](docs/engenharia_reproduzivel.md). A consulta pública informou
+`protected=false`, e a API detalhada respondeu 403 para a integração. Este PR
+não ativa proteção nem altera settings do repositório.
+
+Artifacts de qualidade contêm somente os resumos e versões explicitamente
+listados no workflow; não ampliar o glob para fotos, logs, backups, diretórios de
+contas, `.env` ou Secrets. Não incluir findings de segredo em artifacts.

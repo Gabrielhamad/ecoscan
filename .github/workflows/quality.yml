@@ -23,41 +23,79 @@ jobs:
       ECOSCAN_OPERATIONS_ENABLED: 'false'
       ECOSCAN_COMMUNITY_ENABLED: 'false'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
-          python-version: '3.12'
+          python-version: '3.12.14'
           cache: pip
-      - name: Instalar dependencias declaradas
-        run: python -m pip install -e '.[dev]'
-      - name: Verificar codigo e dependencias
+          cache-dependency-path: |
+            requirements.lock
+            requirements-dev.lock
+      - name: Instalar resolucao verificada
+        run: |
+          python -m pip install --require-hashes --only-binary=:all: -r requirements.lock -r requirements-dev.lock
+          python -m pip install --no-deps --no-build-isolation -e .
+      - name: Verificar codigo, camadas e dependencias
         run: |
           python -m ruff check src scripts tests
           python -m pip check
+          python scripts/check_dependency_lock.py --installed
+          python scripts/check_architecture.py --output reports/ci/architecture.json
       - name: Testes automatizados
-        run: python -m pytest tests -q --junitxml=reports/ci/pytest.xml
+        run: python -m pytest -q
+      - name: Integridade e contrato do ONNX com probe tecnico
+        run: python scripts/check_model_integrity.py --output reports/ci/model-integrity.json
+      - name: Inicializacao HTTP e pagina publica
+        run: python scripts/check_startup.py --output reports/ci/startup.json
       - name: Diagnostico (nao aprova entrega final)
-        run: python scripts/run_acceptance_checks.py --diagnostic --output reports/ci
+        run: python scripts/run_acceptance_checks.py --diagnostic --output reports/ci/diagnostic
       - name: Registrar ambiente resolvido
         if: always()
         run: |
           mkdir -p reports/ci
           python --version > reports/ci/python.txt
-          python -m pip freeze > reports/ci/dependencies.txt
-      - name: Guardar relatorios tecnicos
+          python -m pip list --format=freeze > reports/ci/dependencies.txt
+      - name: Guardar somente resumos tecnicos permitidos
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: validation-${{ github.sha }}
           path: |
-            reports/ci/*.json
-            reports/ci/*.csv
-            reports/ci/*.md
-            reports/ci/*.txt
-            reports/ci/*.xml
-          retention-days: 14
+            reports/ci/architecture.json
+            reports/ci/model-integrity.json
+            reports/ci/startup.json
+            reports/ci/python.txt
+            reports/ci/dependencies.txt
+          if-no-files-found: error
+          include-hidden-files: false
+          retention-days: 7
+
+  security:
+    name: Segredos e dependencias
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12.14'
+          cache: pip
+          cache-dependency-path: requirements-dev.lock
+      - name: Instalar ferramentas fixadas
+        run: |
+          python -m pip install --require-hashes --only-binary=:all: -r requirements-dev.lock
+      - name: Instalar Gitleaks com checksum publicado
+        run: bash scripts/install_ci_gitleaks.sh "$RUNNER_TEMP/ecoscan-tools"
+      - name: Varredura de segredos e canario de deteccao
+        run: python scripts/check_secrets.py --gitleaks "$RUNNER_TEMP/ecoscan-tools/gitleaks"
+      - name: Auditar dependencias fixadas (sem ignorar CVEs)
+        run: >-
+          python -m pip_audit --requirement requirements.lock --requirement requirements-dev.lock
+          --require-hashes --disable-pip --progress-spinner off --cache-dir "$RUNNER_TEMP/pip-audit"
 
   community-database:
     name: Migracao e permissoes PostgreSQL
@@ -81,18 +119,53 @@ jobs:
       PGPASSWORD: local-ci-only
       PGDATABASE: postgres
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
-      - name: Preparar banco isolado da CI
-        run: psql -v ON_ERROR_STOP=1 -f tests/community_database_fixture.sql
-      - name: Aplicar esquema completo e testar migracoes aditivas novamente
+      - name: Preparar banco isolado PostgreSQL 16
         run: |
-          psql -v ON_ERROR_STOP=1 -f migrations/001_contributions.sql
-          psql -v ON_ERROR_STOP=1 -f migrations/002_operational_records.sql
-          psql -v ON_ERROR_STOP=1 -f migrations/003_community.sql
-          psql -v ON_ERROR_STOP=1 -f migrations/003_community.sql
-          psql -v ON_ERROR_STOP=1 -f migrations/004_verified_identity_constraints.sql
-          psql -v ON_ERROR_STOP=1 -f migrations/004_verified_identity_constraints.sql
+          psql -v ON_ERROR_STOP=1 -c 'SHOW server_version;'
+          psql -v ON_ERROR_STOP=1 -f tests/community_database_fixture.sql
+      - name: Aplicar todas as migracoes duas vezes
+        shell: bash
+        run: |
+          set -euo pipefail
+          for pass in 1 2; do
+            for migration in migrations/*.sql; do
+              psql -v ON_ERROR_STOP=1 -f "$migration"
+            done
+          done
       - name: Verificar permissoes, revisoes e auditoria sem manter fixtures
         run: psql -v ON_ERROR_STOP=1 -c BEGIN -f tests/community_database_checks.sql
+
+  container:
+    name: Container e inicializacao
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Construir imagem sem publicar
+        run: docker build --pull --tag ecoscan-ci .
+      - name: Verificar usuario e saude do container
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(docker image inspect ecoscan-ci --format '{{.Config.User}}')" = '10001:10001'
+          trap 'docker rm --force ecoscan-ci >/dev/null 2>&1 || true' EXIT
+          docker run --detach --name ecoscan-ci --publish 127.0.0.1:8501:8501 ecoscan-ci
+          python - <<'PY'
+          import subprocess
+          import time
+          for _ in range(60):
+              status = subprocess.check_output(['docker', 'inspect', '--format', '{{.State.Health.Status}}', 'ecoscan-ci'], text=True).strip()
+              if status == 'healthy':
+                  print('Container non-root and Streamlit health: passed')
+                  break
+              if status == 'unhealthy':
+                  raise SystemExit('Container unhealthy')
+              time.sleep(1)
+          else:
+              raise SystemExit('Container health timeout')
+          PY

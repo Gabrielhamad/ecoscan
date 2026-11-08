@@ -60,15 +60,15 @@ Detalhes: [Arquitetura](docs/arquitetura_atual.md) e [Modelo de reconhecimento](
 
 ## Execução local
 
-Requer Python 3.12.
+Requer Python 3.12; o ambiente validado usa 3.12.14 em Linux x86_64.
 
 ```bash
 git clone https://github.com/Gabrielhamad/ecoscan.git
 cd ecoscan
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
-python -m pip install --upgrade pip
-python -m pip install -e '.[dev]'
+python -m pip install --require-hashes --only-binary=:all: -r requirements.lock -r requirements-dev.lock
+python -m pip install --no-deps --no-build-isolation -e .
 streamlit run streamlit_app.py
 ```
 
@@ -81,6 +81,11 @@ Copie `.streamlit/secrets.example.toml` para `.streamlit/secrets.toml` e preench
 O modo sem banco continua útil para demonstração pública. Cadastro, protocolos persistentes, campanhas compartilhadas e treinamento revisado exigem Supabase configurado conforme [Banco](docs/banco_gratuito.md) e [Autenticação](docs/autenticacao.md).
 
 ## Qualidade
+
+A CI instala as versões e hashes dos locks, valida camadas e ONNX, inicia o app,
+testa PostgreSQL 16 e executa Gitleaks/pip-audit. A imagem usa apenas o lock de
+runtime. Veja [reprodução e rollback](docs/engenharia_reproduzivel.md); CI verde
+não equivale a validação de campo nem comprova proteção de branch ativa.
 
 ```bash
 python -m ruff check src scripts tests
