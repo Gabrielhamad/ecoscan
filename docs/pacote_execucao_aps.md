@@ -174,7 +174,7 @@ O protótipo de smoke tinha empacotador ainda não commitado; seu manifesto não
 falsifica `builder_sha`. O ZIP ignorado não foi publicado como release.
 
 Verificações locais do PR: `python -m ruff check src scripts tests` passou;
-`python -m pytest -q` passou com **513 testes e 108 subtestes**;
+`python -m pytest -q` passou com **516 testes e 108 subtestes**;
 `python -m pip check` passou. A suíte específica
 `python -m pytest tests/test_execution_package.py tests/test_delivery_pack.py -q`
 passou com **19 testes**: snapshot commitado, exclusão de arquivos privados,
@@ -182,6 +182,19 @@ hash/licença/link inválidos, ZIP alterado/extra/inválido, lock sem pin ou com
 opções/URLs/comentários, CI sem atalho de aprovação, isolamento de credenciais,
 painéis de cor e cópia técnica autorizada sem reescrita. O resultado da CI do
 head do PR deve ser conferido no próprio PR; estes números são da execução local.
+
+A primeira CI deste PR, [run 42521848754](https://github.com/Gabrielhamad/ecoscan/actions/runs/42521848754),
+falhou no teste existente de resolução remota (512 passaram e um falhou; PostgreSQL
+passou). A falha foi reproduzida com relógio monótono em 0/5 s: cache vazio era
+tratado como entrada `(None, 0)` válida por 60 s e nem consultava o store stub.
+Com 100 s, o mesmo cenário passava. A correção pontual só reutiliza TTL quando a
+chave já existe no cache; consentimento, hashes, validade e cache de falha continuam
+iguais. Os cinco casos de `tests/test_published_model.py` cobrem relógios 0/5/100 s,
+revogação e falha cacheada aos 0/30/61 s. A suíte combinada com empacotamento passou
+com 24 testes; a suíte completa também passou com as flags da CI desabilitando
+operações/comunidade. Esta correção de inicialização está no PR, sem alterar o
+modelo remoto publicado. O ZIP do SHA oficial continua usando o código daquela
+fonte e seu perfil local mantém modelos remotos desabilitados.
 
 Versões críticas resolvidas, sem atualização por esta etapa: Streamlit 1.67.0,
 ONNX Runtime 1.31.0, NumPy 2.5.4, Pillow 13.0.0, OpenCV headless 5.0.0.93,

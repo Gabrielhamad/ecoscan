@@ -22,7 +22,7 @@ def published_model(config):
     key = (str(config.project_root), processing_contract(config)["sha256"])
     with _LOCK:
         previous, checked = _CACHE.get(key, (None, 0))
-        if time.monotonic() - checked < 60:
+        if key in _CACHE and time.monotonic() - checked < 60:
             return previous
         try:
             store = remote_store()
