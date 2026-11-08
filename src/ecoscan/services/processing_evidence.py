@@ -6,10 +6,13 @@ import io
 import json
 import zipfile
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+
+if TYPE_CHECKING:
+    from ecoscan.app.pipeline import ProcessingPipelineResult
 
 
 def array_digest(array: np.ndarray) -> str:
@@ -49,10 +52,13 @@ class ProcessingEvidence:
         return f"Executada: {self.changed_pixels} pixels alterados"
 
     def manifest(self) -> dict[str, Any]:
+        difference = self.difference
         return {
             "id": self.key, "label": self.label, "applied": self.applied,
             "status": self.status, "parameters": self.parameters,
             "changed_pixels": self.changed_pixels,
+            "mean_absolute_difference": float(difference.mean()) if difference is not None else None,
+            "max_absolute_difference": int(difference.max()) if difference is not None else None,
             "before": {"shape": list(self.before.shape), "dtype": str(self.before.dtype),
                        "sha256": array_digest(self.before)},
             "after": {"shape": list(self.after.shape), "dtype": str(self.after.dtype),
@@ -155,15 +161,34 @@ def evidence_overview(pipeline) -> bytes:
     return _png(np.asarray(canvas))
 
 
-def processing_evidence_zip(pipeline) -> bytes:
+def processing_evidence_zip(pipeline: ProcessingPipelineResult, *, reference_mask: np.ndarray | None = None,
+                            input_sha256: str | None = None, source_kind: str = 'not_attested',
+                            consent_recorded: bool = False,
+                            execution_context: dict[str, Any] | None = None) -> bytes:
     """Private, per-analysis package in memory; never includes server paths or account data."""
+    from ecoscan.services.processing_academic import academic_files
+    manifest = evidence_manifest(pipeline)
+    manifest.update(schema_version=3, input_file_sha256=input_sha256, source_kind=source_kind,
+                    consent_recorded=consent_recorded, execution_context=execution_context)
+    artifacts = {'antes_depois.png': evidence_overview(pipeline)}
+    for stage in processing_evidence(pipeline):
+        artifacts[stage.key + '_before.png'] = _png(stage.before)
+        artifacts[stage.key + '_after.png'] = _png(stage.after)
+        if stage.difference is not None:
+            artifacts[stage.key + '_difference.png'] = _png(stage.difference)
+    artifacts.update(academic_files(pipeline, manifest, reference_mask))
+    manifest['files_sha256'] = {name: hashlib.sha256(data).hexdigest() for name, data in sorted(artifacts.items())}
+    artifacts['manifest.json'] = json.dumps(manifest, indent=2, ensure_ascii=False, allow_nan=False).encode('utf-8')
+    return evidence_archive(artifacts)
+
+
+def evidence_archive(artifacts: dict[str, bytes]) -> bytes:
+    """Stable container for the same captured execution, including its measured timings."""
     buffer = io.BytesIO()
-    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
-        archive.writestr("manifest.json", json.dumps(evidence_manifest(pipeline), indent=2, ensure_ascii=False))
-        archive.writestr("antes_depois.png", evidence_overview(pipeline))
-        for stage in processing_evidence(pipeline):
-            archive.writestr(stage.key + "_before.png", _png(stage.before))
-            archive.writestr(stage.key + "_after.png", _png(stage.after))
-            if stage.difference is not None:
-                archive.writestr(stage.key + "_difference.png", _png(stage.difference))
+    with zipfile.ZipFile(buffer, 'w') as archive:
+        for name, data in sorted(artifacts.items()):
+            entry = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+            entry.compress_type = zipfile.ZIP_DEFLATED
+            entry.external_attr = 0o600 << 16
+            archive.writestr(entry, data)
     return buffer.getvalue()
