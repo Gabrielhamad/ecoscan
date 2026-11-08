@@ -1,0 +1,32 @@
+id,device,role,environment,qa,scenario,status,reason,executed_at_utc,observed_sha,browser,browser_version,evidence_ref,evidence_kind
+http,Codex Linux,visitor,published,,Verificar resposta HTTP; não comprova renderização ou SHA.,passed,,2026-11-08T19:55:49+00:00,,HTTP,3.12.14,EVID-001,technical_http
+browser,Codex Linux,visitor,published,QA-20,"Abrir sessão anônima; verificar renderização, sem login nem dados reais.",manual_pending,browser_tls_error,,,Chromium,156.0.8078.79,EVID-002,technical_browser
+published_sha,PC,operator,published,,Conferir SHA completo no provedor/runtime e comparar com candidato; prefixo ou CI não bastam.,manual_pending,revision_unverified,,,,,,
+published_model,PC,operator,published,QA-09,"Conferir hashes do modelo efetivamente carregado, inclusive override remoto e contrato.",manual_pending,runtime_model_unverified,,,,,,
+local_model,Codex Linux,fixture,local_fixture,,"Verificar configuração, cabeça e montagem dos shards locais; não atesta deployment.",passed,,2026-11-08T20:02:13+00:00,,Python,3.12.14,EVID-003,technical_local
+local_error_privacy,Codex Linux,fixture,local_fixture,,Usar marcador sintético para verificar se a fronteira de erro repassa detalhe bruto à UI/log; não é incidente observado em produção.,failed,raw_exception_exposed,2026-11-08T20:02:13+00:00,,Python,3.12.14,EVID-005,technical_local
+local_rls,CI PostgreSQL 16,fixture,local_fixture,,"Executar fixtures/RLS/permissões em PostgreSQL 16 descartável, sem dados reais.",manual_pending,not_executed,,,,,,
+pc_visitor,PC,visitor,published,QA-20,Abrir como visitante; navegar sem gestão/conta alheia e sem enviar contribuição.,manual_pending,no_device,,,,,,
+pc_capture,PC,visitor,published,QA-20,Capturar/enviar foto real autorizada; conferir EXIF e alternativa após negar câmera.,manual_pending,no_real_photo,,,,,,
+pc_analysis,PC,visitor,published,QA-09,"Analisar foto real; separar hipótese, rejeição, confirmação humana e limites do reconhecimento.",manual_pending,no_real_photo,,,,,,
+pc_disposal,PC,visitor,published,QA-20,Corrigir material; conferir lixeira/ponto e orientação especial de pilhas/eletrônicos.,manual_pending,no_device,,,,,,
+pc_accounts,PC,controlled_A_B,published,QA-18,"Com autorização, entrar A/B em sessões separadas; B não acessa protocolos/fotos/respostas de A.",manual_pending,no_authorized_account,,,,,,
+pc_analyst,PC,controlled_analyst,published,QA-18,"Com autorização, validar analista na allowlist e negar gestão a visitante/B.",manual_pending,no_authorized_account,,,,,,
+pc_reopen,PC,controlled_A_B,published,QA-19,"Persistir evidência consentida de A; reabrir/login/recarregar, revisar e conferir isolamento em B.",manual_pending,no_authorized_account,,,,,,
+android_visitor,Android,visitor,published,QA-20,Abrir como visitante; navegar sem gestão/conta alheia e sem enviar contribuição.,manual_pending,no_device,,,,,,
+android_capture,Android,visitor,published,QA-20,Capturar/enviar foto real autorizada; conferir EXIF e alternativa após negar câmera.,manual_pending,no_real_photo,,,,,,
+android_analysis,Android,visitor,published,QA-09,"Analisar foto real; separar hipótese, rejeição, confirmação humana e limites do reconhecimento.",manual_pending,no_real_photo,,,,,,
+android_disposal,Android,visitor,published,QA-20,Corrigir material; conferir lixeira/ponto e orientação especial de pilhas/eletrônicos.,manual_pending,no_device,,,,,,
+android_accounts,Android,controlled_A_B,published,QA-18,"Com autorização, entrar A/B em sessões separadas; B não acessa protocolos/fotos/respostas de A.",manual_pending,no_authorized_account,,,,,,
+android_analyst,Android,controlled_analyst,published,QA-18,"Com autorização, validar analista na allowlist e negar gestão a visitante/B.",manual_pending,no_authorized_account,,,,,,
+android_reopen,Android,controlled_A_B,published,QA-19,"Persistir evidência consentida de A; reabrir/login/recarregar, revisar e conferir isolamento em B.",manual_pending,no_authorized_account,,,,,,
+iphone_visitor,iPhone,visitor,published,QA-20,Abrir como visitante; navegar sem gestão/conta alheia e sem enviar contribuição.,manual_pending,no_device,,,,,,
+iphone_capture,iPhone,visitor,published,QA-20,Capturar/enviar foto real autorizada; conferir EXIF e alternativa após negar câmera.,manual_pending,no_real_photo,,,,,,
+iphone_analysis,iPhone,visitor,published,QA-09,"Analisar foto real; separar hipótese, rejeição, confirmação humana e limites do reconhecimento.",manual_pending,no_real_photo,,,,,,
+iphone_disposal,iPhone,visitor,published,QA-20,Corrigir material; conferir lixeira/ponto e orientação especial de pilhas/eletrônicos.,manual_pending,no_device,,,,,,
+iphone_accounts,iPhone,controlled_A_B,published,QA-18,"Com autorização, entrar A/B em sessões separadas; B não acessa protocolos/fotos/respostas de A.",manual_pending,no_authorized_account,,,,,,
+iphone_analyst,iPhone,controlled_analyst,published,QA-18,"Com autorização, validar analista na allowlist e negar gestão a visitante/B.",manual_pending,no_authorized_account,,,,,,
+iphone_reopen,iPhone,controlled_A_B,published,QA-19,"Persistir evidência consentida de A; reabrir/login/recarregar, revisar e conferir isolamento em B.",manual_pending,no_authorized_account,,,,,,
+database_outage,PC,controlled_A_B,isolated_copy,QA-19,Simular erro de banco somente em cópia isolada; nenhuma gravação incerta deve virar sucesso/reenvio automático.,manual_pending,isolated_environment_required,,,,,,
+recovery,PC,operator,isolated_copy,QA-21,Ensaiar reabertura/rollback/restore somente em cópia descartável autorizada; nunca produção.,manual_pending,isolated_environment_required,,,,,,
+independent_recognition,PC,operator,field_evaluation,QA-09,"Exigir avaliação independente por classe e proveniência auditada; smoke, fixtures e CI não aprovam reconhecimento.",manual_pending,independent_evidence_required,,,,,,

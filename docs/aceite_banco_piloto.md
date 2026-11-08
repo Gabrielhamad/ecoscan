@@ -1,5 +1,9 @@
 # Aceite do Supabase e das contas
 
+> Registro histórico: os aceites abaixo não aprovam automaticamente o candidato
+> `89622ec714b815c216a9215ab9ba69999b39c6b8`. O novo [roteiro publicado](smoke_versao_publicada.md)
+> separa as evidências locais e as pendências de SHA, contas, dispositivos e recuperação.
+
 Estado revisado em 04/11/2026. O núcleo do aceite foi executado no projeto ligado
 ao aplicativo publicado com duas contas controladas e um analista. A operação
 completa ainda possui os itens pendentes descritos abaixo.
