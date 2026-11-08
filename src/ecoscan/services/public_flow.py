@@ -43,6 +43,8 @@ def build_public_next_action(
         or getattr(result, "top_class", None)
         or "Material a confirmar"
     )
+    if safety_decision.status == "model_unavailable":
+        material_label = "Sem hipótese automática"
 
     if safety_decision.allow_disposal_guidance and target is not None and guidance is not None:
         return PublicNextAction(

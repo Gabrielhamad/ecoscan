@@ -37,6 +37,7 @@ class WasteAnalysisResult:
     outside_scope: bool = False
     model_sha256: str = ""
     processing_compatible: bool = True
+    elapsed_ms: float | None = None
 
 
 def _load_guidance_for_config(config: AppConfig) -> dict[str, DisposalGuidance]:
@@ -62,6 +63,66 @@ def _predict(
     return bundle.classifier.predict_image(image)
 
 
+def _recognize_prepared_image(
+    pipeline: ProcessingPipelineResult,
+    config: AppConfig,
+    model_path: str | Path | None,
+    model_bundle: RecognitionModel | None,
+) -> WasteAnalysisResult:
+    selected_model_path = _model_path(config, model_path)
+    # Live-camera sessions may retain a bundle from before a remote release.
+    remote_release = selected_model_path.is_relative_to(config.directories["models"] / "remote")
+    bundle = (
+        load_recognition_model(config, selected_model_path)
+        if remote_release
+        else model_bundle or load_recognition_model(config, selected_model_path)
+    )
+    prediction = _predict(pipeline.recognition_image, bundle)
+    contract = pipeline.metadata.get("recognition_preparation", {}).get("contract", {})
+    compatible = bundle.classifier.metadata["processing"] == contract
+    outside_scope = prediction.top_class_id not in config.classes
+    if config.model.get("confirmation_required", True):
+        # The current assisted release suggests a class but never confirms disposal.
+        prediction = replace(prediction, class_id=None, accepted=False)
+    if outside_scope:
+        prediction = replace(prediction, class_id=None, top_class_id="", accepted=False)
+    prediction = restrict_prediction(prediction, config.classes)
+    if not compatible:
+        prediction = replace(prediction, class_id=None, accepted=False)
+    outside_scope = outside_scope or not prediction.top_class_id
+
+    guidance = None
+    message = "Não foi possível identificar o resíduo com segurança."
+    message = "Análise assistida: confira a hipótese e confirme o material antes do descarte."
+    if not compatible:
+        message = "A foto foi preparada. A hipótese ainda exige confirmação: o modelo aguarda treinamento com esta preparação."
+    if outside_scope:
+        message = "A análise não corresponde às categorias deste piloto. Alimentos e orgânicos estão fora do escopo; não há destino confirmado."
+    reliability = assess_class_reliability(config, prediction.class_id or prediction.top_class_id)
+    if prediction.accepted and prediction.class_id is not None:
+        guidance_by_class = _load_guidance_for_config(config)
+        guidance = get_guidance(prediction.class_id, guidance_by_class)
+        message = f"Categoria identificada: {guidance.display_name}."
+        if reliability and not reliability.is_sufficient:
+            message = f"{message} {reliability.message}"
+
+    return WasteAnalysisResult(
+        pipeline=pipeline,
+        predicted_class=prediction.class_id,
+        top_class=prediction.top_class_id,
+        probability=prediction.probability,
+        accepted=prediction.accepted,
+        message=message,
+        guidance=guidance,
+        probabilities=prediction.probabilities,
+        model_type=bundle.model_type,
+        reliability=reliability,
+        outside_scope=outside_scope,
+        processing_compatible=compatible,
+        model_sha256=hashlib.sha256(selected_model_path.read_bytes()).hexdigest() if selected_model_path.is_file() else "unavailable",
+    )
+
+
 def analyze_waste_image(
     image_path: str | Path,
     config: AppConfig,
@@ -69,63 +130,25 @@ def analyze_waste_image(
     options: ProcessingPipelineOptions | None = None,
     model_path: str | Path | None = None,
     model_bundle: RecognitionModel | None = None,
+    allow_model_fallback: bool = False,
 ) -> WasteAnalysisResult:
     start = time.perf_counter()
     image_path = Path(image_path)
     try:
         pipeline = run_processing_pipeline(image_path, config, options)
-        selected_model_path = _model_path(config, model_path)
-        # Live-camera sessions may retain a bundle from before a remote release.
-        remote_release = selected_model_path.is_relative_to(config.directories["models"] / "remote")
-        bundle = (
-            load_recognition_model(config, selected_model_path)
-            if remote_release
-            else model_bundle or load_recognition_model(config, selected_model_path)
-        )
-        prediction = _predict(pipeline.recognition_image, bundle)
-        contract = pipeline.metadata.get("recognition_preparation", {}).get("contract", {})
-        compatible = bundle.classifier.metadata["processing"] == contract
-        outside_scope = prediction.top_class_id not in config.classes
-        if config.model.get("confirmation_required", True):
-            # The current assisted release suggests a class but never confirms disposal.
-            prediction = replace(prediction, class_id=None, accepted=False)
-        if outside_scope:
-            prediction = replace(prediction, class_id=None, top_class_id="", accepted=False)
-        prediction = restrict_prediction(prediction, config.classes)
-        if not compatible:
-            prediction = replace(prediction, class_id=None, accepted=False)
-        outside_scope = outside_scope or not prediction.top_class_id
-
-        guidance = None
-        message = "Não foi possível identificar o resíduo com segurança."
-        message = "Análise assistida: confira a hipótese e confirme o material antes do descarte."
-        if not compatible:
-            message = "A foto foi preparada. A hipótese ainda exige confirmação: o modelo aguarda treinamento com esta preparação."
-        if outside_scope:
-            message = "A análise não corresponde às categorias deste piloto. Alimentos e orgânicos estão fora do escopo; não há destino confirmado."
-        reliability = assess_class_reliability(config, prediction.class_id or prediction.top_class_id)
-        if prediction.accepted and prediction.class_id is not None:
-            guidance_by_class = _load_guidance_for_config(config)
-            guidance = get_guidance(prediction.class_id, guidance_by_class)
-            message = f"Categoria identificada: {guidance.display_name}."
-            if reliability and not reliability.is_sufficient:
-                message = f"{message} {reliability.message}"
-
-        result = WasteAnalysisResult(
-            pipeline=pipeline,
-            predicted_class=prediction.class_id,
-            top_class=prediction.top_class_id,
-            probability=prediction.probability,
-            accepted=prediction.accepted,
-            message=message,
-            guidance=guidance,
-            probabilities=prediction.probabilities,
-            model_type=bundle.model_type,
-            reliability=reliability,
-            outside_scope=outside_scope,
-            processing_compatible=compatible,
-            model_sha256=hashlib.sha256(selected_model_path.read_bytes()).hexdigest() if selected_model_path.is_file() else "unavailable",
-        )
+        try:
+            result = _recognize_prepared_image(pipeline, config, model_path, model_bundle)
+        except Exception as exc:
+            if not allow_model_fallback:
+                raise
+            LOGGER.warning("recognition_unavailable error_type=%s", type(exc).__name__,
+                           extra={"event": "recognition_unavailable", "code": "MODEL-001"})
+            result = WasteAnalysisResult(
+                pipeline=pipeline, predicted_class=None, top_class=None, probability=None,
+                accepted=False, guidance=None, probabilities={}, model_type="unavailable",
+                processing_compatible=False, model_sha256="unavailable",
+                message="Reconhecimento indisponível. Selecione o material para consultar o descarte.",
+            )
     except Exception as exc:
         # Uploaded file names and exception messages may contain personal information.
         LOGGER.error("analysis_failed error_type=%s", type(exc).__name__)
@@ -143,7 +166,7 @@ def analyze_waste_image(
         result.pipeline.metadata["segmentation"]["name"],
         elapsed_ms,
     )
-    return result
+    return replace(result, elapsed_ms=elapsed_ms)
 
 
 def try_analyze_waste_image(
