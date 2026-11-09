@@ -1,0 +1,125 @@
+{
+  "model": [
+    {
+      "pr": 20,
+      "head_sha": "992c145f4d444ef810b3737f8fc4c9d08699c246",
+      "active_model_directory_unchanged": true
+    },
+    {
+      "pr": 21,
+      "head_sha": "504685a9382675c5201960eb931c9a518062ec1b",
+      "active_model_directory_unchanged": true
+    },
+    {
+      "pr": 22,
+      "head_sha": "1afb392056e1a98fe1c807c6748fcbc0480ed074",
+      "active_model_directory_unchanged": true
+    },
+    {
+      "pr": 23,
+      "head_sha": "3f5a57004af29887761cc9198704bd29635ce1fa",
+      "active_model_directory_unchanged": true
+    },
+    {
+      "pr": 24,
+      "head_sha": "c6215da25b088c765886c12cfa413ad3219d6fda",
+      "active_model_directory_unchanged": true
+    },
+    {
+      "pr": 25,
+      "head_sha": "490b0599dff36628cf1f34bf0add64b23479491f",
+      "active_model_directory_unchanged": true
+    },
+    {
+      "pr": 26,
+      "head_sha": "91b985e6e96e90e3de0f711f15e98829822226ac",
+      "active_model_directory_unchanged": true
+    },
+    {
+      "pr": 27,
+      "head_sha": "5f255bfb934cf06466e04b21dba5bca2abe1544f",
+      "active_model_directory_unchanged": true
+    },
+    {
+      "pr": 28,
+      "head_sha": "673eb01fdc55de62aefe7797c656417ff114517c",
+      "active_model_directory_unchanged": true
+    },
+    {
+      "pr": 29,
+      "head_sha": "6e6918cb291a60249897a5b8ca4b929580a7fd15",
+      "active_model_directory_unchanged": true
+    },
+    {
+      "pr": 30,
+      "head_sha": "cb044ffab6043b4d2f153a923b6c42ddf525d35f",
+      "active_model_directory_unchanged": true
+    }
+  ],
+  "virtual_pairwise_merges": [
+    {
+      "prs": [
+        21,
+        24
+      ],
+      "exit_code": 1,
+      "conflicts": [
+        "CONFLICT (content): Merge conflict in src/ecoscan/services/analysis_service.py"
+      ]
+    },
+    {
+      "prs": [
+        21,
+        25
+      ],
+      "exit_code": 1,
+      "conflicts": [
+        "CONFLICT (content): Merge conflict in docs/pratica_processamento_imagens.md",
+        "CONFLICT (content): Merge conflict in src/ecoscan/ui/processing_lab.py"
+      ]
+    },
+    {
+      "prs": [
+        24,
+        26
+      ],
+      "exit_code": 1,
+      "conflicts": [
+        "CONFLICT (content): Merge conflict in src/ecoscan/services/analysis_service.py",
+        "CONFLICT (content): Merge conflict in src/ecoscan/services/public_flow.py",
+        "CONFLICT (content): Merge conflict in src/ecoscan/services/recognition_safety.py",
+        "CONFLICT (content): Merge conflict in src/ecoscan/ui/analysis_controller.py",
+        "CONFLICT (content): Merge conflict in src/ecoscan/ui/common_views.py"
+      ]
+    },
+    {
+      "prs": [
+        27,
+        29
+      ],
+      "exit_code": 0,
+      "conflicts": []
+    },
+    {
+      "prs": [
+        27,
+        30
+      ],
+      "exit_code": 0,
+      "conflicts": []
+    },
+    {
+      "prs": [
+        29,
+        30
+      ],
+      "exit_code": 1,
+      "conflicts": [
+        "CONFLICT (content): Merge conflict in scripts/README.md"
+      ]
+    }
+  ],
+  "source_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+  "method": "git merge-tree --write-tree --merge-base=<source_sha> <head_sha_A> <head_sha_B>; não altera main/working tree",
+  "limitation": "Amostra de pares; ausência de conflito textual não comprova compatibilidade. Nenhum merge ou execução combinada foi realizado."
+}

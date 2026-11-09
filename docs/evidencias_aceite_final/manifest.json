@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "source_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+  "generated_at_utc": "2026-11-09T03:05:58+00:00",
+  "verdict": "NO-GO",
+  "release_ready": false,
+  "functional_changes": false,
+  "independent_test": false,
+  "real_field_photos_supplied": false,
+  "audit_commit": "Refer to the final audit PR head; no self-referential commit hash is embedded.",
+  "scope": "Documentation evidence, technical probes and local browser only; no private data, raster photos, binaries, accounts or raw logs.",
+  "files": {
+    "docs/aceite_final_aps.md": {
+      "sha256": "c8c56b2e4fb68d32ebbb55ff9694066cf86cdf411c7507dbe689a5b6b2868ae9",
+      "bytes": 27797
+    },
+    "docs/evidencias_aceite_final/README.md": {
+      "sha256": "fd4e5711cfbf2b5e4e7b8dbe7e648f848b11d740d3e73fb322f6e8be4dff3562",
+      "bytes": 7509
+    },
+    "docs/evidencias_aceite_final/acceptance_summary.json": {
+      "sha256": "eb4d6edf8be79a2ff96d6b60cae8c43d6a13b6142cdb5b44bb7c0099c1c5d03f",
+      "bytes": 3240
+    },
+    "docs/evidencias_aceite_final/browser.json": {
+      "sha256": "437865cc5571a5ad8fad07a2c77c053da9f6373f24ba9b6413215fcdfc34d854",
+      "bytes": 2222
+    },
+    "docs/evidencias_aceite_final/checks.json": {
+      "sha256": "e585d2c97065a30d8088fc65dbe555453469c0a59f7ce2fd621a82054d548862",
+      "bytes": 5097
+    },
+    "docs/evidencias_aceite_final/ci_snapshot.json": {
+      "sha256": "f382aba490837a6ed8c3e252dd4694ade33cccb9e559a1ce1728d28102353839",
+      "bytes": 6789
+    },
+    "docs/evidencias_aceite_final/historical.json": {
+      "sha256": "8867f88926657b463ff56a78effe0213758bb3d21812e4611bcd82d665205302",
+      "bytes": 5155
+    },
+    "docs/evidencias_aceite_final/integration.json": {
+      "sha256": "9ca5cb2682dfa590b7f9caac137006333785879156436a134abe1e305ac8d8ef",
+      "bytes": 3317
+    },
+    "docs/evidencias_aceite_final/pdi_summary.json": {
+      "sha256": "afce776b4c4508266fe8c1c982278f38f2d55ae33847a1d671932bf363784970",
+      "bytes": 17638
+    },
+    "docs/evidencias_aceite_final/pr_review.json": {
+      "sha256": "4ccf9170f41fb51afb5ae29d8d2183f6aa93ddb9d3fd202333e0d14c604fb26c",
+      "bytes": 17032
+    },
+    "docs/evidencias_aceite_final/probes.json": {
+      "sha256": "98420fc2de4c1ef1632f8cde70e9a91f7f0720df97a2b570cc3e5b1c7541ed41",
+      "bytes": 9794
+    },
+    "docs/evidencias_aceite_final/reproduzir.py": {
+      "sha256": "906e04704afa0482a12c5d879c7e41c4def25206d46559cd44d492eec5d6077d",
+      "bytes": 22650
+    },
+    "docs/evidencias_aceite_final/smoke_browser.py": {
+      "sha256": "8e17da61b8774a63630cd32cd07a4a96bc1dc90f04fd0cf69819fca5333c2411",
+      "bytes": 8151
+    }
+  },
+  "manifest_self_excluded": true
+}

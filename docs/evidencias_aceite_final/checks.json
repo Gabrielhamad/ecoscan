@@ -1,0 +1,123 @@
+{
+  "source_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+  "recorded_at_local": "2026-11-09T00:05:58-03:00",
+  "python": "3.12.14",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "resolved_dependencies": {
+    "numpy": "2.5.4",
+    "Pillow": "13.0.0",
+    "opencv-python-headless": "5.0.0.93",
+    "onnxruntime": "1.31.0",
+    "scikit-learn": "1.9.1",
+    "streamlit": "1.67.0",
+    "supabase": "2.34.1",
+    "pytest": "9.2.0",
+    "ruff": "0.17.4",
+    "playwright": "1.64.1"
+  },
+  "checks": [
+    {
+      "command": "python -m ruff check src scripts tests",
+      "exit_code": 0,
+      "result": "All checks passed!"
+    },
+    {
+      "command": "python -m pytest -q",
+      "exit_code": 0,
+      "result": "496 passed, 108 subtests passed in 9.23s"
+    },
+    {
+      "command": "python -m pip check",
+      "exit_code": 0,
+      "result": "WARNING: The directory '/home/agent/.cache/pip' or its parent directory is not owned or is not writable by the current user. The cache has been disabled. Check the permissions and owner of that directory. If executing pip with sudo, you should use sudo's -H flag.\nNo broken requirements found."
+    },
+    {
+      "command": "python -m pytest tests/test_current_recognition.py tests/test_recognition_safety.py tests/test_image_processing.py tests/test_processing_evidence.py tests/test_morphology.py tests/test_image_resource_limits.py tests/test_navigation_session_controllers.py tests/test_identity.py tests/test_identity_ui.py tests/test_community_store.py tests/test_public_flow.py tests/test_published_model.py tests/test_evaluation_manifest.py tests/test_gaussian_evidence.py tests/test_segmentation.py -q",
+      "exit_code": 0,
+      "result": "100 passed, 65 subtests passed in 1.87s"
+    },
+    {
+      "command": "python docs/evidencias_aceite_final/reproduzir.py --output reports/prompt12/probes --onnx",
+      "exit_code": 2,
+      "counts": {
+        "FAIL": 5,
+        "PASS": 21,
+        "BLOCKED": 6
+      },
+      "result": "NO-GO; falhas reproduzidas e gates bloqueados, não mascarados"
+    },
+    {
+      "command": "python docs/evidencias_aceite_final/smoke_browser.py --output reports/prompt12/browser.json",
+      "exit_code": 2,
+      "counts": {
+        "PASS": 9,
+        "FAIL": 2
+      },
+      "result": "Linux Chromium 156.0.8078.79 local; falhas de continuidade"
+    },
+    {
+      "command": "python scripts/evaluate_bundled_model.py --output reports/prompt12/historical.json",
+      "exit_code": 0,
+      "result": "101/145 top-1; histórico reutilizado, independent_test=false"
+    },
+    {
+      "command": "python scripts/export_processing_evidence.py --image <fixture-tecnica.png> --output reports/prompt12/export-cli",
+      "exit_code": 0,
+      "result": "22 artefatos + reproduction.json; mesma execução, não fotos reais"
+    },
+    {
+      "command": "python scripts/prepare_delivery_pack.py",
+      "exit_code": 0,
+      "result": "7 relatórios de inventário, sem ZIP executável; AC-10 indevidamente ok. Não aprova release"
+    },
+    {
+      "command": "python scripts/run_acceptance_checks.py --sample-image <fixture-tecnica.png> --output reports/prompt12/acceptance",
+      "isolation": "env ECOSCAN removido; stores opcionais false; Streamlit Secrets vazio",
+      "exit_code": 2,
+      "result": "12 ok, 4 attention, 5 pending, 0 failed; estrito incompleto"
+    },
+    {
+      "command": "python scripts/validate_semantic_onnx.py em novo corpus real consentido/auditado",
+      "exit_code": null,
+      "result": "BLOCKED; nenhum corpus de campo elegível disponível"
+    },
+    {
+      "command": "PostgreSQL 16 local neste Prompt 12",
+      "exit_code": null,
+      "result": "Não executado localmente: espaço insuficiente para container; consultada CI isolada e repetida no PR"
+    },
+    {
+      "command": "Smoke publicado/PC/Android/iPhone/contas/rehearsals",
+      "exit_code": null,
+      "result": "manual_pending; sem credenciais, dispositivos ou fotos fornecidas"
+    },
+    {
+      "command": "python -m ruff check --ignore E402 docs/evidencias_aceite_final",
+      "exit_code": 0,
+      "result": "All checks passed; exceção de imports somente no wrapper documental"
+    },
+    {
+      "command": "python -m ruff format --check docs/evidencias_aceite_final",
+      "exit_code": 0,
+      "result": "Arquivos documentais formatados"
+    },
+    {
+      "command": "git diff --exit-code <source_sha> -- src scripts tests config models migrations pyproject.toml requirements.txt .github Dockerfile streamlit_app.py",
+      "exit_code": 0,
+      "result": "Zero alteração funcional, de testes existentes, configuração, dependências ou CI"
+    },
+    {
+      "command": "gitleaks dir docs/evidencias_aceite_final --redact --no-banner",
+      "exit_code": 0,
+      "result": "Nenhum segredo detectado; inclui apenas evidência sanitizada"
+    }
+  ],
+  "release_inventory": {
+    "github_releases": [],
+    "main_protected": false,
+    "settings_modified": false,
+    "tag_or_release_created": false
+  },
+  "production_access": false,
+  "functional_changes": false
+}

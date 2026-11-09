@@ -1,0 +1,144 @@
+{
+  "source_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+  "generated_at_utc": "2026-11-09T02:35:39+00:00",
+  "mode": "strict_without_diagnostic",
+  "exit_code": 2,
+  "release_acceptance": "not_approved",
+  "fixture": "Technical generated scene only; no material ground truth or physical camera",
+  "summary": {
+    "ok": 12,
+    "attention": 4,
+    "pending": 5,
+    "failed": 0,
+    "total": 21
+  },
+  "checks": [
+    {
+      "code": "QA-01",
+      "area": "Estrutura",
+      "status": "ok",
+      "evidence_kind": "static"
+    },
+    {
+      "code": "QA-02",
+      "area": "Orientações",
+      "status": "ok",
+      "evidence_kind": "automated"
+    },
+    {
+      "code": "QA-12",
+      "area": "Destinos",
+      "status": "ok",
+      "evidence_kind": "automated"
+    },
+    {
+      "code": "QA-13",
+      "area": "Impacto ambiental",
+      "status": "ok",
+      "evidence_kind": "automated"
+    },
+    {
+      "code": "QA-14",
+      "area": "Plano de fotos",
+      "status": "ok",
+      "evidence_kind": "automated"
+    },
+    {
+      "code": "QA-15",
+      "area": "Pontos de coleta",
+      "status": "attention",
+      "evidence_kind": "automated"
+    },
+    {
+      "code": "QA-03",
+      "area": "Validação",
+      "status": "ok",
+      "evidence_kind": "automated"
+    },
+    {
+      "code": "QA-04",
+      "area": "Modelo",
+      "status": "ok",
+      "evidence_kind": "automated"
+    },
+    {
+      "code": "QA-05",
+      "area": "Inferência",
+      "status": "ok",
+      "evidence_kind": "automated"
+    },
+    {
+      "code": "QA-06",
+      "area": "Pipeline",
+      "status": "ok",
+      "evidence_kind": "automated"
+    },
+    {
+      "code": "QA-07",
+      "area": "Câmera ao vivo",
+      "status": "ok",
+      "evidence_kind": "automated"
+    },
+    {
+      "code": "QA-08",
+      "area": "Dataset",
+      "status": "attention",
+      "evidence_kind": "automated"
+    },
+    {
+      "code": "QA-09",
+      "area": "Aceite do reconhecimento",
+      "status": "pending",
+      "evidence_kind": "manual_required"
+    },
+    {
+      "code": "QA-10",
+      "area": "Erros",
+      "status": "ok",
+      "evidence_kind": "automated"
+    },
+    {
+      "code": "QA-16",
+      "area": "Campanha e denúncias",
+      "status": "ok",
+      "evidence_kind": "static"
+    },
+    {
+      "code": "QA-17",
+      "area": "Perfis e gestão",
+      "status": "attention",
+      "evidence_kind": "static"
+    },
+    {
+      "code": "QA-11",
+      "area": "Interface",
+      "status": "attention",
+      "evidence_kind": "static"
+    },
+    {
+      "code": "QA-18",
+      "area": "Identidade real",
+      "status": "pending",
+      "evidence_kind": "manual_required"
+    },
+    {
+      "code": "QA-19",
+      "area": "Persistência integrada",
+      "status": "pending",
+      "evidence_kind": "manual_required"
+    },
+    {
+      "code": "QA-20",
+      "area": "Dispositivos",
+      "status": "pending",
+      "evidence_kind": "manual_required"
+    },
+    {
+      "code": "QA-21",
+      "area": "Operação e recuperação",
+      "status": "pending",
+      "evidence_kind": "manual_required"
+    }
+  ],
+  "limitation": "Static ok entries do not prove field, identities, devices or production. QA-09/18/19/20/21 remain pending."
+}
