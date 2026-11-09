@@ -1,223 +1,236 @@
+"""Reviewed academic text bound to immutable evidence, without private reports."""
+
 from __future__ import annotations
 
+import hashlib
 import json
-from datetime import datetime, timezone
 from pathlib import Path
+import re
+import shutil
+import subprocess
 from typing import Any
+import zipfile
 
 from ecoscan.config import AppConfig
-from ecoscan.services.diagnostics import dataset_status, model_status
+
+FROZEN_SOURCE_SHA = "89622ec714b815c216a9215ab9ba69999b39c6b8"
+COMPANION_FILES = (
+    "indice_evidencias.md",
+    "roteiro_seminario.md",
+    "ficha_aps_preenchimento_privado.md",
+    "fontes_verificadas.json",
+    "evidencias.json",
+)
 
 
-def _load_json(path: Path) -> dict[str, Any]:
-    if not path.exists():
-        return {}
-    try:
-        return json.loads(path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return {}
+def checked_evidence(config: AppConfig) -> dict[str, Any]:
+    """Refuse stale evidence instead of relabelling reviewed text with a new SHA."""
+    root = config.project_root
+    evidence = json.loads((root / "docs/aps/evidencias.json").read_text(encoding="utf-8"))
+    if (
+        evidence["source_sha"] != FROZEN_SOURCE_SHA
+        or evidence["academic_submission_ready"] is not False
+        or evidence["independent_test"] is not False
+    ):
+        raise ValueError("Academic evidence needs a new review for this source/acceptance state")
+    for name, record in evidence["source_files"].items():
+        path = root / name
+        if (
+            Path(name).is_absolute()
+            or ".." in Path(name).parts
+            or "\\" in name
+            or not path.resolve().is_relative_to(root.resolve())
+            or path.is_symlink()
+            or hashlib.sha256(path.read_bytes()).hexdigest() != record["sha256"]
+        ):
+            raise ValueError("Source evidence changed; review the frozen academic base")
+    for row in evidence["requirements"]:
+        for key in ("code", "test_or_reference"):
+            location = row[key]
+            if location["path"] not in evidence["source_files"]:
+                raise ValueError("Unbound academic reference")
+            expected_url = (
+                f"https://github.com/Gabrielhamad/ecoscan/blob/{FROZEN_SOURCE_SHA}/"
+                f"{location['path']}#L{location['line']}"
+            )
+            if location["url"] != expected_url:
+                raise ValueError("Academic link must use the frozen SHA and line")
+            lines = (root / location["path"]).read_text(encoding="utf-8").splitlines()
+            if location["anchor"] and location["anchor"] not in lines[location["line"] - 1]:
+                raise ValueError("Academic line reference changed")
+    return evidence
 
 
-def _dataset_table(config: AppConfig) -> list[str]:
-    status = dataset_status(config)
-    lines = [
-        "| Classe | Raw | Curated | Train | Validation | Test |",
-        "|---|---:|---:|---:|---:|---:|",
-    ]
-    for class_id in config.classes:
-        lines.append(
-            "| "
-            f"{class_id} | {status.raw_counts[class_id]} | {status.curated_counts[class_id]} | "
-            f"{status.train_counts[class_id]} | {status.validation_counts[class_id]} | {status.test_counts[class_id]} |"
+def _percentage(value: float) -> str:
+    return f"{100 * value:.2f}%".replace(".", ",")
+
+
+def measured_model_tables(config: AppConfig) -> str:
+    root = config.project_root
+    historical = json.loads(
+        (root / "docs/model_evaluation/semantic_v1_historical.json").read_text()
+    )
+    external = json.loads(
+        (root / "docs/model_evaluation/trashnet_priority_diagnostic.json").read_text()
+    )
+    if historical["independent_test"] is not False or external["independent_test"] is not False:
+        raise ValueError("Independent evidence requires a new academic review")
+    columns = []
+    for data in (historical, external["evaluation"]):
+        top, acceptance = data["top1"], data["acceptance"]
+        total, accepted = top["total"], acceptance["accepted"]
+        columns.append(
+            {
+                "N": str(total),
+                "Top-1 correto": str(round(top["accuracy"] * total)),
+                "Acurácia top-1": _percentage(top["accuracy"]),
+                "Precisão macro": _percentage(top["macro_precision"]),
+                "Recall macro": _percentage(top["macro_recall"]),
+                "F1 macro": f"{top['macro_f1']:.4f}",
+                "Aceitos pelo artefato": str(accepted),
+                "Erros entre aceitos": str(acceptance["wrong"]),
+                "Rejeitados": str(acceptance["rejected"]),
+                "Precisão entre aceitos": _percentage(acceptance["correct"] / accepted),
+                "Cobertura do artefato": _percentage(accepted / total),
+                "Erro entre aceitos": _percentage(acceptance["wrong"] / accepted),
+                "Taxa de rejeição": _percentage(acceptance["rejected"] / total),
+            }
         )
-    return lines
-
-
-def _dependency_summary(config: AppConfig) -> str:
-    diagnostics = _load_json(config.directories["reports"] / "diagnostics.json")
-    dependencies = diagnostics.get("dependencies", [])
-    if not dependencies:
-        return "Diagnóstico de dependências ainda não gerado."
-    missing = [item["name"] for item in dependencies if not item.get("installed")]
-    if not missing:
-        return "Todas as dependências verificadas estavam disponíveis no ambiente local."
-    return "Dependências opcionais ausentes no ambiente atual: " + ", ".join(missing) + "."
-
-
-def _recognition_summary() -> list[str]:
-    return [
-        "- Avaliação histórica reproduzida: 101 primeiras escolhas corretas em 145 vetores.",
-        "- Acima do limiar: 47 resultados corretos em 51 aceitos pelo artefato.",
-        "- Limite: a validação independente com fotos novas ainda está pendente.",
-        "- Política do produto: toda hipótese exige confirmação humana.",
+    lines = ["| Métrica | Histórico reutilizado | TrashNet diagnóstico |", "| --- | ---: | ---: |"]
+    for key in columns[0]:
+        lines.append(f"| {key} | {columns[0][key]} | {columns[1][key]} |")
+    lines += [
+        "",
+        "Histórico, por classe, antes da confirmação humana:",
+        "",
+        "| Classe | N | Precisão top-1 | Recall top-1 | F1 |",
+        "| --- | ---: | ---: | ---: | ---: |",
     ]
-
-
-def _readiness_summary(config: AppConfig) -> list[str]:
-    readiness = _load_json(config.directories["reports"] / "dataset_readiness" / "dataset_readiness.json")
-    summary = readiness.get("summary", {})
-    if not summary:
-        return ["Relatório de prontidão do dataset ainda não foi gerado."]
-    return [
-        f"- Alvo por classe: {summary.get('target_per_class')}.",
-        f"- Total bruto: {summary.get('raw_total')}.",
-        f"- Total curado: {summary.get('curated_total')}.",
-        f"- Classes no alvo bruto: {summary.get('classes_at_raw_target')}/{summary.get('class_count')}.",
-        f"- Imagens brutas ainda necessárias: {summary.get('missing_raw_total')}.",
-        f"- Pronto para treinamento final: {summary.get('ready_for_final_training')}.",
+    for label, row in historical["top1"]["by_class"].items():
+        lines.append(
+            f"| {label} | {row['support']} | {_percentage(row['precision'])} | {_percentage(row['recall'])} | {row['f1']:.4f} |"
+        )
+    top = historical["top1"]
+    classes = top["classes"]
+    lines += [
+        "",
+        "Matriz histórica: linhas = rótulo de referência; colunas = top-1 previsto.",
+        "B=battery; E=electronic; G=glass; M=metal; P=paper_cardboard; L=plastic.",
+        "",
+        "| Real | B | E | G | M | P | L |",
+        "| --- | " + " | ".join("---:" for _ in classes) + " |",
     ]
-
-
-def _audit_attention(config: AppConfig) -> list[str]:
-    audit = _load_json(config.directories["reports"] / "project_audit" / "aps_audit.json")
-    items = audit.get("items", [])
-    attention = [
-        item for item in items
-        if item.get("priority") == "alta" and item.get("status") in {"attention", "pending"}
-    ]
-    if not attention:
-        return ["Nenhuma atenção alta registrada na auditoria atual."]
-    return [
-        f"- {item.get('code')}: {item.get('rationale')} Próxima ação: {item.get('next_action')}"
-        for item in attention
-    ]
-
-
-def build_academic_report(config: AppConfig) -> str:
-    dataset = dataset_status(config)
-    selected_model = model_status(config)
-    raw_total = sum(dataset.raw_counts.values())
-    curated_total = sum(dataset.curated_counts.values())
-    split_total = sum(dataset.train_counts.values()) + sum(dataset.validation_counts.values()) + sum(dataset.test_counts.values())
-    generated_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
-
-    lines = [
-        "# EcoScan: Guia Inteligente de Descarte de Resíduos",
-        "",
-        "**Autoria acadêmica:** inserir na versão final os nomes completos e RAs reais dos integrantes, conforme a capa da APS. Não usar o login do GitHub como autor.",
-        "",
-        f"Relatório técnico gerado em {generated_at}.",
-        "",
-        "## 1. Problema",
-        "",
-        "Pessoas comuns frequentemente têm dúvidas sobre o descarte correto de resíduos. "
-        "Isso pode causar descarte inadequado de recicláveis, orgânicos, pilhas, baterias e eletrônicos.",
-        "",
-        "## 2. Objetivo",
-        "",
-        "Desenvolver uma aplicação local de visão computacional que receba uma imagem com um resíduo principal, "
-        "aplique processamento digital de imagens, classifique a categoria visual e retorne uma orientação de descarte configurável.",
-        "",
-        "## 3. Escopo",
-        "",
-        "O MVP trabalha com classificação de uma imagem contendo um resíduo principal. "
-        "O modo ao vivo rastreia componentes segmentados, mas detecção supervisionada de múltiplas classes por objeto "
-        "está documentada como evolução futura, fora do núcleo atual.",
-        "",
-        "Classes ativas: " + ", ".join(f"`{class_id}`" for class_id in config.classes) + ".",
-        "",
-        "## 4. Arquitetura",
-        "",
-        "O projeto separa interface, aquisição, validação, pré-processamento, filtros, segmentação, classificação, "
-        "orientações de descarte, histórico, diagnósticos e relatórios. Essa separação reduz acoplamento e facilita explicar a solução.",
-        "",
-        "## 5. Aquisição e validação",
-        "",
-        "A interface permite upload e captura por câmera pelo navegador. O projeto também possui um modo ao vivo para celular, "
-        "com preferência pela câmera traseira e envio periódico de frames ao backend local. Após capturar uma foto ou receber um frame, "
-        "o mesmo pipeline executa filtro, segmentação, análise de elementos visuais e reconhecimento. O pipeline valida extensão, "
-        "existência do arquivo, arquivo vazio, corrupção e tamanho mínimo antes de qualquer inferência.",
-        "",
-        "## 6. Dataset",
-        "",
-        f"Estado atual: {raw_total} imagens brutas, {curated_total} imagens curadas e {split_total} imagens em treino/validação/teste.",
-        "",
-        *_dataset_table(config),
-        "",
-        "### Prontidão do dataset",
-        "",
-        *_readiness_summary(config),
-        "",
-        "## 7. Processamento digital de imagens",
-        "",
-        "O pipeline é parametrizável e inclui redimensionamento, normalização, filtragem adaptativa, filtros manuais e preparação da entrada do modelo. "
-        "O modo automático avalia brilho, contraste, saturação, nitidez e densidade de bordas antes de comparar sequências curtas de preparação. "
-        "Os filtros disponíveis para demonstração incluem Gaussiano, mediana, CLAHE, Sobel, Canny e bilateral quando OpenCV estiver instalado.",
-        "",
-        "## 8. Segmentação",
-        "",
-        "A segmentação foi implementada de forma modular. Otsu pode ser demonstrado sem OpenCV; HSV e GrabCut ficam disponíveis com OpenCV. "
-        "Após a segmentação, o sistema analisa componentes conectados para estimar elementos visuais significativos, área relativa e caixas delimitadoras. "
-        "No modo ao vivo, essas caixas alimentam um tracking simples por centroide para manter IDs estáveis entre frames. "
-        "A decisão final sobre usar segmentação como padrão deve ser baseada no dataset real do grupo.",
-        "",
-        "## 9. Modelagem",
-        "",
-        f"Modelo selecionado atualmente: `{selected_model.selected_kind}`.",
-        f"Caminho selecionado: `{selected_model.selected_path}`.",
-        "",
-        "O runtime usa uma única release semântica ONNX com encoder congelado e cabeça supervisionada. "
-        "As hipóteses exigem confirmação até uma validação independente aprovar automação por classe.",
-        "",
-        "## 10. Avaliação",
-        "",
-        *_recognition_summary(),
-        "",
-        "Esses números descrevem a release atual, mas não autorizam reconhecimento automático. "
-        "O próximo gate usa um conjunto novo e congelado, com métricas por classe.",
-        "",
-        "## 11. Confirmação do material e orientação de descarte",
-        "",
-        "A análise apresenta uma categoria visual sugerida, sem expor pontuações de classificação ao usuário. "
-        "O usuário seleciona explicitamente o material antes de visualizar a orientação completa, "
-        "com a cor da lixeira para metal, plástico, vidro e papel, ou ponto especial para pilhas e eletrônicos. "
-        "A confirmação humana distingue identificação visual de composição efetiva do resíduo.",
-        "",
-        "## 12. Tratamento de erros",
-        "",
-        "O EcoScan possui contrato centralizado de erros em `src/ecoscan/errors.py`. "
-        "Falhas conhecidas são apresentadas com código, título, mensagem amigável, ação recomendada e categoria. "
-        "A interface e o modo ao vivo evitam expor stack trace bruto ao usuário, enquanto os detalhes técnicos ficam disponíveis para log e diagnóstico.",
-        "",
-        "## 13. Orientação de descarte",
-        "",
-        "As orientações ficam em `config/disposal_guidance.json`, separadas do modelo. O modelo classifica; outro módulo transforma a classe em orientação.",
-        "",
-        "A versão atual também usa `config/disposal_targets.json` e `config/environmental_impacts.json` para apresentar cor ou ponto de descarte, preparo do material, busca de ponto próximo e consequências do descarte incorreto.",
-        "",
-        "## 14. Campanha, missões e denúncia",
-        "",
-        "Com base na proposta de atuação da Secretaria do Ambiente, a versão atual inclui `config/campaigns.json` com campanha pública, missões rotativas, pontuação e recompensas simbólicas. `config/user_profiles.json` separa perfil de usuário e perfil administrativo para demonstrar o fluxo institucional sem misturar papéis.",
-        "",
-        "A aba `Campanha` valida evidências por imagem usando o mesmo pipeline de tratamento, segmentação e reconhecimento. Os pontos são registrados em `reports/accounts/points_ledger.csv`, vinculados ao perfil ativo e protegidos contra pontuação duplicada da mesma comprovação.",
-        "",
-        "A aba `Denúncia` registra evidência de mau descarte em manifesto local, salvando qualidade da captura, filtro, segmentação, classe provável e status de triagem. A aba `Gestão`, disponível para o perfil administrativo, registra decisão humana separada da triagem automática. Essa verificação deve ser tratada como apoio técnico para revisão, não como prova definitiva sem vistoria humana.",
-        "",
-        "## 15. Testes e reprodutibilidade",
-        "",
-        "O projeto contém testes automatizados com `pytest`, scripts de diagnóstico, análise de dataset e split, "
-        "validação executável de aceite, auditoria, prontidão do dataset e pacote de entrega APS com evidências e critérios de aceite.",
-        "",
-        "## 16. Limitações atuais",
-        "",
-        *_audit_attention(config),
-        "",
-        "## 17. Ambiente",
-        "",
-        _dependency_summary(config),
-        "",
-        "## 18. Conclusão",
-        "",
-        "O EcoScan já possui estrutura técnica sólida para a APS: aquisição, validação, processamento, segmentação, reconhecimento ONNX, "
-        "câmera ao vivo, tracking visual, tratamento de erros, orientação de descarte, perfis, campanha, missões, denúncia, gestão, histórico, interface e relatórios. A evolução crítica agora é de dados: coletar imagens próprias, "
-        "curar o dataset, validar fotos novas e promover somente releases que passem pelos gates.",
-        "",
-    ]
+    for label, values in zip("BEGMPL", top["confusion_matrix"], strict=True):
+        lines.append("| " + label + " | " + " | ".join(map(str, values)) + " |")
     return "\n".join(lines)
 
 
+def measured_processing_tables(config: AppConfig) -> str:
+    folder = config.project_root / "docs/preparation_evidence"
+    lines = [
+        "| Registro histórico | Condição | N | ΔSSIM médio | Casos com queda de SSIM |",
+        "| --- | --- | ---: | ---: | ---: |",
+    ]
+    for name in ("default", "sigma8"):
+        data = json.loads((folder / (name + ".json")).read_text())
+        for condition, row in data["summary"].items():
+            lines.append(
+                f"| {name}.json | {condition} | {row['count']} | {row['mean_delta_ssim']:+.6f} | {row['worsened']} |"
+            )
+    return "\n".join(lines)
+
+
+def build_academic_report(config: AppConfig) -> str:
+    """Do not count local photos or ingest ambient reports as scientific evidence."""
+    checked_evidence(config)
+    text = (config.project_root / "docs/aps/relatorio_tecnico.md").read_text(encoding="utf-8")
+    for name, body in [
+        ("MODEL", measured_model_tables(config)),
+        ("PDI", measured_processing_tables(config)),
+    ]:
+        pattern = rf"<!-- {name}:BEGIN -->.*?<!-- {name}:END -->"
+        text, count = re.subn(
+            pattern, f"<!-- {name}:BEGIN -->\n{body}\n<!-- {name}:END -->", text, flags=re.S
+        )
+        if count != 1:
+            raise ValueError("Missing or duplicate measured result block")
+    return text
+
+
 def write_academic_report(config: AppConfig, output_path: str | Path | None = None) -> Path:
-    path = Path(output_path).resolve() if output_path else config.directories["reports"] / "aps_report" / "relatorio_aps.md"
+    path = (
+        Path(output_path).resolve()
+        if output_path
+        else config.directories["reports"] / "aps_report/relatorio_aps.md"
+    )
+    report = build_academic_report(config)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(build_academic_report(config), encoding="utf-8")
+    path.write_text(report, encoding="utf-8")
+    for name in COMPANION_FILES:
+        source, target = config.project_root / "docs/aps" / name, path.parent / name
+        if source.resolve() != target.resolve():
+            shutil.copyfile(source, target)
     return path
+
+
+def write_code_appendix(config: AppConfig, output: Path) -> Path:
+    """Export public code from the documented Git commit; never from local data."""
+    checked_evidence(config)
+    root = config.project_root
+    records = subprocess.run(
+        ["git", "ls-tree", "-r", "-z", FROZEN_SOURCE_SHA],
+        cwd=root,
+        check=True,
+        capture_output=True,
+        timeout=30,
+    ).stdout.split(b"\0")
+    output.parent.mkdir(parents=True, exist_ok=True)
+    hashes = {}
+    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for record in records:
+            if not record:
+                continue
+            metadata, raw_name = record.split(b"\t", 1)
+            name = raw_name.decode()
+            relative = Path(name)
+            if not (
+                (
+                    relative.parts[0] in {"src", "scripts", "tests", "migrations"}
+                    and relative.suffix in {".py", ".sql", ".css", ".html"}
+                )
+                or name
+                in {
+                    "streamlit_app.py",
+                    "pyproject.toml",
+                    "requirements.txt",
+                    "models/semantic-v1/LICENSE-CLIP",
+                }
+            ):
+                continue
+            if metadata.split()[0] not in {b"100644", b"100755"}:
+                raise ValueError("Links are not code appendix inputs")
+            data = subprocess.run(
+                ["git", "show", FROZEN_SOURCE_SHA + ":" + name],
+                cwd=root,
+                check=True,
+                capture_output=True,
+                timeout=30,
+            ).stdout
+            info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+            info.compress_type = zipfile.ZIP_DEFLATED
+            archive.writestr(info, data)
+            hashes[name] = hashlib.sha256(data).hexdigest()
+        info = zipfile.ZipInfo("APENDICE_MANIFEST.json", date_time=(1980, 1, 1, 0, 0, 0))
+        info.compress_type = zipfile.ZIP_DEFLATED
+        archive.writestr(
+            info,
+            json.dumps(
+                {
+                    "source_sha": FROZEN_SOURCE_SHA,
+                    "purpose": "Code audit appendix, not an executable release",
+                    "files": hashes,
+                },
+                indent=2,
+            ),
+        )
+    return output

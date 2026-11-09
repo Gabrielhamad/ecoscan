@@ -11,6 +11,7 @@ Esta pasta descreve o produto presente no `main`. Resultados e métodos substitu
 | [Arquitetura atual](arquitetura_atual.md) | Componentes, fronteiras e fluxo de execução |
 | [Arquitetura modular da interface](arquitetura_interface.md) | Camadas, dependências e extensão segura das páginas Streamlit |
 | [Autoria acadêmica](autoria_aps.md) | Registro correto dos integrantes e suas contribuições |
+| [Pacote acadêmico e seminário](aps/README.md) | Base técnica por SHA, índice de evidências, roteiro e ficha preparatória |
 | [Modelo de reconhecimento](modelo_reconhecimento.md) | Release ONNX, segurança, métricas e atualização |
 | [Avaliação técnica](avaliacao_tecnica.md) | Riscos, bloqueios e qualidade observada |
 | [Roadmap de entrega](roadmap_entrega.md) | Marcos, backlog, priorização, rastreabilidade e gates de liberação |

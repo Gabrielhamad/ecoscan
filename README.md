@@ -107,6 +107,7 @@ docs/               documentação atual da entrega
 
 - [Índice da documentação](docs/README.md)
 - [Autoria da APS](docs/autoria_aps.md)
+- [Base técnica do relatório e seminário](docs/aps/README.md)
 - [Arquitetura atual](docs/arquitetura_atual.md)
 - [Arquitetura modular da interface](docs/arquitetura_interface.md)
 - [Modelo de reconhecimento](docs/modelo_reconhecimento.md)

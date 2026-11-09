@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "access_date_local": "2026-11-08",
+  "timezone": "America/Sao_Paulo",
+  "official_manual_2026": "not_available",
+  "official_manual_note": "Somente resumo no plano versionado; nome 2026 e cabeçalho 2025/2. Nenhuma ficha oficial copiada. O grupo confirmou nesta etapa que não há URL institucional pública; autorizou usar o resumo com a ressalva.",
+  "sources": [
+    {
+      "id": "BRASIL2010",
+      "author": "BRASIL",
+      "title": "Lei nº 12.305, de 2 de agosto de 2010 — Publicação original",
+      "url": "https://www2.camara.leg.br/legin/fed/lei/2010/lei-12305-2-agosto-2010-607598-publicacaooriginal-128609-pl.html",
+      "verification": "primary_public_text_read",
+      "used_for": "Contexto de sustentabilidade e ordem de prioridades; não mede impacto do EcoScan"
+    },
+    {
+      "id": "CONAMA2001",
+      "author": "CONAMA",
+      "title": "Resolução nº 275, de 25 de abril de 2001",
+      "url": "https://conama.mma.gov.br/?id=273&option=com_sisconama&task=arquivo.download",
+      "verification": "primary_one_page_pdf_read",
+      "used_for": "Padrão de cores no anexo"
+    },
+    {
+      "id": "RADFORD2021",
+      "author": "Radford et al.",
+      "title": "Learning Transferable Visual Models From Natural Language Supervision",
+      "url": "https://proceedings.mlr.press/v139/radford21a.html",
+      "verification": "primary_publisher_metadata_and_abstract_read",
+      "used_for": "Encoder de representações imagem/texto; não transfere métricas publicadas para EcoScan"
+    },
+    {
+      "id": "OTSU1979",
+      "author": "Otsu, N.",
+      "title": "A Threshold Selection Method from Gray-Level Histograms",
+      "url": "https://doi.org/10.1109/TSMC.1979.4310076",
+      "verification": "publisher_index_metadata_verified_full_page_browser_challenge",
+      "used_for": "Atribuição do método; operação descrita pelo código e documentação OpenCV"
+    },
+    {
+      "id": "ROTHER2004",
+      "author": "Rother, C.; Kolmogorov, V.; Blake, A.",
+      "title": "GrabCut: Interactive Foreground Extraction using Iterated Graph Cuts",
+      "url": "https://www.microsoft.com/en-us/research/publication/grabcut-interactive-foreground-extraction-using-iterated-graph-cuts/",
+      "verification": "primary_author_institution_metadata_and_abstract_read",
+      "used_for": "Atribuição e princípio de segmentação"
+    },
+    {
+      "id": "OPENCV_FILTERS",
+      "author": "OpenCV",
+      "title": "Smoothing Images — OpenCV 4.13.0",
+      "url": "https://docs.opencv.org/4.13.0/d4/d13/tutorial_py_filtering.html",
+      "verification": "official_documentation_read",
+      "used_for": "Filtragem; versão documental não substitui registro da dependência executada"
+    },
+    {
+      "id": "OPENCV_THRESHOLD",
+      "author": "OpenCV",
+      "title": "Image Thresholding — OpenCV 4.13.0",
+      "url": "https://docs.opencv.org/4.13.0/d7/d4d/tutorial_py_thresholding.html",
+      "verification": "official_documentation_read",
+      "used_for": "Limiarização/Otsu"
+    },
+    {
+      "id": "PILLOW",
+      "author": "Pillow",
+      "title": "ImageOps module — Pillow 13.0.0",
+      "url": "https://pillow.readthedocs.io/en/stable/reference/ImageOps.html",
+      "verification": "official_documentation_read",
+      "used_for": "Orientação EXIF"
+    },
+    {
+      "id": "TACO2020",
+      "author": "Proença, P. F.; Simões, P.",
+      "title": "TACO: Trash Annotations in Context for Litter Detection",
+      "url": "https://arxiv.org/abs/2003.06975",
+      "verification": "primary_paper_repository_metadata_and_abstract_read",
+      "used_for": "Contexto da base; direitos individuais de fotos não certificados"
+    },
+    {
+      "id": "SUPABASE_RLS",
+      "author": "Supabase",
+      "title": "Row Level Security",
+      "url": "https://supabase.com/docs/guides/database/postgres/row-level-security",
+      "verification": "official_documentation_read",
+      "used_for": "RLS e bypass pela chave de serviço"
+    },
+    {
+      "id": "TRASHNET",
+      "author": "TrashNet (projeto)",
+      "title": "Dataset and project documentation",
+      "url": "https://github.com/garythung/trashnet/tree/6fa2b878c6c1b4304b91109070ce0edf9279bb31",
+      "verification": "project_readme_consulted_and_frozen_source_record_in_local_diagnostic",
+      "used_for": "Origem do diagnóstico; nenhuma imagem foi baixada/reexecutada nesta etapa"
+    }
+  ]
+}
