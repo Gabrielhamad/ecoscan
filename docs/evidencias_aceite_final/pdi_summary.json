@@ -1,0 +1,646 @@
+{
+  "source_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+  "technical_fixture_only": true,
+  "cli_exit_code": 0,
+  "exported_artifacts_reported_by_cli": 22,
+  "additional_reproduction_json": 1,
+  "files": [
+    {
+      "name": "01_original.jpg",
+      "sha256": "cbbebc068866bd03db65dee513baf385acd874eae8178ea152718303d6eff6bd",
+      "bytes": 1382
+    },
+    {
+      "name": "02_resized.jpg",
+      "sha256": "cbbebc068866bd03db65dee513baf385acd874eae8178ea152718303d6eff6bd",
+      "bytes": 1382
+    },
+    {
+      "name": "03_filtered.jpg",
+      "sha256": "cbbebc068866bd03db65dee513baf385acd874eae8178ea152718303d6eff6bd",
+      "bytes": 1382
+    },
+    {
+      "name": "04_segmentation_mask.jpg",
+      "sha256": "74a7bfb756d98191d9fe34922162b1c8480a512085d7e33bf6f990a95799b280",
+      "bytes": 1534
+    },
+    {
+      "name": "05_segmented.jpg",
+      "sha256": "986054685ce8b38723b31df3b1aa0924ae4551a00998decc6fc35f06cc7d5c91",
+      "bytes": 1506
+    },
+    {
+      "name": "06_model_input_preview.jpg",
+      "sha256": "261b2176e0a4f3826ba4511ee0e3039e4659c2597617e2fd133eb4a76555a88c",
+      "bytes": 3203
+    },
+    {
+      "name": "07_elements_overlay.jpg",
+      "sha256": "a1be2542b1bb6f6ee600172112ef2f188a6a407ba41149304bb1b65e7657cee6",
+      "bytes": 2159
+    },
+    {
+      "name": "08_detection_heatmap.jpg",
+      "sha256": "10c8e6509853bef729cff3da5056dfd99613cb8be6008e71480d1af15cf566c5",
+      "bytes": 2551
+    },
+    {
+      "name": "09_grayscale.png",
+      "sha256": "e51153cd034c691997890481a317a8cf47880a2ad24421ccd4334f5b0827db8e",
+      "bytes": 375
+    },
+    {
+      "name": "10_mask_before_morphology.png",
+      "sha256": "6727a7d7568cd6229006510c0a731c5c7b86114628076374ff6bb9cc17433f64",
+      "bytes": 239
+    },
+    {
+      "name": "11_mask_after_morphology.png",
+      "sha256": "6727a7d7568cd6229006510c0a731c5c7b86114628076374ff6bb9cc17433f64",
+      "bytes": 239
+    },
+    {
+      "name": "12_morphological_gradient.png",
+      "sha256": "37cf9a17f5ffd164ba9704221dcd5020306c7dc46ac426657b6c16eb186ec79d",
+      "bytes": 296
+    },
+    {
+      "name": "13_structuring_element.png",
+      "sha256": "70ba026d91e74971bab8091565401b3bb188cdf230802f060b00bccfdd301abf",
+      "bytes": 72
+    },
+    {
+      "name": "antes_depois.png",
+      "sha256": "7226d6f8c480fdda60f00bb120b4288b6faa1f0ee41d4d66443f9813c9b2bb5d",
+      "bytes": 46486
+    },
+    {
+      "name": "morphology_01_erosion.png",
+      "sha256": "83db0bc00ff2ed0483c47e280555f80359400b25a2443ac86f80a286cdfb292f",
+      "bytes": 241
+    },
+    {
+      "name": "morphology_02_dilation.png",
+      "sha256": "6727a7d7568cd6229006510c0a731c5c7b86114628076374ff6bb9cc17433f64",
+      "bytes": 239
+    },
+    {
+      "name": "morphology_03_dilation.png",
+      "sha256": "ad4b67b07591e856737df4083b57aaadf0d5e2c21f80ddce3577c7c58ce287e9",
+      "bytes": 235
+    },
+    {
+      "name": "morphology_04_erosion.png",
+      "sha256": "6727a7d7568cd6229006510c0a731c5c7b86114628076374ff6bb9cc17433f64",
+      "bytes": 239
+    },
+    {
+      "name": "pipeline_overview.jpg",
+      "sha256": "db6ffdfc9c2e7398f5f5d1add6860b42897c706c9fd09a67d0bec9f387344ec3",
+      "bytes": 38885
+    },
+    {
+      "name": "pipeline_report.json",
+      "sha256": "181f703b16c4dcc8792106d6148d66f9f104b83f23d3c07dc4d69bcca796b17f",
+      "bytes": 8138
+    },
+    {
+      "name": "processing_evidence.json",
+      "sha256": "4ef5a7fe6ab93e4a4c1d5d8ee4122c41eb5d213107fd886dc0eaf1245053ed00",
+      "bytes": 10908
+    },
+    {
+      "name": "processing_evidence.zip",
+      "sha256": "6b7ee044cf0688f539df563b933c8f4a3d488fe28dd2362145871f59ffb94866",
+      "bytes": 43835
+    },
+    {
+      "name": "reproduction.json",
+      "sha256": "de4a5ac24830b59516b4a8f4e5d491e62d66d5fe26d9ddbd3ba4f0f6248c5667",
+      "bytes": 1341
+    }
+  ],
+  "reproduction": {
+    "input_file_sha256": "a15178dadebbce9b4fc19e5a5c208d03bb793f9e21946c5ea261051d8b5517a1",
+    "settings_file_sha256": "438920775c2c2576bf6888d19092854ccd6fe89741a4dc90c1cab8030b41103e",
+    "filter": "auto -> none",
+    "segmentation": "grabcut",
+    "morphology": {
+      "operation": "open_close",
+      "kernel_size": 3,
+      "kernel_shape": "square",
+      "kernel": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "anchor": [
+        1,
+        1
+      ],
+      "iterations": 1,
+      "sequence": [
+        "erosion",
+        "dilation",
+        "dilation",
+        "erosion"
+      ],
+      "iteration_semantics": "N repetições de cada primitiva, na ordem registrada.",
+      "border": "constant background (0)",
+      "foreground": "white (255)",
+      "foreground_pixels_before": 5516,
+      "foreground_pixels_after": 5516,
+      "foreground_ratio_before": 0.4488932291666667,
+      "foreground_ratio_after": 0.4488932291666667,
+      "changed_pixels": 0,
+      "explanation": "Abertura seguida de fechamento; remove ruído claro e pequenas lacunas escuras.",
+      "gradient": "Dilatação menos erosão da máscara final; somente visualização.",
+      "dependency": "numpy"
+    },
+    "scope": "Processamento real; este comando não calcula uma previsão nem a acurácia."
+  },
+  "processing_evidence": {
+    "schema_version": 2,
+    "source": "arrays da execução; nenhuma transformação é refeita para ilustrar",
+    "digest": "SHA-256 de JSON shape/dtype (sort_keys=True), byte NUL e bytes C-order",
+    "difference": "máxima diferença absoluta entre canais, escala 0–255 sem amplificação",
+    "scope": "Aquisição RGB até a imagem entregue ao classificador; não mede acurácia.",
+    "classifier_input_sha256": "ce70e92dfeaa5a103d1e3e9d7f9fc2fa1bfa3b827abd31def6b7420b022d0544",
+    "stages": [
+      {
+        "id": "01_resize",
+        "label": "Preparação: redimensionamento",
+        "applied": true,
+        "status": "Executada, sem alteração de pixels",
+        "parameters": {
+          "resampling": "area",
+          "target_size": [
+            128,
+            96
+          ],
+          "aspect_ratio": "preserved; no upscaling",
+          "input": "RGB, orientação EXIF já corrigida"
+        },
+        "changed_pixels": 0,
+        "before": {
+          "shape": [
+            96,
+            128,
+            3
+          ],
+          "dtype": "uint8",
+          "sha256": "cf33cca1df8db8d7c0fa5785543ae7edb79c7aa917dcd64c7288269afe7ad5ea"
+        },
+        "after": {
+          "shape": [
+            96,
+            128,
+            3
+          ],
+          "dtype": "uint8",
+          "sha256": "cf33cca1df8db8d7c0fa5785543ae7edb79c7aa917dcd64c7288269afe7ad5ea"
+        }
+      },
+      {
+        "id": "02_filter",
+        "label": "Filtro: auto -> none",
+        "applied": false,
+        "status": "Controle: operação desativada",
+        "parameters": {
+          "sequence": [
+            "none"
+          ],
+          "steps": [
+            {
+              "name": "none",
+              "parameters": {},
+              "dependency": "numpy"
+            }
+          ],
+          "score": 0.0
+        },
+        "changed_pixels": 0,
+        "before": {
+          "shape": [
+            96,
+            128,
+            3
+          ],
+          "dtype": "uint8",
+          "sha256": "cf33cca1df8db8d7c0fa5785543ae7edb79c7aa917dcd64c7288269afe7ad5ea"
+        },
+        "after": {
+          "shape": [
+            96,
+            128,
+            3
+          ],
+          "dtype": "uint8",
+          "sha256": "cf33cca1df8db8d7c0fa5785543ae7edb79c7aa917dcd64c7288269afe7ad5ea"
+        }
+      },
+      {
+        "id": "03_segmentation",
+        "label": "Segmentação: grabcut",
+        "applied": true,
+        "status": "Executada; dimensões ou representação diferentes",
+        "parameters": {
+          "iterations": 3,
+          "margin_percent": 0.01
+        },
+        "changed_pixels": null,
+        "before": {
+          "shape": [
+            96,
+            128,
+            3
+          ],
+          "dtype": "uint8",
+          "sha256": "cf33cca1df8db8d7c0fa5785543ae7edb79c7aa917dcd64c7288269afe7ad5ea"
+        },
+        "after": {
+          "shape": [
+            96,
+            128
+          ],
+          "dtype": "uint8",
+          "sha256": "49da32bcc3cb2e2ffc4aec8b9b484fb33ca864bc47d645a274189f8f644e7b9a"
+        }
+      },
+      {
+        "id": "04_morphology_01_erosion",
+        "label": "Morfologia 1: Erosão",
+        "applied": true,
+        "status": "Executada: 320 pixels alterados",
+        "parameters": {
+          "operation": "open_close",
+          "kernel_size": 3,
+          "kernel_shape": "square",
+          "kernel": [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1
+            ]
+          ],
+          "anchor": [
+            1,
+            1
+          ],
+          "iterations": 1,
+          "border": "constant background (0)",
+          "primitive": "erosion"
+        },
+        "changed_pixels": 320,
+        "before": {
+          "shape": [
+            96,
+            128
+          ],
+          "dtype": "uint8",
+          "sha256": "49da32bcc3cb2e2ffc4aec8b9b484fb33ca864bc47d645a274189f8f644e7b9a"
+        },
+        "after": {
+          "shape": [
+            96,
+            128
+          ],
+          "dtype": "uint8",
+          "sha256": "673dde94adf29743f1de48ac3cc1f9b33c67ef6bb90539ce1752f2474e7fb155"
+        }
+      },
+      {
+        "id": "04_morphology_02_dilation",
+        "label": "Morfologia 2: Dilatação",
+        "applied": true,
+        "status": "Executada: 320 pixels alterados",
+        "parameters": {
+          "operation": "open_close",
+          "kernel_size": 3,
+          "kernel_shape": "square",
+          "kernel": [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1
+            ]
+          ],
+          "anchor": [
+            1,
+            1
+          ],
+          "iterations": 1,
+          "border": "constant background (0)",
+          "primitive": "dilation"
+        },
+        "changed_pixels": 320,
+        "before": {
+          "shape": [
+            96,
+            128
+          ],
+          "dtype": "uint8",
+          "sha256": "673dde94adf29743f1de48ac3cc1f9b33c67ef6bb90539ce1752f2474e7fb155"
+        },
+        "after": {
+          "shape": [
+            96,
+            128
+          ],
+          "dtype": "uint8",
+          "sha256": "49da32bcc3cb2e2ffc4aec8b9b484fb33ca864bc47d645a274189f8f644e7b9a"
+        }
+      },
+      {
+        "id": "04_morphology_03_dilation",
+        "label": "Morfologia 3: Dilatação",
+        "applied": true,
+        "status": "Executada: 328 pixels alterados",
+        "parameters": {
+          "operation": "open_close",
+          "kernel_size": 3,
+          "kernel_shape": "square",
+          "kernel": [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1
+            ]
+          ],
+          "anchor": [
+            1,
+            1
+          ],
+          "iterations": 1,
+          "border": "constant background (0)",
+          "primitive": "dilation"
+        },
+        "changed_pixels": 328,
+        "before": {
+          "shape": [
+            96,
+            128
+          ],
+          "dtype": "uint8",
+          "sha256": "49da32bcc3cb2e2ffc4aec8b9b484fb33ca864bc47d645a274189f8f644e7b9a"
+        },
+        "after": {
+          "shape": [
+            96,
+            128
+          ],
+          "dtype": "uint8",
+          "sha256": "58b69056bda262d43828d52f50c2b35db0f521399df80137e9de109f5c9d0cb0"
+        }
+      },
+      {
+        "id": "04_morphology_04_erosion",
+        "label": "Morfologia 4: Erosão",
+        "applied": true,
+        "status": "Executada: 328 pixels alterados",
+        "parameters": {
+          "operation": "open_close",
+          "kernel_size": 3,
+          "kernel_shape": "square",
+          "kernel": [
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              1
+            ]
+          ],
+          "anchor": [
+            1,
+            1
+          ],
+          "iterations": 1,
+          "border": "constant background (0)",
+          "primitive": "erosion"
+        },
+        "changed_pixels": 328,
+        "before": {
+          "shape": [
+            96,
+            128
+          ],
+          "dtype": "uint8",
+          "sha256": "58b69056bda262d43828d52f50c2b35db0f521399df80137e9de109f5c9d0cb0"
+        },
+        "after": {
+          "shape": [
+            96,
+            128
+          ],
+          "dtype": "uint8",
+          "sha256": "49da32bcc3cb2e2ffc4aec8b9b484fb33ca864bc47d645a274189f8f644e7b9a"
+        }
+      },
+      {
+        "id": "05_mask_preview",
+        "label": "Máscara: visualização auxiliar",
+        "applied": true,
+        "status": "Executada: 6772 pixels alterados",
+        "parameters": {
+          "background_rgb": [
+            255,
+            255,
+            255
+          ],
+          "mask_sha256": "49da32bcc3cb2e2ffc4aec8b9b484fb33ca864bc47d645a274189f8f644e7b9a",
+          "destination": "inspeção; não enviada ao classificador"
+        },
+        "changed_pixels": 6772,
+        "before": {
+          "shape": [
+            96,
+            128,
+            3
+          ],
+          "dtype": "uint8",
+          "sha256": "cf33cca1df8db8d7c0fa5785543ae7edb79c7aa917dcd64c7288269afe7ad5ea"
+        },
+        "after": {
+          "shape": [
+            96,
+            128,
+            3
+          ],
+          "dtype": "uint8",
+          "sha256": "62680b36e5b8ed1e0217b99db968db558f2619dc210f117a1302d6585a31efd6"
+        }
+      },
+      {
+        "id": "06_classifier_input",
+        "label": "Entrada RGB do classificador",
+        "applied": true,
+        "status": "Executada; dimensões ou representação diferentes",
+        "parameters": {
+          "resize": "letterbox; no crop or stretching",
+          "scale": 1.75,
+          "content_box_xywh": [
+            0,
+            28,
+            224,
+            168
+          ],
+          "padding_rgb": [
+            127,
+            127,
+            127
+          ],
+          "target_size": [
+            224,
+            224
+          ],
+          "mask_applied": false,
+          "contract": {
+            "profile": {
+              "version": "rgb-preserved-v2",
+              "working_max_dimension": 640,
+              "image_size": [
+                224,
+                224
+              ],
+              "padding_rgb": 127,
+              "filter": "auto",
+              "parameters": {},
+              "filters_config": {
+                "default": "auto",
+                "auto": {
+                  "candidate_sequences": [
+                    [
+                      "none"
+                    ],
+                    [
+                      "gaussian"
+                    ],
+                    [
+                      "median"
+                    ],
+                    [
+                      "bilateral"
+                    ],
+                    [
+                      "clahe"
+                    ]
+                  ],
+                  "min_noise_sigma": 4.0,
+                  "min_impulse_ratio": 0.0005
+                },
+                "gaussian": {
+                  "kernel_size": 5,
+                  "sigma": 1
+                },
+                "median": {
+                  "kernel_size": 3
+                },
+                "bilateral": {
+                  "diameter": 9,
+                  "sigma_color": 75,
+                  "sigma_space": 75
+                },
+                "clahe": {
+                  "clip_limit": 2,
+                  "tile_grid_size": [
+                    8,
+                    8
+                  ]
+                },
+                "canny": {
+                  "threshold1": 80,
+                  "threshold2": 160
+                }
+              },
+              "mask_applied_to_classifier": false
+            },
+            "sha256": "2a1a47bad72255684a7a33a3f038d6b622f120ff5ee10c6597734e27fa46a61d"
+          }
+        },
+        "changed_pixels": null,
+        "before": {
+          "shape": [
+            96,
+            128,
+            3
+          ],
+          "dtype": "uint8",
+          "sha256": "cf33cca1df8db8d7c0fa5785543ae7edb79c7aa917dcd64c7288269afe7ad5ea"
+        },
+        "after": {
+          "shape": [
+            224,
+            224,
+            3
+          ],
+          "dtype": "uint8",
+          "sha256": "ce70e92dfeaa5a103d1e3e9d7f9fc2fa1bfa3b827abd31def6b7420b022d0544"
+        }
+      }
+    ]
+  },
+  "timings_ms_single_local_execution": {
+    "decode": 4.83,
+    "prepare": 5.24,
+    "filter": 408.7,
+    "segmentation": 35.3,
+    "evidence_and_model_input": 8.88,
+    "total": 462.97
+  },
+  "reference_mask": "not_available",
+  "iou": null,
+  "dice": null,
+  "limitation": "Nenhuma qualidade de segmentação ou acurácia de campo medida. Timestamps/tempos podem mudar; verificar arrays, parâmetros e PNGs sem perdas. Não distribui imagens sintéticas como evidência acadêmica de fotos reais."
+}

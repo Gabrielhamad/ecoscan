@@ -1,0 +1,325 @@
+{
+  "schema_version": 1,
+  "source_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+  "verdict": "NO-GO",
+  "generated_at_local": "2026-11-08T23:54:47-03:00",
+  "technical_fixtures_only": true,
+  "independent_test": false,
+  "production_or_real_accounts_accessed": false,
+  "results": [
+    {
+      "id": "ADV-01",
+      "title": "Filtro didático não deve alterar o encoder oficial",
+      "status": "FAIL",
+      "scope": "synthetic_contract_probe",
+      "observations": {
+        "changed_encoder_pixels": 5525,
+        "input_before": "ce70e92dfeaa5a103d1e3e9d7f9fc2fa1bfa3b827abd31def6b7420b022d0544",
+        "input_after": "72f1970315ef0d603bb713922913269f0459079b17a4084b4d5d674bdaae5bf4",
+        "default_contract_matches_model": true,
+        "changed_contract_matches_model": false,
+        "accuracy_effect": "not_measured"
+      }
+    },
+    {
+      "id": "ADV-02-0",
+      "title": "Máscara degenerada permanece diagnóstica",
+      "status": "PASS",
+      "scope": "synthetic_mask_probe",
+      "observations": {
+        "mask_value": 0,
+        "mask_applied_to_classifier": false
+      }
+    },
+    {
+      "id": "ADV-02-255",
+      "title": "Máscara degenerada permanece diagnóstica",
+      "status": "PASS",
+      "scope": "synthetic_mask_probe",
+      "observations": {
+        "mask_value": 255,
+        "mask_applied_to_classifier": false
+      }
+    },
+    {
+      "id": "ADV-03-corrupt",
+      "title": "Arquivo inválido recusado",
+      "status": "PASS",
+      "scope": "technical_file_validation",
+      "observations": {}
+    },
+    {
+      "id": "ADV-03-empty",
+      "title": "Arquivo inválido recusado",
+      "status": "PASS",
+      "scope": "technical_file_validation",
+      "observations": {}
+    },
+    {
+      "id": "ADV-04",
+      "title": "EXIF aplicado antes do preparo RGB",
+      "status": "PASS",
+      "scope": "technical_orientation_fixture",
+      "observations": {
+        "shape": [
+          128,
+          96,
+          3
+        ],
+        "dtype": "uint8"
+      }
+    },
+    {
+      "id": "ADV-05-plastic",
+      "title": "Score alto não autoriza mensagem categórica sem gate",
+      "status": "PASS",
+      "scope": "stub_policy_not_classifier_accuracy",
+      "observations": {
+        "class_id": "plastic",
+        "decision": "needs_confirmation",
+        "accepted": false
+      }
+    },
+    {
+      "id": "ADV-05-paper_cardboard",
+      "title": "Score alto não autoriza mensagem categórica sem gate",
+      "status": "PASS",
+      "scope": "stub_policy_not_classifier_accuracy",
+      "observations": {
+        "class_id": "paper_cardboard",
+        "decision": "needs_confirmation",
+        "accepted": false
+      }
+    },
+    {
+      "id": "ADV-05-metal",
+      "title": "Score alto não autoriza mensagem categórica sem gate",
+      "status": "PASS",
+      "scope": "stub_policy_not_classifier_accuracy",
+      "observations": {
+        "class_id": "metal",
+        "decision": "needs_confirmation",
+        "accepted": false
+      }
+    },
+    {
+      "id": "ADV-05-glass",
+      "title": "Score alto não autoriza mensagem categórica sem gate",
+      "status": "PASS",
+      "scope": "stub_policy_not_classifier_accuracy",
+      "observations": {
+        "class_id": "glass",
+        "decision": "needs_confirmation",
+        "accepted": false
+      }
+    },
+    {
+      "id": "ADV-05-battery",
+      "title": "Score alto não autoriza mensagem categórica sem gate",
+      "status": "PASS",
+      "scope": "stub_policy_not_classifier_accuracy",
+      "observations": {
+        "class_id": "battery",
+        "decision": "needs_confirmation",
+        "accepted": false
+      }
+    },
+    {
+      "id": "ADV-05-electronic",
+      "title": "Score alto não autoriza mensagem categórica sem gate",
+      "status": "PASS",
+      "scope": "stub_policy_not_classifier_accuracy",
+      "observations": {
+        "class_id": "electronic",
+        "decision": "needs_confirmation",
+        "accepted": false
+      }
+    },
+    {
+      "id": "ADV-05-unknown",
+      "title": "Score alto não autoriza mensagem categórica sem gate",
+      "status": "PASS",
+      "scope": "stub_policy_not_classifier_accuracy",
+      "observations": {
+        "class_id": "unknown",
+        "decision": "outside_scope",
+        "accepted": false
+      }
+    },
+    {
+      "id": "ADV-06",
+      "title": "Contrato incompatível não libera decisão",
+      "status": "PASS",
+      "scope": "stub_contract_probe",
+      "observations": {
+        "decision": "needs_training"
+      }
+    },
+    {
+      "id": "ADV-07-dark",
+      "title": "Captura uniforme pede nova foto",
+      "status": "PASS",
+      "scope": "uniform_technical_frame_not_a_field_photo",
+      "observations": {
+        "capture_status": "retake",
+        "score": 34
+      }
+    },
+    {
+      "id": "ADV-07-empty_white",
+      "title": "Captura uniforme pede nova foto",
+      "status": "PASS",
+      "scope": "uniform_technical_frame_not_a_field_photo",
+      "observations": {
+        "capture_status": "retake",
+        "score": 34
+      }
+    },
+    {
+      "id": "ADV-08",
+      "title": "Falta de encoder falha de modo controlado",
+      "status": "PASS",
+      "scope": "isolated_real_model_loader",
+      "observations": {}
+    },
+    {
+      "id": "ADV-09",
+      "title": "Modelo ausente preserva correção manual na página",
+      "status": "FAIL",
+      "scope": "real_controller_and_missing_encoder_apptest",
+      "observations": {
+        "visible_errors": 1,
+        "uncaught_exceptions": 0,
+        "material_selector_available": false
+      }
+    },
+    {
+      "id": "ADV-10",
+      "title": "Boundary público não deve expor exceção bruta",
+      "status": "FAIL",
+      "scope": "synthetic_marker_no_personal_data",
+      "observations": {
+        "raw_detail_reached_ui": true,
+        "raw_detail_reached_log": true
+      }
+    },
+    {
+      "id": "ADV-11",
+      "title": "Visitante/claims incompletos não elevam privilégio",
+      "status": "PASS",
+      "scope": "identity_stubs_no_real_accounts",
+      "observations": {}
+    },
+    {
+      "id": "ADV-12",
+      "title": "Indisponibilidade de banco sanitizada no serviço",
+      "status": "PASS",
+      "scope": "database_stub_no_network_or_production",
+      "observations": {}
+    },
+    {
+      "id": "ADV-16",
+      "title": "Cache frio deve consultar release antes do TTL",
+      "status": "FAIL",
+      "scope": "stub_clock_no_remote_access",
+      "observations": {
+        "monotonic_seconds": 5,
+        "source_store_consulted": false
+      }
+    },
+    {
+      "id": "ADV-17",
+      "title": "Inventário não deve aprovar gate independente pela presença do artefato",
+      "status": "FAIL",
+      "scope": "legacy_inventory_with_no_field_evidence_not_release",
+      "observations": {
+        "legacy_ac10_status": "ok",
+        "independent_test": false,
+        "raw_images": 0,
+        "curated_images": 0,
+        "limitation": "Existência local do modelo não comprova validação independente"
+      }
+    },
+    {
+      "id": "ADV-13",
+      "title": "ZIP representa a execução e não inclui caminho privado no manifesto",
+      "status": "PASS",
+      "scope": "synthetic_lossless_evidence",
+      "observations": {
+        "stages": 9,
+        "input_sha256": "ce70e92dfeaa5a103d1e3e9d7f9fc2fa1bfa3b827abd31def6b7420b022d0544",
+        "artifact_sha256": "3aee281ef380591d6d76ddf79679146574e475d99067d897b02d57169682b401"
+      }
+    },
+    {
+      "id": "ADV-14",
+      "title": "Integridade cabeça/shards/encoder/contrato",
+      "status": "PASS",
+      "scope": "real_bundled_artifact_hashes",
+      "observations": {
+        "metadata_sha256": "5821ecf3ccc4e5b7dd807cab74978df14aae6e82a2360c765c7232bdf1fa75f2",
+        "head_sha256": "5cc1aa6b5ee4d0e0ed74bca37a8510802f739b61c5e179165beae15c68e8386a",
+        "encoder_sha256": "dfad0c5b643cc67908fbfc88b7ba5ecad10aa6567cc72bfced3a759baaf509bd",
+        "processing_sha256": "2a1a47bad72255684a7a33a3f038d6b622f120ff5ee10c6597734e27fa46a61d"
+      }
+    },
+    {
+      "id": "ADV-15",
+      "title": "ONNX CPU local com conexões Python bloqueadas",
+      "status": "PASS",
+      "scope": "real_local_onnx_synthetic_image_no_accuracy",
+      "observations": {
+        "decision": "needs_confirmation",
+        "processing_compatible": true,
+        "automatic_accepted": false,
+        "python_socket_connect_blocked": true,
+        "native_library_network": "not_monitored",
+        "analysis_wall_ms": 439.63,
+        "latency_samples": 1,
+        "assembled_encoder_present_before_call": true
+      }
+    },
+    {
+      "id": "FIELD-01",
+      "title": "Plástico versus vidro transparente",
+      "status": "BLOCKED",
+      "scope": "manual_pending_no_authorized_data_or_device",
+      "observations": {}
+    },
+    {
+      "id": "FIELD-02",
+      "title": "Metal refletivo",
+      "status": "BLOCKED",
+      "scope": "manual_pending_no_authorized_data_or_device",
+      "observations": {}
+    },
+    {
+      "id": "FIELD-03",
+      "title": "Fundo confuso/sem objeto real",
+      "status": "BLOCKED",
+      "scope": "manual_pending_no_authorized_data_or_device",
+      "observations": {}
+    },
+    {
+      "id": "FIELD-04",
+      "title": "CLI em conjunto real novo",
+      "status": "BLOCKED",
+      "scope": "manual_pending_no_authorized_data_or_device",
+      "observations": {}
+    },
+    {
+      "id": "DEVICE-01",
+      "title": "PC/Android/iPhone reais",
+      "status": "BLOCKED",
+      "scope": "manual_pending_no_authorized_data_or_device",
+      "observations": {}
+    },
+    {
+      "id": "APS-REHEARSAL",
+      "title": "Três ensaios de apresentação",
+      "status": "BLOCKED",
+      "scope": "manual_pending_no_authorized_data_or_device",
+      "observations": {}
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "expected_source_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+  "working_tree_application_matches_source": true,
+  "generated_at_local": "2026-11-08T23:51:48-03:00",
+  "scope": "Linux Chromium local, fixture only; not a real phone or published acceptance",
+  "real_accounts_used": false,
+  "results": [
+    {
+      "id": "BROWSER-01",
+      "title": "Visitante abre sem tela branca",
+      "status": "PASS",
+      "observations": {}
+    },
+    {
+      "id": "BROWSER-02",
+      "title": "Arquivo inválido tem erro controlado",
+      "status": "PASS",
+      "observations": {}
+    },
+    {
+      "id": "BROWSER-03",
+      "title": "Correção manual acessível após arquivo inválido",
+      "status": "FAIL",
+      "observations": {}
+    },
+    {
+      "id": "BROWSER-04",
+      "title": "Aba Descarte oferece escolha de material após falha",
+      "status": "FAIL",
+      "observations": {}
+    },
+    {
+      "id": "BROWSER-05",
+      "title": "Análise local permite confirmação",
+      "status": "PASS",
+      "observations": {}
+    },
+    {
+      "id": "BROWSER-06",
+      "title": "Escolha humana de Vidro mostra lixeira verde",
+      "status": "PASS",
+      "observations": {}
+    },
+    {
+      "id": "BROWSER-07",
+      "title": "Navegação mantém foto/resultado e escolha humana",
+      "status": "PASS",
+      "observations": {}
+    },
+    {
+      "id": "BROWSER-10",
+      "title": "Nova sessão após reload pede reenvio sem tela branca",
+      "status": "PASS",
+      "observations": {
+        "previous_analysis_restored": false
+      }
+    },
+    {
+      "id": "BROWSER-11",
+      "title": "Outro contexto visitante não herda captura ou escolha humana",
+      "status": "PASS",
+      "observations": {
+        "scope": "fresh_browser_context_not_real_account_isolation"
+      }
+    },
+    {
+      "id": "BROWSER-08",
+      "title": "Query de perfil não libera Gestão",
+      "status": "PASS",
+      "observations": {}
+    },
+    {
+      "id": "BROWSER-09",
+      "title": "Navegador sem exceções não tratadas",
+      "status": "PASS",
+      "observations": {
+        "uncaught_page_errors": 0,
+        "external_browser_requests_blocked": 0
+      }
+    }
+  ]
+}
