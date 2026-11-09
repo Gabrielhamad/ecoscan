@@ -14,6 +14,7 @@ da inicialização pública do Streamlit.
 | `benchmark_startup.py` | Mede importação e primeira renderização do app |
 | `diagnose_project.py` | Inspeciona dependências, modelo e diretórios |
 | `prepare_delivery_pack.py` | Gera o pacote técnico para avaliação |
+| `generate_academic_report.py --docx --code-appendix` | Exporta a base acadêmica congelada, DOCX de revisão e apêndice público; não aprova a entrega |
 | `check_backup.py` | Valida um backup operacional sem restaurá-lo |
 
 ## Modelo e dados

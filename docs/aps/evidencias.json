@@ -1,0 +1,547 @@
+{
+  "schema_version": 1,
+  "source_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+  "source_repository": "Gabrielhamad/ecoscan",
+  "review_date_local": "2026-11-08",
+  "timezone": "America/Sao_Paulo",
+  "official_manual_2026": "not_available",
+  "manual_basis": "docs/plano_validacao_aps_4_dias.md; nome recebido 2026, cabeçalho interno 2025/2 segundo esse registro",
+  "academic_submission_ready": false,
+  "field_photos": "not_provided",
+  "reference_segmentation_masks": "not_provided",
+  "independent_test": false,
+  "source_files": {
+    "config/education.json": {
+      "sha256": "999dbc4429c0b30aa93f1b6b49c0d568e3dccd56c0384c5bc9ee9e6fe35bef2e"
+    },
+    "docs/plano_validacao_aps_4_dias.md": {
+      "sha256": "07ff35c6202dbddb6323924e6c963d64c0e04a0d7c30028fe1968c5548833a2e"
+    },
+    "src/ecoscan/image_processing/image_io.py": {
+      "sha256": "fe3e768a444ab69e8ed80fd7384d39885254ac6d0e4cc760ae5db9b0f34346d5"
+    },
+    "tests/test_image_processing.py": {
+      "sha256": "93be7b50e83da7def8b56edc1133000cf09396c14ec92671793f7fd69549a193"
+    },
+    "src/ecoscan/image_processing/preprocessing.py": {
+      "sha256": "fe19f49ae5a30b746993f56d03823681b3fc3bfa617f6b559acd817380a9fba1"
+    },
+    "src/ecoscan/image_processing/filters.py": {
+      "sha256": "222ea2f450b442d0815b915c350f067cdb2b9e82ed1b334cf89cc05b6b91f74f"
+    },
+    "tests/test_gaussian_evidence.py": {
+      "sha256": "bfaaf9cc1960f3eca1bcd079f2429409964aa68ce28a2b9722a8b0c03c93ec26"
+    },
+    "src/ecoscan/segmentation/methods.py": {
+      "sha256": "a22c700cc91ecc3dfd03dc575a45cb522f360974ae71913db85f22757649ba22"
+    },
+    "tests/test_segmentation.py": {
+      "sha256": "1819d2416bd3d17b0f3bf6cd9e63e6abc474a4966cb6222c28a24e7623a2d481"
+    },
+    "src/ecoscan/segmentation/morphology.py": {
+      "sha256": "7bfe3d1093b29cf0be22c041c47bbf92cf74649f98425f1b19011967001f6d62"
+    },
+    "tests/test_morphology.py": {
+      "sha256": "c967fa0158aa014cfc2ae0b889c7e2da0559fbe466d881392a982458449786cc"
+    },
+    "src/ecoscan/services/processing_evidence.py": {
+      "sha256": "dcfc8e9aeabd52c48d577f3de440285ea503336644ba4b26596f6ff330b49dd0"
+    },
+    "tests/test_processing_evidence.py": {
+      "sha256": "b71b73d035bf562438cfa401ea494f2dc88f458a94438e7ae0b23b9e5dc23687"
+    },
+    "src/ecoscan/classification/semantic_onnx.py": {
+      "sha256": "922cba98b48cce3e9d094ffa248591df832758545031e0b069432c59aedb7f4b"
+    },
+    "tests/test_current_recognition.py": {
+      "sha256": "24a8dd381255c01053658c73e50f768904fb01c9a3d94ea9fefab23a78a90724"
+    },
+    "src/ecoscan/services/analysis_service.py": {
+      "sha256": "87f238ef50ca0363819bdf329f44ee3870533deafb97be39846480a729c3f816"
+    },
+    "migrations/003_community.sql": {
+      "sha256": "461333cf4ee7bfa333e6cbc8fa45b5014de31d61c25ae7d92c3b58f4277ff70a"
+    },
+    "tests/community_database_checks.sql": {
+      "sha256": "5a50e64ade5e09f6049a6aeb021b48cdadd331a03a1a5c0cabe1deb5adcceec3"
+    },
+    "src/ecoscan/services/password_identity.py": {
+      "sha256": "8062607d4e9dd73002773c6a60a0bf3990dec5507e41c154e2e6f115a7de1e78"
+    },
+    "tests/test_identity.py": {
+      "sha256": "079b421e0eaface9b0d566d6242e743507c7c50e5c7ccdc9159dcb39aacae17b"
+    },
+    ".github/workflows/quality.yml": {
+      "sha256": "f5278a9da05382217f1862f93b17fa764a38dde43217d50b5a3e935455322145"
+    },
+    "tests/test_community_store.py": {
+      "sha256": "6cdbf4f641b7bba57e1b941165531a207ac15b787999167fcb33cf97d666b530"
+    },
+    "docs/preparation_evidence/default.json": {
+      "sha256": "7f838b000bf0587b2cae5a3a575ce162eb569782de5e1736809fcac058aac127"
+    },
+    "docs/datasets/taco_v1/README.md": {
+      "sha256": "437dafe1b049a52197b1ad25b910d089e3acbff0e8b0dec9ab487410b62183af"
+    },
+    "docs/model_evaluation/semantic_v1_historical.json": {
+      "sha256": "8867f88926657b463ff56a78effe0213758bb3d21812e4611bcd82d665205302"
+    },
+    "tests/test_model_evidence.py": {
+      "sha256": "6a0840e4def0664b2c12978e0ef05c136185e8c2f3b370608df00e47929f197b"
+    },
+    "docs/autoria_aps.md": {
+      "sha256": "9e3850c1e67ddb703e13e553bce33290df2463f2b615e149ce569d72f2fc73ab"
+    },
+    "docs/modelo_reconhecimento.md": {
+      "sha256": "cdf1ca7951d400087ad99276cbfd285481c5d3a7a7638a11a457b90163aa4547"
+    },
+    "streamlit_app.py": {
+      "sha256": "44ba75703ca64ad598bfee2dc52e6530f59650bb128c69cd7312d69caf7d376d"
+    },
+    "tests/test_pipeline.py": {
+      "sha256": "37c41dfb59b54f673e991c44abbcfeaa5fe1d0cc46311bbe0aff1cad895f3a04"
+    },
+    "docs/roteiro_testes_manuais.md": {
+      "sha256": "1302b2ae3782babc29bf25a60f6d9ece8c61cb3f1346478fd81020427538a0bf"
+    },
+    "config/settings.json": {
+      "sha256": "438920775c2c2576bf6888d19092854ccd6fe89741a4dc90c1cab8030b41103e"
+    },
+    "models/semantic-v1/semantic.json": {
+      "sha256": "5821ecf3ccc4e5b7dd807cab74978df14aae6e82a2360c765c7232bdf1fa75f2"
+    },
+    "models/semantic-v1/head.npz": {
+      "sha256": "5cc1aa6b5ee4d0e0ed74bca37a8510802f739b61c5e179165beae15c68e8386a"
+    },
+    "docs/model_evaluation/trashnet_priority_diagnostic.json": {
+      "sha256": "4a4cd32d2495d83fc98b8668d36edea2cc3ce27edbd0a07d5c9f7ddbf220c7af"
+    },
+    "docs/model_evaluation/trashnet_priority_manifest.json": {
+      "sha256": "18121fccb0b6bbc898a97b501a427ede8e2d359062d31838da5ea7daa103a863"
+    },
+    "docs/preparation_evidence/sigma8.json": {
+      "sha256": "81f9eebcc3203d7bb181491b33c6f0a7951e4251b367f317fc658e8235a8f790"
+    },
+    "src/ecoscan/app/pipeline.py": {
+      "sha256": "be71bb4fe62e83a2cf6c73e8e439f0a0b5593187902681e5f22aa38e3f46da05"
+    },
+    "src/ecoscan/image_processing/contracts.py": {
+      "sha256": "2fe95c4a6962a265f8b0e4bb6449cb2b05dca59481b601b2ba00bdae0aca2eb9"
+    },
+    "src/ecoscan/services/recognition_safety.py": {
+      "sha256": "a569085819d0629111af2243920fbde72acc110ba262b52afa80f1e7638971ab"
+    },
+    "src/ecoscan/ui/analysis_controller.py": {
+      "sha256": "52a88b68bfcbe7de4a524e5c54e1ac0f47ec8020fa5435bda1f5b166ca2c634d"
+    },
+    "src/ecoscan/ui/identity.py": {
+      "sha256": "2e8bd6648b37f83676397936a789e683296520b8b8fbf62019ed01aff015d9a8"
+    },
+    "src/ecoscan/services/operational_store.py": {
+      "sha256": "ea4c9d841fde5d3356b89bfd993c6454f7efa76c8a8656b61082328b296c3b42"
+    },
+    "src/ecoscan/services/community_store.py": {
+      "sha256": "1d44b7165e3e934170eb90b26d6a5dad88b829469a9bcfb8d8427399e255c473"
+    },
+    "migrations/001_contributions.sql": {
+      "sha256": "82461474f5c2ed7d3137478bdf7d90dcc825c4d28f061e1c1970e995bbc0b147"
+    },
+    "migrations/002_operational_records.sql": {
+      "sha256": "b487d494e068e1387297ef6ad33852f61e2e71d46bb8535f55ad35ad0d79c159"
+    },
+    "migrations/004_verified_identity_constraints.sql": {
+      "sha256": "801f89e66efcb13c0ee42ec3ed02dd3a2aa1b68f5d7d7388511d2244979a667e"
+    },
+    "src/ecoscan/training/semantic_learning.py": {
+      "sha256": "a50b00ea98aff81ddabd1878caeb74f24beafe29e94c2d6ee4e8c47ddc4b8bc4"
+    }
+  },
+  "requirements": [
+    {
+      "id": "APS-01",
+      "requirement": "Problema, sustentabilidade e proposta",
+      "status": "implemented_documented",
+      "code": {
+        "path": "config/education.json",
+        "line": 3,
+        "anchor": "\"materials\"",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/config/education.json#L3"
+      },
+      "test_or_reference": {
+        "path": "docs/plano_validacao_aps_4_dias.md",
+        "line": 10,
+        "anchor": "O que é obrigatório",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/docs/plano_validacao_aps_4_dias.md#L10"
+      },
+      "limitation": "Revisão acadêmica; não mede impacto ambiental."
+    },
+    {
+      "id": "APS-02",
+      "requirement": "Aquisição, RGB, EXIF e limites",
+      "status": "automated_evidence",
+      "code": {
+        "path": "src/ecoscan/image_processing/image_io.py",
+        "line": 18,
+        "anchor": "def load_rgb_image",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/src/ecoscan/image_processing/image_io.py#L18"
+      },
+      "test_or_reference": {
+        "path": "tests/test_image_processing.py",
+        "line": 59,
+        "anchor": "def test_exif_orientation_is_corrected_before_resize",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/test_image_processing.py#L59"
+      },
+      "limitation": "Câmera física e dispositivos reais: manual_pending."
+    },
+    {
+      "id": "APS-03",
+      "requirement": "Manipulação e letterbox",
+      "status": "automated_evidence",
+      "code": {
+        "path": "src/ecoscan/image_processing/preprocessing.py",
+        "line": 55,
+        "anchor": "def letterbox_image",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/src/ecoscan/image_processing/preprocessing.py#L55"
+      },
+      "test_or_reference": {
+        "path": "tests/test_image_processing.py",
+        "line": 39,
+        "anchor": "def test_resize_and_model_input_shape",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/test_image_processing.py#L39"
+      },
+      "limitation": "Preserva proporções; verificar a mesma foto autorizada no PC."
+    },
+    {
+      "id": "APS-04",
+      "requirement": "Filtragem e autoria dos algoritmos",
+      "status": "automated_evidence",
+      "code": {
+        "path": "src/ecoscan/image_processing/filters.py",
+        "line": 58,
+        "anchor": "def apply_gaussian",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/src/ecoscan/image_processing/filters.py#L58"
+      },
+      "test_or_reference": {
+        "path": "tests/test_gaussian_evidence.py",
+        "line": 6,
+        "anchor": "def test_reported_kernel_reproduces_convolution_and_preserves_channels",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/test_gaussian_evidence.py#L6"
+      },
+      "limitation": "OpenCV/Pillow executam Gaussian/mediana; Sobel usa rotina NumPy do projeto."
+    },
+    {
+      "id": "APS-05",
+      "requirement": "Segmentação Otsu/HSV/GrabCut",
+      "status": "automated_evidence",
+      "code": {
+        "path": "src/ecoscan/segmentation/methods.py",
+        "line": 55,
+        "anchor": "def _otsu_threshold",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/src/ecoscan/segmentation/methods.py#L55"
+      },
+      "test_or_reference": {
+        "path": "tests/test_segmentation.py",
+        "line": 11,
+        "anchor": "def test_otsu_segmentation_returns_mask_and_segmented_image",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/test_segmentation.py#L11"
+      },
+      "limitation": "A máscara não prova material; transparentes/reflexos exigem comparação real."
+    },
+    {
+      "id": "APS-06",
+      "requirement": "Morfologia e bordas",
+      "status": "automated_evidence",
+      "code": {
+        "path": "src/ecoscan/segmentation/morphology.py",
+        "line": 48,
+        "anchor": "def _primitive",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/src/ecoscan/segmentation/morphology.py#L48"
+      },
+      "test_or_reference": {
+        "path": "tests/test_morphology.py",
+        "line": 91,
+        "anchor": "def test_matches_opencv_with_explicit_zero_border",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/test_morphology.py#L91"
+      },
+      "limitation": "Rotina NumPy com fundo zero; sem máscara humana, IoU/Dice não medidos."
+    },
+    {
+      "id": "APS-07",
+      "requirement": "Componentes e evidência do mesmo processamento",
+      "status": "automated_evidence",
+      "code": {
+        "path": "src/ecoscan/services/processing_evidence.py",
+        "line": 158,
+        "anchor": "def processing_evidence_zip",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/src/ecoscan/services/processing_evidence.py#L158"
+      },
+      "test_or_reference": {
+        "path": "tests/test_processing_evidence.py",
+        "line": 91,
+        "anchor": "def test_lossless_package_matches_arrays_without_private_paths",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/test_processing_evidence.py#L91"
+      },
+      "limitation": "Componentes e mapa de calor não são detecção supervisionada nem confiança."
+    },
+    {
+      "id": "APS-08",
+      "requirement": "Modelo ONNX, classes, normalização e hashes",
+      "status": "automated_evidence",
+      "code": {
+        "path": "src/ecoscan/classification/semantic_onnx.py",
+        "line": 73,
+        "anchor": "def image_features",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/src/ecoscan/classification/semantic_onnx.py#L73"
+      },
+      "test_or_reference": {
+        "path": "tests/test_current_recognition.py",
+        "line": 70,
+        "anchor": "def test_encoder_parts_are_verified_and_reassembled",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/test_current_recognition.py#L70"
+      },
+      "limitation": "Encoder congelado; métricas independentes por classe ainda ausentes."
+    },
+    {
+      "id": "APS-09",
+      "requirement": "Confirmação humana e orientação",
+      "status": "automated_evidence",
+      "code": {
+        "path": "src/ecoscan/services/analysis_service.py",
+        "line": 89,
+        "anchor": "if config.model.get(\"confirmation_required\"",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/src/ecoscan/services/analysis_service.py#L89"
+      },
+      "test_or_reference": {
+        "path": "tests/test_current_recognition.py",
+        "line": 20,
+        "anchor": "def test_current_recognizer_requires_confirmation_even_at_high_score",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/test_current_recognition.py#L20"
+      },
+      "limitation": "Aceitação do artefato não é decisão automática do produto."
+    },
+    {
+      "id": "APS-10",
+      "requirement": "Banco, RLS e privilégios",
+      "status": "ci_fixture_evidence",
+      "code": {
+        "path": "migrations/003_community.sql",
+        "line": 43,
+        "anchor": "enable row level security",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/migrations/003_community.sql#L43"
+      },
+      "test_or_reference": {
+        "path": "tests/community_database_checks.sql",
+        "line": 35,
+        "anchor": "set local role",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/community_database_checks.sql#L35"
+      },
+      "limitation": "PostgreSQL 16 isolado; contas/Supabase de produção: manual_pending."
+    },
+    {
+      "id": "APS-11",
+      "requirement": "Identidade e autorização no servidor",
+      "status": "automated_evidence",
+      "code": {
+        "path": "src/ecoscan/services/password_identity.py",
+        "line": 108,
+        "anchor": "def verified_profile",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/src/ecoscan/services/password_identity.py#L108"
+      },
+      "test_or_reference": {
+        "path": "tests/test_identity.py",
+        "line": 22,
+        "anchor": "def test_missing_or_untrusted_claims_cannot_elevate",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/test_identity.py#L22"
+      },
+      "limitation": "service_role exige controle de dono/papel no servidor; não é RLS por usuário direto."
+    },
+    {
+      "id": "APS-12",
+      "requirement": "Metodologia e CI por SHA",
+      "status": "ci_fixture_evidence",
+      "code": {
+        "path": ".github/workflows/quality.yml",
+        "line": 17,
+        "anchor": "validation:",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/.github/workflows/quality.yml#L17"
+      },
+      "test_or_reference": {
+        "path": "tests/test_community_store.py",
+        "line": 181,
+        "anchor": "def test_private_queries_filter_before_limiting",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/test_community_store.py#L181"
+      },
+      "limitation": "CI não aprova dispositivos, campo ou restauração em produção."
+    },
+    {
+      "id": "APS-13",
+      "requirement": "Comparações de fotos reais e caso de falha",
+      "status": "manual_pending",
+      "code": {
+        "path": "docs/preparation_evidence/default.json",
+        "line": 3,
+        "anchor": "\"unchanged\"",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/docs/preparation_evidence/default.json#L3"
+      },
+      "test_or_reference": {
+        "path": "docs/datasets/taco_v1/README.md",
+        "line": 14,
+        "anchor": "licencas individuais",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/docs/datasets/taco_v1/README.md#L14"
+      },
+      "limitation": "Histórico com recortes TACO; faltam originais autorizados e revisão individual de direitos."
+    },
+    {
+      "id": "APS-14",
+      "requirement": "Métricas medidas e limitações",
+      "status": "historical_only",
+      "code": {
+        "path": "docs/model_evaluation/semantic_v1_historical.json",
+        "line": 4,
+        "anchor": "\"independent_test\"",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/docs/model_evaluation/semantic_v1_historical.json#L4"
+      },
+      "test_or_reference": {
+        "path": "tests/test_model_evidence.py",
+        "line": 12,
+        "anchor": "def test_versioned_historical_evidence_matches_bundled_artifacts",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/test_model_evidence.py#L12"
+      },
+      "limitation": "145 vetores históricos reutilizados; independent_test=false."
+    },
+    {
+      "id": "APS-15",
+      "requirement": "Bibliografia verificável",
+      "status": "document_review",
+      "code": {
+        "path": "docs/autoria_aps.md",
+        "line": 18,
+        "anchor": "## Autoria e atribuição",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/docs/autoria_aps.md#L18"
+      },
+      "test_or_reference": {
+        "path": "docs/modelo_reconhecimento.md",
+        "line": 28,
+        "anchor": "## Evidência disponível",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/docs/modelo_reconhecimento.md#L28"
+      },
+      "limitation": "Fontes primárias registradas em fontes_verificadas.json; manual 2026 não acessível."
+    },
+    {
+      "id": "APS-16",
+      "requirement": "Apêndice do código congelado",
+      "status": "source_available",
+      "code": {
+        "path": "streamlit_app.py",
+        "line": 12,
+        "anchor": "from ecoscan.ui.bootstrap",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/streamlit_app.py#L12"
+      },
+      "test_or_reference": {
+        "path": "tests/test_pipeline.py",
+        "line": 14,
+        "anchor": "def test_pipeline_builds_all_processing_stages",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/tests/test_pipeline.py#L14"
+      },
+      "limitation": "Apêndice textual + exportação de fonte por Git SHA; não inclui modelos, contas ou fotos."
+    },
+    {
+      "id": "APS-17",
+      "requirement": "Ficha APS e identificação",
+      "status": "manual_pending",
+      "code": {
+        "path": "docs/autoria_aps.md",
+        "line": 8,
+        "anchor": "## Identificação",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/docs/autoria_aps.md#L8"
+      },
+      "test_or_reference": {
+        "path": "docs/plano_validacao_aps_4_dias.md",
+        "line": 7,
+        "anchor": "**Referência recebida",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/docs/plano_validacao_aps_4_dias.md#L7"
+      },
+      "limitation": "Ficha preparatória, não modelo oficial; nomes/RAs/horas ficam para cópia privada."
+    },
+    {
+      "id": "APS-18",
+      "requirement": "Seminário e demonstração 10–15 min",
+      "status": "manual_pending",
+      "code": {
+        "path": "docs/plano_validacao_aps_4_dias.md",
+        "line": 45,
+        "anchor": "T14",
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/docs/plano_validacao_aps_4_dias.md#L45"
+      },
+      "test_or_reference": {
+        "path": "docs/roteiro_testes_manuais.md",
+        "line": 1,
+        "anchor": null,
+        "url": "https://github.com/Gabrielhamad/ecoscan/blob/89622ec714b815c216a9215ab9ba69999b39c6b8/docs/roteiro_testes_manuais.md#L1"
+      },
+      "limitation": "Roteiro de 13 minutos; ensaios, fotos e PC real ainda pendentes."
+    }
+  ],
+  "baseline_ci": {
+    "source_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+    "url": "https://github.com/Gabrielhamad/ecoscan/actions/runs/42513163053",
+    "conclusion": "success",
+    "tests": 496,
+    "subtests": 108,
+    "scope": "tests/lint/pip/isolated PostgreSQL; not production or academic acceptance"
+  },
+  "work_in_progress_prs": [
+    {
+      "number": 20,
+      "url": "https://github.com/Gabrielhamad/ecoscan/pull/20",
+      "merged_into_frozen_source": false
+    },
+    {
+      "number": 21,
+      "url": "https://github.com/Gabrielhamad/ecoscan/pull/21",
+      "merged_into_frozen_source": false
+    },
+    {
+      "number": 22,
+      "url": "https://github.com/Gabrielhamad/ecoscan/pull/22",
+      "merged_into_frozen_source": false
+    },
+    {
+      "number": 23,
+      "url": "https://github.com/Gabrielhamad/ecoscan/pull/23",
+      "merged_into_frozen_source": false
+    },
+    {
+      "number": 24,
+      "url": "https://github.com/Gabrielhamad/ecoscan/pull/24",
+      "merged_into_frozen_source": false
+    },
+    {
+      "number": 25,
+      "url": "https://github.com/Gabrielhamad/ecoscan/pull/25",
+      "merged_into_frozen_source": false
+    },
+    {
+      "number": 26,
+      "url": "https://github.com/Gabrielhamad/ecoscan/pull/26",
+      "merged_into_frozen_source": false
+    },
+    {
+      "number": 27,
+      "url": "https://github.com/Gabrielhamad/ecoscan/pull/27",
+      "merged_into_frozen_source": false
+    },
+    {
+      "number": 28,
+      "url": "https://github.com/Gabrielhamad/ecoscan/pull/28",
+      "merged_into_frozen_source": false
+    },
+    {
+      "number": 29,
+      "url": "https://github.com/Gabrielhamad/ecoscan/pull/29",
+      "merged_into_frozen_source": false
+    }
+  ],
+  "manual_availability_confirmed_by_group": true,
+  "manual_public_url": null
+}

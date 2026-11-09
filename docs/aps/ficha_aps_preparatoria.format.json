@@ -1,0 +1,12 @@
+{
+  "ooxml_format": "passed",
+  "font_declared": "Arial",
+  "font_points": 12,
+  "line_spacing": 1.5,
+  "page": "A4",
+  "margins_cm": 2.5,
+  "arial_available_on_export_host": false,
+  "visual_review_on_presentation_pc": "manual_pending",
+  "official_2026_template": "not_available",
+  "academic_submission_ready": false
+}
