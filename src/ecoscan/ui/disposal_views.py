@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import html
 from typing import Any
+from ecoscan.config import AppConfig
 
 from ecoscan.disposal.collection_points import (
     CollectionPoint,
@@ -205,7 +206,8 @@ def _render_disposal_action_panel(
         maps_col, ecopoint_col = st.columns(2)
         maps_col.link_button("Ponto específico", map_url, width="stretch")
         ecopoint_col.link_button("Ecopontos próximos", generic_map_url, width="stretch")
-        st.caption("Confirme horário, regras e materiais aceitos pelo ponto de coleta antes de levar o resíduo.")
+        st.caption("Os links de mapa precisam de internet. A orientação local permanece disponível. "
+                   "Confirme horário, regras e materiais aceitos antes de levar o resíduo.")
     _render_environmental_impact(st, impact)
     matching_points = filter_collection_points(collection_points, class_id=target.class_id)
     if matching_points:
@@ -275,3 +277,54 @@ def _render_public_next_action(st: Any, action: PublicNextAction) -> None:
         )
 
 
+
+
+def render_manual_disposal(
+    st: Any,
+    config: AppConfig,
+    guidance_by_class: dict[str, DisposalGuidance],
+    targets_by_class: dict[str, DisposalTarget],
+    impacts_by_class: dict[str, EnvironmentalImpact],
+    collection_points: list[CollectionPoint] | tuple[CollectionPoint, ...],
+    *,
+    selection_key: str,
+) -> str | None:
+    """Render a human-confirmed consultation, independent of model availability."""
+    st.caption("A orientação abaixo depende do material que você selecionar, mesmo sem foto ou reconhecimento. "
+               "A consulta local funciona sem o banco; mapas externos precisam de internet.")
+    st.markdown(
+        '<div class="ecoscan-section-title">Confirme o material e veja o descarte</div>',
+        unsafe_allow_html=True,
+    )
+    if not guidance_by_class:
+        st.warning("Orientações locais indisponíveis. Tente novamente mais tarde; não há destino confirmado.")
+    confirmed_class = st.selectbox(
+        "Qual material você confirmou?",
+        [None, *(class_id for class_id in config.classes if class_id in guidance_by_class)],
+        format_func=lambda class_id: (
+            "Selecione o material (confirmação manual)"
+            if class_id is None else guidance_by_class[class_id].display_name
+        ),
+        key=selection_key,
+        help="Escolha a categoria do material. A foto não determina composição ou contaminação.",
+    )
+    if confirmed_class is not None:
+        confirmed_guidance = guidance_by_class.get(confirmed_class)
+        confirmed_target = targets_by_class.get(confirmed_class)
+        confirmed_impact = impacts_by_class.get(confirmed_class)
+        if confirmed_guidance is not None and confirmed_target is not None:
+            st.success(
+                f"Material confirmado por você: {confirmed_guidance.display_name}. "
+                f"{confirmed_target.destination_title}."
+            )
+            _render_disposal_action_panel(
+                st,
+                config,
+                confirmed_guidance,
+                confirmed_target,
+                confirmed_impact,
+                collection_points,
+            )
+        else:
+            st.warning("O destino deste material está indisponível. Consulte as regras do serviço local antes de descartar.")
+    return confirmed_class

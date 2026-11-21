@@ -5,6 +5,8 @@ from pathlib import Path
 
 from PIL import Image, UnidentifiedImageError
 
+MAX_IMAGE_FILE_BYTES = 15 * 1024 * 1024
+
 
 class ImageValidationError(ValueError):
     """Raised when an input image is not acceptable for EcoScan."""
@@ -25,7 +27,7 @@ def validate_image_file(
     allowed_extensions: set[str] | frozenset[str],
     min_size: tuple[int, int],
     max_pixels: int = 40_000_000,
-    max_file_bytes: int = 15 * 1024 * 1024,
+    max_file_bytes: int = MAX_IMAGE_FILE_BYTES,
 ) -> ImageInfo:
     if max_pixels <= 0 or max_file_bytes <= 0:
         raise ValueError('Image size limits must be positive.')

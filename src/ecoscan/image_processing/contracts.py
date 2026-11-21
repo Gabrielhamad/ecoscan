@@ -4,9 +4,30 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from typing import Any
+
+from ecoscan.config import AppConfig
 
 
 PROCESSING_VERSION = "rgb-preserved-v2"
+
+
+def recognition_processing_contract(config: AppConfig) -> dict[str, Any]:
+    """Released preparation uses configuration defaults, never didactic selections.
+
+    Keep the rgb-preserved-v2 payload unchanged: existing heads and seeds remain
+    compatible. Configuration drift still requires validation of a new profile.
+    """
+    return processing_contract(config)
+
+
+def processing_contract_matches(expected: dict[str, Any], actual: dict[str, Any]) -> bool:
+    """Check both the declared profile and its checksum before inference."""
+    try:
+        digest = hashlib.sha256(json.dumps(actual['profile'], sort_keys=True).encode()).hexdigest()
+        return actual['sha256'] == digest and expected == actual
+    except (KeyError, TypeError, ValueError):
+        return False
 
 
 def processing_contract(config, *, filter_name=None, filter_parameters=None):

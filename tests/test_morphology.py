@@ -134,7 +134,7 @@ class MorphologyPipelineTests(unittest.TestCase):
             self.assertEqual(processed.segmentation_result.mask[5, 5], 0)
             np.testing.assert_array_equal(processed.segmentation_result.image,
                                           apply_mask(processed.filter_result.image, processed.morphology_result.mask))
-            np.testing.assert_array_equal(processed.recognition_image, processed.filter_result.image)
+            np.testing.assert_array_equal(processed.recognition_image, control.recognition_image)
             self.assertEqual(processed.metadata["morphology"]["changed_pixels"], 2)
 
     def test_classifier_receives_rgb_and_mask_remains_diagnostic(self):
