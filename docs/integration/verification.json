@@ -79,7 +79,7 @@
   "candidate": {
     "ruff": "passed",
     "pip_check": "passed",
-    "pytest": "576 passed, 110 subtests passed in 25.04s",
+    "pytest": "578 passed, 110 subtests passed in 25.71s",
     "targeted_tests": "86 passed, 2 subtests passed in 14.20s",
     "browser": {
       "passed": 9,
