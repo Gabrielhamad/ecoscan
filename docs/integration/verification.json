@@ -1,0 +1,280 @@
+{
+  "schema_version": 1,
+  "base_sha": "89622ec714b815c216a9215ab9ba69999b39c6b8",
+  "generated_at_utc": "2026-11-21T20:44:42+00:00",
+  "candidate_identification": "Implementation content is bound by source_files_sha256 in browser.json; final commit/CI recorded in the PR.",
+  "scope": "Critical fixes integration only; not a field benchmark, production smoke or final release",
+  "release_acceptance": "not_approved",
+  "independent_test": false,
+  "baseline": {
+    "pytest": "496 passed, 108 subtests passed in 13.36s",
+    "probe_source_ref": "01041ae0860f80cfd2950b4de65fcd5fdd894ad7",
+    "probe_source_sha256": "906e04704afa0482a12c5d879c7e41c4def25206d46559cd44d492eec5d6077d",
+    "probe_counts": {
+      "PASS": 21,
+      "FAIL": 5,
+      "BLOCKED": 6
+    },
+    "reproduced_failures": [
+      {
+        "id": "ADV-01",
+        "title": "Filtro didático não deve alterar o encoder oficial",
+        "status": "FAIL",
+        "scope": "synthetic_contract_probe",
+        "observations": {
+          "changed_encoder_pixels": 5525,
+          "input_before": "ce70e92dfeaa5a103d1e3e9d7f9fc2fa1bfa3b827abd31def6b7420b022d0544",
+          "input_after": "72f1970315ef0d603bb713922913269f0459079b17a4084b4d5d674bdaae5bf4",
+          "default_contract_matches_model": true,
+          "changed_contract_matches_model": false,
+          "accuracy_effect": "not_measured"
+        }
+      },
+      {
+        "id": "ADV-09",
+        "title": "Modelo ausente preserva correção manual na página",
+        "status": "FAIL",
+        "scope": "real_controller_and_missing_encoder_apptest",
+        "observations": {
+          "visible_errors": 1,
+          "uncaught_exceptions": 0,
+          "material_selector_available": false
+        }
+      },
+      {
+        "id": "ADV-10",
+        "title": "Boundary público não deve expor exceção bruta",
+        "status": "FAIL",
+        "scope": "synthetic_marker_no_personal_data",
+        "observations": {
+          "raw_detail_reached_ui": true,
+          "raw_detail_reached_log": true
+        }
+      },
+      {
+        "id": "ADV-16",
+        "title": "Cache frio deve consultar release antes do TTL",
+        "status": "FAIL",
+        "scope": "stub_clock_no_remote_access",
+        "observations": {
+          "monotonic_seconds": 5,
+          "source_store_consulted": false
+        }
+      },
+      {
+        "id": "ADV-17",
+        "title": "Inventário não deve aprovar gate independente pela presença do artefato",
+        "status": "FAIL",
+        "scope": "legacy_inventory_with_no_field_evidence_not_release",
+        "observations": {
+          "legacy_ac10_status": "ok",
+          "independent_test": false,
+          "raw_images": 0,
+          "curated_images": 0,
+          "limitation": "Existência local do modelo não comprova validação independente"
+        }
+      }
+    ]
+  },
+  "candidate": {
+    "ruff": "passed",
+    "pip_check": "passed",
+    "pytest": "578 passed, 110 subtests passed in 25.71s",
+    "targeted_tests": "86 passed, 2 subtests passed in 14.20s",
+    "browser": {
+      "passed": 9,
+      "failed": 0,
+      "file": "browser.json",
+      "scope": "Local Linux Chromium; technical fixtures only"
+    },
+    "additional_fault_before_fix": "Second optional evidence renderer: 1 failed, 1 passed when exceptions injected; recovery now parametrized in pytest",
+    "secret_scan": {
+      "tool": "gitleaks 8.30.1",
+      "result": "no leaks found"
+    },
+    "pdi_export": {
+      "artifacts": 22,
+      "additional_reproduction_json": true,
+      "stages": 9,
+      "classifier_input_sha256": "ce70e92dfeaa5a103d1e3e9d7f9fc2fa1bfa3b827abd31def6b7420b022d0544",
+      "fixture": "generated technical scene; no material ground truth",
+      "iou": null,
+      "dice": null
+    },
+    "strict_acceptance": {
+      "exit_code": 2,
+      "summary": {
+        "ok": 12,
+        "attention": 4,
+        "pending": 5,
+        "failed": 0,
+        "total": 21
+      },
+      "pending": [
+        "QA-09",
+        "QA-18",
+        "QA-19",
+        "QA-20",
+        "QA-21"
+      ]
+    },
+    "historical_only": {
+      "top1": {
+        "accuracy": 0.696551724137931,
+        "macro_precision": 0.7374749133369823,
+        "macro_recall": 0.6410098522167488,
+        "macro_f1": 0.6510344159582698,
+        "uncertain_count": 0,
+        "total": 145,
+        "by_class": {
+          "battery": {
+            "support": 14,
+            "precision": 0.75,
+            "recall": 0.21428571428571427,
+            "f1": 0.3333333333333333
+          },
+          "electronic": {
+            "support": 16,
+            "precision": 0.8888888888888888,
+            "recall": 0.5,
+            "f1": 0.64
+          },
+          "glass": {
+            "support": 29,
+            "precision": 0.7931034482758621,
+            "recall": 0.7931034482758621,
+            "f1": 0.7931034482758621
+          },
+          "metal": {
+            "support": 29,
+            "precision": 0.7857142857142857,
+            "recall": 0.7586206896551724,
+            "f1": 0.7719298245614034
+          },
+          "paper_cardboard": {
+            "support": 29,
+            "precision": 0.55,
+            "recall": 0.7586206896551724,
+            "f1": 0.6376811594202898
+          },
+          "plastic": {
+            "support": 28,
+            "precision": 0.6571428571428571,
+            "recall": 0.8214285714285714,
+            "f1": 0.73015873015873
+          }
+        },
+        "confusion_matrix": [
+          [
+            3,
+            1,
+            1,
+            2,
+            7,
+            0
+          ],
+          [
+            1,
+            8,
+            1,
+            1,
+            3,
+            2
+          ],
+          [
+            0,
+            0,
+            23,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            0,
+            3,
+            22,
+            2,
+            2
+          ],
+          [
+            0,
+            0,
+            0,
+            2,
+            22,
+            5
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            4,
+            23
+          ]
+        ],
+        "classes": [
+          "battery",
+          "electronic",
+          "glass",
+          "metal",
+          "paper_cardboard",
+          "plastic"
+        ]
+      },
+      "acceptance": {
+        "threshold": 0.8,
+        "accepted": 51,
+        "correct": 47,
+        "wrong": 4,
+        "rejected": 94
+      },
+      "independent_test": false,
+      "new_field_accuracy": null
+    },
+    "model": {
+      "metadata_sha256": "5821ecf3ccc4e5b7dd807cab74978df14aae6e82a2360c765c7232bdf1fa75f2",
+      "head_sha256": "5cc1aa6b5ee4d0e0ed74bca37a8510802f739b61c5e179165beae15c68e8386a",
+      "encoder_sha256": "dfad0c5b643cc67908fbfc88b7ba5ecad10aa6567cc72bfced3a759baaf509bd",
+      "processing_sha256": "2a1a47bad72255684a7a33a3f038d6b622f120ff5ee10c6597734e27fa46a61d",
+      "threshold": 0.8,
+      "confirmation_required": true,
+      "permitted_assertive_classes": []
+    }
+  },
+  "environment": {
+    "python": "3.12.14",
+    "browser": "Chromium local Linux",
+    "resolved_versions": {
+      "numpy": "2.5.5",
+      "Pillow": "13.0.0",
+      "opencv-python-headless": "5.1.0.95",
+      "onnxruntime": "1.31.0",
+      "scikit-learn": "1.9.1",
+      "streamlit": "1.67.0",
+      "supabase": "2.34.1",
+      "pytest": "9.2.0",
+      "ruff": "0.17.6",
+      "playwright": "1.64.1"
+    },
+    "deploy_dependencies_changed": false,
+    "playwright": "QA only, not added to runtime requirements"
+  },
+  "not_executed": {
+    "field_evaluation": "BLOCKED: no new local consented/audited corpus supplied",
+    "physical_pc_android_iphone": "manual_pending",
+    "published_deployment": "manual_pending",
+    "three_presentation_rehearsals": "manual_pending",
+    "real_accounts_or_database": "not accessed",
+    "postgresql16_local": "not executed; isolated CI job required"
+  },
+  "unmodified_tracked_paths": [
+    "config/",
+    "models/",
+    "migrations/",
+    ".github/",
+    "pyproject.toml",
+    "requirements.txt"
+  ]
+}

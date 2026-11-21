@@ -50,6 +50,7 @@ class DeliveryPack:
     evidence: tuple[EvidenceItem, ...]
     acceptance: tuple[AcceptanceCriterion, ...]
     decisions: tuple[TechnicalDecision, ...]
+    release_acceptance: str = "not_approved"
 
 
 def _status_for_path(config: AppConfig, relative_path: str) -> str:
@@ -106,7 +107,6 @@ def _evidence(config: AppConfig) -> tuple[EvidenceItem, ...]:
 
 
 def _acceptance(config: AppConfig) -> tuple[AcceptanceCriterion, ...]:
-    final_model = model_status(config).final_model_exists
     summary, _ = build_dataset_readiness(config, target_per_class=50)
     return (
         AcceptanceCriterion(
@@ -175,9 +175,10 @@ def _acceptance(config: AppConfig) -> tuple[AcceptanceCriterion, ...]:
         AcceptanceCriterion(
             "AC-10",
             "Release atual passa pelos gates por classe.",
-            "pending" if not final_model else "ok",
+            "pending",
             "models/semantic-v1/semantic.json; docs/modelo_reconhecimento.md",
-            "A release existe, mas ainda precisa de validação independente de campo para automatizar orientação.",
+            "Exige avaliação independente de campo por classe e decisão de promoção registrada; "
+            "a presença do artefato não comprova esse gate.",
         ),
         AcceptanceCriterion(
             "AC-11",
@@ -370,6 +371,9 @@ def _format_index(pack: DeliveryPack) -> str:
         "# Pacote de entrega APS - EcoScan",
         "",
         f"Gerado em UTC: `{pack.generated_at_utc}`.",
+        "",
+        "Inventário local de implementação e evidências: não aprova release nem substitui "
+        "o aceite do SHA, a avaliação independente do modelo ou os testes em dispositivos reais.",
         "",
         "## Resumo executivo",
         "",

@@ -33,6 +33,14 @@ def build_recognition_safety_decision(
     except (TypeError, ValueError, OverflowError):
         valid_score = False
 
+    if getattr(result, "model_type", "") == "unavailable":
+        return RecognitionSafetyDecision(
+            status="model_unavailable", tone="warn", title="Reconhecimento indisponível",
+            message="A foto foi processada, mas o modelo não retornou uma hipótese utilizável.",
+            primary_action="Selecione o material manualmente ou tente analisar novamente.",
+            allow_disposal_guidance=False, encourage_feedback=False,
+        )
+
     if getattr(result, "outside_scope", False):
         return RecognitionSafetyDecision(
             status="outside_scope", tone="warn", title="Item fora do escopo ou não confirmado",

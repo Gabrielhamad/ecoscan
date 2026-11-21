@@ -123,16 +123,19 @@ class LearningTests(unittest.TestCase):
 
     def test_pipeline_rejects_legacy_class_even_if_rule_changes_it(self):
         from ecoscan.services.analysis_service import analyze_waste_image
+        from ecoscan.image_processing.contracts import processing_contract
+        contract = processing_contract(self.config)
         organic = ClassificationPrediction("organic", "organic", .9, {"organic": .9}, True, .6)
         pipeline = SimpleNamespace(
             recognition_image=None,
             segmentation_result=SimpleNamespace(image=None, mask=None),
             preprocessing=SimpleNamespace(resized=None), element_analysis=None,
-            metadata={"filter": {"name": "gaussian"}, "segmentation": {"name": "otsu"}})
+            metadata={"recognition_preparation": {"contract": contract},
+                      "filter": {"name": "gaussian"}, "segmentation": {"name": "otsu"}})
         module = "ecoscan.services.analysis_service."
         bundle = SimpleNamespace(
             model_type="semantic_onnx_assisted",
-            classifier=SimpleNamespace(metadata={"processing": {}}),
+            classifier=SimpleNamespace(metadata={"processing": contract}),
         )
         with patch(module + "run_processing_pipeline", return_value=pipeline), \
              patch(module + "_predict", return_value=organic):

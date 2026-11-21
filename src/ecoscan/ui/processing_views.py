@@ -71,12 +71,12 @@ def _render_photo_processing_summary(st: Any, pipeline: Any) -> None:
 
     rows = [
         (
-            "Filtragem",
+            "Filtro experimental",
             str(filter_decision.get("selected") or filter_meta.get("name") or pipeline.filter_result.name),
             str(filter_decision.get("reason") or filter_meta.get("explanation") or ""),
         ),
         (
-            "Segmentação",
+            "Segmentação experimental",
             str(segmentation_decision.get("selected") or segmentation_meta.get("name") or pipeline.segmentation_result.name),
             str(segmentation_decision.get("reason") or segmentation_meta.get("explanation") or ""),
         ),
@@ -101,7 +101,7 @@ def _render_photo_processing_summary(st: Any, pipeline: Any) -> None:
     )
     st.markdown(
         '<div class="ecoscan-tech-summary">'
-        '<div class="ecoscan-tech-summary-title">Processamento usado nesta foto</div>'
+        '<div class="ecoscan-tech-summary-title">Processamento experimental e qualidade da captura</div>'
         f"{rendered_rows}"
         "</div>",
         unsafe_allow_html=True,
@@ -135,7 +135,7 @@ def _render_processing_evidence(
     method_chips = "".join(
         [
             _method_chip("Filtro", filter_name),
-            _method_chip("Segmentação", segmentation_name),
+            _method_chip("Segmentação experimental", segmentation_name),
             _method_chip("Elementos", f"{element_count} detectado(s)"),
             _method_chip("Modelo", model_name),
         ]

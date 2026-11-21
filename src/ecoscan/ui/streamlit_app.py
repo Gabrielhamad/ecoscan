@@ -429,6 +429,12 @@ def main(*, page_configured: bool = False) -> None:
         with tabs["Descarte"]:
             st.subheader("Descarte responsável")
             render_scope(st)
+            from ecoscan.ui.disposal_views import render_manual_disposal
+            render_manual_disposal(
+                st, config, resources.guidance_by_class, resources.targets_by_class,
+                resources.impacts_by_class, resources.collection_points,
+                selection_key="manual_disposal_consultation",
+            )
 
     # Keep the photo widget mounted across navigation, as in the original flow.
     result = render_analysis_page(

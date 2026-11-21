@@ -9,17 +9,18 @@ a ementa oficial não foi fornecida.
 
 - Visitante/participante: expandir **Laboratório de processamento de imagens** na
   página principal. Selecionar os parâmetros e tirar/enviar a foto em Escanear.
-  O resultado exibe **Processamento aplicado: antes e depois**, sem exigir abrir a área técnica.
+  O resultado exibe **Processamento aplicado: processamento experimental**, sem exigir abrir a área técnica.
   As abas apresentam o antes/depois e a diferença de cada operação.
   **Baixar evidências do processamento (ZIP)** salva as imagens PNG e o manifesto de parâmetros.
 - Analista: usar os **Parâmetros técnicos** na barra lateral e a aba **Processamento**.
 - Mudar uma operação ou parâmetro reprocessa a foto carregada; não é necessário
-  reenviar uma contribuição à secretaria.
+  reenviar uma contribuição à secretaria. A entrada oficial do reconhecedor permanece fixa.
 - Para demonstrar sem login, modelo treinado ou banco: executar o experimento
   sintético descrito abaixo.
 
 ## Sequência real do pipeline
 
+    Trilha diagnostic_processing (experimento):
     Arquivo validado e orientação EXIF corrigida
       → conversão RGB e transparência sobre branco
       → redução proporcional por área (lado maior até 640 px)
@@ -28,8 +29,11 @@ a ementa oficial não foi fornecida.
       → abertura + fechamento da máscara (padrão ativo)
       → máscara aplicada somente à prévia diagnóstica
       → componentes, área e caixas
+
+    Trilha independente recognition_preparation:
+    RGB orientado → redução proporcional → filtro do perfil oficial auto
       → RGB completo com margens para o classificador (224×224)
-      → reconhecimento e orientação
+      → reconhecimento assistido e confirmação humana
 
 A imagem original é preservada em memória. A máscara bruta e a máscara tratada
 são mantidas separadamente. O padrão seleciona **filtragem e segmentação
@@ -38,7 +42,11 @@ por primitiva e borda zero. Para demonstrar especificamente mediana 3×3 e Otsu,
 selecione esses métodos no laboratório.
 A máscara tratada não apaga pixels da entrada de reconhecimento. A versão
 [RGB preservado v2](processamento_preservado_v2.md) mantém cor e proporções.
-Os parâmetros são configurados em config/settings.json; o avaliador também lê esses padrões.
+O perfil oficial é configurado em config/settings.json e deve coincidir com o contrato
+de models/semantic-v1/semantic.json, inclusive o SHA-256 do perfil. O avaliador e o
+treinamento de novas contribuições também usam esses padrões. O serviço recusa um
+contrato incompatível antes de chamar o encoder. O manifesto inclui as duas trilhas
+e o SHA-256 dos bytes C-order do RGB oficial, além dos hashes shape/dtype já existentes.
 Os controles sem operação e os métodos manuais continuam disponíveis no laboratório.
 
 ## Conteúdo da disciplina e onde demonstrar
@@ -128,8 +136,9 @@ Nenhuma máscara degenerada é silenciosamente substituída pela anterior.
 A interface usa os arrays produzidos pela análise. Não repete as transformações
 para produzir uma imagem ilustrativa. Cada primitiva morfológica recebe a máscara
 de saída da anterior; a última máscara serve à prévia segmentada, aos contornos
-e às medições. O classificador recebe o RGB filtrado e redimensionado, **sem
-aplicação da máscara**. Os testes verificam a preservação dos pixels do objeto
+e às medições. O classificador recebe o RGB filtrado pelo perfil oficial e redimensionado, **sem
+aplicação da máscara**. Os filtros escolhidos no laboratório pertencem à trilha
+`diagnostic_processing` e não alteram `recognition_preparation`. Os testes verificam a preservação dos pixels do objeto
 e a correspondência das evidências exportadas com as operações executadas.
 
 - Antes/depois de redimensionamento, filtro, segmentação, cada primitiva e aplicação da máscara.
@@ -198,7 +207,7 @@ Mais área, menos ruído aparente ou menos componentes não garantem uma máscar
 5. Mostrar o kernel e prever o efeito antes de executar dilatação/erosão.
 6. Comparar abertura/fechamento e suas etapas intermediárias.
 7. Identificar pixels alterados e componentes que foram unidos ou removidos.
-8. Comparar a prévia segmentada à entrada RGB preservada que realmente segue para reconhecimento.
+8. Comparar o processamento experimental à preparação para reconhecimento exibida separadamente.
 9. Separar conclusão sobre qualidade da máscara da conclusão sobre classificação.
 10. Entregar parâmetros, imagens, resultados, limitações e fontes usadas.
 
@@ -208,6 +217,23 @@ anotadas e medir IoU/Dice quando houver referência. Separar por objeto/cena nos
 conjuntos de avaliação. Não escolher parâmetros somente para uma foto favorável.
 
 ## Validação automatizada
+
+Separação das trilhas (mudança de 07/11/2026, baseline `89622ec714b815c216a9215ab9ba69999b39c6b8`):
+
+    python -m pytest tests/test_processing_tracks.py -q
+
+Antes da alteração, as sete escolhas de filtro sondadas não preservavam a entrada
+ou o contrato padrão; o encoder era chamado antes de rejeitar um contrato incompatível.
+Os testes agora verificam invariância exata, efeito didático visível, EXIF/RGB/margens,
+hashes, contrato da release, gate de qualidade estável, manifesto e rerun de controles
+Streamlit. `ModelLoadError` interrompe contratos incompatíveis antes da predição,
+usando o tratamento público de erros já existente. Os atributos anteriores do resultado
+continuam disponíveis; `diagnostic_processing` e `recognition_preparation` nomeiam as trilhas.
+
+O smoke sintético com CPU ONNX real confirmou scores idênticos entre filtro padrão e
+experimento gaussiano, sem alterar artefato, limiar ou confirmação obrigatória. Isso
+comprova o contrato de software, não acurácia de campo. O RGB oficial padrão também
+foi comparado pixel a pixel ao pipeline da baseline, sem diferença na cena usada.
 
     python -m unittest tests.test_processing_evidence tests.test_morphology tests.test_processing_lab tests.test_pipeline tests.test_image_processing tests.test_streamlit_camera_flow -v
 

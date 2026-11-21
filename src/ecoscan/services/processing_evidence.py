@@ -98,9 +98,9 @@ def processing_evidence(pipeline) -> tuple[ProcessingEvidence, ...]:
          "destination": "inspeção; não enviada ao classificador"},
         raw.name != "none" or morphology.metadata["operation"] != "none"))
     stages.append(ProcessingEvidence(
-        "06_classifier_input", "Entrada RGB do classificador",
-        (pipeline.preprocessing.resized if pipeline.filter_result.name in {"sobel", "canny"}
-         else pipeline.filter_result.image), pipeline.recognition_image,
+        "06_classifier_input", "Preparação para reconhecimento: RGB oficial",
+        (pipeline.recognition_preparation.source if pipeline.recognition_preparation is not None
+         else pipeline.preprocessing.resized), pipeline.recognition_image,
         pipeline.metadata["recognition_preparation"], True))
     return tuple(stages)
 
@@ -119,6 +119,8 @@ def evidence_manifest(pipeline) -> dict[str, Any]:
         "difference": "máxima diferença absoluta entre canais, escala 0–255 sem amplificação",
         "scope": "Aquisição RGB até a imagem entregue ao classificador; não mede acurácia.",
         "classifier_input_sha256": array_digest(pipeline.recognition_image),
+        "recognition_preparation": pipeline.metadata["recognition_preparation"],
+        "diagnostic_processing": pipeline.metadata.get("diagnostic_processing", {}),
         "stages": [stage.manifest() for stage in processing_evidence(pipeline)],
     }
 

@@ -16,6 +16,11 @@ tratado como referência autoral de conceitos científicos. Consulte
 
 ## Estado da entrega
 
+A branch candidata consolida correções de separação do PDI, recuperação após
+falhas e consulta manual. [Escopo, reprodução e gates pendentes](docs/integracao_candidata_aps.md).
+Ela requer revisão/CI e aceite externo antes de release; não comprova mudança
+na aplicação publicada ou melhoria de acurácia de campo.
+
 O fluxo web, a autenticação, o processamento de imagens e o reconhecedor ONNX estão implementados e cobertos por testes automatizados. A interface exibe o material sugerido e a cor do coletor padronizada; a pessoa confirma a classe para obter instruções completas. Percentuais da classificação permanecem restritos à avaliação técnica.
 
 | Área | Estado | Observação |
